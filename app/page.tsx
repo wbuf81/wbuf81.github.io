@@ -393,7 +393,7 @@ export default function Home() {
         }
 
         .name {
-          font-family: var(--font-poppins), system-ui, sans-serif;
+          font-family: var(--font-outfit), system-ui, sans-serif;
           font-size: 4rem;
           font-weight: 700;
           line-height: 1;
