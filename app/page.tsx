@@ -13,7 +13,7 @@ interface Channel {
   name: string;
   icon: string;
   revealImage: string;
-  grainStyle: 'film' | 'tv-static' | 'digital' | 'vhs';
+  grainStyle: 'film' | 'sports';
 }
 
 const CHANNELS: Channel[] = [
@@ -24,7 +24,13 @@ const CHANNELS: Channel[] = [
     revealImage: '/aligned_space_transparent.png',
     grainStyle: 'film',
   },
-  // Add more channels here later
+  {
+    id: 'sports',
+    name: 'Sports',
+    icon: '🏈',
+    revealImage: '/aligned_football_transparent.png',
+    grainStyle: 'sports',
+  },
 ];
 
 export default function Home() {
@@ -272,7 +278,7 @@ export default function Home() {
       <div ref={bgImageRef} className="background-image" />
 
       {/* Grain texture overlay */}
-      <div className="grain-overlay" />
+      <div className={`grain-overlay grain-${currentChannel.grainStyle}`} />
 
       {/* Reveal canvas (space.jpg revealed by blob) */}
       <canvas ref={revealCanvasRef} className="reveal-canvas" />
@@ -406,9 +412,20 @@ export default function Home() {
           height: 200%;
           pointer-events: none;
           z-index: 1;
-          background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
           opacity: 0.18;
           animation: grain 3s steps(1) infinite;
+        }
+
+        /* Film grain - default space channel */
+        .grain-film {
+          background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+        }
+
+        /* Sports grain - green grass-like texture with yard line hints */
+        .grain-sports {
+          background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.2' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Cpattern id='lines' patternUnits='userSpaceOnUse' width='40' height='200'%3E%3Cline x1='20' y1='0' x2='20' y2='200' stroke='%23228B22' stroke-width='0.5' stroke-opacity='0.3'/%3E%3C/pattern%3E%3C/defs%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3Crect width='100%25' height='100%25' fill='url(%23lines)'/%3E%3C/svg%3E");
+          opacity: 0.22;
+          animation: grain-sports 3s steps(1) infinite;
         }
 
         @keyframes grain {
@@ -422,6 +439,19 @@ export default function Home() {
           70% { transform: translate(-1%, -1%); }
           80% { transform: translate(1%, 1%); }
           90% { transform: translate(-2%, -1%); }
+        }
+
+        @keyframes grain-sports {
+          0%, 100% { transform: translate(0, 0); }
+          10% { transform: translate(-1%, -1%); }
+          20% { transform: translate(1%, 1%); }
+          30% { transform: translate(-0.5%, 0.5%); }
+          40% { transform: translate(0.5%, -0.5%); }
+          50% { transform: translate(-1%, 1%); }
+          60% { transform: translate(1%, -1%); }
+          70% { transform: translate(-0.5%, -0.5%); }
+          80% { transform: translate(0.5%, 0.5%); }
+          90% { transform: translate(-1%, -0.5%); }
         }
 
         .reveal-canvas {
