@@ -268,7 +268,7 @@ export default function Home() {
         <p className="tagline">⚙️ Engineer at heart.</p>
         <p className="tagline">🚀 Space enthusiast.</p>
         <p className="tagline">🤖 AI builder.</p>
-        <p className="tagline">🐾 Florida, boy and bernese dad.</p>
+        <p className="tagline"><svg className="tagline-icon" viewBox="0 0 24 24"><ellipse cx="12" cy="13" rx="10" ry="9" fill="#1a1a1a"/><ellipse cx="12" cy="14" rx="4" ry="5" fill="#fff"/><ellipse cx="7" cy="9" rx="2.5" ry="2" fill="#1a1a1a"/><ellipse cx="17" cy="9" rx="2.5" ry="2" fill="#1a1a1a"/><circle cx="9" cy="12" r="1.5" fill="#c45c26"/><circle cx="15" cy="12" r="1.5" fill="#c45c26"/><ellipse cx="12" cy="17" rx="2" ry="1.5" fill="#1a1a1a"/><circle cx="9.5" cy="10" r="1" fill="#333"/><circle cx="14.5" cy="10" r="1" fill="#333"/></svg> Florida, boy and bernese dad.</p>
         <p className="tagline"><svg className="tagline-icon" viewBox="0 0 24 24" fill="#1e88e5"><path d="M20.5 11H19V7c0-1.1-.9-2-2-2h-4V3.5C13 2.12 11.88 1 10.5 1S8 2.12 8 3.5V5H4c-1.1 0-1.99.9-1.99 2v3.8H3.5c1.49 0 2.7 1.21 2.7 2.7s-1.21 2.7-2.7 2.7H2V20c0 1.1.9 2 2 2h3.8v-1.5c0-1.49 1.21-2.7 2.7-2.7s2.7 1.21 2.7 2.7V22H17c1.1 0 2-.9 2-2v-4h1.5c1.38 0 2.5-1.12 2.5-2.5S21.88 11 20.5 11z"/></svg> Autism & inclusivity advocate.</p>
       </div>
 
