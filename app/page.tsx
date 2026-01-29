@@ -63,8 +63,8 @@ export default function Home() {
     const radiusX = window.innerWidth * 0.3;
     const radiusY = window.innerHeight * 0.3;
 
-    // Combine multiple frequencies for organic, non-repetitive movement (2.5x speed)
-    const speed = 2.5;
+    // Combine multiple frequencies for organic, non-repetitive movement (2x speed)
+    const speed = 2;
     const x = centerX +
       Math.sin(time * 0.0003 * speed) * radiusX * 0.6 +
       Math.sin(time * 0.0007 * speed) * radiusX * 0.3 +
