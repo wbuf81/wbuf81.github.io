@@ -79,8 +79,8 @@ export default function ArticlesClient({ articles }: { articles: Article[] }) {
           pointer-events: none;
           z-index: 0;
           background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.2' numOctaves='2' stitchTiles='stitch' seed='1'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='discrete' tableValues='0 1'/%3E%3CfeFuncG type='discrete' tableValues='0 1'/%3E%3CfeFuncB type='discrete' tableValues='0 1'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
-          opacity: 0.07;
-          animation: tvstatic 0.1s steps(1) infinite;
+          opacity: 0.12;
+          animation: tvstatic 3s steps(1) infinite;
         }
 
         @keyframes tvstatic {
