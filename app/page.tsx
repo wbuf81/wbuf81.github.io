@@ -35,7 +35,7 @@ const CHANNELS: Channel[] = [
     id: 'gaming',
     name: 'Gaming',
     icon: '🎮',
-    revealImage: '/aligned_gaming_transparent.png',
+    revealImage: '/aligned_videogame_transparent.png',
     grainStyle: 'crt',
   },
 ];
@@ -281,11 +281,97 @@ export default function Home() {
       onTouchMove={handleTouchMove}
       onTouchStart={handleTouchStart}
     >
+      {/* Space background elements - renders behind everything */}
+      {currentChannel.grainStyle === 'film' && (
+        <div className="space-bg">
+          {/* Planets */}
+          <div className="planet planet-1" />
+          <div className="planet planet-2" />
+          <div className="planet planet-3" />
+
+          {/* Background stars */}
+          <div className="bg-star" style={{ left: '8%', top: '12%' }} />
+          <div className="bg-star" style={{ left: '22%', top: '78%' }} />
+          <div className="bg-star" style={{ left: '35%', top: '25%' }} />
+          <div className="bg-star" style={{ left: '52%', top: '88%' }} />
+          <div className="bg-star" style={{ left: '68%', top: '15%' }} />
+          <div className="bg-star" style={{ left: '85%', top: '65%' }} />
+          <div className="bg-star" style={{ left: '15%', top: '45%' }} />
+          <div className="bg-star" style={{ left: '78%', top: '35%' }} />
+          <div className="bg-star" style={{ left: '42%', top: '58%' }} />
+          <div className="bg-star" style={{ left: '92%', top: '82%' }} />
+          <div className="bg-star bg-star-large" style={{ left: '28%', top: '8%' }} />
+          <div className="bg-star bg-star-large" style={{ left: '65%', top: '72%' }} />
+          <div className="bg-star bg-star-large" style={{ left: '88%', top: '22%' }} />
+        </div>
+      )}
+
       {/* Background Image (main.jpg) */}
       <div ref={bgImageRef} className="background-image" />
 
       {/* Grain texture overlay */}
       <div className={`grain-overlay grain-${currentChannel.grainStyle}`} />
+
+
+      {/* Sports emojis for sports channel */}
+      {currentChannel.grainStyle === 'sports' && (
+        <div className="sports-container">
+          <div className="sports-emoji" style={{ left: '5%', animationDelay: '0s', animationDuration: '12s' }}>🏈</div>
+          <div className="sports-emoji" style={{ left: '12%', animationDelay: '3s', animationDuration: '15s' }}>🏀</div>
+          <div className="sports-emoji" style={{ left: '20%', animationDelay: '1s', animationDuration: '11s' }}>🏈</div>
+          <div className="sports-emoji" style={{ left: '28%', animationDelay: '5s', animationDuration: '14s' }}>🏀</div>
+          <div className="sports-emoji" style={{ left: '35%', animationDelay: '2s', animationDuration: '13s' }}>🏈</div>
+          <div className="sports-emoji" style={{ left: '43%', animationDelay: '4s', animationDuration: '10s' }}>🏀</div>
+          <div className="sports-emoji" style={{ left: '50%', animationDelay: '6s', animationDuration: '16s' }}>🏈</div>
+          <div className="sports-emoji" style={{ left: '58%', animationDelay: '1.5s', animationDuration: '12s' }}>🏀</div>
+          <div className="sports-emoji" style={{ left: '65%', animationDelay: '3.5s', animationDuration: '14s' }}>🏈</div>
+          <div className="sports-emoji" style={{ left: '73%', animationDelay: '0.5s', animationDuration: '11s' }}>🏀</div>
+          <div className="sports-emoji" style={{ left: '80%', animationDelay: '4.5s', animationDuration: '15s' }}>🏈</div>
+          <div className="sports-emoji" style={{ left: '88%', animationDelay: '2.5s', animationDuration: '13s' }}>🏀</div>
+          <div className="sports-emoji" style={{ left: '95%', animationDelay: '5.5s', animationDuration: '10s' }}>🏈</div>
+          <div className="sports-emoji" style={{ left: '8%', animationDelay: '7s', animationDuration: '14s' }}>🏀</div>
+          <div className="sports-emoji" style={{ left: '32%', animationDelay: '8s', animationDuration: '12s' }}>🏈</div>
+          <div className="sports-emoji" style={{ left: '55%', animationDelay: '9s', animationDuration: '15s' }}>🏀</div>
+          <div className="sports-emoji" style={{ left: '78%', animationDelay: '7.5s', animationDuration: '11s' }}>🏈</div>
+          <div className="sports-emoji" style={{ left: '18%', animationDelay: '8.5s', animationDuration: '13s' }}>🏀</div>
+        </div>
+      )}
+
+      {/* Tetris pieces for gaming channel */}
+      {currentChannel.grainStyle === 'crt' && (
+        <div className="tetris-container">
+          <div className="tetris-piece piece-i" style={{ left: '3%', animationDelay: '0s', animationDuration: '8s' }} />
+          <div className="tetris-piece piece-o" style={{ left: '8%', animationDelay: '2s', animationDuration: '10s' }} />
+          <div className="tetris-piece piece-t" style={{ left: '13%', animationDelay: '1s', animationDuration: '9s' }} />
+          <div className="tetris-piece piece-l" style={{ left: '18%', animationDelay: '4s', animationDuration: '11s' }} />
+          <div className="tetris-piece piece-j" style={{ left: '23%', animationDelay: '0.5s', animationDuration: '7s' }} />
+          <div className="tetris-piece piece-s" style={{ left: '28%', animationDelay: '3s', animationDuration: '12s' }} />
+          <div className="tetris-piece piece-z" style={{ left: '33%', animationDelay: '1.5s', animationDuration: '8.5s' }} />
+          <div className="tetris-piece piece-i" style={{ left: '38%', animationDelay: '2.5s', animationDuration: '9.5s' }} />
+          <div className="tetris-piece piece-t" style={{ left: '43%', animationDelay: '0.8s', animationDuration: '10.5s' }} />
+          <div className="tetris-piece piece-o" style={{ left: '48%', animationDelay: '3.5s', animationDuration: '7.5s' }} />
+          <div className="tetris-piece piece-l" style={{ left: '53%', animationDelay: '5s', animationDuration: '11.5s' }} />
+          <div className="tetris-piece piece-j" style={{ left: '58%', animationDelay: '6s', animationDuration: '8.2s' }} />
+          <div className="tetris-piece piece-s" style={{ left: '63%', animationDelay: '4.5s', animationDuration: '9.8s' }} />
+          <div className="tetris-piece piece-z" style={{ left: '68%', animationDelay: '5.5s', animationDuration: '10.2s' }} />
+          <div className="tetris-piece piece-i" style={{ left: '73%', animationDelay: '6.5s', animationDuration: '8.8s' }} />
+          <div className="tetris-piece piece-t" style={{ left: '78%', animationDelay: '1.2s', animationDuration: '9.2s' }} />
+          <div className="tetris-piece piece-o" style={{ left: '83%', animationDelay: '2.8s', animationDuration: '10.8s' }} />
+          <div className="tetris-piece piece-l" style={{ left: '88%', animationDelay: '0.3s', animationDuration: '7.8s' }} />
+          <div className="tetris-piece piece-j" style={{ left: '93%', animationDelay: '4.2s', animationDuration: '11.2s' }} />
+          <div className="tetris-piece piece-s" style={{ left: '98%', animationDelay: '5.8s', animationDuration: '8.5s' }} />
+          <div className="tetris-piece piece-z" style={{ left: '6%', animationDelay: '7s', animationDuration: '9.5s' }} />
+          <div className="tetris-piece piece-i" style={{ left: '16%', animationDelay: '7.5s', animationDuration: '10s' }} />
+          <div className="tetris-piece piece-t" style={{ left: '26%', animationDelay: '8s', animationDuration: '8.8s' }} />
+          <div className="tetris-piece piece-o" style={{ left: '36%', animationDelay: '8.5s', animationDuration: '11s' }} />
+          <div className="tetris-piece piece-l" style={{ left: '46%', animationDelay: '9s', animationDuration: '7.2s' }} />
+          <div className="tetris-piece piece-j" style={{ left: '56%', animationDelay: '9.5s', animationDuration: '9.8s' }} />
+          <div className="tetris-piece piece-s" style={{ left: '66%', animationDelay: '10s', animationDuration: '10.5s' }} />
+          <div className="tetris-piece piece-z" style={{ left: '76%', animationDelay: '10.5s', animationDuration: '8.2s' }} />
+          <div className="tetris-piece piece-i" style={{ left: '86%', animationDelay: '11s', animationDuration: '9s' }} />
+          <div className="tetris-piece piece-t" style={{ left: '96%', animationDelay: '11.5s', animationDuration: '10.2s' }} />
+        </div>
+      )}
 
       {/* Reveal canvas (space.jpg revealed by blob) */}
       <canvas ref={revealCanvasRef} className="reveal-canvas" />
@@ -409,6 +495,7 @@ export default function Home() {
           background-position: center;
           background-repeat: no-repeat;
           will-change: transform;
+          z-index: 1;
         }
 
         .grain-overlay {
@@ -427,6 +514,124 @@ export default function Home() {
         .grain-film {
           background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
         }
+
+        /* Space background - behind the pictures */
+        .space-bg {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          z-index: 0;
+          overflow: hidden;
+        }
+
+        /* Planets */
+        .planet {
+          position: absolute;
+          border-radius: 50%;
+          opacity: 0.5;
+        }
+
+        .planet-1 {
+          width: 120px;
+          height: 120px;
+          top: 10%;
+          right: 8%;
+          background: radial-gradient(circle at 30% 30%, #8b5a2b, #4a3728 60%, #2d1f1a);
+          box-shadow: inset -15px -10px 30px rgba(0,0,0,0.5), 0 0 40px rgba(139, 90, 43, 0.3);
+          animation: planet-drift-1 20s ease-in-out infinite;
+        }
+
+        .planet-2 {
+          width: 80px;
+          height: 80px;
+          bottom: 15%;
+          left: 5%;
+          background: radial-gradient(circle at 35% 35%, #6b8cae, #3d5a73 50%, #1a2f3d);
+          box-shadow: inset -10px -8px 20px rgba(0,0,0,0.5), 0 0 30px rgba(107, 140, 174, 0.3);
+          animation: planet-drift-2 25s ease-in-out infinite;
+        }
+
+        .planet-3 {
+          width: 60px;
+          height: 60px;
+          top: 55%;
+          right: 15%;
+          background: radial-gradient(circle at 30% 30%, #c4a35a, #8b7355 60%, #4a3f2f);
+          box-shadow: inset -8px -6px 15px rgba(0,0,0,0.5), 0 0 20px rgba(196, 163, 90, 0.3);
+          animation: planet-drift-3 18s ease-in-out infinite;
+        }
+
+        @keyframes planet-drift-1 {
+          0%, 100% { transform: translate(0, 0); }
+          25% { transform: translate(-15px, 10px); }
+          50% { transform: translate(-5px, 20px); }
+          75% { transform: translate(10px, 8px); }
+        }
+
+        @keyframes planet-drift-2 {
+          0%, 100% { transform: translate(0, 0); }
+          25% { transform: translate(12px, -8px); }
+          50% { transform: translate(20px, 5px); }
+          75% { transform: translate(8px, 15px); }
+        }
+
+        @keyframes planet-drift-3 {
+          0%, 100% { transform: translate(0, 0); }
+          25% { transform: translate(-10px, -12px); }
+          50% { transform: translate(8px, -5px); }
+          75% { transform: translate(-5px, 10px); }
+        }
+
+        /* Background stars */
+        .bg-star {
+          position: absolute;
+          width: 8px;
+          height: 8px;
+          background: #ffd700;
+          border-radius: 50%;
+          opacity: 0.8;
+          box-shadow: 0 0 12px 4px rgba(255, 215, 0, 0.6), 0 0 20px 6px rgba(255, 200, 0, 0.3);
+          animation: star-twinkle 3s ease-in-out infinite;
+        }
+
+        .bg-star:nth-child(odd) {
+          background: #87ceeb;
+          box-shadow: 0 0 12px 4px rgba(135, 206, 235, 0.6), 0 0 20px 6px rgba(135, 206, 235, 0.3);
+          animation: star-twinkle-alt 4s ease-in-out infinite;
+        }
+
+        .bg-star-large {
+          width: 12px;
+          height: 12px;
+          opacity: 1;
+          background: #fff;
+          box-shadow: 0 0 20px 6px rgba(255, 255, 255, 0.8), 0 0 30px 10px rgba(255, 215, 0, 0.4);
+          animation: star-twinkle-large 5s ease-in-out infinite;
+        }
+
+        @keyframes star-twinkle {
+          0%, 100% { opacity: 0.4; transform: scale(1) translate(0, 0); }
+          25% { opacity: 0.7; transform: scale(1.1) translate(1px, -1px); }
+          50% { opacity: 0.9; transform: scale(1.2) translate(0, 1px); }
+          75% { opacity: 0.6; transform: scale(1.05) translate(-1px, 0); }
+        }
+
+        @keyframes star-twinkle-alt {
+          0%, 100% { opacity: 0.5; transform: scale(1) translate(0, 0); }
+          25% { opacity: 0.8; transform: scale(1.15) translate(-1px, 1px); }
+          50% { opacity: 0.6; transform: scale(0.95) translate(1px, 0); }
+          75% { opacity: 0.9; transform: scale(1.1) translate(0, -1px); }
+        }
+
+        @keyframes star-twinkle-large {
+          0%, 100% { opacity: 0.6; transform: scale(1) translate(0, 0); }
+          25% { opacity: 0.9; transform: scale(1.15) translate(2px, -2px); }
+          50% { opacity: 1; transform: scale(1.25) translate(-1px, 2px); }
+          75% { opacity: 0.75; transform: scale(1.1) translate(1px, -1px); }
+        }
+
 
         /* Sports effect - green field with animated yard lines */
         .grain-sports {
@@ -468,6 +673,35 @@ export default function Home() {
           100% { transform: translateX(0px); }
         }
 
+        /* Sports emojis container */
+        .sports-container {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          pointer-events: none;
+          z-index: 1;
+          overflow: hidden;
+        }
+
+        .sports-emoji {
+          position: absolute;
+          top: -60px;
+          font-size: 32px;
+          opacity: 0.2;
+          animation: sports-fall linear infinite;
+        }
+
+        @keyframes sports-fall {
+          0% {
+            transform: translateY(0) rotate(0deg);
+          }
+          100% {
+            transform: translateY(calc(100vh + 80px)) rotate(360deg);
+          }
+        }
+
         /* CRT effect - classic 8-bit Nintendo TV look */
         .grain-crt {
           background:
@@ -496,6 +730,95 @@ export default function Home() {
           0% { opacity: 0.97; }
           50% { opacity: 1; }
           100% { opacity: 0.98; }
+        }
+
+        /* Tetris pieces container */
+        .tetris-container {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          pointer-events: none;
+          z-index: 1;
+          overflow: hidden;
+        }
+
+        .tetris-piece {
+          position: absolute;
+          top: -120px;
+          opacity: 0.25;
+          animation: tetris-fall linear infinite;
+        }
+
+        @keyframes tetris-fall {
+          0% {
+            transform: translateY(0) rotate(0deg);
+          }
+          100% {
+            transform: translateY(calc(100vh + 100px)) rotate(360deg);
+          }
+        }
+
+        /* I-piece - cyan */
+        .piece-i {
+          width: 24px;
+          height: 96px;
+          background: #00f0f0;
+          box-shadow: inset -3px -3px 0 rgba(0,0,0,0.3), inset 3px 3px 0 rgba(255,255,255,0.3);
+        }
+
+        /* O-piece - yellow */
+        .piece-o {
+          width: 48px;
+          height: 48px;
+          background: #f0f000;
+          box-shadow: inset -3px -3px 0 rgba(0,0,0,0.3), inset 3px 3px 0 rgba(255,255,255,0.3);
+        }
+
+        /* T-piece - purple */
+        .piece-t {
+          width: 72px;
+          height: 48px;
+          background: #a000f0;
+          clip-path: polygon(33% 0%, 66% 0%, 66% 50%, 100% 50%, 100% 100%, 0% 100%, 0% 50%, 33% 50%);
+          box-shadow: inset -3px -3px 0 rgba(0,0,0,0.3), inset 3px 3px 0 rgba(255,255,255,0.3);
+        }
+
+        /* L-piece - orange */
+        .piece-l {
+          width: 48px;
+          height: 72px;
+          background: #f0a000;
+          clip-path: polygon(0% 0%, 50% 0%, 50% 66%, 100% 66%, 100% 100%, 0% 100%);
+          box-shadow: inset -3px -3px 0 rgba(0,0,0,0.3), inset 3px 3px 0 rgba(255,255,255,0.3);
+        }
+
+        /* J-piece - blue */
+        .piece-j {
+          width: 48px;
+          height: 72px;
+          background: #0000f0;
+          clip-path: polygon(50% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 66%, 50% 66%);
+          box-shadow: inset -3px -3px 0 rgba(0,0,0,0.3), inset 3px 3px 0 rgba(255,255,255,0.3);
+        }
+
+        /* S-piece - green */
+        .piece-s {
+          width: 72px;
+          height: 48px;
+          background: #00f000;
+          clip-path: polygon(33% 0%, 100% 0%, 100% 50%, 66% 50%, 66% 100%, 0% 100%, 0% 50%, 33% 50%);
+          box-shadow: inset -3px -3px 0 rgba(0,0,0,0.3), inset 3px 3px 0 rgba(255,255,255,0.3);
+        }
+
+        /* Z-piece - red */
+        .piece-z {
+          width: 72px;
+          height: 48px;
+          background: #f00000;
+          clip-path: polygon(0% 0%, 66% 0%, 66% 50%, 100% 50%, 100% 100%, 33% 100%, 33% 50%, 0% 50%);
+          box-shadow: inset -3px -3px 0 rgba(0,0,0,0.3), inset 3px 3px 0 rgba(255,255,255,0.3);
         }
 
         .reveal-canvas {
