@@ -421,21 +421,26 @@ export default function Home() {
           background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
         }
 
-        /* Sports effect - animated yard lines like a football field */
+        /* Sports effect - green field with animated yard lines */
         .grain-sports {
-          background: repeating-linear-gradient(
-            90deg,
-            transparent 0px,
-            transparent 80px,
-            rgba(255, 255, 255, 0.15) 80px,
-            rgba(255, 255, 255, 0.15) 84px,
-            transparent 84px,
-            transparent 160px,
-            rgba(255, 255, 255, 0.08) 160px,
-            rgba(255, 255, 255, 0.08) 162px
-          );
+          background:
+            repeating-linear-gradient(
+              90deg,
+              transparent 0px,
+              transparent 118px,
+              rgba(255, 255, 255, 0.7) 118px,
+              rgba(255, 255, 255, 0.7) 122px,
+              transparent 122px,
+              transparent 240px
+            ),
+            linear-gradient(
+              180deg,
+              rgba(34, 139, 34, 0.12) 0%,
+              rgba(34, 139, 34, 0.18) 50%,
+              rgba(34, 139, 34, 0.12) 100%
+            );
           opacity: 1;
-          animation: yard-lines 20s linear infinite;
+          animation: yard-lines 12s linear infinite;
         }
 
         @keyframes grain {
@@ -452,7 +457,7 @@ export default function Home() {
         }
 
         @keyframes yard-lines {
-          0% { transform: translateX(-160px); }
+          0% { transform: translateX(-240px); }
           100% { transform: translateX(0px); }
         }
 
