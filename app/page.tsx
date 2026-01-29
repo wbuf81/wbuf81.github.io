@@ -25,18 +25,18 @@ const CHANNELS: Channel[] = [
     grainStyle: 'film',
   },
   {
-    id: 'sports',
-    name: 'Sports',
-    icon: '🏈',
-    revealImage: '/aligned_football_transparent.png',
-    grainStyle: 'sports',
-  },
-  {
     id: 'gaming',
     name: 'Gaming',
     icon: '🎮',
     revealImage: '/aligned_videogame_transparent.png',
     grainStyle: 'crt',
+  },
+  {
+    id: 'sports',
+    name: 'Sports',
+    icon: '🏈',
+    revealImage: '/aligned_football_transparent.png',
+    grainStyle: 'sports',
   },
 ];
 
