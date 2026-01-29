@@ -532,7 +532,12 @@ export default function Home() {
         }
 
         .widget-bottom-mid {
-          border-bottom: 1px solid #333;
+          background: #374151;
+          border-bottom: 1px solid #4b5563;
+        }
+
+        .widget-bottom-mid:hover {
+          background: #4b5563;
         }
 
         .widget-bottom-icon {
