@@ -42,6 +42,8 @@ const CHANNELS: Channel[] = [
 
 export default function Home() {
   const [currentChannelIndex, setCurrentChannelIndex] = useState(0);
+  const [isChangingChannel, setIsChangingChannel] = useState(false);
+  const [dialRotation, setDialRotation] = useState(0);
   const currentChannel = CHANNELS[currentChannelIndex];
   const containerRef = useRef<HTMLDivElement>(null);
   const revealCanvasRef = useRef<HTMLCanvasElement>(null);
@@ -214,7 +216,7 @@ export default function Home() {
       // Draw blob circles on offscreen canvas
       // Smaller blob on mobile for better fit
       const isMobile = window.innerWidth < 768;
-      const baseSize = isMobile ? 60 : 90;
+      const baseSize = isMobile ? 80 : 120;
       offCtx.fillStyle = 'white';
       blobPointsRef.current.forEach((point) => {
         const size = baseSize * point.scale;
@@ -272,6 +274,21 @@ export default function Home() {
       lastMouseMoveRef.current = Date.now();
     }
   }, []);
+
+  const handleChannelChange = useCallback(() => {
+    if (isChangingChannel) return;
+
+    setIsChangingChannel(true);
+    setDialRotation(prev => prev + 120); // Rotate dial 120 degrees
+
+    // Show static for 300ms, then change channel
+    setTimeout(() => {
+      setCurrentChannelIndex((prev) => (prev + 1) % CHANNELS.length);
+      setTimeout(() => {
+        setIsChangingChannel(false);
+      }, 150);
+    }, 300);
+  }, [isChangingChannel]);
 
   return (
     <div
@@ -386,26 +403,24 @@ export default function Home() {
           <p className="tagline">⚙️ Engineer at Heart.</p>
           <p className="tagline">🤖 AI Builder.</p>
           <p className="tagline">👨‍👩‍👦‍👦 Proud Husband and Boy (x2) Dad.</p>
-          <p className="tagline">🐾 Bernese Mountain Dogs.</p>
-          <p className="tagline">🚀 Space Enthusiast.</p>
-          <p className="tagline">🕹️ Video Gamer.</p>
-          <p className="tagline">🏈 Florida Gators, Jacksonville Jaguars.</p>
+          <p className="tagline tagline-secondary">🐾 Bernese Mountain Dogs.</p>
+          <p className="tagline tagline-secondary">🚀 Space Enthusiast.</p>
+          <p className="tagline tagline-secondary">🕹️ Video Gamer.</p>
+          <p className="tagline tagline-secondary">🏈 Florida Gators, Jacksonville Jaguars.</p>
           <p className="tagline"><svg className="tagline-icon" viewBox="0 0 24 24" fill="#1e88e5"><path d="M20.5 11H19V7c0-1.1-.9-2-2-2h-4V3.5C13 2.12 11.88 1 10.5 1S8 2.12 8 3.5V5H4c-1.1 0-1.99.9-1.99 2v3.8H3.5c1.49 0 2.7 1.21 2.7 2.7s-1.21 2.7-2.7 2.7H2V20c0 1.1.9 2 2 2h3.8v-1.5c0-1.49 1.21-2.7 2.7-2.7s2.7 1.21 2.7 2.7V22H17c1.1 0 2-.9 2-2v-4h1.5c1.38 0 2.5-1.12 2.5-2.5S21.88 11 20.5 11z"/></svg> Autism & Inclusivity Advocate.</p>
         </div>
       </div>
 
       
-      {/* Socials Widget - Bottom Left */}
-      <div className="widget widget-bottom-left">
+      {/* Socials Widget - Top Right */}
+      <div className="widget widget-top-right">
         <div className="widget-top">
-          <div className="widget-label">SOCIALS</div>
           <a href="https://www.linkedin.com/in/wesleybard/" target="_blank" rel="noopener noreferrer" className="widget-top-link">
             <svg viewBox="0 0 24 24" fill="currentColor" width="48" height="48">
               <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
             </svg>
             <span className="widget-top-link-text">LINKED IN</span>
           </a>
-          <div className="widget-divider"></div>
         </div>
         <a href="https://www.instagram.com/wb81" target="_blank" rel="noopener noreferrer" className="widget-bottom widget-bottom-mid">
           <svg className="widget-bottom-icon" viewBox="0 0 24 24" fill="currentColor" width="32" height="32">
@@ -427,10 +442,9 @@ export default function Home() {
         </a>
       </div>
 
-      {/* Portfolio Widget - Top Right */}
-      <div className="widget widget-top-right">
+      {/* Portfolio Widget - Bottom Left */}
+      <div className="widget widget-bottom-left">
         <div className="widget-top">
-          <div className="widget-label">PORTFOLIO</div>
           <a href="/resume.pdf" className="widget-top-link">
             {/* Document/Resume Icon */}
             <svg viewBox="0 0 24 24" fill="currentColor" width="48" height="48">
@@ -439,7 +453,6 @@ export default function Home() {
             </svg>
             <span className="widget-top-link-text">RESUME</span>
           </a>
-          <div className="widget-divider"></div>
         </div>
         <a href="/articles" className="widget-bottom">
           {/* Articles/Pen Icon */}
@@ -456,21 +469,28 @@ export default function Home() {
       {/* Channel Widget - Bottom Right */}
       <div className="widget widget-bottom-right channel-widget">
         <div className="channel-display">
+          {isChangingChannel && <div className="channel-static" />}
           <div className="channel-label">CURRENT CHANNEL</div>
           <div className="channel-info">
-            <span className="channel-icon">{currentChannel.icon}</span>
+            <span className={`channel-icon channel-icon-${currentChannel.id}`}>{currentChannel.icon}</span>
             <span className="channel-name">{currentChannel.name}</span>
           </div>
           <div className="channel-number">CH {currentChannelIndex + 1}/{CHANNELS.length}</div>
         </div>
         <button
-          className="channel-button"
-          onClick={() => setCurrentChannelIndex((prev) => (prev + 1) % CHANNELS.length)}
+          className="channel-dial-container"
+          onClick={handleChannelChange}
+          disabled={isChangingChannel}
         >
-          <svg className="channel-button-icon" viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
-            <path d="M12 6v3l4-4-4-4v3c-4.42 0-8 3.58-8 8 0 1.57.46 3.03 1.24 4.26L6.7 14.8c-.45-.83-.7-1.79-.7-2.8 0-3.31 2.69-6 6-6zm6.76 1.74L17.3 9.2c.44.84.7 1.79.7 2.8 0 3.31-2.69 6-6 6v-3l-4 4 4 4v-3c4.42 0 8-3.58 8-8 0-1.57-.46-3.03-1.24-4.26z"/>
-          </svg>
-          CHANGE CHANNEL
+          <div
+            className="channel-dial"
+            style={{ transform: `rotate(${dialRotation}deg)` }}
+          >
+            <div className="dial-notch" />
+            <div className="dial-notch" />
+            <div className="dial-notch" />
+          </div>
+          <span className="dial-label">CHANGE CHANNEL</span>
         </button>
       </div>
 
@@ -934,9 +954,22 @@ export default function Home() {
           width: 180px;
           background: #1a1a1a;
           border: none;
+          animation: channel-pulse 1.5s ease-in-out 3;
+          animation-delay: 1s;
+        }
+
+        @keyframes channel-pulse {
+          0%, 100% {
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
+          }
+          50% {
+            box-shadow: 0 0 20px 4px rgba(99, 102, 241, 0.5), 0 0 40px 8px rgba(99, 102, 241, 0.3);
+          }
         }
 
         .channel-display {
+          position: relative;
+          overflow: hidden;
           padding: 20px;
           text-align: center;
           background: #374151;
@@ -961,6 +994,68 @@ export default function Home() {
 
         .channel-icon {
           font-size: 1.5rem;
+          display: inline-block;
+        }
+
+        /* Animated icons for each channel */
+        .channel-icon-space {
+          animation: rocket-float 2s ease-in-out infinite;
+        }
+
+        .channel-icon-gaming {
+          animation: gamepad-pulse 1.5s ease-in-out infinite;
+        }
+
+        .channel-icon-sports {
+          animation: football-spin 3s linear infinite;
+        }
+
+        @keyframes rocket-float {
+          0%, 100% { transform: translateY(0) rotate(-10deg); }
+          50% { transform: translateY(-3px) rotate(-10deg); }
+        }
+
+        @keyframes gamepad-pulse {
+          0%, 100% { transform: scale(1); }
+          50% { transform: scale(1.1); }
+        }
+
+        @keyframes football-spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+
+        /* TV Static effect */
+        .channel-static {
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background:
+            repeating-radial-gradient(circle at 50% 50%,
+              transparent 0,
+              rgba(0,0,0,0.1) 1px,
+              transparent 2px
+            ),
+            linear-gradient(
+              to bottom,
+              rgba(255,255,255,0.1) 0%,
+              rgba(0,0,0,0.2) 50%,
+              rgba(255,255,255,0.1) 100%
+            );
+          background-color: #888;
+          background-size: 4px 4px, 100% 4px;
+          z-index: 10;
+          animation: static-flicker 0.05s steps(3) infinite;
+          border-radius: inherit;
+        }
+
+        @keyframes static-flicker {
+          0% { opacity: 1; background-position: 0 0, 0 0; }
+          33% { opacity: 0.95; background-position: 2px 1px, 0 2px; }
+          66% { opacity: 1; background-position: 1px 2px, 0 1px; }
+          100% { opacity: 0.9; background-position: 0 0, 0 3px; }
         }
 
         .channel-name {
@@ -977,30 +1072,82 @@ export default function Home() {
           letter-spacing: 0.1em;
         }
 
-        .channel-button {
+        .channel-dial-container {
           display: flex;
+          flex-direction: column;
           align-items: center;
           justify-content: center;
-          gap: 8px;
+          gap: 10px;
           width: 100%;
-          padding: 14px 20px;
+          padding: 16px 20px;
           background: #1a1a1a;
           border: none;
-          color: #fff;
-          font-family: system-ui, -apple-system, sans-serif;
-          font-size: 0.65rem;
-          font-weight: 600;
-          letter-spacing: 0.1em;
           cursor: pointer;
           transition: background 0.2s ease;
         }
 
-        .channel-button:hover {
+        .channel-dial-container:hover {
           background: #2a2a2a;
         }
 
-        .channel-button-icon {
-          opacity: 0.8;
+        .channel-dial-container:disabled {
+          cursor: not-allowed;
+        }
+
+        .channel-dial {
+          width: 50px;
+          height: 50px;
+          background: linear-gradient(145deg, #3a3a3a, #252525);
+          border-radius: 50%;
+          border: 3px solid #4a4a4a;
+          position: relative;
+          box-shadow:
+            inset 0 2px 4px rgba(255,255,255,0.1),
+            0 4px 8px rgba(0,0,0,0.3);
+          transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .channel-dial-container:hover .channel-dial {
+          border-color: #5a5a5a;
+        }
+
+        .dial-notch {
+          position: absolute;
+          width: 4px;
+          height: 10px;
+          background: #666;
+          border-radius: 2px;
+        }
+
+        .dial-notch:nth-child(1) {
+          top: 5px;
+          left: 50%;
+          transform: translateX(-50%);
+          background: #fff;
+        }
+
+        .dial-notch:nth-child(2) {
+          bottom: 8px;
+          left: 8px;
+          transform: rotate(-60deg);
+        }
+
+        .dial-notch:nth-child(3) {
+          bottom: 8px;
+          right: 8px;
+          transform: rotate(60deg);
+        }
+
+        .dial-label {
+          color: #888;
+          font-family: system-ui, -apple-system, sans-serif;
+          font-size: 0.55rem;
+          font-weight: 600;
+          letter-spacing: 0.1em;
+          text-transform: uppercase;
         }
 
         .widget-top {
@@ -1025,7 +1172,6 @@ export default function Home() {
         .widget-top-link {
           color: #888;
           transition: color 0.3s ease, transform 0.3s ease;
-          margin-bottom: 24px;
           display: flex;
           flex-direction: column;
           align-items: center;
@@ -1110,6 +1256,20 @@ export default function Home() {
           letter-spacing: 0.05em;
         }
 
+        /* Hide secondary taglines when viewport height is limited */
+        @media (max-height: 750px) {
+          .tagline-secondary {
+            display: none;
+          }
+        }
+
+        /* Also hide on small width + moderate height combo */
+        @media (max-width: 768px) and (max-height: 900px) {
+          .tagline-secondary {
+            display: none;
+          }
+        }
+
         @media (max-width: 768px) {
           .background-image {
             background-size: cover;
@@ -1187,14 +1347,37 @@ export default function Home() {
             font-size: 0.65rem;
           }
 
-          .channel-button {
-            padding: 10px 14px;
-            font-size: 0.55rem;
+          .channel-dial-container {
+            padding: 12px 14px;
+            gap: 8px;
           }
 
-          .channel-button-icon {
-            width: 16px;
-            height: 16px;
+          .channel-dial {
+            width: 40px;
+            height: 40px;
+          }
+
+          .dial-notch {
+            height: 8px;
+            width: 3px;
+          }
+
+          .dial-notch:nth-child(1) {
+            top: 4px;
+          }
+
+          .dial-notch:nth-child(2) {
+            bottom: 6px;
+            left: 6px;
+          }
+
+          .dial-notch:nth-child(3) {
+            bottom: 6px;
+            right: 6px;
+          }
+
+          .dial-label {
+            font-size: 0.5rem;
           }
 
           .widget-top {
@@ -1212,7 +1395,7 @@ export default function Home() {
           }
 
           .widget-top-link {
-            margin-bottom: 10px;
+            margin-bottom: 0;
           }
 
           .widget-top-link-text {
@@ -1308,15 +1491,37 @@ export default function Home() {
             font-size: 0.55rem;
           }
 
-          .channel-button {
-            padding: 8px 10px;
-            font-size: 0.5rem;
-            gap: 4px;
+          .channel-dial-container {
+            padding: 10px;
+            gap: 6px;
           }
 
-          .channel-button-icon {
-            width: 14px;
-            height: 14px;
+          .channel-dial {
+            width: 35px;
+            height: 35px;
+          }
+
+          .dial-notch {
+            height: 7px;
+            width: 3px;
+          }
+
+          .dial-notch:nth-child(1) {
+            top: 4px;
+          }
+
+          .dial-notch:nth-child(2) {
+            bottom: 5px;
+            left: 5px;
+          }
+
+          .dial-notch:nth-child(3) {
+            bottom: 5px;
+            right: 5px;
+          }
+
+          .dial-label {
+            font-size: 0.45rem;
           }
 
           .widget-top {
@@ -1334,7 +1539,7 @@ export default function Home() {
           }
 
           .widget-top-link {
-            margin-bottom: 8px;
+            margin-bottom: 0;
           }
 
           .widget-top-link-text {
@@ -1430,14 +1635,37 @@ export default function Home() {
             font-size: 0.5rem;
           }
 
-          .channel-button {
-            padding: 6px 8px;
-            font-size: 0.4rem;
+          .channel-dial-container {
+            padding: 8px;
+            gap: 4px;
           }
 
-          .channel-button-icon {
-            width: 12px;
-            height: 12px;
+          .channel-dial {
+            width: 30px;
+            height: 30px;
+          }
+
+          .dial-notch {
+            height: 5px;
+            width: 2px;
+          }
+
+          .dial-notch:nth-child(1) {
+            top: 3px;
+          }
+
+          .dial-notch:nth-child(2) {
+            bottom: 4px;
+            left: 4px;
+          }
+
+          .dial-notch:nth-child(3) {
+            bottom: 4px;
+            right: 4px;
+          }
+
+          .dial-label {
+            font-size: 0.4rem;
           }
 
           .widget-top {
@@ -1455,7 +1683,7 @@ export default function Home() {
           }
 
           .widget-top-link {
-            margin-bottom: 6px;
+            margin-bottom: 0;
           }
 
           .widget-top-link-text {
