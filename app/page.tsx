@@ -13,7 +13,7 @@ interface Channel {
   name: string;
   icon: string;
   revealImage: string;
-  grainStyle: 'film' | 'sports';
+  grainStyle: 'film' | 'sports' | 'crt';
 }
 
 const CHANNELS: Channel[] = [
@@ -30,6 +30,13 @@ const CHANNELS: Channel[] = [
     icon: '🏈',
     revealImage: '/aligned_football_transparent.png',
     grainStyle: 'sports',
+  },
+  {
+    id: 'gaming',
+    name: 'Gaming',
+    icon: '🎮',
+    revealImage: '/aligned_gaming_transparent.png',
+    grainStyle: 'crt',
   },
 ];
 
@@ -459,6 +466,36 @@ export default function Home() {
         @keyframes yard-lines {
           0% { transform: translateX(-240px); }
           100% { transform: translateX(0px); }
+        }
+
+        /* CRT effect - classic 8-bit Nintendo TV look */
+        .grain-crt {
+          background:
+            repeating-linear-gradient(
+              0deg,
+              rgba(0, 0, 0, 0.3) 0px,
+              rgba(0, 0, 0, 0.3) 1px,
+              transparent 1px,
+              transparent 3px
+            ),
+            repeating-linear-gradient(
+              90deg,
+              rgba(255, 0, 0, 0.03) 0px,
+              rgba(255, 0, 0, 0.03) 1px,
+              rgba(0, 255, 0, 0.03) 1px,
+              rgba(0, 255, 0, 0.03) 2px,
+              rgba(0, 0, 255, 0.03) 2px,
+              rgba(0, 0, 255, 0.03) 3px
+            );
+          opacity: 1;
+          animation: crt-flicker 0.15s infinite;
+          box-shadow: inset 0 0 150px rgba(0, 0, 0, 0.4);
+        }
+
+        @keyframes crt-flicker {
+          0% { opacity: 0.97; }
+          50% { opacity: 1; }
+          100% { opacity: 0.98; }
         }
 
         .reveal-canvas {
