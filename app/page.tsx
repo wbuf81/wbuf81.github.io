@@ -393,11 +393,11 @@ export default function Home() {
         }
 
         .name {
-          font-family: var(--font-space-grotesk), system-ui, sans-serif;
+          font-family: var(--font-poppins), system-ui, sans-serif;
           font-size: 4rem;
           font-weight: 700;
           line-height: 1;
-          color: #2563eb;
+          color: #1f2937;
           margin: 0;
           display: flex;
           flex-direction: column;
