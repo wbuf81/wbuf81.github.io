@@ -180,9 +180,12 @@ export default function Home() {
       }
 
       // Draw blob circles on offscreen canvas
+      // Smaller blob on mobile for better fit
+      const isMobile = window.innerWidth < 768;
+      const baseSize = isMobile ? 60 : 90;
       offCtx.fillStyle = 'white';
       blobPointsRef.current.forEach((point) => {
-        const size = 90 * point.scale;
+        const size = baseSize * point.scale;
         offCtx.beginPath();
         offCtx.arc(point.x, point.y, size, 0, Math.PI * 2);
         offCtx.fill();
@@ -222,11 +225,29 @@ export default function Home() {
     lastMouseMoveRef.current = Date.now();
   }, []);
 
+  const handleTouchMove = useCallback((e: React.TouchEvent) => {
+    if (e.touches.length > 0) {
+      const touch = e.touches[0];
+      mousePosRef.current = { x: touch.clientX, y: touch.clientY };
+      lastMouseMoveRef.current = Date.now();
+    }
+  }, []);
+
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    if (e.touches.length > 0) {
+      const touch = e.touches[0];
+      mousePosRef.current = { x: touch.clientX, y: touch.clientY };
+      lastMouseMoveRef.current = Date.now();
+    }
+  }, []);
+
   return (
     <div
       ref={containerRef}
       className="hero-container"
       onMouseMove={handleMouseMove}
+      onTouchMove={handleTouchMove}
+      onTouchStart={handleTouchStart}
     >
       {/* Background Image (main.jpg) */}
       <div ref={bgImageRef} className="background-image" />
@@ -300,8 +321,11 @@ export default function Home() {
           position: relative;
           width: 100vw;
           height: 100vh;
+          height: 100dvh;
           overflow: hidden;
           background: #ffffff;
+          touch-action: none;
+          -webkit-overflow-scrolling: touch;
         }
 
         .background-image {
@@ -501,6 +525,10 @@ export default function Home() {
         }
 
         @media (max-width: 768px) {
+          .background-image {
+            background-size: cover;
+          }
+
           .name {
             font-size: 2.5rem;
           }
@@ -511,53 +539,189 @@ export default function Home() {
           }
 
           .widget {
-            width: 150px;
-            border-radius: 20px;
+            width: 140px;
+            border-radius: 16px;
           }
 
           .widget-bottom-left {
             bottom: 24px;
-            left: 24px;
+            left: 16px;
           }
 
           .widget-top-right {
-            top: 24px;
-            right: 24px;
+            top: auto;
+            bottom: 24px;
+            right: 16px;
           }
 
           .widget-top {
-            padding: 16px;
+            padding: 14px;
           }
 
           .widget-label {
-            font-size: 0.6rem;
-            margin-bottom: 16px;
+            font-size: 0.55rem;
+            margin-bottom: 12px;
           }
 
           .widget-top-link svg {
-            width: 36px;
-            height: 36px;
+            width: 32px;
+            height: 32px;
           }
 
           .widget-top-link {
-            margin-bottom: 16px;
+            margin-bottom: 12px;
+          }
+
+          .widget-top-link-text {
+            font-size: 0.6rem;
+            margin-top: 8px;
           }
 
           .widget-bottom {
-            padding: 16px;
+            padding: 14px;
           }
 
           .widget-bottom-icon {
+            width: 20px;
+            height: 20px;
+            margin-bottom: 8px;
+          }
+
+          .widget-bottom-title {
+            font-size: 0.6rem;
+          }
+
+          .widget-bottom-subtitle {
+            font-size: 0.55rem;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .name {
+            font-size: 2rem;
+          }
+
+          .name-container {
+            top: 16px;
+            left: 16px;
+          }
+
+          .widget {
+            width: 120px;
+            border-radius: 14px;
+          }
+
+          .widget-bottom-left {
+            bottom: 16px;
+            left: 12px;
+          }
+
+          .widget-top-right {
+            bottom: 16px;
+            right: 12px;
+          }
+
+          .widget-top {
+            padding: 12px;
+          }
+
+          .widget-label {
+            font-size: 0.5rem;
+            margin-bottom: 10px;
+          }
+
+          .widget-top-link svg {
+            width: 28px;
+            height: 28px;
+          }
+
+          .widget-top-link {
+            margin-bottom: 10px;
+          }
+
+          .widget-top-link-text {
+            font-size: 0.55rem;
+            margin-top: 6px;
+          }
+
+          .widget-bottom {
+            padding: 12px;
+          }
+
+          .widget-bottom-icon {
+            width: 18px;
+            height: 18px;
+            margin-bottom: 6px;
+          }
+
+          .widget-bottom-title {
+            font-size: 0.55rem;
+          }
+
+          .widget-bottom-subtitle {
+            font-size: 0.5rem;
+          }
+        }
+
+        @media (max-width: 380px) {
+          .name {
+            font-size: 1.75rem;
+          }
+
+          .widget {
+            width: 105px;
+            border-radius: 12px;
+          }
+
+          .widget-bottom-left {
+            bottom: 12px;
+            left: 8px;
+          }
+
+          .widget-top-right {
+            bottom: 12px;
+            right: 8px;
+          }
+
+          .widget-top {
+            padding: 10px;
+          }
+
+          .widget-label {
+            font-size: 0.45rem;
+            margin-bottom: 8px;
+          }
+
+          .widget-top-link svg {
             width: 24px;
             height: 24px;
           }
 
+          .widget-top-link {
+            margin-bottom: 8px;
+          }
+
+          .widget-top-link-text {
+            font-size: 0.5rem;
+            margin-top: 4px;
+          }
+
+          .widget-bottom {
+            padding: 10px;
+          }
+
+          .widget-bottom-icon {
+            width: 16px;
+            height: 16px;
+            margin-bottom: 4px;
+          }
+
           .widget-bottom-title {
-            font-size: 0.65rem;
+            font-size: 0.5rem;
           }
 
           .widget-bottom-subtitle {
-            font-size: 0.6rem;
+            font-size: 0.45rem;
           }
         }
       `}</style>

@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Playfair_Display } from 'next/font/google';
 import './globals.css';
 
@@ -11,6 +11,13 @@ const playfair = Playfair_Display({
 export const metadata: Metadata = {
   title: 'Wesley Bard',
   description: 'Personal portfolio of Wesley Bard',
+};
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
 };
 
 export default function RootLayout({
