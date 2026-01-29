@@ -261,6 +261,7 @@ export default function Home() {
       {/* Name - Top Left */}
       <div ref={nameContainerRef} className="name-container">
         <h1 className="name">Wesley Bard</h1>
+        <p className="nickname">(you can call me Wes)</p>
         <p className="tagline">🔒 Risk and Compliance executive by trade.</p>
         <p className="tagline">⚙️ Engineer at heart.</p>
         <p className="tagline">🤖 AI builder.</p>
@@ -401,12 +402,21 @@ export default function Home() {
 
         .name {
           font-family: var(--font-outfit), system-ui, sans-serif;
-          font-size: 2.5rem;
+          font-size: 4rem;
           font-weight: 700;
           line-height: 1;
           color: #1f2937;
           margin: 0;
           white-space: nowrap;
+        }
+
+        .nickname {
+          font-family: system-ui, -apple-system, sans-serif;
+          font-size: 1rem;
+          font-weight: 400;
+          font-style: italic;
+          color: #666;
+          margin: 0.5em 0 0 0;
         }
 
         .tagline {
@@ -564,7 +574,11 @@ export default function Home() {
           }
 
           .name {
-            font-size: 1.75rem;
+            font-size: 2.5rem;
+          }
+
+          .nickname {
+            font-size: 0.85rem;
           }
 
           .name-container {
@@ -644,7 +658,11 @@ export default function Home() {
 
         @media (max-width: 480px) {
           .name {
-            font-size: 1.5rem;
+            font-size: 2rem;
+          }
+
+          .nickname {
+            font-size: 0.75rem;
           }
 
           .name-container {
@@ -721,7 +739,11 @@ export default function Home() {
 
         @media (max-width: 380px) {
           .name {
-            font-size: 1.25rem;
+            font-size: 1.5rem;
+          }
+
+          .nickname {
+            font-size: 0.65rem;
           }
 
           .name-container {
