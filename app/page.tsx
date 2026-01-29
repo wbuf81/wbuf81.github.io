@@ -269,6 +269,7 @@ export default function Home() {
         <p className="tagline">Space enthusiast.</p>
         <p className="tagline">AI builder.</p>
         <p className="tagline">Florida, boy and bernese dad.</p>
+        <p className="tagline">Autism & inclusivity advocate.</p>
       </div>
 
       
