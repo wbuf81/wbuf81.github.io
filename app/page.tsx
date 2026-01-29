@@ -264,8 +264,11 @@ export default function Home() {
           <span className="first-name">Wesley</span>
           <span className="last-name">Bard</span>
         </h1>
-        <p className="tagline">Risk executive by trade. Engineer at heart.</p>
-        <p className="tagline">Compliance leader. AI builder. Florida dad.</p>
+        <p className="tagline">Risk and Compliance executive by trade.</p>
+        <p className="tagline">Engineer at heart.</p>
+        <p className="tagline">Space enthusiast.</p>
+        <p className="tagline">AI builder.</p>
+        <p className="tagline">Florida, boy and bernese dad.</p>
       </div>
 
       
