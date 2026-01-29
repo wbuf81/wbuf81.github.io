@@ -334,24 +334,14 @@ export default function Home() {
       {/* Sports emojis for sports channel */}
       {currentChannel.grainStyle === 'sports' && (
         <div className="sports-container">
-          <div className="sports-emoji" style={{ left: '5%', animationDelay: '0s', animationDuration: '12s' }}>🏈</div>
-          <div className="sports-emoji" style={{ left: '12%', animationDelay: '3s', animationDuration: '15s' }}>🏀</div>
-          <div className="sports-emoji" style={{ left: '20%', animationDelay: '1s', animationDuration: '11s' }}>🏈</div>
-          <div className="sports-emoji" style={{ left: '28%', animationDelay: '5s', animationDuration: '14s' }}>🏀</div>
-          <div className="sports-emoji" style={{ left: '35%', animationDelay: '2s', animationDuration: '13s' }}>🏈</div>
-          <div className="sports-emoji" style={{ left: '43%', animationDelay: '4s', animationDuration: '10s' }}>🏀</div>
-          <div className="sports-emoji" style={{ left: '50%', animationDelay: '6s', animationDuration: '16s' }}>🏈</div>
-          <div className="sports-emoji" style={{ left: '58%', animationDelay: '1.5s', animationDuration: '12s' }}>🏀</div>
-          <div className="sports-emoji" style={{ left: '65%', animationDelay: '3.5s', animationDuration: '14s' }}>🏈</div>
-          <div className="sports-emoji" style={{ left: '73%', animationDelay: '0.5s', animationDuration: '11s' }}>🏀</div>
-          <div className="sports-emoji" style={{ left: '80%', animationDelay: '4.5s', animationDuration: '15s' }}>🏈</div>
-          <div className="sports-emoji" style={{ left: '88%', animationDelay: '2.5s', animationDuration: '13s' }}>🏀</div>
-          <div className="sports-emoji" style={{ left: '95%', animationDelay: '5.5s', animationDuration: '10s' }}>🏈</div>
-          <div className="sports-emoji" style={{ left: '8%', animationDelay: '7s', animationDuration: '14s' }}>🏀</div>
-          <div className="sports-emoji" style={{ left: '32%', animationDelay: '8s', animationDuration: '12s' }}>🏈</div>
-          <div className="sports-emoji" style={{ left: '55%', animationDelay: '9s', animationDuration: '15s' }}>🏀</div>
-          <div className="sports-emoji" style={{ left: '78%', animationDelay: '7.5s', animationDuration: '11s' }}>🏈</div>
-          <div className="sports-emoji" style={{ left: '18%', animationDelay: '8.5s', animationDuration: '13s' }}>🏀</div>
+          {/* Footballs thrown left to right */}
+          <div className="sports-emoji football-ltr" style={{ top: '25%', animationDelay: '0s', animationDuration: '4s' }}>🏈</div>
+          <div className="sports-emoji football-ltr" style={{ top: '55%', animationDelay: '2.5s', animationDuration: '4.5s' }}>🏈</div>
+          <div className="sports-emoji football-ltr" style={{ top: '80%', animationDelay: '5s', animationDuration: '3.5s' }}>🏈</div>
+          {/* Footballs thrown right to left */}
+          <div className="sports-emoji football-rtl" style={{ top: '35%', animationDelay: '1s', animationDuration: '4s' }}>🏈</div>
+          <div className="sports-emoji football-rtl" style={{ top: '65%', animationDelay: '3.5s', animationDuration: '4.5s' }}>🏈</div>
+          <div className="sports-emoji football-rtl" style={{ top: '15%', animationDelay: '6s', animationDuration: '3.5s' }}>🏈</div>
         </div>
       )}
 
@@ -726,18 +716,57 @@ export default function Home() {
 
         .sports-emoji {
           position: absolute;
-          top: -60px;
           font-size: 32px;
-          opacity: 0.2;
-          animation: sports-fall linear infinite;
+          opacity: 0.25;
         }
 
-        @keyframes sports-fall {
+        .football-ltr {
+          left: -60px;
+          animation: football-throw-ltr linear infinite;
+        }
+
+        .football-rtl {
+          right: -60px;
+          animation: football-throw-rtl linear infinite;
+        }
+
+        @keyframes football-throw-ltr {
           0% {
-            transform: translateY(0) rotate(0deg);
+            transform: translateX(0) translateY(60px) rotate(-30deg);
+            opacity: 0;
+          }
+          10% {
+            opacity: 0.25;
+          }
+          50% {
+            transform: translateX(calc(50vw + 30px)) translateY(-180px) rotate(-30deg);
+          }
+          90% {
+            opacity: 0.25;
           }
           100% {
-            transform: translateY(calc(100vh + 80px)) rotate(360deg);
+            transform: translateX(calc(100vw + 60px)) translateY(60px) rotate(-30deg);
+            opacity: 0;
+          }
+        }
+
+        @keyframes football-throw-rtl {
+          0% {
+            transform: translateX(0) translateY(60px) rotate(210deg);
+            opacity: 0;
+          }
+          10% {
+            opacity: 0.25;
+          }
+          50% {
+            transform: translateX(calc(-50vw - 30px)) translateY(-180px) rotate(210deg);
+          }
+          90% {
+            opacity: 0.25;
+          }
+          100% {
+            transform: translateX(calc(-100vw - 60px)) translateY(60px) rotate(210deg);
+            opacity: 0;
           }
         }
 
@@ -793,6 +822,27 @@ export default function Home() {
         @keyframes tetris-fall {
           0% {
             transform: translateY(0) rotate(0deg);
+          }
+          24.9% {
+            transform: translateY(calc(25vh)) rotate(0deg);
+          }
+          25% {
+            transform: translateY(calc(25vh)) rotate(90deg);
+          }
+          49.9% {
+            transform: translateY(calc(50vh)) rotate(90deg);
+          }
+          50% {
+            transform: translateY(calc(50vh)) rotate(180deg);
+          }
+          74.9% {
+            transform: translateY(calc(75vh)) rotate(180deg);
+          }
+          75% {
+            transform: translateY(calc(75vh)) rotate(270deg);
+          }
+          99.9% {
+            transform: translateY(calc(100vh + 100px)) rotate(270deg);
           }
           100% {
             transform: translateY(calc(100vh + 100px)) rotate(360deg);
