@@ -288,6 +288,7 @@ export default function Home() {
           <div className="planet planet-1" />
           <div className="planet planet-2" />
           <div className="planet planet-3" />
+          <div className="planet planet-4" />
 
           {/* Background stars */}
           <div className="bg-star" style={{ left: '8%', top: '12%' }} />
@@ -381,7 +382,7 @@ export default function Home() {
         <h1 className="name">Wesley Bard</h1>
         <p className="nickname">(you can call me Wes)</p>
         <div className="taglines-container">
-          <p className="tagline">🔒 Risk and Compliance Executive by Trade.</p>
+          <p className="tagline">🔒 Risk and Compliance Leader by Trade.</p>
           <p className="tagline">⚙️ Engineer at Heart.</p>
           <p className="tagline">🤖 AI Builder.</p>
           <p className="tagline">👨‍👩‍👦‍👦 Proud Husband and Boy (x2) Dad.</p>
@@ -564,25 +565,42 @@ export default function Home() {
           animation: planet-drift-3 18s ease-in-out infinite;
         }
 
+        .planet-4 {
+          width: 100px;
+          height: 100px;
+          top: 25%;
+          left: 3%;
+          background: radial-gradient(circle at 30% 30%, #9b59b6, #6c3483 60%, #4a235a);
+          box-shadow: inset -12px -9px 25px rgba(0,0,0,0.5), 0 0 35px rgba(155, 89, 182, 0.3);
+          animation: planet-drift-4 22s ease-in-out infinite;
+        }
+
         @keyframes planet-drift-1 {
           0%, 100% { transform: translate(0, 0); }
-          25% { transform: translate(-15px, 10px); }
-          50% { transform: translate(-5px, 20px); }
-          75% { transform: translate(10px, 8px); }
+          25% { transform: translate(-30px, 20px); }
+          50% { transform: translate(-10px, 40px); }
+          75% { transform: translate(20px, 16px); }
         }
 
         @keyframes planet-drift-2 {
           0%, 100% { transform: translate(0, 0); }
-          25% { transform: translate(12px, -8px); }
-          50% { transform: translate(20px, 5px); }
-          75% { transform: translate(8px, 15px); }
+          25% { transform: translate(24px, -16px); }
+          50% { transform: translate(40px, 10px); }
+          75% { transform: translate(16px, 30px); }
         }
 
         @keyframes planet-drift-3 {
           0%, 100% { transform: translate(0, 0); }
-          25% { transform: translate(-10px, -12px); }
-          50% { transform: translate(8px, -5px); }
-          75% { transform: translate(-5px, 10px); }
+          25% { transform: translate(-20px, -24px); }
+          50% { transform: translate(16px, -10px); }
+          75% { transform: translate(-10px, 20px); }
+        }
+
+        @keyframes planet-drift-4 {
+          0%, 100% { transform: translate(0, 0); }
+          25% { transform: translate(25px, 15px); }
+          50% { transform: translate(10px, -20px); }
+          75% { transform: translate(-15px, 25px); }
         }
 
         /* Background stars */
