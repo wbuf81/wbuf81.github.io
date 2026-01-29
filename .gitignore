@@ -23,3 +23,9 @@ next-env.d.ts
 
 # OS
 .DS_Store
+
+# Generated images
+Gemini_Generated_Image_*
+
+# Drafts
+content/drafts/
