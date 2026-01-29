@@ -432,28 +432,17 @@ export default function Home() {
         </a>
       </div>
 
-      {/* Portfolio Widget - Bottom Left */}
+      {/* Articles Widget - Bottom Left */}
       <div className="widget widget-bottom-left">
         <div className="widget-top">
-          <a href="/resume.pdf" className="widget-top-link">
-            {/* Document/Resume Icon */}
+          <a href="/articles" className="widget-top-link">
+            {/* Articles/Pen Icon */}
             <svg viewBox="0 0 24 24" fill="currentColor" width="48" height="48">
-              <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zM6 20V4h7v5h5v11H6z"/>
-              <path d="M8 12h8v2H8zM8 16h8v2H8zM8 8h5v2H8z"/>
+              <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
             </svg>
-            <span className="widget-top-link-text">RESUME</span>
+            <span className="widget-top-link-text">ARTICLES</span>
           </a>
         </div>
-        <a href="/articles" className="widget-bottom">
-          {/* Articles/Pen Icon */}
-          <svg className="widget-bottom-icon" viewBox="0 0 24 24" fill="currentColor" width="32" height="32">
-            <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
-          </svg>
-          <div className="widget-bottom-text">
-            <div className="widget-bottom-title">ARTICLES</div>
-            <div className="widget-bottom-subtitle">What's New Over Here</div>
-          </div>
-        </a>
       </div>
 
       {/* Channel Widget - Bottom Right */}
