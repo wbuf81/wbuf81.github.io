@@ -384,7 +384,8 @@ export default function Home() {
           <p className="tagline">🔒 Risk and Compliance executive by trade.</p>
           <p className="tagline">⚙️ Engineer at heart.</p>
           <p className="tagline">🤖 AI builder.</p>
-          <p className="tagline">🐾 Proud husband, boy and bernese dad.</p>
+          <p className="tagline">👨‍👩‍👦‍👦 Proud husband and Boy (x2) Dad.</p>
+          <p className="tagline">🐾 Bernese Mountain Dogs.</p>
           <p className="tagline">🚀 Space enthusiast.</p>
           <p className="tagline">🕹️ Video gamer.</p>
           <p className="tagline">🏈 Florida Gators, Jacksonville Jaguars.</p>
