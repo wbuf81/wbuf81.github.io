@@ -448,7 +448,7 @@ export default function Home() {
           </svg>
           <div className="widget-bottom-text">
             <div className="widget-bottom-title">ARTICLES</div>
-            <div className="widget-bottom-subtitle">Read my writing</div>
+            <div className="widget-bottom-subtitle">What's New Over Here</div>
           </div>
         </a>
       </div>
