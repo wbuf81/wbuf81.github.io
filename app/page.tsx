@@ -264,6 +264,8 @@ export default function Home() {
           <span className="first-name">Wesley</span>
           <span className="last-name">Bard</span>
         </h1>
+        <p className="tagline">Risk executive by trade. Engineer at heart.</p>
+        <p className="tagline">Compliance leader. AI builder. Florida dad.</p>
       </div>
 
       
@@ -407,6 +409,21 @@ export default function Home() {
           margin-top: 0.1em;
         }
 
+        .tagline {
+          display: block;
+          font-family: system-ui, -apple-system, sans-serif;
+          font-size: 0.9rem;
+          font-weight: 400;
+          color: #555;
+          margin: 0;
+          margin-top: 0.4em;
+          letter-spacing: 0.02em;
+        }
+
+        .tagline:first-of-type {
+          margin-top: 1em;
+        }
+
         .widget {
           position: absolute;
           z-index: 10;
@@ -538,6 +555,10 @@ export default function Home() {
             left: 24px;
           }
 
+          .tagline {
+            font-size: 0.75rem;
+          }
+
           .widget {
             width: 140px;
             border-radius: 16px;
@@ -606,6 +627,10 @@ export default function Home() {
             left: 16px;
           }
 
+          .tagline {
+            font-size: 0.65rem;
+          }
+
           .widget {
             width: 120px;
             border-radius: 14px;
@@ -666,6 +691,10 @@ export default function Home() {
         @media (max-width: 380px) {
           .name {
             font-size: 1.75rem;
+          }
+
+          .tagline {
+            font-size: 0.55rem;
           }
 
           .widget {
