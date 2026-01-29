@@ -583,97 +583,33 @@ export default function Home() {
           .name-container {
             top: 24px;
             left: 24px;
+            right: 24px;
+            max-width: calc(100% - 48px);
           }
 
           .tagline {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
+            margin-top: 0.35em;
+          }
+
+          .tagline:first-of-type {
+            margin-top: 0.75em;
           }
 
           .widget {
-            width: 140px;
+            width: 130px;
             border-radius: 16px;
           }
 
           .widget-bottom-left {
-            bottom: 24px;
+            bottom: 20px;
             left: 16px;
           }
 
           .widget-top-right {
             top: auto;
-            bottom: 24px;
+            bottom: 20px;
             right: 16px;
-          }
-
-          .widget-top {
-            padding: 14px;
-          }
-
-          .widget-label {
-            font-size: 0.55rem;
-            margin-bottom: 12px;
-          }
-
-          .widget-top-link svg {
-            width: 32px;
-            height: 32px;
-          }
-
-          .widget-top-link {
-            margin-bottom: 12px;
-          }
-
-          .widget-top-link-text {
-            font-size: 0.6rem;
-            margin-top: 8px;
-          }
-
-          .widget-bottom {
-            padding: 14px;
-          }
-
-          .widget-bottom-icon {
-            width: 20px;
-            height: 20px;
-            margin-bottom: 8px;
-          }
-
-          .widget-bottom-title {
-            font-size: 0.6rem;
-          }
-
-          .widget-bottom-subtitle {
-            font-size: 0.55rem;
-          }
-        }
-
-        @media (max-width: 480px) {
-          .name {
-            font-size: 2rem;
-          }
-
-          .name-container {
-            top: 16px;
-            left: 16px;
-          }
-
-          .tagline {
-            font-size: 0.65rem;
-          }
-
-          .widget {
-            width: 120px;
-            border-radius: 14px;
-          }
-
-          .widget-bottom-left {
-            bottom: 16px;
-            left: 12px;
-          }
-
-          .widget-top-right {
-            bottom: 16px;
-            right: 12px;
           }
 
           .widget-top {
@@ -692,6 +628,84 @@ export default function Home() {
 
           .widget-top-link {
             margin-bottom: 10px;
+          }
+
+          .widget-top-link-text {
+            font-size: 0.55rem;
+            margin-top: 6px;
+          }
+
+          .widget-bottom {
+            padding: 10px;
+          }
+
+          .widget-bottom-icon {
+            width: 18px;
+            height: 18px;
+            margin-bottom: 6px;
+          }
+
+          .widget-bottom-title {
+            font-size: 0.55rem;
+          }
+
+          .widget-bottom-subtitle {
+            font-size: 0.5rem;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .name {
+            font-size: 1.85rem;
+          }
+
+          .name-container {
+            top: 16px;
+            left: 16px;
+            right: 16px;
+            max-width: calc(100% - 32px);
+          }
+
+          .tagline {
+            font-size: 0.6rem;
+            margin-top: 0.3em;
+          }
+
+          .tagline:first-of-type {
+            margin-top: 0.6em;
+          }
+
+          .widget {
+            width: 110px;
+            border-radius: 12px;
+          }
+
+          .widget-bottom-left {
+            bottom: 16px;
+            left: 10px;
+          }
+
+          .widget-top-right {
+            bottom: 16px;
+            right: 10px;
+          }
+
+          .widget-top {
+            padding: 10px;
+          }
+
+          .widget-label {
+            font-size: 0.45rem;
+            margin-bottom: 8px;
+          }
+
+          .widget-top-link svg {
+            width: 24px;
+            height: 24px;
+          }
+
+          .widget-top-link {
+            margin-bottom: 8px;
           }
 
           .widget-top-link-text {
@@ -720,67 +734,78 @@ export default function Home() {
 
         @media (max-width: 380px) {
           .name {
-            font-size: 1.75rem;
+            font-size: 1.6rem;
+          }
+
+          .name-container {
+            top: 12px;
+            left: 12px;
+            right: 12px;
           }
 
           .tagline {
-            font-size: 0.55rem;
+            font-size: 0.5rem;
+            margin-top: 0.25em;
+          }
+
+          .tagline:first-of-type {
+            margin-top: 0.5em;
           }
 
           .widget {
-            width: 105px;
-            border-radius: 12px;
+            width: 95px;
+            border-radius: 10px;
           }
 
           .widget-bottom-left {
-            bottom: 12px;
-            left: 8px;
+            bottom: 10px;
+            left: 6px;
           }
 
           .widget-top-right {
-            bottom: 12px;
-            right: 8px;
+            bottom: 10px;
+            right: 6px;
           }
 
           .widget-top {
-            padding: 10px;
+            padding: 8px;
           }
 
           .widget-label {
-            font-size: 0.45rem;
-            margin-bottom: 8px;
+            font-size: 0.4rem;
+            margin-bottom: 6px;
           }
 
           .widget-top-link svg {
-            width: 24px;
-            height: 24px;
+            width: 20px;
+            height: 20px;
           }
 
           .widget-top-link {
-            margin-bottom: 8px;
+            margin-bottom: 6px;
           }
 
           .widget-top-link-text {
-            font-size: 0.5rem;
+            font-size: 0.45rem;
             margin-top: 4px;
           }
 
           .widget-bottom {
-            padding: 10px;
+            padding: 8px;
           }
 
           .widget-bottom-icon {
-            width: 16px;
-            height: 16px;
-            margin-bottom: 4px;
+            width: 14px;
+            height: 14px;
+            margin-bottom: 3px;
           }
 
           .widget-bottom-title {
-            font-size: 0.5rem;
+            font-size: 0.45rem;
           }
 
           .widget-bottom-subtitle {
-            font-size: 0.45rem;
+            font-size: 0.4rem;
           }
         }
       `}</style>
