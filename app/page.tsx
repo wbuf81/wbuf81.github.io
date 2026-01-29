@@ -260,10 +260,7 @@ export default function Home() {
 
       {/* Name - Top Left */}
       <div ref={nameContainerRef} className="name-container">
-        <h1 className="name">
-          <span className="first-name">Wesley</span>
-          <span className="last-name">Bard</span>
-        </h1>
+        <h1 className="name">Wesley Bard</h1>
         <p className="tagline">🔒 Risk and Compliance executive by trade.</p>
         <p className="tagline">⚙️ Engineer at heart.</p>
         <p className="tagline">🤖 AI builder.</p>
@@ -396,31 +393,20 @@ export default function Home() {
 
         
         .name-container {
-          position: absolute;
+          position: fixed;
           top: 40px;
           left: 40px;
           z-index: 10;
-          will-change: transform;
         }
 
         .name {
           font-family: var(--font-outfit), system-ui, sans-serif;
-          font-size: 4rem;
+          font-size: 2.5rem;
           font-weight: 700;
           line-height: 1;
           color: #1f2937;
           margin: 0;
-          display: flex;
-          flex-direction: column;
-        }
-
-        .first-name,
-        .last-name {
-          display: block;
-        }
-
-        .last-name {
-          margin-top: 0.1em;
+          white-space: nowrap;
         }
 
         .tagline {
@@ -578,14 +564,15 @@ export default function Home() {
           }
 
           .name {
-            font-size: 2.5rem;
+            font-size: 1.75rem;
           }
 
           .name-container {
+            position: fixed;
             top: 24px;
             left: 24px;
-            right: 24px;
-            max-width: calc(100% - 48px);
+            right: auto;
+            max-width: 60%;
           }
 
           .tagline {
@@ -657,14 +644,13 @@ export default function Home() {
 
         @media (max-width: 480px) {
           .name {
-            font-size: 1.85rem;
+            font-size: 1.5rem;
           }
 
           .name-container {
             top: 16px;
             left: 16px;
-            right: 16px;
-            max-width: calc(100% - 32px);
+            max-width: 65%;
           }
 
           .tagline {
@@ -735,13 +721,13 @@ export default function Home() {
 
         @media (max-width: 380px) {
           .name {
-            font-size: 1.6rem;
+            font-size: 1.25rem;
           }
 
           .name-container {
             top: 12px;
             left: 12px;
-            right: 12px;
+            max-width: 60%;
           }
 
           .tagline {
