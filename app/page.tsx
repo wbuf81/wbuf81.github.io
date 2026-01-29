@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useCallback } from 'react';
+import { useEffect, useRef, useCallback, useState } from 'react';
 
 interface BlobPoint {
   x: number;
@@ -8,8 +8,28 @@ interface BlobPoint {
   scale: number;
 }
 
+interface Channel {
+  id: string;
+  name: string;
+  icon: string;
+  revealImage: string;
+  grainStyle: 'film' | 'tv-static' | 'digital' | 'vhs';
+}
+
+const CHANNELS: Channel[] = [
+  {
+    id: 'space',
+    name: 'Space',
+    icon: '🚀',
+    revealImage: '/aligned_space_transparent.png',
+    grainStyle: 'film',
+  },
+  // Add more channels here later
+];
 
 export default function Home() {
+  const [currentChannelIndex, setCurrentChannelIndex] = useState(0);
+  const currentChannel = CHANNELS[currentChannelIndex];
   const containerRef = useRef<HTMLDivElement>(null);
   const revealCanvasRef = useRef<HTMLCanvasElement>(null);
   const targetPosRef = useRef({ x: 0, y: 0 });
@@ -36,17 +56,20 @@ export default function Home() {
   // Refs for DOM elements
   const bgImageRef = useRef<HTMLDivElement>(null);
 
-  // Initialize
+  // Load reveal image when channel changes
   useEffect(() => {
-    // Preload reveal image
+    // Preload reveal image for current channel
+    revealImgLoadedRef.current = false;
     const img = new Image();
     img.onload = () => {
       revealImgLoadedRef.current = true;
     };
-    img.src = '/aligned_space_transparent.png';
+    img.src = currentChannel.revealImage;
     revealImgRef.current = img;
+  }, [currentChannel.revealImage]);
 
-    // Initialize blob positions to center of screen
+  // Initialize blob positions
+  useEffect(() => {
     const centerX = window.innerWidth / 2;
     const centerY = window.innerHeight / 2;
     blobPointsRef.current.forEach((point) => {
@@ -329,6 +352,27 @@ export default function Home() {
         </a>
       </div>
 
+      {/* Channel Widget - Bottom Right */}
+      <div className="widget widget-bottom-right channel-widget">
+        <div className="channel-display">
+          <div className="channel-label">CURRENT CHANNEL</div>
+          <div className="channel-info">
+            <span className="channel-icon">{currentChannel.icon}</span>
+            <span className="channel-name">{currentChannel.name}</span>
+          </div>
+          <div className="channel-number">CH {currentChannelIndex + 1}/{CHANNELS.length}</div>
+        </div>
+        <button
+          className="channel-button"
+          onClick={() => setCurrentChannelIndex((prev) => (prev + 1) % CHANNELS.length)}
+        >
+          <svg className="channel-button-icon" viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+            <path d="M12 6v3l4-4-4-4v3c-4.42 0-8 3.58-8 8 0 1.57.46 3.03 1.24 4.26L6.7 14.8c-.45-.83-.7-1.79-.7-2.8 0-3.31 2.69-6 6-6zm6.76 1.74L17.3 9.2c.44.84.7 1.79.7 2.8 0 3.31-2.69 6-6 6v-3l-4 4 4 4v-3c4.42 0 8-3.58 8-8 0-1.57-.46-3.03-1.24-4.26z"/>
+          </svg>
+          CHANGE CHANNEL
+        </button>
+      </div>
+
       <style jsx>{`
         .hero-container {
           position: relative;
@@ -463,6 +507,84 @@ export default function Home() {
         .widget-top-right {
           top: 40px;
           right: 40px;
+        }
+
+        .widget-bottom-right {
+          bottom: 40px;
+          right: 40px;
+        }
+
+        .channel-widget {
+          width: 200px;
+          background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+          border: 1px solid #333;
+        }
+
+        .channel-display {
+          padding: 20px;
+          text-align: center;
+          border-bottom: 1px solid #333;
+        }
+
+        .channel-label {
+          font-family: system-ui, -apple-system, sans-serif;
+          font-size: 0.6rem;
+          font-weight: 600;
+          letter-spacing: 0.15em;
+          color: #666;
+          margin-bottom: 12px;
+        }
+
+        .channel-info {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+          margin-bottom: 8px;
+        }
+
+        .channel-icon {
+          font-size: 1.5rem;
+        }
+
+        .channel-name {
+          font-family: var(--font-outfit), system-ui, sans-serif;
+          font-size: 1.5rem;
+          font-weight: 700;
+          color: #fff;
+        }
+
+        .channel-number {
+          font-family: monospace;
+          font-size: 0.75rem;
+          color: #888;
+          letter-spacing: 0.1em;
+        }
+
+        .channel-button {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+          width: 100%;
+          padding: 14px 20px;
+          background: #333;
+          border: none;
+          color: #fff;
+          font-family: system-ui, -apple-system, sans-serif;
+          font-size: 0.65rem;
+          font-weight: 600;
+          letter-spacing: 0.1em;
+          cursor: pointer;
+          transition: background 0.2s ease;
+        }
+
+        .channel-button:hover {
+          background: #444;
+        }
+
+        .channel-button-icon {
+          opacity: 0.8;
         }
 
         .widget-top {
@@ -618,6 +740,48 @@ export default function Home() {
             right: 16px;
           }
 
+          .widget-bottom-right {
+            bottom: auto;
+            top: 24px;
+            right: 16px;
+            width: 140px;
+          }
+
+          .channel-widget {
+            width: 140px;
+          }
+
+          .channel-display {
+            padding: 14px;
+          }
+
+          .channel-label {
+            font-size: 0.5rem;
+            margin-bottom: 8px;
+          }
+
+          .channel-icon {
+            font-size: 1.2rem;
+          }
+
+          .channel-name {
+            font-size: 1.1rem;
+          }
+
+          .channel-number {
+            font-size: 0.65rem;
+          }
+
+          .channel-button {
+            padding: 10px 14px;
+            font-size: 0.55rem;
+          }
+
+          .channel-button-icon {
+            width: 16px;
+            height: 16px;
+          }
+
           .widget-top {
             padding: 12px;
           }
@@ -699,6 +863,48 @@ export default function Home() {
             right: 10px;
           }
 
+          .widget-bottom-right {
+            top: 16px;
+            right: 10px;
+            width: 115px;
+          }
+
+          .channel-widget {
+            width: 115px;
+          }
+
+          .channel-display {
+            padding: 10px;
+          }
+
+          .channel-label {
+            font-size: 0.45rem;
+            margin-bottom: 6px;
+          }
+
+          .channel-icon {
+            font-size: 1rem;
+          }
+
+          .channel-name {
+            font-size: 0.9rem;
+          }
+
+          .channel-number {
+            font-size: 0.55rem;
+          }
+
+          .channel-button {
+            padding: 8px 10px;
+            font-size: 0.5rem;
+            gap: 4px;
+          }
+
+          .channel-button-icon {
+            width: 14px;
+            height: 14px;
+          }
+
           .widget-top {
             padding: 10px;
           }
@@ -778,6 +984,47 @@ export default function Home() {
           .widget-top-right {
             bottom: 10px;
             right: 6px;
+          }
+
+          .widget-bottom-right {
+            top: 10px;
+            right: 6px;
+            width: 100px;
+          }
+
+          .channel-widget {
+            width: 100px;
+          }
+
+          .channel-display {
+            padding: 8px;
+          }
+
+          .channel-label {
+            font-size: 0.4rem;
+            margin-bottom: 4px;
+          }
+
+          .channel-icon {
+            font-size: 0.85rem;
+          }
+
+          .channel-name {
+            font-size: 0.75rem;
+          }
+
+          .channel-number {
+            font-size: 0.5rem;
+          }
+
+          .channel-button {
+            padding: 6px 8px;
+            font-size: 0.4rem;
+          }
+
+          .channel-button-icon {
+            width: 12px;
+            height: 12px;
           }
 
           .widget-top {
