@@ -569,7 +569,7 @@ export default function Home() {
           width: 100px;
           height: 100px;
           top: 25%;
-          left: calc(3% + 200px);
+          left: calc(3% + 300px);
           background: radial-gradient(circle at 30% 30%, #9b59b6, #6c3483 60%, #4a235a);
           box-shadow: inset -12px -9px 25px rgba(0,0,0,0.5), 0 0 35px rgba(155, 89, 182, 0.3);
           animation: planet-drift-4 22s ease-in-out infinite;
