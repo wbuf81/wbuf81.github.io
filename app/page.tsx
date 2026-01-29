@@ -515,15 +515,15 @@ export default function Home() {
         }
 
         .channel-widget {
-          width: 200px;
-          background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
-          border: 1px solid #333;
+          width: 180px;
+          background: #1a1a1a;
+          border: none;
         }
 
         .channel-display {
           padding: 20px;
           text-align: center;
-          border-bottom: 1px solid #333;
+          background: #374151;
         }
 
         .channel-label {
@@ -568,7 +568,7 @@ export default function Home() {
           gap: 8px;
           width: 100%;
           padding: 14px 20px;
-          background: #333;
+          background: #1a1a1a;
           border: none;
           color: #fff;
           font-family: system-ui, -apple-system, sans-serif;
@@ -580,7 +580,7 @@ export default function Home() {
         }
 
         .channel-button:hover {
-          background: #444;
+          background: #2a2a2a;
         }
 
         .channel-button-icon {
@@ -744,11 +744,10 @@ export default function Home() {
             bottom: auto;
             top: 24px;
             right: 16px;
-            width: 140px;
           }
 
           .channel-widget {
-            width: 140px;
+            width: 130px;
           }
 
           .channel-display {
@@ -866,11 +865,10 @@ export default function Home() {
           .widget-bottom-right {
             top: 16px;
             right: 10px;
-            width: 115px;
           }
 
           .channel-widget {
-            width: 115px;
+            width: 110px;
           }
 
           .channel-display {
@@ -989,11 +987,10 @@ export default function Home() {
           .widget-bottom-right {
             top: 10px;
             right: 6px;
-            width: 100px;
           }
 
           .channel-widget {
-            width: 100px;
+            width: 95px;
           }
 
           .channel-display {
