@@ -268,7 +268,7 @@ export default function Home() {
         <p className="tagline">⚙️ Engineer at heart.</p>
         <p className="tagline">🚀 Space enthusiast.</p>
         <p className="tagline">🤖 AI builder.</p>
-        <p className="tagline"><svg className="tagline-icon berner-icon" viewBox="0 0 36 36"><path fill="#1a1a1a" d="M36 18c0 9.941-8.059 18-18 18S0 27.941 0 18 8.059 0 18 0s18 8.059 18 18"/><path fill="#1a1a1a" d="M4 10c-2 4-3 6-3 10 0 8 6 15 17 15s17-7 17-15c0-4-1-6-3-10l-4-4c-2-2-4-3-6-3h-8c-2 0-4 1-6 3z"/><ellipse fill="#1a1a1a" cx="7" cy="11" rx="5" ry="6"/><ellipse fill="#1a1a1a" cx="29" cy="11" rx="5" ry="6"/><ellipse fill="#fff" cx="18" cy="26" rx="6" ry="5"/><path fill="#fff" d="M15 14h6v10h-6z"/><circle fill="#c45c26" cx="11" cy="15" r="3"/><circle fill="#c45c26" cx="25" cy="15" r="3"/><circle fill="#292929" cx="12" cy="18" r="2.5"/><circle fill="#292929" cx="24" cy="18" r="2.5"/><ellipse fill="#292929" cx="18" cy="24" rx="3" ry="2"/></svg> Florida, boy and bernese dad.</p>
+        <p className="tagline">🐾 Florida, boy and bernese dad.</p>
         <p className="tagline"><svg className="tagline-icon" viewBox="0 0 24 24" fill="#1e88e5"><path d="M20.5 11H19V7c0-1.1-.9-2-2-2h-4V3.5C13 2.12 11.88 1 10.5 1S8 2.12 8 3.5V5H4c-1.1 0-1.99.9-1.99 2v3.8H3.5c1.49 0 2.7 1.21 2.7 2.7s-1.21 2.7-2.7 2.7H2V20c0 1.1.9 2 2 2h3.8v-1.5c0-1.49 1.21-2.7 2.7-2.7s2.7 1.21 2.7 2.7V22H17c1.1 0 2-.9 2-2v-4h1.5c1.38 0 2.5-1.12 2.5-2.5S21.88 11 20.5 11z"/></svg> Autism & inclusivity advocate.</p>
       </div>
 
@@ -434,12 +434,6 @@ export default function Home() {
           vertical-align: -0.1em;
           margin-right: 0.2em;
           display: inline-block;
-        }
-
-        .berner-icon {
-          width: 1.2em;
-          height: 1.2em;
-          vertical-align: -0.2em;
         }
 
         .widget {
