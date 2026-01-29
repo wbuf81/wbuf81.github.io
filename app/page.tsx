@@ -418,8 +418,8 @@ export default function Home() {
         }
 
         .taglines-container {
-          margin-top: 1.5em;
-          padding-top: 1em;
+          margin-top: 0.75em;
+          padding-top: 0.75em;
           border-top: 1px solid rgba(0, 0, 0, 0.1);
         }
 
