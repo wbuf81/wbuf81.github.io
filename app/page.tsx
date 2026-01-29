@@ -35,7 +35,6 @@ export default function Home() {
 
   // Refs for DOM elements
   const bgImageRef = useRef<HTMLDivElement>(null);
-  const nameContainerRef = useRef<HTMLDivElement>(null);
 
   // Initialize
   useEffect(() => {
@@ -143,9 +142,6 @@ export default function Home() {
       // Update DOM elements with parallax
       if (bgImageRef.current) {
         bgImageRef.current.style.transform = `translate(${parallaxRef.current.x}px, ${parallaxRef.current.y}px)`;
-      }
-      if (nameContainerRef.current) {
-        nameContainerRef.current.style.transform = `translate(${parallaxRef.current.x * 1.5}px, ${parallaxRef.current.y * 1.5}px)`;
       }
 
       // Animate blob points with different easing for trailing effect
@@ -259,17 +255,19 @@ export default function Home() {
       <canvas ref={revealCanvasRef} className="reveal-canvas" />
 
       {/* Name - Top Left */}
-      <div ref={nameContainerRef} className="name-container">
+      <div className="name-container">
         <h1 className="name">Wesley Bard</h1>
         <p className="nickname">(you can call me Wes)</p>
-        <p className="tagline">🔒 Risk and Compliance executive by trade.</p>
-        <p className="tagline">⚙️ Engineer at heart.</p>
-        <p className="tagline">🤖 AI builder.</p>
-        <p className="tagline">🐾 Proud husband, boy and bernese dad.</p>
-        <p className="tagline">🚀 Space enthusiast.</p>
-        <p className="tagline">🕹️ Video gamer.</p>
-        <p className="tagline">🏈 Florida Gators, Jacksonville Jaguars.</p>
-        <p className="tagline"><svg className="tagline-icon" viewBox="0 0 24 24" fill="#1e88e5"><path d="M20.5 11H19V7c0-1.1-.9-2-2-2h-4V3.5C13 2.12 11.88 1 10.5 1S8 2.12 8 3.5V5H4c-1.1 0-1.99.9-1.99 2v3.8H3.5c1.49 0 2.7 1.21 2.7 2.7s-1.21 2.7-2.7 2.7H2V20c0 1.1.9 2 2 2h3.8v-1.5c0-1.49 1.21-2.7 2.7-2.7s2.7 1.21 2.7 2.7V22H17c1.1 0 2-.9 2-2v-4h1.5c1.38 0 2.5-1.12 2.5-2.5S21.88 11 20.5 11z"/></svg> Autism & inclusivity advocate.</p>
+        <div className="taglines-container">
+          <p className="tagline">🔒 Risk and Compliance executive by trade.</p>
+          <p className="tagline">⚙️ Engineer at heart.</p>
+          <p className="tagline">🤖 AI builder.</p>
+          <p className="tagline">🐾 Proud husband, boy and bernese dad.</p>
+          <p className="tagline">🚀 Space enthusiast.</p>
+          <p className="tagline">🕹️ Video gamer.</p>
+          <p className="tagline">🏈 Florida Gators, Jacksonville Jaguars.</p>
+          <p className="tagline"><svg className="tagline-icon" viewBox="0 0 24 24" fill="#1e88e5"><path d="M20.5 11H19V7c0-1.1-.9-2-2-2h-4V3.5C13 2.12 11.88 1 10.5 1S8 2.12 8 3.5V5H4c-1.1 0-1.99.9-1.99 2v3.8H3.5c1.49 0 2.7 1.21 2.7 2.7s-1.21 2.7-2.7 2.7H2V20c0 1.1.9 2 2 2h3.8v-1.5c0-1.49 1.21-2.7 2.7-2.7s2.7 1.21 2.7 2.7V22H17c1.1 0 2-.9 2-2v-4h1.5c1.38 0 2.5-1.12 2.5-2.5S21.88 11 20.5 11z"/></svg> Autism & inclusivity advocate.</p>
+        </div>
       </div>
 
       
@@ -415,23 +413,29 @@ export default function Home() {
           font-size: 1rem;
           font-weight: 400;
           font-style: italic;
-          color: #666;
-          margin: 0.5em 0 0 0;
+          color: #888;
+          margin: 0.4em 0 0 0;
+        }
+
+        .taglines-container {
+          margin-top: 1.5em;
+          padding-top: 1em;
+          border-top: 1px solid rgba(0, 0, 0, 0.1);
         }
 
         .tagline {
           display: block;
           font-family: system-ui, -apple-system, sans-serif;
-          font-size: 0.9rem;
+          font-size: 0.85rem;
           font-weight: 400;
           color: #555;
           margin: 0;
-          margin-top: 0.4em;
+          margin-top: 0.35em;
           letter-spacing: 0.02em;
         }
 
         .tagline:first-of-type {
-          margin-top: 1em;
+          margin-top: 0;
         }
 
         .tagline-icon {
