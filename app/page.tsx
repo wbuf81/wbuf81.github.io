@@ -421,11 +421,21 @@ export default function Home() {
           background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
         }
 
-        /* Sports grain - green grass-like texture with yard line hints */
+        /* Sports effect - animated yard lines like a football field */
         .grain-sports {
-          background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.2' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Cpattern id='lines' patternUnits='userSpaceOnUse' width='40' height='200'%3E%3Cline x1='20' y1='0' x2='20' y2='200' stroke='%23228B22' stroke-width='0.5' stroke-opacity='0.3'/%3E%3C/pattern%3E%3C/defs%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3Crect width='100%25' height='100%25' fill='url(%23lines)'/%3E%3C/svg%3E");
-          opacity: 0.22;
-          animation: grain-sports 3s steps(1) infinite;
+          background: repeating-linear-gradient(
+            90deg,
+            transparent 0px,
+            transparent 80px,
+            rgba(255, 255, 255, 0.15) 80px,
+            rgba(255, 255, 255, 0.15) 84px,
+            transparent 84px,
+            transparent 160px,
+            rgba(255, 255, 255, 0.08) 160px,
+            rgba(255, 255, 255, 0.08) 162px
+          );
+          opacity: 1;
+          animation: yard-lines 20s linear infinite;
         }
 
         @keyframes grain {
@@ -441,17 +451,9 @@ export default function Home() {
           90% { transform: translate(-2%, -1%); }
         }
 
-        @keyframes grain-sports {
-          0%, 100% { transform: translate(0, 0); }
-          10% { transform: translate(-1%, -1%); }
-          20% { transform: translate(1%, 1%); }
-          30% { transform: translate(-0.5%, 0.5%); }
-          40% { transform: translate(0.5%, -0.5%); }
-          50% { transform: translate(-1%, 1%); }
-          60% { transform: translate(1%, -1%); }
-          70% { transform: translate(-0.5%, -0.5%); }
-          80% { transform: translate(0.5%, 0.5%); }
-          90% { transform: translate(-1%, -0.5%); }
+        @keyframes yard-lines {
+          0% { transform: translateX(-160px); }
+          100% { transform: translateX(0px); }
         }
 
         .reveal-canvas {
