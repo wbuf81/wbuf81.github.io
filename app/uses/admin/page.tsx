@@ -10,7 +10,7 @@ import EmojiRating from '../components/EmojiRating';
 
 // Default repo info - can be overridden with env vars
 const DEFAULT_OWNER = 'wbuf81';
-const DEFAULT_REPO = 'personal-website';
+const DEFAULT_REPO = 'wbuf81.github.io';
 
 export default function AdminPage() {
   const [token, setToken] = useState<string | null>(null);
