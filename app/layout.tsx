@@ -18,6 +18,7 @@ export const metadata: Metadata = {
   title: 'Wesley Bard',
   description: 'Risk & Compliance Leader, Engineer, AI Builder',
   metadataBase: new URL('https://wbuf81.github.io'),
+  manifest: '/manifest.json',
   openGraph: {
     title: 'Wesley Bard',
     description: 'Risk & Compliance Leader, Engineer, AI Builder',
@@ -40,6 +41,26 @@ export const metadata: Metadata = {
     description: 'Risk & Compliance Leader, Engineer, AI Builder',
     images: ['/og-image.svg'],
   },
+  other: {
+    'theme-color': '#6366f1',
+  },
+};
+
+// Structured data for SEO (Person schema)
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: 'Wesley Bard',
+  alternateName: 'Wes',
+  description: 'Risk & Compliance Leader, Engineer, AI Builder',
+  url: 'https://wbuf81.github.io',
+  sameAs: [
+    'https://www.linkedin.com/in/wesleybard/',
+    'https://github.com/wbuf81',
+    'https://www.instagram.com/wb81',
+  ],
+  jobTitle: 'Risk and Compliance Leader',
+  knowsAbout: ['Risk Management', 'Compliance', 'AI', 'Engineering'],
 };
 
 export const viewport: Viewport = {
@@ -56,6 +77,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${playfair.variable} ${outfit.variable}`}>
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      </head>
       <body>{children}</body>
     </html>
   );

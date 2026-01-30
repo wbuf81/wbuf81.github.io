@@ -95,13 +95,16 @@ export default function Home() {
 
   // Generate wandering position using multiple sine waves for organic movement
   const getWanderingPosition = useCallback((time: number) => {
+    const isMobile = window.innerWidth < 768;
     const centerX = window.innerWidth / 2;
     const centerY = window.innerHeight / 2;
-    const radiusX = window.innerWidth * 0.3;
-    const radiusY = window.innerHeight * 0.3;
+    // Smaller wandering radius on mobile to keep blob more centered
+    const radiusX = window.innerWidth * (isMobile ? 0.2 : 0.3);
+    const radiusY = window.innerHeight * (isMobile ? 0.2 : 0.3);
 
-    // Combine multiple frequencies for organic, non-repetitive movement (2x speed)
-    const speed = 2;
+    // Combine multiple frequencies for organic, non-repetitive movement
+    // Slower speed on mobile for less frantic movement
+    const speed = isMobile ? 1.2 : 2;
     const x = centerX +
       Math.sin(time * 0.0003 * speed) * radiusX * 0.6 +
       Math.sin(time * 0.0007 * speed) * radiusX * 0.3 +
@@ -183,9 +186,15 @@ export default function Home() {
       }
 
       // Animate blob points with different easing for trailing effect
-      // Faster easing when mouse is active for more responsive feel
-      const baseEase = isMouseActiveRef.current ? 0.15 : 0.08;
-      const easeStep = isMouseActiveRef.current ? 0.02 : 0.01;
+      // Faster easing when touch/mouse is active for more responsive feel
+      // Even faster on mobile for snappier touch response
+      const isMobileDevice = window.innerWidth < 768;
+      const baseEase = isMouseActiveRef.current
+        ? (isMobileDevice ? 0.2 : 0.15)  // Faster touch response on mobile
+        : 0.08;
+      const easeStep = isMouseActiveRef.current
+        ? (isMobileDevice ? 0.025 : 0.02)
+        : 0.01;
       blobPointsRef.current.forEach((point, index) => {
         const ease = baseEase - index * easeStep;
         point.x += (targetPos.x - point.x) * ease;
@@ -214,9 +223,9 @@ export default function Home() {
       }
 
       // Draw blob circles on offscreen canvas
-      // Smaller blob on mobile for better fit
       const isMobile = window.innerWidth < 768;
-      const baseSize = isMobile ? 80 : 120;
+      // Larger blob on mobile for better coverage
+      const baseSize = isMobile ? 105 : 120;
       offCtx.fillStyle = 'white';
       blobPointsRef.current.forEach((point) => {
         const size = baseSize * point.scale;
@@ -225,8 +234,8 @@ export default function Home() {
         offCtx.fill();
       });
 
-      // Apply blur for gooey effect
-      ctx.filter = 'blur(30px)';
+      // Apply blur for gooey effect - less blur on mobile for sharper edges
+      ctx.filter = isMobile ? 'blur(20px)' : 'blur(30px)';
       ctx.drawImage(offscreen, 0, 0);
       ctx.filter = 'none';
 
