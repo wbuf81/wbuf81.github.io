@@ -13,6 +13,25 @@ interface GitHubUserResponse {
   name: string;
 }
 
+// Helper functions for proper UTF-8 base64 encoding/decoding
+function utf8ToBase64(str: string): string {
+  const bytes = new TextEncoder().encode(str);
+  let binary = '';
+  for (let i = 0; i < bytes.length; i++) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+  return btoa(binary);
+}
+
+function base64ToUtf8(base64: string): string {
+  const binary = atob(base64);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) {
+    bytes[i] = binary.charCodeAt(i);
+  }
+  return new TextDecoder().decode(bytes);
+}
+
 export async function validateToken(token: string): Promise<{ valid: boolean; user?: string }> {
   try {
     const response = await fetch(`${GITHUB_API_BASE}/user`, {
@@ -58,7 +77,9 @@ export async function getFileContent(
     }
 
     const data: GitHubFileResponse = await response.json();
-    const content = atob(data.content);
+    // Remove newlines from base64 content before decoding
+    const cleanedContent = data.content.replace(/\n/g, '');
+    const content = base64ToUtf8(cleanedContent);
     return { content, sha: data.sha };
   } catch (error) {
     console.error('Error fetching file from GitHub:', error);
@@ -82,7 +103,7 @@ export async function commitFile(
       sha?: string;
     } = {
       message,
-      content: btoa(unescape(encodeURIComponent(content))),
+      content: utf8ToBase64(content),
     };
 
     if (sha) {
@@ -117,9 +138,6 @@ export async function commitFile(
 
 // Helper to extract owner and repo from various GitHub URL formats or env vars
 export function getRepoInfo(): { owner: string; repo: string } | null {
-  // These would typically come from environment variables or be hardcoded
-  // For this implementation, we'll use the repo name from the project
-  // You should update these values or use environment variables
   const owner = process.env.NEXT_PUBLIC_GITHUB_OWNER || '';
   const repo = process.env.NEXT_PUBLIC_GITHUB_REPO || '';
 

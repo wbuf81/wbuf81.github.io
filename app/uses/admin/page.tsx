@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { UsesItem, UsesData, CATEGORY_LABELS } from '@/types/uses';
-import { validateToken, getFileContent } from '@/lib/github';
+import { validateToken, getFileContent, commitFile } from '@/lib/github';
 import TokenPrompt from '../components/TokenPrompt';
 import AdminForm from '../components/AdminForm';
 import EmojiRating from '../components/EmojiRating';
@@ -21,6 +21,8 @@ export default function AdminPage() {
   const [editingItem, setEditingItem] = useState<UsesItem | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [error, setError] = useState('');
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState('');
 
   const owner = process.env.NEXT_PUBLIC_GITHUB_OWNER || DEFAULT_OWNER;
   const repo = process.env.NEXT_PUBLIC_GITHUB_REPO || DEFAULT_REPO;
@@ -90,9 +92,48 @@ export default function AdminPage() {
     setShowForm(true);
   };
 
+  const handleDelete = async (item: UsesItem) => {
+    if (!token) return;
+    if (!confirm(`Are you sure you want to delete "${item.name}"?`)) return;
+
+    setDeletingId(item.id);
+    setError('');
+
+    try {
+      const result = await getFileContent(token, owner, repo, 'data/uses.json');
+      if (!result) {
+        throw new Error('Could not load data file');
+      }
+
+      const data: UsesData = JSON.parse(result.content);
+      data.items = data.items.filter(i => i.id !== item.id);
+      data.lastUpdated = new Date().toISOString();
+
+      await commitFile(
+        token,
+        owner,
+        repo,
+        'data/uses.json',
+        JSON.stringify(data, null, 2),
+        `Delete uses item: ${item.name}`,
+        result.sha
+      );
+
+      setSuccessMessage(`"${item.name}" deleted. Site will update after rebuild.`);
+      setTimeout(() => setSuccessMessage(''), 5000);
+      loadItems(token);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to delete item');
+    } finally {
+      setDeletingId(null);
+    }
+  };
+
   const handleFormSaved = () => {
     setShowForm(false);
     setEditingItem(null);
+    setSuccessMessage('Item saved! Site will update after rebuild.');
+    setTimeout(() => setSuccessMessage(''), 5000);
     if (token) {
       loadItems(token);
     }
@@ -105,17 +146,17 @@ export default function AdminPage() {
 
   if (isCheckingToken) {
     return (
-      <div className="admin-container">
-        <div className="loading">Checking authentication...</div>
+      <div className="admin-loading">
+        <div className="loading-text">Checking authentication...</div>
         <style jsx>{`
-          .admin-container {
+          .admin-loading {
             min-height: 100vh;
             background: #fafafa;
             display: flex;
             align-items: center;
             justify-content: center;
           }
-          .loading {
+          .loading-text {
             font-family: system-ui, -apple-system, sans-serif;
             color: #6b7280;
           }
@@ -126,7 +167,6 @@ export default function AdminPage() {
 
   return (
     <div className="admin-container">
-      {/* Grain texture overlay */}
       <div className="grain-overlay" />
 
       {showTokenPrompt && (
@@ -141,7 +181,7 @@ export default function AdminPage() {
           <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
             <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" />
           </svg>
-          Back to Uses
+          Back to Recommendations
         </Link>
         {token && (
           <button className="logout-btn" onClick={handleLogout}>
@@ -152,8 +192,8 @@ export default function AdminPage() {
 
       <main className="admin-main">
         <header className="admin-header">
-          <div>
-            <h1 className="admin-title">Uses Admin</h1>
+          <div className="header-text">
+            <h1 className="admin-title">Recommendations Admin</h1>
             <p className="admin-subtitle">
               Manage your recommended products and gear.
             </p>
@@ -169,6 +209,11 @@ export default function AdminPage() {
         </header>
 
         {error && <div className="error-message">{error}</div>}
+        {successMessage && <div className="success-message">{successMessage}</div>}
+
+        <div className="info-banner">
+          <strong>Note:</strong> Changes are committed to GitHub. The public page updates after the site rebuilds (usually 1-2 minutes).
+        </div>
 
         {showForm && token ? (
           <AdminForm
@@ -209,12 +254,21 @@ export default function AdminPage() {
                         {item.featured && <span className="featured-badge">Featured</span>}
                       </div>
                     </div>
-                    <button
-                      className="edit-btn"
-                      onClick={() => handleEdit(item)}
-                    >
-                      Edit
-                    </button>
+                    <div className="item-actions">
+                      <button
+                        className="edit-btn"
+                        onClick={() => handleEdit(item)}
+                      >
+                        Edit
+                      </button>
+                      <button
+                        className="delete-btn"
+                        onClick={() => handleDelete(item)}
+                        disabled={deletingId === item.id}
+                      >
+                        {deletingId === item.id ? 'Deleting...' : 'Delete'}
+                      </button>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -251,6 +305,8 @@ export default function AdminPage() {
           display: flex;
           justify-content: space-between;
           align-items: center;
+          flex-wrap: wrap;
+          gap: 12px;
         }
 
         .back-link {
@@ -301,13 +357,19 @@ export default function AdminPage() {
           display: flex;
           justify-content: space-between;
           align-items: flex-start;
-          margin-bottom: 32px;
+          margin-bottom: 24px;
           gap: 20px;
+          flex-wrap: wrap;
+        }
+
+        .header-text {
+          flex: 1;
+          min-width: 200px;
         }
 
         .admin-title {
           font-family: var(--font-outfit), system-ui, sans-serif;
-          font-size: 2.5rem;
+          font-size: 2rem;
           font-weight: 700;
           color: #1f2937;
           margin: 0 0 8px;
@@ -321,7 +383,7 @@ export default function AdminPage() {
         }
 
         .add-btn {
-          display: flex;
+          display: inline-flex;
           align-items: center;
           gap: 8px;
           padding: 12px 20px;
@@ -341,14 +403,38 @@ export default function AdminPage() {
           background: #374151;
         }
 
+        .info-banner {
+          background: #eff6ff;
+          border: 1px solid #bfdbfe;
+          color: #1e40af;
+          padding: 12px 16px;
+          border-radius: 10px;
+          font-family: system-ui, -apple-system, sans-serif;
+          font-size: 0.9rem;
+          margin-bottom: 24px;
+          line-height: 1.5;
+        }
+
         .error-message {
           background: #fef2f2;
           border: 1px solid #fecaca;
           color: #dc2626;
-          padding: 16px 20px;
-          border-radius: 12px;
-          font-size: 0.95rem;
-          margin-bottom: 24px;
+          padding: 12px 16px;
+          border-radius: 10px;
+          font-family: system-ui, -apple-system, sans-serif;
+          font-size: 0.9rem;
+          margin-bottom: 16px;
+        }
+
+        .success-message {
+          background: #f0fdf4;
+          border: 1px solid #bbf7d0;
+          color: #166534;
+          padding: 12px 16px;
+          border-radius: 10px;
+          font-family: system-ui, -apple-system, sans-serif;
+          font-size: 0.9rem;
+          margin-bottom: 16px;
         }
 
         .loading-state,
@@ -374,6 +460,7 @@ export default function AdminPage() {
           padding: 20px;
           box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04), 0 0 0 1px rgba(0, 0, 0, 0.04);
           align-items: center;
+          flex-wrap: wrap;
         }
 
         .item-image {
@@ -402,7 +489,7 @@ export default function AdminPage() {
 
         .item-content {
           flex: 1;
-          min-width: 0;
+          min-width: 200px;
         }
 
         .item-name {
@@ -418,15 +505,13 @@ export default function AdminPage() {
           font-size: 0.85rem;
           color: #6b7280;
           margin: 0 0 8px;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          white-space: nowrap;
+          line-height: 1.4;
         }
 
         .item-meta {
           display: flex;
           align-items: center;
-          gap: 12px;
+          gap: 10px;
           flex-wrap: wrap;
         }
 
@@ -448,16 +533,26 @@ export default function AdminPage() {
           border-radius: 10px;
         }
 
-        .edit-btn {
+        .item-actions {
+          display: flex;
+          gap: 8px;
+          flex-shrink: 0;
+        }
+
+        .edit-btn,
+        .delete-btn {
           padding: 8px 16px;
           border: 1px solid #e5e7eb;
           border-radius: 8px;
           background: #fff;
           font-family: system-ui, -apple-system, sans-serif;
           font-size: 0.85rem;
-          color: #374151;
           cursor: pointer;
           transition: background 0.2s ease, border-color 0.2s ease;
+        }
+
+        .edit-btn {
+          color: #374151;
         }
 
         .edit-btn:hover {
@@ -465,13 +560,28 @@ export default function AdminPage() {
           border-color: #d1d5db;
         }
 
+        .delete-btn {
+          color: #dc2626;
+          border-color: #fecaca;
+        }
+
+        .delete-btn:hover:not(:disabled) {
+          background: #fef2f2;
+          border-color: #f87171;
+        }
+
+        .delete-btn:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+
         @media (max-width: 768px) {
           .admin-nav {
-            padding: 20px 24px;
+            padding: 20px 20px;
           }
 
           .admin-main {
-            padding: 0 24px 60px;
+            padding: 0 20px 60px;
           }
 
           .admin-header {
@@ -484,7 +594,7 @@ export default function AdminPage() {
           }
 
           .admin-title {
-            font-size: 2rem;
+            font-size: 1.75rem;
           }
 
           .item-card {
@@ -494,15 +604,24 @@ export default function AdminPage() {
 
           .item-image {
             width: 100%;
-            height: 120px;
+            height: 140px;
+          }
+
+          .item-content {
+            min-width: 0;
           }
 
           .item-description {
             white-space: normal;
           }
 
-          .edit-btn {
+          .item-actions {
             width: 100%;
+          }
+
+          .edit-btn,
+          .delete-btn {
+            flex: 1;
             text-align: center;
           }
         }
@@ -510,9 +629,6 @@ export default function AdminPage() {
         @media (max-width: 480px) {
           .admin-nav {
             padding: 16px;
-            flex-direction: column;
-            gap: 12px;
-            align-items: flex-start;
           }
 
           .admin-main {
@@ -520,7 +636,12 @@ export default function AdminPage() {
           }
 
           .admin-title {
-            font-size: 1.75rem;
+            font-size: 1.5rem;
+          }
+
+          .info-banner {
+            font-size: 0.85rem;
+            padding: 10px 14px;
           }
         }
       `}</style>
