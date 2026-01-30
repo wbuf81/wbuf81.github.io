@@ -1,0 +1,44 @@
+{
+  "items": [
+    {
+      "id": "sample-001",
+      "name": "Sony WH-1000XM5",
+      "description": "The best noise-canceling headphones I've used. Perfect for deep work and travel.",
+      "imageUrl": "https://m.media-amazon.com/images/I/61+btxzpfDL._AC_SL1500_.jpg",
+      "affiliateUrl": "https://www.amazon.com/dp/B09XS7JWHH",
+      "category": "tech-gear",
+      "tags": ["headphones", "audio", "wireless"],
+      "rating": 9,
+      "ratingEmoji": "🔥",
+      "featured": true,
+      "dateAdded": "2024-01-15T00:00:00Z"
+    },
+    {
+      "id": "sample-002",
+      "name": "Herman Miller Aeron Chair",
+      "description": "Worth the investment for anyone who spends 8+ hours at a desk.",
+      "imageUrl": "https://m.media-amazon.com/images/I/41HfCpBbxdL._AC_SL1024_.jpg",
+      "affiliateUrl": "https://www.hermanmiller.com/products/seating/office-chairs/aeron-chairs/",
+      "category": "desk-office",
+      "tags": ["chair", "ergonomic", "office"],
+      "rating": 10,
+      "ratingEmoji": "⭐",
+      "featured": true,
+      "dateAdded": "2024-01-10T00:00:00Z"
+    },
+    {
+      "id": "sample-003",
+      "name": "Whoop 4.0",
+      "description": "Great for tracking sleep and recovery. The subscription model is steep but the insights are valuable.",
+      "imageUrl": "https://cdn.shopify.com/s/files/1/0559/2349/1361/products/4.0band-onyx_900x.png",
+      "affiliateUrl": "https://www.whoop.com/",
+      "category": "fitness-supplements",
+      "tags": ["fitness", "wearable", "sleep"],
+      "rating": 8,
+      "ratingEmoji": "💪",
+      "featured": false,
+      "dateAdded": "2024-01-05T00:00:00Z"
+    }
+  ],
+  "lastUpdated": "2024-01-15T10:30:00Z"
+}

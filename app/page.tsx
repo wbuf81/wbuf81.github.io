@@ -343,6 +343,29 @@ export default function Home() {
       {/* Sports emojis for sports channel */}
       {currentChannel.grainStyle === 'sports' && (
         <div className="sports-container">
+          {/* Hash marks overlay */}
+          <div className="hash-marks" />
+          {/* Yard numbers */}
+          <div className="yard-numbers">
+            <span className="yard-number">10</span>
+            <span className="yard-number">20</span>
+            <span className="yard-number">30</span>
+            <span className="yard-number">40</span>
+            <span className="yard-number">50</span>
+            <span className="yard-number">40</span>
+            <span className="yard-number">30</span>
+            <span className="yard-number">20</span>
+            <span className="yard-number">10</span>
+            {/* Duplicate for seamless loop */}
+            <span className="yard-number">20</span>
+            <span className="yard-number">30</span>
+            <span className="yard-number">40</span>
+            <span className="yard-number">50</span>
+            <span className="yard-number">40</span>
+            <span className="yard-number">30</span>
+            <span className="yard-number">20</span>
+            <span className="yard-number">10</span>
+          </div>
           {/* Footballs thrown left to right */}
           <div className="sports-emoji football-ltr" style={{ top: '25%', animationDelay: '0s', animationDuration: '4s' }}>🏈</div>
           <div className="sports-emoji football-ltr" style={{ top: '55%', animationDelay: '2.5s', animationDuration: '4.5s' }}>🏈</div>
@@ -441,7 +464,7 @@ export default function Home() {
         </a>
       </div>
 
-      {/* Articles Widget - Bottom Left */}
+      {/* Articles & Uses Widget - Bottom Left */}
       <div className="widget widget-bottom-left">
         <div className="widget-top">
           <a href="/articles" className="widget-top-link">
@@ -452,6 +475,16 @@ export default function Home() {
             <span className="widget-top-link-text">ARTICLES</span>
           </a>
         </div>
+        <a href="/uses" className="widget-bottom">
+          {/* Recs/Star Icon */}
+          <svg className="widget-bottom-icon" viewBox="0 0 24 24" fill="currentColor" width="32" height="32">
+            <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
+          </svg>
+          <div className="widget-bottom-text">
+            <div className="widget-bottom-title">RECS</div>
+            <div className="widget-bottom-subtitle">My Gear</div>
+          </div>
+        </a>
       </div>
 
       {/* Channel Widget - Bottom Right */}
@@ -661,6 +694,17 @@ export default function Home() {
         /* Sports effect - green field with animated yard lines */
         .grain-sports {
           background:
+            /* Small 5-yard marker lines */
+            repeating-linear-gradient(
+              90deg,
+              transparent 0px,
+              transparent 58px,
+              rgba(255, 255, 255, 0.35) 58px,
+              rgba(255, 255, 255, 0.35) 60px,
+              transparent 60px,
+              transparent 120px
+            ),
+            /* Big 10-yard marker lines */
             repeating-linear-gradient(
               90deg,
               transparent 0px,
@@ -708,6 +752,69 @@ export default function Home() {
           pointer-events: none;
           z-index: 1;
           overflow: hidden;
+        }
+
+        /* Hash marks - small perpendicular lines */
+        .hash-marks {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: calc(100% + 240px);
+          height: 100%;
+          background:
+            /* Upper hash marks */
+            repeating-linear-gradient(
+              90deg,
+              transparent 0px,
+              transparent 117px,
+              rgba(255, 255, 255, 0.4) 117px,
+              rgba(255, 255, 255, 0.4) 123px,
+              transparent 123px,
+              transparent 240px
+            ),
+            /* Lower hash marks */
+            repeating-linear-gradient(
+              90deg,
+              transparent 0px,
+              transparent 117px,
+              rgba(255, 255, 255, 0.4) 117px,
+              rgba(255, 255, 255, 0.4) 123px,
+              transparent 123px,
+              transparent 240px
+            );
+          background-size: 240px 8px, 240px 8px;
+          background-position: 0 30%, 0 70%;
+          background-repeat: repeat-x;
+          animation: yard-lines 12s linear infinite;
+        }
+
+        /* Yard numbers */
+        .yard-numbers {
+          position: absolute;
+          top: 50%;
+          left: -120px;
+          transform: translateY(-50%);
+          display: flex;
+          gap: 0;
+          animation: yard-numbers-anchored 12s linear infinite;
+          white-space: nowrap;
+        }
+
+        @keyframes yard-numbers-anchored {
+          0% { transform: translateY(-50%) translateX(-240px); }
+          100% { transform: translateY(-50%) translateX(0px); }
+        }
+
+        .yard-number {
+          font-family: 'Arial Black', 'Helvetica Neue', sans-serif;
+          font-size: 48px;
+          font-weight: 900;
+          color: rgba(255, 255, 255, 0.15);
+          width: 240px;
+          text-align: center;
+          letter-spacing: 4px;
+          text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.1);
+          flex-shrink: 0;
         }
 
         .sports-emoji {
