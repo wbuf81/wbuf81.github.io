@@ -6,8 +6,8 @@ interface EmojiRatingProps {
 }
 
 export default function EmojiRating({ rating, emoji }: EmojiRatingProps) {
-  const filled = Math.round(rating / 2); // Convert 1-10 to 1-5
-  const empty = 5 - filled;
+  const filled = Math.min(Math.max(rating, 0), 10); // Clamp to 0-10
+  const empty = 10 - filled;
 
   return (
     <div className="emoji-rating">
@@ -22,8 +22,8 @@ export default function EmojiRating({ rating, emoji }: EmojiRatingProps) {
         .emoji-rating {
           display: inline-flex;
           align-items: center;
-          font-size: 0.9rem;
-          letter-spacing: 2px;
+          font-size: 0.75rem;
+          letter-spacing: 1px;
         }
 
         .filled {
@@ -32,7 +32,6 @@ export default function EmojiRating({ rating, emoji }: EmojiRatingProps) {
 
         .empty {
           opacity: 0.3;
-          font-size: 0.7rem;
         }
       `}</style>
     </div>
