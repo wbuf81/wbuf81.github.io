@@ -450,24 +450,22 @@ export default function Home() {
         <div className="channel-display">
           {isChangingChannel && <div className="channel-static" />}
           <div className="channel-label">CURRENT CHANNEL</div>
-          <div className="channel-info">
-            <span className={`channel-icon channel-icon-${currentChannel.id}`}>{currentChannel.icon}</span>
-            <span className="channel-name">{currentChannel.name}</span>
-          </div>
-          <div className="channel-number">CH {currentChannelIndex + 1}/{CHANNELS.length}</div>
+          <span className={`channel-icon channel-icon-${currentChannel.id}`}>{currentChannel.icon}</span>
+          <span className="channel-name">{currentChannel.name}</span>
         </div>
         <button
           className="channel-dial-container"
           onClick={handleChannelChange}
           disabled={isChangingChannel}
         >
-          <div
-            className="channel-dial"
-            style={{ transform: `rotate(${dialRotation}deg)` }}
-          >
-            <div className="dial-notch" />
-            <div className="dial-notch" />
-            <div className="dial-notch" />
+          <div className="dial-outer-ring">
+            <div
+              className="channel-dial"
+              style={{ transform: `rotate(${dialRotation}deg)` }}
+            >
+              <div className="dial-indicator" />
+              <div className="dial-center-cap" />
+            </div>
           </div>
           <span className="dial-label">CHANGE CHANNEL</span>
         </button>
@@ -1020,43 +1018,36 @@ export default function Home() {
           font-weight: 600;
           letter-spacing: 0.15em;
           color: #666;
-          margin-bottom: 12px;
-        }
-
-        .channel-info {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 8px;
-          margin-bottom: 8px;
+          margin-bottom: 4px;
         }
 
         .channel-icon {
-          font-size: 1.5rem;
+          font-size: 2.2rem;
           display: inline-block;
+          margin-bottom: 4px;
         }
 
         /* Animated icons for each channel */
         .channel-icon-space {
-          animation: rocket-float 2s ease-in-out infinite;
+          animation: rocket-float 1.5s ease-in-out infinite;
         }
 
         .channel-icon-gaming {
-          animation: gamepad-pulse 1.5s ease-in-out infinite;
+          animation: gamepad-rock 0.8s ease-in-out infinite;
         }
 
         .channel-icon-sports {
-          animation: football-spin 3s linear infinite;
+          animation: football-spin 2s linear infinite;
         }
 
         @keyframes rocket-float {
-          0%, 100% { transform: translateY(0) rotate(-10deg); }
-          50% { transform: translateY(-3px) rotate(-10deg); }
+          0%, 100% { transform: translateY(0) rotate(-15deg); }
+          50% { transform: translateY(-8px) rotate(-5deg); }
         }
 
-        @keyframes gamepad-pulse {
-          0%, 100% { transform: scale(1); }
-          50% { transform: scale(1.1); }
+        @keyframes gamepad-rock {
+          0%, 100% { transform: rotate(-15deg); }
+          50% { transform: rotate(15deg); }
         }
 
         @keyframes football-spin {
@@ -1098,17 +1089,13 @@ export default function Home() {
         }
 
         .channel-name {
-          font-family: var(--font-outfit), system-ui, sans-serif;
-          font-size: 1.5rem;
-          font-weight: 700;
+          display: block;
+          font-family: system-ui, -apple-system, sans-serif;
+          font-size: 0.6rem;
+          font-weight: 600;
+          letter-spacing: 0.15em;
           color: #fff;
-        }
-
-        .channel-number {
-          font-family: monospace;
-          font-size: 0.75rem;
-          color: #888;
-          letter-spacing: 0.1em;
+          text-transform: uppercase;
         }
 
         .channel-dial-container {
@@ -1133,51 +1120,121 @@ export default function Home() {
           cursor: not-allowed;
         }
 
-        .channel-dial {
-          width: 50px;
-          height: 50px;
-          background: linear-gradient(145deg, #3a3a3a, #252525);
+        .dial-outer-ring {
+          width: 64px;
+          height: 64px;
           border-radius: 50%;
-          border: 3px solid #4a4a4a;
+          background: #2a2a2a;
+          padding: 3px;
+          box-shadow:
+            0 6px 12px rgba(0,0,0,0.5),
+            0 2px 4px rgba(0,0,0,0.3),
+            inset 0 1px 1px rgba(255,255,255,0.05);
+          position: relative;
+        }
+
+        /* Ridges around the edge */
+        .dial-outer-ring::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          border-radius: 50%;
+          background:
+            repeating-conic-gradient(
+              from 0deg,
+              #3d3d3d 0deg 6deg,
+              #2a2a2a 6deg 12deg
+            );
+          mask: radial-gradient(circle, transparent 75%, black 76%);
+          -webkit-mask: radial-gradient(circle, transparent 75%, black 76%);
+        }
+
+        .channel-dial {
+          width: 100%;
+          height: 100%;
+          background:
+            radial-gradient(ellipse at 25% 25%, #d4c4a0 0%, #8b7355 30%, #5c4a32 70%, #3d3225 100%);
+          border-radius: 50%;
           position: relative;
           box-shadow:
-            inset 0 2px 4px rgba(255,255,255,0.1),
-            0 4px 8px rgba(0,0,0,0.3);
+            inset 0 3px 8px rgba(255,255,255,0.3),
+            inset 0 -4px 8px rgba(0,0,0,0.5),
+            inset 2px 0 4px rgba(0,0,0,0.2),
+            inset -2px 0 4px rgba(0,0,0,0.2),
+            0 2px 4px rgba(0,0,0,0.4);
           transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-          display: flex;
-          align-items: center;
-          justify-content: center;
+          border: 2px solid #4a3f2f;
+        }
+
+        /* Inner ridges on the knob */
+        .channel-dial::before {
+          content: '';
+          position: absolute;
+          top: 6px;
+          left: 6px;
+          right: 6px;
+          bottom: 6px;
+          border-radius: 50%;
+          background:
+            repeating-conic-gradient(
+              from 0deg,
+              rgba(0,0,0,0.15) 0deg 15deg,
+              rgba(255,255,255,0.05) 15deg 30deg
+            );
         }
 
         .channel-dial-container:hover .channel-dial {
-          border-color: #5a5a5a;
+          background:
+            radial-gradient(ellipse at 25% 25%, #e0d0b0 0%, #9b8365 30%, #6c5a42 70%, #4d4235 100%);
         }
 
-        .dial-notch {
+        .dial-indicator {
           position: absolute;
-          width: 4px;
-          height: 10px;
-          background: #666;
-          border-radius: 2px;
-        }
-
-        .dial-notch:nth-child(1) {
-          top: 5px;
+          top: 2px;
           left: 50%;
           transform: translateX(-50%);
-          background: #fff;
+          width: 4px;
+          height: 14px;
+          background: linear-gradient(to bottom, #f5f0e0, #c0b090);
+          border-radius: 2px;
+          box-shadow:
+            0 1px 2px rgba(0,0,0,0.4),
+            inset 0 1px 1px rgba(255,255,255,0.5);
+          z-index: 2;
         }
 
-        .dial-notch:nth-child(2) {
-          bottom: 8px;
-          left: 8px;
-          transform: rotate(-60deg);
+        .dial-center-cap {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          width: 18px;
+          height: 18px;
+          background:
+            radial-gradient(ellipse at 35% 35%, #c0a878 0%, #8b7355 50%, #5c4a32 100%);
+          border-radius: 50%;
+          box-shadow:
+            inset 0 2px 4px rgba(255,255,255,0.3),
+            inset 0 -2px 4px rgba(0,0,0,0.4),
+            0 1px 3px rgba(0,0,0,0.3);
+          border: 1px solid #4a3f2f;
+          z-index: 3;
         }
 
-        .dial-notch:nth-child(3) {
-          bottom: 8px;
-          right: 8px;
-          transform: rotate(60deg);
+        /* Hex screw head in center */
+        .dial-center-cap::after {
+          content: '';
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          width: 6px;
+          height: 6px;
+          background: #3d3225;
+          clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
         }
 
         .dial-label {
@@ -1371,19 +1428,16 @@ export default function Home() {
 
           .channel-label {
             font-size: 0.5rem;
-            margin-bottom: 8px;
+            margin-bottom: 3px;
           }
 
           .channel-icon {
-            font-size: 1.2rem;
+            font-size: 1.6rem;
+            margin-bottom: 3px;
           }
 
           .channel-name {
-            font-size: 1.1rem;
-          }
-
-          .channel-number {
-            font-size: 0.65rem;
+            font-size: 0.5rem;
           }
 
           .channel-dial-container {
@@ -1391,28 +1445,21 @@ export default function Home() {
             gap: 8px;
           }
 
-          .channel-dial {
-            width: 40px;
-            height: 40px;
+          .dial-outer-ring {
+            width: 50px;
+            height: 50px;
+            padding: 3px;
           }
 
-          .dial-notch {
-            height: 8px;
-            width: 3px;
+          .dial-indicator {
+            height: 10px;
+            width: 2px;
+            top: 3px;
           }
 
-          .dial-notch:nth-child(1) {
-            top: 4px;
-          }
-
-          .dial-notch:nth-child(2) {
-            bottom: 6px;
-            left: 6px;
-          }
-
-          .dial-notch:nth-child(3) {
-            bottom: 6px;
-            right: 6px;
+          .dial-center-cap {
+            width: 16px;
+            height: 16px;
           }
 
           .dial-label {
@@ -1515,19 +1562,16 @@ export default function Home() {
 
           .channel-label {
             font-size: 0.45rem;
-            margin-bottom: 6px;
+            margin-bottom: 2px;
           }
 
           .channel-icon {
-            font-size: 1rem;
+            font-size: 1.3rem;
+            margin-bottom: 2px;
           }
 
           .channel-name {
-            font-size: 0.9rem;
-          }
-
-          .channel-number {
-            font-size: 0.55rem;
+            font-size: 0.45rem;
           }
 
           .channel-dial-container {
@@ -1535,28 +1579,21 @@ export default function Home() {
             gap: 6px;
           }
 
-          .channel-dial {
-            width: 35px;
-            height: 35px;
+          .dial-outer-ring {
+            width: 42px;
+            height: 42px;
+            padding: 3px;
           }
 
-          .dial-notch {
-            height: 7px;
-            width: 3px;
+          .dial-indicator {
+            height: 8px;
+            width: 2px;
+            top: 2px;
           }
 
-          .dial-notch:nth-child(1) {
-            top: 4px;
-          }
-
-          .dial-notch:nth-child(2) {
-            bottom: 5px;
-            left: 5px;
-          }
-
-          .dial-notch:nth-child(3) {
-            bottom: 5px;
-            right: 5px;
+          .dial-center-cap {
+            width: 14px;
+            height: 14px;
           }
 
           .dial-label {
@@ -1659,19 +1696,16 @@ export default function Home() {
 
           .channel-label {
             font-size: 0.4rem;
-            margin-bottom: 4px;
+            margin-bottom: 2px;
           }
 
           .channel-icon {
-            font-size: 0.85rem;
+            font-size: 1.1rem;
+            margin-bottom: 2px;
           }
 
           .channel-name {
-            font-size: 0.75rem;
-          }
-
-          .channel-number {
-            font-size: 0.5rem;
+            font-size: 0.4rem;
           }
 
           .channel-dial-container {
@@ -1679,28 +1713,21 @@ export default function Home() {
             gap: 4px;
           }
 
-          .channel-dial {
-            width: 30px;
-            height: 30px;
+          .dial-outer-ring {
+            width: 36px;
+            height: 36px;
+            padding: 2px;
           }
 
-          .dial-notch {
-            height: 5px;
+          .dial-indicator {
+            height: 6px;
             width: 2px;
+            top: 2px;
           }
 
-          .dial-notch:nth-child(1) {
-            top: 3px;
-          }
-
-          .dial-notch:nth-child(2) {
-            bottom: 4px;
-            left: 4px;
-          }
-
-          .dial-notch:nth-child(3) {
-            bottom: 4px;
-            right: 4px;
+          .dial-center-cap {
+            width: 12px;
+            height: 12px;
           }
 
           .dial-label {

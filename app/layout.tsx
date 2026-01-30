@@ -16,7 +16,30 @@ const outfit = Outfit({
 
 export const metadata: Metadata = {
   title: 'Wesley Bard',
-  description: 'Personal portfolio of Wesley Bard',
+  description: 'Risk & Compliance Leader, Engineer, AI Builder',
+  metadataBase: new URL('https://wbuf81.github.io'),
+  openGraph: {
+    title: 'Wesley Bard',
+    description: 'Risk & Compliance Leader, Engineer, AI Builder',
+    url: 'https://wbuf81.github.io',
+    siteName: 'Wesley Bard',
+    locale: 'en_US',
+    type: 'website',
+    images: [
+      {
+        url: '/og-image.svg',
+        width: 1200,
+        height: 630,
+        alt: 'Wesley Bard',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Wesley Bard',
+    description: 'Risk & Compliance Leader, Engineer, AI Builder',
+    images: ['/og-image.svg'],
+  },
 };
 
 export const viewport: Viewport = {
