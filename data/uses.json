@@ -19,23 +19,6 @@
       "dateAdded": "2026-01-30T23:39:18.285Z"
     },
     {
-      "id": "sample-001",
-      "name": "Sony WH-1000XM5",
-      "description": "The best noise-canceling headphones I've used. Perfect for deep work and travel.",
-      "imageUrl": "https://m.media-amazon.com/images/I/61+btxzpfDL._AC_SL1500_.jpg",
-      "affiliateUrl": "https://www.amazon.com/dp/B09XS7JWHH",
-      "category": "tech-gear",
-      "tags": [
-        "headphones",
-        "audio",
-        "wireless"
-      ],
-      "rating": 9,
-      "ratingEmoji": "🔥",
-      "featured": true,
-      "dateAdded": "2024-01-15T00:00:00Z"
-    },
-    {
       "id": "sample-002",
       "name": "Herman Miller Aeron Chair",
       "description": "Worth the investment for anyone who spends 8+ hours at a desk.",
@@ -53,5 +36,5 @@
       "dateAdded": "2024-01-10T00:00:00Z"
     }
   ],
-  "lastUpdated": "2026-01-30T23:45:37.397Z"
+  "lastUpdated": "2026-01-31T01:30:50.899Z"
 }
