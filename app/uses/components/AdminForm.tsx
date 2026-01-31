@@ -14,7 +14,7 @@ interface AdminFormProps {
   onCancel: () => void;
 }
 
-const EMOJI_OPTIONS = ['🔥', '⭐', '💪', '🎯', '✨', '💯', '🏆', '👍'];
+const EMOJI_OPTIONS = ['🔥', '⭐', '💪', '🎯', '✨', '💯', '🏆', '👍', '🐕', '🐾', '🦴', '💩', '🐶', '🐩', '💊', '💉'];
 const CATEGORY_OPTIONS = [
   { value: 'health-wellness', label: 'Health & Wellness' },
   { value: 'tech-office', label: 'Tech Gear & Office' },

@@ -17,23 +17,91 @@ const CATEGORY_COLORS: Record<string, { primary: string; secondary: string; glow
   'daisys-stuff': { primary: '#ec4899', secondary: '#f472b6', glow: 'rgba(236, 72, 153, 0.3)' },
 };
 
-function EmojiRating({ rating, emoji }: { rating: number; emoji: string }) {
+function EmojiRating({ rating, emoji, animate = false }: { rating: number; emoji: string; animate?: boolean }) {
   const filled = Math.min(Math.max(rating, 0), 10);
   const empty = 10 - filled;
 
   return (
-    <div className="emoji-rating">
-      <span className="filled">{Array(filled).fill(emoji).join('')}</span>
-      <span className="empty">{Array(empty).fill('⚫').join('')}</span>
+    <div className={`emoji-rating ${animate ? 'animate' : ''}`}>
+      {Array(filled).fill(null).map((_, i) => (
+        <span
+          key={`filled-${i}`}
+          className="emoji filled"
+          style={{ animationDelay: animate ? `${i * 0.08}s` : '0s' }}
+        >
+          {emoji}
+        </span>
+      ))}
+      {Array(empty).fill(null).map((_, i) => (
+        <span
+          key={`empty-${i}`}
+          className="emoji empty"
+          style={{ animationDelay: animate ? `${(filled + i) * 0.08}s` : '0s' }}
+        >
+          ⚫
+        </span>
+      ))}
       <style jsx>{`
         .emoji-rating {
           display: inline-flex;
           align-items: center;
-          font-size: 0.65rem;
-          letter-spacing: 0.5px;
+          font-size: 0.75rem;
+          letter-spacing: 1px;
+          gap: 1px;
         }
-        .filled { opacity: 1; }
-        .empty { opacity: 0.2; }
+        .emoji {
+          display: inline-block;
+          transition: transform 0.2s ease;
+        }
+        .emoji-rating:hover .emoji.filled {
+          animation: bounce 0.4s ease infinite;
+        }
+        .emoji-rating:hover .emoji.filled:nth-child(odd) {
+          animation-delay: 0.05s;
+        }
+        .filled {
+          opacity: 1;
+          filter: drop-shadow(0 0 2px rgba(255, 200, 0, 0.5));
+        }
+        .empty {
+          opacity: 0.15;
+          font-size: 0.6rem;
+        }
+        .emoji-rating.animate .emoji {
+          opacity: 0;
+          transform: scale(0) rotate(-180deg);
+          animation: popIn 0.4s ease forwards;
+        }
+        .emoji-rating.animate .emoji.empty {
+          animation: fadeIn 0.3s ease forwards;
+        }
+        @keyframes popIn {
+          0% {
+            opacity: 0;
+            transform: scale(0) rotate(-180deg);
+          }
+          60% {
+            transform: scale(1.3) rotate(10deg);
+          }
+          100% {
+            opacity: 1;
+            transform: scale(1) rotate(0deg);
+          }
+        }
+        @keyframes fadeIn {
+          0% {
+            opacity: 0;
+            transform: scale(0);
+          }
+          100% {
+            opacity: 0.15;
+            transform: scale(1);
+          }
+        }
+        @keyframes bounce {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-3px); }
+        }
       `}</style>
     </div>
   );
@@ -58,7 +126,7 @@ function FeaturedCard({ item, onTagClick }: { item: UsesItemType; onTagClick: (t
         )}
         <div className="card-overlay" />
         <div className="rating-badge">
-          {item.ratingEmoji} {item.rating}/10
+          <EmojiRating rating={item.rating} emoji={item.ratingEmoji} animate={true} />
         </div>
       </div>
       <div className="card-content">
@@ -133,13 +201,14 @@ function FeaturedCard({ item, onTagClick }: { item: UsesItemType; onTagClick: (t
           position: absolute;
           top: 12px;
           left: 12px;
-          background: rgba(0,0,0,0.75);
+          background: rgba(0,0,0,0.8);
           backdrop-filter: blur(8px);
           color: white;
-          font-size: 0.75rem;
+          font-size: 0.85rem;
           font-weight: 600;
-          padding: 6px 10px;
-          border-radius: 8px;
+          padding: 8px 12px;
+          border-radius: 12px;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
         }
         .card-content {
           padding: 20px;
@@ -233,7 +302,7 @@ function ItemCard({ item, onTagClick }: { item: UsesItemType; onTagClick: (tag: 
       <div className="item-content">
         <div className="item-header">
           <span className="category-badge">{CATEGORY_LABELS[item.category]}</span>
-          <div className="rating-small">{item.ratingEmoji} {item.rating}/10</div>
+          <div className="rating-small"><EmojiRating rating={item.rating} emoji={item.ratingEmoji} animate={true} /></div>
         </div>
         <h3 className="item-name">{item.name}</h3>
         <p className="item-description">{item.description}</p>
@@ -312,8 +381,11 @@ function ItemCard({ item, onTagClick }: { item: UsesItemType; onTagClick: (tag: 
           letter-spacing: 0.05em;
         }
         .rating-small {
-          font-size: 0.7rem;
-          color: #9ca3af;
+          font-size: 0.8rem;
+          background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+          padding: 4px 8px;
+          border-radius: 8px;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
         }
         .item-name {
           font-family: var(--font-outfit), system-ui, sans-serif;
