@@ -62,7 +62,7 @@
       "tags": [],
       "rating": 8,
       "ratingEmoji": "💊",
-      "featured": false,
+      "featured": true,
       "dateAdded": "2026-01-31T01:37:18.951Z"
     },
     {
@@ -97,5 +97,5 @@
       "dateAdded": "2026-01-30T23:39:18.285Z"
     }
   ],
-  "lastUpdated": "2026-01-31T11:49:59.594Z"
+  "lastUpdated": "2026-01-31T11:50:06.878Z"
 }
