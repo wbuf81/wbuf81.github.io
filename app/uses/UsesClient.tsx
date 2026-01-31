@@ -109,13 +109,14 @@ function EmojiRating({ rating, emoji, animate = false }: { rating: number; emoji
 
 function FeaturedCard({ item, onTagClick }: { item: UsesItemType; onTagClick: (tag: string) => void }) {
   const colors = CATEGORY_COLORS[item.category] || CATEGORY_COLORS['health-wellness'];
+  const isTopRated = item.rating >= 9;
 
   return (
     <a
       href={item.affiliateUrl}
       target="_blank"
       rel="noopener noreferrer nofollow"
-      className="featured-card"
+      className={`featured-card ${isTopRated ? 'top-rated' : ''}`}
       style={{ '--glow-color': colors.glow, '--primary': colors.primary } as React.CSSProperties}
     >
       <div className="card-image">
@@ -128,6 +129,9 @@ function FeaturedCard({ item, onTagClick }: { item: UsesItemType; onTagClick: (t
         <div className="rating-badge">
           <EmojiRating rating={item.rating} emoji={item.ratingEmoji} animate={true} />
         </div>
+        {isTopRated && (
+          <div className="top-pick-badge">🏆 TOP PICK</div>
+        )}
       </div>
       <div className="card-content">
         <span className="category-label">{CATEGORY_LABELS[item.category]}</span>
@@ -135,7 +139,7 @@ function FeaturedCard({ item, onTagClick }: { item: UsesItemType; onTagClick: (t
         <p className="card-description">{item.description}</p>
         <div className="card-footer">
           <div className="card-tags">
-            {item.tags.slice(0, 3).map(tag => (
+            {item.tags.slice(0, 2).map(tag => (
               <button
                 key={tag}
                 className="tag"
@@ -145,8 +149,8 @@ function FeaturedCard({ item, onTagClick }: { item: UsesItemType; onTagClick: (t
               </button>
             ))}
           </div>
-          <span className="view-link">
-            View →
+          <span className="shop-btn">
+            Shop Now →
           </span>
         </div>
       </div>
@@ -161,10 +165,22 @@ function FeaturedCard({ item, onTagClick }: { item: UsesItemType; onTagClick: (t
           text-decoration: none;
           box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
           transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+          min-width: 300px;
+          flex-shrink: 0;
         }
         .featured-card:hover {
-          transform: translateY(-6px);
+          transform: translateY(-6px) scale(1.02);
           box-shadow: 0 20px 40px var(--glow-color);
+        }
+        .featured-card.top-rated {
+          border: 2px solid transparent;
+          background: linear-gradient(#fff, #fff) padding-box,
+                      linear-gradient(135deg, #fbbf24 0%, #f59e0b 50%, #fbbf24 100%) border-box;
+          animation: shimmer 3s ease-in-out infinite;
+        }
+        @keyframes shimmer {
+          0%, 100% { border-color: rgba(251, 191, 36, 0.5); }
+          50% { border-color: rgba(251, 191, 36, 1); }
         }
         .card-image {
           position: relative;
@@ -209,6 +225,24 @@ function FeaturedCard({ item, onTagClick }: { item: UsesItemType; onTagClick: (t
           padding: 8px 12px;
           border-radius: 12px;
           box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+        .top-pick-badge {
+          position: absolute;
+          top: 12px;
+          right: 12px;
+          background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+          color: #1f2937;
+          font-size: 0.65rem;
+          font-weight: 700;
+          padding: 6px 10px;
+          border-radius: 8px;
+          box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
+          letter-spacing: 0.05em;
+          animation: pulse 2s ease-in-out infinite;
+        }
+        @keyframes pulse {
+          0%, 100% { transform: scale(1); }
+          50% { transform: scale(1.05); }
         }
         .card-content {
           padding: 20px;
@@ -266,15 +300,20 @@ function FeaturedCard({ item, onTagClick }: { item: UsesItemType; onTagClick: (t
           background: var(--primary);
           color: white;
         }
-        .view-link {
+        .shop-btn {
           font-size: 0.8rem;
-          font-weight: 600;
-          color: var(--primary);
+          font-weight: 700;
+          color: #fff;
+          background: var(--primary);
+          padding: 8px 16px;
+          border-radius: 8px;
           white-space: nowrap;
-          transition: transform 0.2s ease;
+          transition: all 0.3s ease;
+          box-shadow: 0 2px 8px var(--glow-color);
         }
-        .featured-card:hover .view-link {
+        .featured-card:hover .shop-btn {
           transform: translateX(4px);
+          box-shadow: 0 4px 16px var(--glow-color);
         }
       `}</style>
     </a>
@@ -283,13 +322,14 @@ function FeaturedCard({ item, onTagClick }: { item: UsesItemType; onTagClick: (t
 
 function ItemCard({ item, onTagClick }: { item: UsesItemType; onTagClick: (tag: string) => void }) {
   const colors = CATEGORY_COLORS[item.category] || CATEGORY_COLORS['health-wellness'];
+  const isHighRated = item.rating >= 9;
 
   return (
     <a
       href={item.affiliateUrl}
       target="_blank"
       rel="noopener noreferrer nofollow"
-      className="item-card"
+      className={`item-card ${isHighRated ? 'high-rated' : ''}`}
       style={{ '--glow-color': colors.glow, '--primary': colors.primary } as React.CSSProperties}
     >
       <div className="item-image">
@@ -298,6 +338,7 @@ function ItemCard({ item, onTagClick }: { item: UsesItemType; onTagClick: (tag: 
         ) : (
           <div className="placeholder">📦</div>
         )}
+        {isHighRated && <span className="must-have">⭐ MUST HAVE</span>}
       </div>
       <div className="item-content">
         <div className="item-header">
@@ -306,19 +347,21 @@ function ItemCard({ item, onTagClick }: { item: UsesItemType; onTagClick: (tag: 
         </div>
         <h3 className="item-name">{item.name}</h3>
         <p className="item-description">{item.description}</p>
-        <div className="item-tags">
-          {item.tags.map(tag => (
-            <button
-              key={tag}
-              className="tag"
-              onClick={(e) => { e.preventDefault(); e.stopPropagation(); onTagClick(tag); }}
-            >
-              #{tag}
-            </button>
-          ))}
+        <div className="item-footer">
+          <div className="item-tags">
+            {item.tags.slice(0, 3).map(tag => (
+              <button
+                key={tag}
+                className="tag"
+                onClick={(e) => { e.preventDefault(); e.stopPropagation(); onTagClick(tag); }}
+              >
+                #{tag}
+              </button>
+            ))}
+          </div>
+          <span className="item-shop-btn">Shop →</span>
         </div>
       </div>
-      <div className="arrow-indicator">→</div>
       <style jsx>{`
         .item-card {
           display: flex;
@@ -339,6 +382,7 @@ function ItemCard({ item, onTagClick }: { item: UsesItemType; onTagClick: (tag: 
           border-color: var(--primary);
         }
         .item-image {
+          position: relative;
           flex-shrink: 0;
           width: 80px;
           height: 80px;
@@ -406,10 +450,17 @@ function ItemCard({ item, onTagClick }: { item: UsesItemType; onTagClick: (tag: 
           -webkit-box-orient: vertical;
           overflow: hidden;
         }
+        .item-footer {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 12px;
+        }
         .item-tags {
           display: flex;
           flex-wrap: wrap;
           gap: 4px;
+          flex: 1;
         }
         .tag {
           background: #f3f4f6;
@@ -425,16 +476,37 @@ function ItemCard({ item, onTagClick }: { item: UsesItemType; onTagClick: (tag: 
           background: var(--primary);
           color: white;
         }
-        .arrow-indicator {
-          font-size: 1.25rem;
-          color: #d1d5db;
-          font-weight: 300;
-          transition: all 0.3s ease;
-          padding-right: 4px;
-        }
-        .item-card:hover .arrow-indicator {
+        .item-shop-btn {
+          font-size: 0.75rem;
+          font-weight: 600;
           color: var(--primary);
-          transform: translateX(4px);
+          background: transparent;
+          border: 1.5px solid var(--primary);
+          padding: 6px 12px;
+          border-radius: 6px;
+          white-space: nowrap;
+          transition: all 0.3s ease;
+        }
+        .item-card:hover .item-shop-btn {
+          background: var(--primary);
+          color: #fff;
+          transform: translateX(2px);
+        }
+        .item-card.high-rated {
+          background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+          border-color: #fcd34d;
+        }
+        .must-have {
+          position: absolute;
+          top: 4px;
+          left: 4px;
+          font-size: 0.55rem;
+          font-weight: 700;
+          background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+          color: #1f2937;
+          padding: 3px 6px;
+          border-radius: 4px;
+          letter-spacing: 0.03em;
         }
         @media (max-width: 640px) {
           .item-card {
@@ -446,7 +518,7 @@ function ItemCard({ item, onTagClick }: { item: UsesItemType; onTagClick: (tag: 
             width: 100%;
             height: 140px;
           }
-          .arrow-indicator {
+          .item-shop-btn {
             display: none;
           }
         }
@@ -610,12 +682,48 @@ export default function UsesClient({ items, allTags }: UsesClientProps) {
             <div className="section-header">
               <h2 className="section-title">⭐ Top Picks</h2>
               <p className="section-subtitle">My absolute favorites that I use every day</p>
+              {featuredItems.length > 3 && (
+                <span className="scroll-hint">← Scroll for more →</span>
+              )}
             </div>
-            <div className="featured-grid">
-              {featuredItems.map(item => (
-                <FeaturedCard key={item.id} item={item} onTagClick={handleTagToggle} />
-              ))}
+            <div className="carousel-container">
+              {featuredItems.length > 3 && (
+                <button
+                  className="carousel-arrow carousel-arrow-left"
+                  onClick={() => {
+                    const container = document.querySelector('.featured-grid');
+                    container?.scrollBy({ left: -320, behavior: 'smooth' });
+                  }}
+                  aria-label="Scroll left"
+                >
+                  ←
+                </button>
+              )}
+              <div className="featured-grid">
+                {featuredItems.map(item => (
+                  <FeaturedCard key={item.id} item={item} onTagClick={handleTagToggle} />
+                ))}
+              </div>
+              {featuredItems.length > 3 && (
+                <button
+                  className="carousel-arrow carousel-arrow-right"
+                  onClick={() => {
+                    const container = document.querySelector('.featured-grid');
+                    container?.scrollBy({ left: 320, behavior: 'smooth' });
+                  }}
+                  aria-label="Scroll right"
+                >
+                  →
+                </button>
+              )}
             </div>
+            {featuredItems.length > 3 && (
+              <div className="carousel-dots">
+                {featuredItems.map((_, i) => (
+                  <span key={i} className="dot" />
+                ))}
+              </div>
+            )}
           </section>
         )}
 
@@ -942,6 +1050,10 @@ export default function UsesClient({ items, allTags }: UsesClientProps) {
 
         .section-header {
           margin-bottom: 24px;
+          display: flex;
+          flex-wrap: wrap;
+          align-items: baseline;
+          gap: 12px;
         }
 
         .section-title {
@@ -949,13 +1061,25 @@ export default function UsesClient({ items, allTags }: UsesClientProps) {
           font-size: 1.75rem;
           font-weight: 700;
           color: #1f2937;
-          margin: 0 0 8px;
+          margin: 0;
         }
 
         .section-subtitle {
           font-size: 0.95rem;
           color: #9ca3af;
           margin: 0;
+          flex: 1;
+        }
+
+        .scroll-hint {
+          font-size: 0.75rem;
+          color: #9ca3af;
+          animation: scrollHint 2s ease-in-out infinite;
+        }
+
+        @keyframes scrollHint {
+          0%, 100% { opacity: 0.5; }
+          50% { opacity: 1; }
         }
 
         .section-title-small {
@@ -968,10 +1092,92 @@ export default function UsesClient({ items, allTags }: UsesClientProps) {
           border-bottom: 1px solid #f0f0f0;
         }
 
+        .carousel-container {
+          position: relative;
+          margin: 0 -32px;
+          padding: 0 32px;
+        }
+
+        .carousel-arrow {
+          position: absolute;
+          top: 50%;
+          transform: translateY(-50%);
+          z-index: 10;
+          width: 48px;
+          height: 48px;
+          border-radius: 50%;
+          border: none;
+          background: #fff;
+          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+          font-size: 1.25rem;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .carousel-arrow:hover {
+          background: #1f2937;
+          color: #fff;
+          transform: translateY(-50%) scale(1.1);
+        }
+
+        .carousel-arrow-left {
+          left: 12px;
+        }
+
+        .carousel-arrow-right {
+          right: 12px;
+        }
+
         .featured-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+          display: flex;
           gap: 20px;
+          overflow-x: auto;
+          scroll-snap-type: x mandatory;
+          scroll-behavior: smooth;
+          padding: 12px 4px 20px;
+          margin: -12px -4px -20px;
+          -webkit-overflow-scrolling: touch;
+          scrollbar-width: none;
+        }
+
+        .featured-grid::-webkit-scrollbar {
+          display: none;
+        }
+
+        .featured-grid > :global(*) {
+          scroll-snap-align: start;
+        }
+
+        .carousel-dots {
+          display: flex;
+          justify-content: center;
+          gap: 8px;
+          margin-top: 20px;
+        }
+
+        .dot {
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+          background: #d1d5db;
+          transition: all 0.3s ease;
+        }
+
+        .dot:first-child {
+          background: #1f2937;
+        }
+
+        @media (max-width: 768px) {
+          .carousel-container {
+            margin: 0 -20px;
+            padding: 0 20px;
+          }
+          .carousel-arrow {
+            display: none;
+          }
         }
 
         /* Items Section */
