@@ -1,6 +1,19 @@
 {
   "items": [
     {
+      "id": "97e17103-eab0-4505-bce7-f8ca308e7b91",
+      "name": "Evlution Nutrition HYDRAMINO Complete Hydration Multiplier, All 6 Electrolytes, Vitamin C & B, Fluid Boosting Aminos, Coconut Water, Endurance, Recovery, Antioxidants, 30 Serve, Orange Mango",
+      "description": "Drink these every morning when I wake up.  Electrolytes + greens powder.  Tastes like Tang when we were a kid.",
+      "imageUrl": "https://m.media-amazon.com/images/I/61YNSO2xNcL._AC_SL1000_.jpg",
+      "affiliateUrl": "https://www.amazon.com/Evlution-Nutrition-Hydramino-Electrolytes-Antioxidants/dp/B07TYJFRG5?pd_rd_w=Ygy4S&content-id=amzn1.sym.ef8687d6-a5c9-462d-bf15-2b003652688f&pf_rd_p=ef8687d6-a5c9-462d-bf15-2b003652688f&pf_rd_r=DZ7PMWJ84NTRMY7YFP40&pd_rd_wg=8yh0y&pd_rd_r=b6efdc61-8f78-4731-a589-51d4bf3800a5&pd_rd_i=B07TYJFRG5&th=1&linkCode=ll2&tag=wesbard81-20&linkId=32d099ce53179ccf22c18835fe28f997&language=en_US&ref_=as_li_ss_tl",
+      "category": "fitness-supplements",
+      "tags": [],
+      "rating": 10,
+      "ratingEmoji": "💪",
+      "featured": false,
+      "dateAdded": "2026-01-31T01:33:48.915Z"
+    },
+    {
       "id": "d7d5e068-dff6-42d0-9284-3a0fa496827a",
       "name": "SALTT Electrolytes Powder Flavored Drink Mix - Radical Grape - 30 Hydration Packets",
       "description": "LMNT knockoffs that taste better and are cheaper.",
@@ -19,5 +32,5 @@
       "dateAdded": "2026-01-30T23:39:18.285Z"
     }
   ],
-  "lastUpdated": "2026-01-31T01:30:54.073Z"
+  "lastUpdated": "2026-01-31T01:33:48.915Z"
 }
