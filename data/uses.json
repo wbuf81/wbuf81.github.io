@@ -17,24 +17,7 @@
       "ratingEmoji": "💪",
       "featured": false,
       "dateAdded": "2026-01-30T23:39:18.285Z"
-    },
-    {
-      "id": "sample-002",
-      "name": "Herman Miller Aeron Chair",
-      "description": "Worth the investment for anyone who spends 8+ hours at a desk.",
-      "imageUrl": "https://m.media-amazon.com/images/I/41HfCpBbxdL._AC_SL1024_.jpg",
-      "affiliateUrl": "https://www.hermanmiller.com/products/seating/office-chairs/aeron-chairs/",
-      "category": "desk-office",
-      "tags": [
-        "chair",
-        "ergonomic",
-        "office"
-      ],
-      "rating": 10,
-      "ratingEmoji": "⭐",
-      "featured": true,
-      "dateAdded": "2024-01-10T00:00:00Z"
     }
   ],
-  "lastUpdated": "2026-01-31T01:30:50.899Z"
+  "lastUpdated": "2026-01-31T01:30:54.073Z"
 }
