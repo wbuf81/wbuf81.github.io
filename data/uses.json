@@ -1,6 +1,19 @@
 {
   "items": [
     {
+      "id": "f7880c30-5979-4977-802e-07776394672f",
+      "name": "Amazon Brand - Wag Split Elk Antler, Naturally Shed, Long Lasting for Aggressive Chewers, X-Large (Best for Dogs over 45 lbs)",
+      "description": "Only \"bone\" for Daisy.",
+      "imageUrl": "https://m.media-amazon.com/images/I/71Y6q+RJmBL._AC_SL1500_.jpg",
+      "affiliateUrl": "https://amzn.to/45GERTn",
+      "category": "daisys-stuff",
+      "tags": [],
+      "rating": 9,
+      "ratingEmoji": "⭐",
+      "featured": false,
+      "dateAdded": "2026-01-31T11:40:08.667Z"
+    },
+    {
       "id": "7799e0f9-8749-4086-b9d4-106945ebc183",
       "name": "EVL Advanced Daily Multivitamin - Men's Multivitamin with Essential Minerals Phytonutrient Complex and VitaMode Active Mens Vitamins for Energy with Lycopene for Muscle Bone and Immune Support",
       "description": "Cheap multi-vitamin I take every day.  Good catch-all if you're deficient in something.",
@@ -45,5 +58,5 @@
       "dateAdded": "2026-01-30T23:39:18.285Z"
     }
   ],
-  "lastUpdated": "2026-01-31T01:37:26.451Z"
+  "lastUpdated": "2026-01-31T11:40:08.668Z"
 }
