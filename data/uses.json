@@ -1,6 +1,19 @@
 {
   "items": [
     {
+      "id": "7799e0f9-8749-4086-b9d4-106945ebc183",
+      "name": "EVL Advanced Daily Multivitamin - Men's Multivitamin with Essential Minerals Phytonutrient Complex and VitaMode Active Mens Vitamins for Energy with Lycopene for Muscle Bone and Immune Support",
+      "description": "Cheap multi-vitamin I take every day.  Good catch-all if you're deficient in something.",
+      "imageUrl": "https://m.media-amazon.com/images/I/61xRNr+U3yL._AC_SL1000_.jpg",
+      "affiliateUrl": "https://www.amazon.com/Evlution-Nutrition-Multivitamin-VitaMode-Performance/dp/B01DP1BVQM?pd_rd_w=gHG3A&content-id=amzn1.sym.ef8687d6-a5c9-462d-bf15-2b003652688f&pf_rd_p=ef8687d6-a5c9-462d-bf15-2b003652688f&pf_rd_r=8MK671W21HA92JMVSAWP&pd_rd_wg=hL9gd&pd_rd_r=2260abe1-44cb-488b-a846-b272528a5793&pd_rd_i=B01DP1BVQM&th=1&linkCode=ll2&tag=wesbard81-20&linkId=062f3cb91c5306a1dbb83810d60aa463&language=en_US&ref_=as_li_ss_tl",
+      "category": "fitness-supplements",
+      "tags": [],
+      "rating": 8,
+      "ratingEmoji": "💪",
+      "featured": false,
+      "dateAdded": "2026-01-31T01:37:18.951Z"
+    },
+    {
       "id": "97e17103-eab0-4505-bce7-f8ca308e7b91",
       "name": "Evlution Nutrition HYDRAMINO Complete Hydration Multiplier, All 6 Electrolytes, Vitamin C & B, Fluid Boosting Aminos, Coconut Water, Endurance, Recovery, Antioxidants, 30 Serve, Orange Mango",
       "description": "Drink these every morning when I wake up.  Electrolytes + greens powder.  Tastes like Tang when we were a kid.",
@@ -32,5 +45,5 @@
       "dateAdded": "2026-01-30T23:39:18.285Z"
     }
   ],
-  "lastUpdated": "2026-01-31T01:33:48.915Z"
+  "lastUpdated": "2026-01-31T01:37:18.951Z"
 }
