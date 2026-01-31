@@ -16,9 +16,9 @@ interface AdminFormProps {
 
 const EMOJI_OPTIONS = ['🔥', '⭐', '💪', '🎯', '✨', '💯', '🏆', '👍'];
 const CATEGORY_OPTIONS = [
-  { value: 'tech-gear', label: 'Tech & Gear' },
-  { value: 'desk-office', label: 'Desk & Office' },
-  { value: 'fitness-supplements', label: 'Fitness & Supplements' },
+  { value: 'health-wellness', label: 'Health & Wellness' },
+  { value: 'tech-office', label: 'Tech Gear & Office' },
+  { value: 'daisys-stuff', label: "Daisy's Stuff" },
 ] as const;
 
 export default function AdminForm({
@@ -33,8 +33,8 @@ export default function AdminForm({
   const [name, setName] = useState(editItem?.name || '');
   const [description, setDescription] = useState(editItem?.description || '');
   const [imageUrl, setImageUrl] = useState(editItem?.imageUrl || '');
-  const [category, setCategory] = useState<'tech-gear' | 'desk-office' | 'fitness-supplements'>(
-    editItem?.category || 'tech-gear'
+  const [category, setCategory] = useState<'health-wellness' | 'tech-office' | 'daisys-stuff'>(
+    editItem?.category || 'health-wellness'
   );
   const [tags, setTags] = useState(editItem?.tags.join(', ') || '');
   const [rating, setRating] = useState(editItem?.rating || 8);
@@ -231,7 +231,7 @@ export default function AdminForm({
           id="category"
           value={category}
           onChange={(e) =>
-            setCategory(e.target.value as 'tech-gear' | 'desk-office' | 'fitness-supplements')
+            setCategory(e.target.value as 'health-wellness' | 'tech-office' | 'daisys-stuff')
           }
         >
           {CATEGORY_OPTIONS.map((opt) => (

@@ -7,7 +7,7 @@ interface CategoryTabsProps {
   onCategoryChange: (category: Category) => void;
 }
 
-const CATEGORIES: Category[] = ['all', 'tech-gear', 'desk-office', 'fitness-supplements'];
+const CATEGORIES: Category[] = ['all', 'health-wellness', 'tech-office', 'daisys-stuff'];
 
 export default function CategoryTabs({ activeCategory, onCategoryChange }: CategoryTabsProps) {
   return (

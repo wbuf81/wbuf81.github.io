@@ -74,7 +74,7 @@ describe('UsesItem data structure', () => {
     description: 'Great noise-canceling headphones',
     imageUrl: 'https://example.com/image.jpg',
     affiliateUrl: 'https://amazon.com/product',
-    category: 'tech-gear',
+    category: 'tech-office',
     tags: ['audio', 'headphones', 'wireless'],
     rating: 9,
     ratingEmoji: '🔥',
@@ -97,7 +97,7 @@ describe('UsesItem data structure', () => {
   });
 
   it('should have valid category', () => {
-    const validCategories = ['tech-gear', 'desk-office', 'fitness-supplements'];
+    const validCategories = ['health-wellness', 'tech-office', 'daisys-stuff'];
     expect(validCategories).toContain(sampleItem.category);
   });
 
@@ -114,15 +114,15 @@ describe('UsesItem data structure', () => {
 
 describe('Category colors', () => {
   const CATEGORY_COLORS: Record<string, { primary: string; secondary: string; glow: string }> = {
-    'tech-gear': { primary: '#8b5cf6', secondary: '#a78bfa', glow: 'rgba(139, 92, 246, 0.4)' },
-    'desk-office': { primary: '#10b981', secondary: '#34d399', glow: 'rgba(16, 185, 129, 0.4)' },
-    'fitness-supplements': { primary: '#f59e0b', secondary: '#fbbf24', glow: 'rgba(245, 158, 11, 0.4)' },
+    'health-wellness': { primary: '#10b981', secondary: '#34d399', glow: 'rgba(16, 185, 129, 0.4)' },
+    'tech-office': { primary: '#8b5cf6', secondary: '#a78bfa', glow: 'rgba(139, 92, 246, 0.4)' },
+    'daisys-stuff': { primary: '#ec4899', secondary: '#f472b6', glow: 'rgba(236, 72, 153, 0.4)' },
   };
 
   it('should have colors for all categories', () => {
-    expect(CATEGORY_COLORS['tech-gear']).toBeDefined();
-    expect(CATEGORY_COLORS['desk-office']).toBeDefined();
-    expect(CATEGORY_COLORS['fitness-supplements']).toBeDefined();
+    expect(CATEGORY_COLORS['health-wellness']).toBeDefined();
+    expect(CATEGORY_COLORS['tech-office']).toBeDefined();
+    expect(CATEGORY_COLORS['daisys-stuff']).toBeDefined();
   });
 
   it('should have valid hex colors for primary', () => {

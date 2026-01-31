@@ -46,7 +46,7 @@ describe('Data file validation', () => {
         expect(typeof item.affiliateUrl).toBe('string');
 
         expect(item.category).toBeDefined();
-        expect(['tech-gear', 'desk-office', 'fitness-supplements']).toContain(item.category);
+        expect(['health-wellness', 'tech-office', 'daisys-stuff']).toContain(item.category);
 
         expect(Array.isArray(item.tags)).toBe(true);
 

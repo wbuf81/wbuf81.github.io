@@ -4,7 +4,7 @@ export interface UsesItem {
   description: string;
   imageUrl: string;
   affiliateUrl: string;
-  category: 'tech-gear' | 'desk-office' | 'fitness-supplements';
+  category: 'health-wellness' | 'tech-office' | 'daisys-stuff';
   tags: string[];
   rating: number; // 1-10
   ratingEmoji: string;
@@ -17,11 +17,11 @@ export interface UsesData {
   lastUpdated: string;
 }
 
-export type Category = 'all' | 'tech-gear' | 'desk-office' | 'fitness-supplements';
+export type Category = 'all' | 'health-wellness' | 'tech-office' | 'daisys-stuff';
 
 export const CATEGORY_LABELS: Record<Category, string> = {
   'all': 'All',
-  'tech-gear': 'Tech & Gear',
-  'desk-office': 'Desk & Office',
-  'fitness-supplements': 'Fitness',
+  'health-wellness': 'Health & Wellness',
+  'tech-office': 'Tech Gear & Office',
+  'daisys-stuff': "Daisy's Stuff",
 };

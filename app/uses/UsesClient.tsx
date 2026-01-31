@@ -12,9 +12,9 @@ interface UsesClientProps {
 type SortOption = 'rating' | 'newest' | 'name';
 
 const CATEGORY_COLORS: Record<string, { primary: string; secondary: string; glow: string }> = {
-  'tech-gear': { primary: '#8b5cf6', secondary: '#a78bfa', glow: 'rgba(139, 92, 246, 0.3)' },
-  'desk-office': { primary: '#10b981', secondary: '#34d399', glow: 'rgba(16, 185, 129, 0.3)' },
-  'fitness-supplements': { primary: '#f59e0b', secondary: '#fbbf24', glow: 'rgba(245, 158, 11, 0.3)' },
+  'health-wellness': { primary: '#10b981', secondary: '#34d399', glow: 'rgba(16, 185, 129, 0.3)' },
+  'tech-office': { primary: '#8b5cf6', secondary: '#a78bfa', glow: 'rgba(139, 92, 246, 0.3)' },
+  'daisys-stuff': { primary: '#ec4899', secondary: '#f472b6', glow: 'rgba(236, 72, 153, 0.3)' },
 };
 
 function EmojiRating({ rating, emoji }: { rating: number; emoji: string }) {
@@ -40,7 +40,7 @@ function EmojiRating({ rating, emoji }: { rating: number; emoji: string }) {
 }
 
 function FeaturedCard({ item, onTagClick }: { item: UsesItemType; onTagClick: (tag: string) => void }) {
-  const colors = CATEGORY_COLORS[item.category] || CATEGORY_COLORS['tech-gear'];
+  const colors = CATEGORY_COLORS[item.category] || CATEGORY_COLORS['health-wellness'];
 
   return (
     <a
@@ -213,7 +213,7 @@ function FeaturedCard({ item, onTagClick }: { item: UsesItemType; onTagClick: (t
 }
 
 function ItemCard({ item, onTagClick }: { item: UsesItemType; onTagClick: (tag: string) => void }) {
-  const colors = CATEGORY_COLORS[item.category] || CATEGORY_COLORS['tech-gear'];
+  const colors = CATEGORY_COLORS[item.category] || CATEGORY_COLORS['health-wellness'];
 
   return (
     <a
@@ -460,7 +460,7 @@ export default function UsesClient({ items, allTags }: UsesClientProps) {
       <div className="filter-bar">
         <div className="filter-bar-inner">
           <div className="category-tabs">
-            {(['all', 'tech-gear', 'desk-office', 'fitness-supplements'] as Category[]).map(cat => (
+            {(['all', 'health-wellness', 'tech-office', 'daisys-stuff'] as Category[]).map(cat => (
               <button
                 key={cat}
                 className={`tab ${activeCategory === cat ? 'active' : ''}`}
@@ -468,9 +468,9 @@ export default function UsesClient({ items, allTags }: UsesClientProps) {
                 style={cat !== 'all' && CATEGORY_COLORS[cat] ? { '--cat-color': CATEGORY_COLORS[cat].primary } as React.CSSProperties : {}}
               >
                 {cat === 'all' && '✨ '}
-                {cat === 'tech-gear' && '💻 '}
-                {cat === 'desk-office' && '🪴 '}
-                {cat === 'fitness-supplements' && '💪 '}
+                {cat === 'health-wellness' && '💪 '}
+                {cat === 'tech-office' && '💻 '}
+                {cat === 'daisys-stuff' && '🐕 '}
                 {CATEGORY_LABELS[cat]}
               </button>
             ))}
