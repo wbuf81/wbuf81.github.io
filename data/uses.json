@@ -1,6 +1,19 @@
 {
   "items": [
     {
+      "id": "ff3cd6e1-4b33-412e-a526-905823fc8661",
+      "name": "ACANA Singles Grain Free Dog Treats Limited Ingredients & Freeze-Dried Lamb & Apple Recipe 3.25oz Bag",
+      "description": "Crush up two of these on Daisy's dry food every day, she thinks it's her \"Sprinkles\"",
+      "imageUrl": "https://m.media-amazon.com/images/I/71EDDFezTGL._AC_SL1500_.jpg",
+      "affiliateUrl": "https://amzn.to/3NQS6dZ",
+      "category": "health-wellness",
+      "tags": [],
+      "rating": 10,
+      "ratingEmoji": "🔥",
+      "featured": false,
+      "dateAdded": "2026-01-31T11:41:28.158Z"
+    },
+    {
       "id": "f7880c30-5979-4977-802e-07776394672f",
       "name": "Amazon Brand - Wag Split Elk Antler, Naturally Shed, Long Lasting for Aggressive Chewers, X-Large (Best for Dogs over 45 lbs)",
       "description": "Only \"bone\" for Daisy.",
@@ -58,5 +71,5 @@
       "dateAdded": "2026-01-30T23:39:18.285Z"
     }
   ],
-  "lastUpdated": "2026-01-31T11:40:08.668Z"
+  "lastUpdated": "2026-01-31T11:41:28.158Z"
 }
