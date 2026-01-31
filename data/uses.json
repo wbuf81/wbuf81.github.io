@@ -1,6 +1,19 @@
 {
   "items": [
     {
+      "id": "01c654de-70a0-4f0d-9833-114d759117fa",
+      "name": "Logitech MX Master 3S for Mac - Wireless Bluetooth Mouse",
+      "description": "Daily driver for office work on a Mac.",
+      "imageUrl": "https://m.media-amazon.com/images/I/61IYUIdRgaL._AC_SL1500_.jpg",
+      "affiliateUrl": "https://amzn.to/4kkmSYP",
+      "category": "tech-office",
+      "tags": [],
+      "rating": 9,
+      "ratingEmoji": "👍",
+      "featured": false,
+      "dateAdded": "2026-01-31T11:48:52.152Z"
+    },
+    {
       "id": "5325b436-4669-4a6a-a084-2f6d10bc966d",
       "name": "Perfect Poop Digestion & General Health Supplement for Dogs: Fiber, Prebiotics, Probiotics & Enzymes Relieve Digestive Conditions, Optimize Stool, and Improve Health (Chicken, 30.0 oz)",
       "description": "Heaping tablespoon of this on Daisy's (she's 105lbs) food each meal keeps everything \"Perfect\".  10/10 no more notes.",
@@ -84,5 +97,5 @@
       "dateAdded": "2026-01-30T23:39:18.285Z"
     }
   ],
-  "lastUpdated": "2026-01-31T11:43:33.705Z"
+  "lastUpdated": "2026-01-31T11:48:52.152Z"
 }
