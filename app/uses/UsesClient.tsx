@@ -128,27 +128,14 @@ function FeaturedCard({ item, onTagClick }: { item: UsesItemType; onTagClick: (t
         <div className="card-overlay" />
       </div>
       <div className="card-content">
-        <div className="card-meta">
+        <div className="card-header">
           <span className="category-label">{CATEGORY_LABELS[item.category]}</span>
-          <div className="rating-row">
-            <EmojiRating rating={item.rating} emoji={item.ratingEmoji} animate={true} />
-            {isTopRated && <span className="top-pick-badge">🏆 TOP PICK</span>}
-          </div>
+          {isTopRated && <span className="top-pick-badge">🏆 TOP PICK</span>}
         </div>
         <h3 className="card-name">{item.name}</h3>
         <p className="card-description">{item.description}</p>
         <div className="card-footer">
-          <div className="card-tags">
-            {item.tags.slice(0, 2).map(tag => (
-              <button
-                key={tag}
-                className="tag"
-                onClick={(e) => { e.preventDefault(); e.stopPropagation(); onTagClick(tag); }}
-              >
-                #{tag}
-              </button>
-            ))}
-          </div>
+          <EmojiRating rating={item.rating} emoji={item.ratingEmoji} animate={true} />
           <span className="shop-btn">
             Shop Now →
           </span>
@@ -201,21 +188,18 @@ function FeaturedCard({ item, onTagClick }: { item: UsesItemType; onTagClick: (t
           font-size: 3rem;
           background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
         }
-        .card-meta {
-          margin-bottom: 8px;
-        }
-        .rating-row {
+        .card-header {
           display: flex;
+          justify-content: space-between;
           align-items: center;
-          gap: 8px;
-          margin-top: 6px;
+          margin-bottom: 8px;
         }
         .top-pick-badge {
           background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
           color: #1f2937;
           font-size: 0.6rem;
           font-weight: 700;
-          padding: 4px 8px;
+          padding: 4px 10px;
           border-radius: 6px;
           letter-spacing: 0.03em;
           white-space: nowrap;
@@ -232,15 +216,18 @@ function FeaturedCard({ item, onTagClick }: { item: UsesItemType; onTagClick: (t
           color: var(--primary);
           text-transform: uppercase;
           letter-spacing: 0.08em;
-          margin-bottom: 6px;
         }
         .card-name {
           font-family: var(--font-outfit), system-ui, sans-serif;
-          font-size: 1.1rem;
+          font-size: 1rem;
           font-weight: 700;
           color: #1f2937;
           margin: 0 0 8px;
-          line-height: 1.3;
+          line-height: 1.35;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
         }
         .card-description {
           font-family: system-ui, -apple-system, sans-serif;
@@ -249,18 +236,17 @@ function FeaturedCard({ item, onTagClick }: { item: UsesItemType; onTagClick: (t
           line-height: 1.5;
           margin: 0 0 16px;
           flex: 1;
+          display: -webkit-box;
+          -webkit-line-clamp: 3;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
         }
         .card-footer {
           display: flex;
           justify-content: space-between;
           align-items: center;
           gap: 12px;
-        }
-        .card-tags {
-          display: flex;
-          gap: 6px;
-          flex-wrap: wrap;
-          flex: 1;
+          margin-top: auto;
         }
         .tag {
           background: #f3f4f6;
@@ -318,24 +304,12 @@ function ItemCard({ item, onTagClick }: { item: UsesItemType; onTagClick: (tag: 
       <div className="item-content">
         <div className="item-header">
           <span className="category-badge">{CATEGORY_LABELS[item.category]}</span>
-          <div className="rating-row">
-            <div className="rating-small"><EmojiRating rating={item.rating} emoji={item.ratingEmoji} animate={true} /></div>
-            {isHighRated && <span className="must-have">⭐ MUST HAVE</span>}
-          </div>
         </div>
         <h3 className="item-name">{item.name}</h3>
         <p className="item-description">{item.description}</p>
         <div className="item-footer">
-          <div className="item-tags">
-            {item.tags.slice(0, 3).map(tag => (
-              <button
-                key={tag}
-                className="tag"
-                onClick={(e) => { e.preventDefault(); e.stopPropagation(); onTagClick(tag); }}
-              >
-                #{tag}
-              </button>
-            ))}
+          <div className="rating-small">
+            <EmojiRating rating={item.rating} emoji={item.ratingEmoji} animate={true} />
           </div>
           <span className="item-shop-btn">Shop →</span>
         </div>
@@ -390,11 +364,6 @@ function ItemCard({ item, onTagClick }: { item: UsesItemType; onTagClick: (tag: 
           min-width: 0;
         }
         .item-header {
-          display: flex;
-          flex-wrap: wrap;
-          align-items: center;
-          justify-content: space-between;
-          gap: 8px;
           margin-bottom: 4px;
         }
         .category-badge {
@@ -404,31 +373,24 @@ function ItemCard({ item, onTagClick }: { item: UsesItemType; onTagClick: (tag: 
           text-transform: uppercase;
           letter-spacing: 0.05em;
         }
-        .rating-row {
-          display: flex;
-          align-items: center;
-          gap: 6px;
-        }
-        .rating-small {
-          font-size: 0.75rem;
-          background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
-          padding: 3px 6px;
-          border-radius: 6px;
-        }
         .item-name {
           font-family: var(--font-outfit), system-ui, sans-serif;
-          font-size: 1rem;
+          font-size: 0.95rem;
           font-weight: 600;
           color: #1f2937;
           margin: 0 0 4px;
           line-height: 1.3;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
         }
         .item-description {
           font-family: system-ui, -apple-system, sans-serif;
           font-size: 0.85rem;
           color: #6b7280;
           line-height: 1.4;
-          margin: 0 0 8px;
+          margin: 0 0 10px;
           display: -webkit-box;
           -webkit-line-clamp: 2;
           -webkit-box-orient: vertical;
@@ -440,25 +402,11 @@ function ItemCard({ item, onTagClick }: { item: UsesItemType; onTagClick: (tag: 
           justify-content: space-between;
           gap: 12px;
         }
-        .item-tags {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 4px;
-          flex: 1;
-        }
-        .tag {
-          background: #f3f4f6;
-          border: none;
-          border-radius: 4px;
-          padding: 2px 6px;
-          font-size: 0.65rem;
-          color: #9ca3af;
-          cursor: pointer;
-          transition: all 0.2s ease;
-        }
-        .tag:hover {
-          background: var(--primary);
-          color: white;
+        .rating-small {
+          font-size: 0.7rem;
+          background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+          padding: 4px 8px;
+          border-radius: 6px;
         }
         .item-shop-btn {
           font-size: 0.75rem;
@@ -466,7 +414,7 @@ function ItemCard({ item, onTagClick }: { item: UsesItemType; onTagClick: (tag: 
           color: var(--primary);
           background: transparent;
           border: 1.5px solid var(--primary);
-          padding: 6px 12px;
+          padding: 6px 14px;
           border-radius: 6px;
           white-space: nowrap;
           transition: all 0.3s ease;
@@ -474,15 +422,12 @@ function ItemCard({ item, onTagClick }: { item: UsesItemType; onTagClick: (tag: 
         .item-card:hover .item-shop-btn {
           background: var(--primary);
           color: #fff;
-          transform: translateX(2px);
         }
         .item-card.high-rated {
-          background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
-          border-color: #fcd34d;
+          border-left: 3px solid #f59e0b;
         }
-        .must-have {
-          font-size: 0.55rem;
-          font-weight: 700;
+        .unused-style {
+          display: none;
           background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
           color: #1f2937;
           padding: 3px 6px;
