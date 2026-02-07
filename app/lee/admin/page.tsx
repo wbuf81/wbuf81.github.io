@@ -1,0 +1,634 @@
+'use client';
+
+import { useState, useEffect, useCallback } from 'react';
+import Link from 'next/link';
+import { LeeItem, LeeData, LEE_CATEGORY_LABELS } from '@/types/lee';
+import { getFileContent, commitFile } from '@/lib/github';
+import PasswordPrompt from '../components/PasswordPrompt';
+import AdminForm from '../components/AdminForm';
+import EmojiRating from '../components/EmojiRating';
+
+// Default repo info
+const DEFAULT_OWNER = 'wbuf81';
+const DEFAULT_REPO = 'wbuf81.github.io';
+
+export default function LeeAdminPage() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isChecking, setIsChecking] = useState(true);
+  const [items, setItems] = useState<LeeItem[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [editingItem, setEditingItem] = useState<LeeItem | null>(null);
+  const [showForm, setShowForm] = useState(false);
+  const [error, setError] = useState('');
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState('');
+
+  const owner = process.env.NEXT_PUBLIC_GITHUB_OWNER || DEFAULT_OWNER;
+  const repo = process.env.NEXT_PUBLIC_GITHUB_REPO || DEFAULT_REPO;
+  const token = process.env.NEXT_PUBLIC_LEE_GITHUB_TOKEN || '';
+
+  const loadItems = useCallback(async () => {
+    if (!token) {
+      setError('GitHub token not configured. Please set NEXT_PUBLIC_LEE_GITHUB_TOKEN.');
+      return;
+    }
+
+    setIsLoading(true);
+    setError('');
+
+    try {
+      const result = await getFileContent(token, owner, repo, 'data/lee.json');
+      if (result) {
+        const data: LeeData = JSON.parse(result.content);
+        setItems(data.items || []);
+      } else {
+        setItems([]);
+      }
+    } catch (err) {
+      setError('Failed to load items. Please check the configuration.');
+      console.error(err);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [owner, repo, token]);
+
+  // Check for existing auth on mount
+  useEffect(() => {
+    const stored = localStorage.getItem('lee_authenticated');
+    if (stored === 'true') {
+      setIsAuthenticated(true);
+      loadItems();
+    }
+    setIsChecking(false);
+  }, [loadItems]);
+
+  const handleAuthenticated = () => {
+    setIsAuthenticated(true);
+    loadItems();
+  };
+
+  const handleLock = () => {
+    localStorage.removeItem('lee_authenticated');
+    setIsAuthenticated(false);
+    setItems([]);
+  };
+
+  const handleAddNew = () => {
+    setEditingItem(null);
+    setShowForm(true);
+  };
+
+  const handleEdit = (item: LeeItem) => {
+    setEditingItem(item);
+    setShowForm(true);
+  };
+
+  const handleDelete = async (item: LeeItem) => {
+    if (!token) return;
+    if (!confirm(`Are you sure you want to delete "${item.name}"?`)) return;
+
+    setDeletingId(item.id);
+    setError('');
+
+    try {
+      const result = await getFileContent(token, owner, repo, 'data/lee.json');
+      if (!result) {
+        throw new Error('Could not load data file');
+      }
+
+      const data: LeeData = JSON.parse(result.content);
+      data.items = data.items.filter(i => i.id !== item.id);
+      data.lastUpdated = new Date().toISOString();
+
+      await commitFile(
+        token,
+        owner,
+        repo,
+        'data/lee.json',
+        JSON.stringify(data, null, 2),
+        `Delete lee item: ${item.name}`,
+        result.sha
+      );
+
+      setSuccessMessage(`"${item.name}" deleted. Site will update after rebuild.`);
+      setTimeout(() => setSuccessMessage(''), 5000);
+      loadItems();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to delete item');
+    } finally {
+      setDeletingId(null);
+    }
+  };
+
+  const handleFormSaved = () => {
+    setShowForm(false);
+    setEditingItem(null);
+    setSuccessMessage('Item saved! Site will update after rebuild.');
+    setTimeout(() => setSuccessMessage(''), 5000);
+    loadItems();
+  };
+
+  const handleFormCancel = () => {
+    setShowForm(false);
+    setEditingItem(null);
+  };
+
+  if (isChecking) {
+    return (
+      <div className="admin-loading">
+        <div className="loading-text">Checking authentication...</div>
+        <style jsx>{`
+          .admin-loading {
+            min-height: 100vh;
+            background: #fafafa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
+          .loading-text {
+            font-family: system-ui, -apple-system, sans-serif;
+            color: #6b7280;
+          }
+        `}</style>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return <PasswordPrompt onAuthenticated={handleAuthenticated} />;
+  }
+
+  return (
+    <div className="admin-container">
+      <div className="grain-overlay" />
+
+      <nav className="admin-nav">
+        <Link href="/lee" className="back-link">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+            <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" />
+          </svg>
+          Back to Lee&apos;s Picks
+        </Link>
+        <button className="logout-btn" onClick={handleLock}>
+          🔒 Lock
+        </button>
+      </nav>
+
+      <main className="admin-main">
+        <header className="admin-header">
+          <div className="header-text">
+            <h1 className="admin-title">Lee&apos;s Picks Admin</h1>
+            <p className="admin-subtitle">
+              Manage Lee&apos;s recommended products.
+            </p>
+          </div>
+          {!showForm && (
+            <button className="add-btn" onClick={handleAddNew}>
+              <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+              </svg>
+              Add Item
+            </button>
+          )}
+        </header>
+
+        {error && <div className="error-message">{error}</div>}
+        {successMessage && <div className="success-message">{successMessage}</div>}
+
+        <div className="info-banner">
+          <strong>Note:</strong> Changes are committed to GitHub. The public page updates after the site rebuilds (usually 1-2 minutes).
+        </div>
+
+        {showForm ? (
+          <AdminForm
+            token={token}
+            owner={owner}
+            repo={repo}
+            editItem={editingItem}
+            onSaved={handleFormSaved}
+            onCancel={handleFormCancel}
+          />
+        ) : (
+          <div className="items-section">
+            {isLoading ? (
+              <div className="loading-state">Loading items...</div>
+            ) : items.length === 0 ? (
+              <div className="empty-state">
+                <p>No items yet. Add your first recommendation!</p>
+              </div>
+            ) : (
+              <div className="items-list">
+                {items.map((item) => (
+                  <div key={item.id} className="item-card">
+                    <div className="item-image">
+                      {item.imageUrl ? (
+                        <img src={item.imageUrl} alt={item.name} />
+                      ) : (
+                        <div className="placeholder-image">📦</div>
+                      )}
+                    </div>
+                    <div className="item-content">
+                      <h3 className="item-name">{item.name}</h3>
+                      <p className="item-description">{item.description}</p>
+                      <div className="item-meta">
+                        <span className="item-category">
+                          {LEE_CATEGORY_LABELS[item.category]}
+                        </span>
+                        <EmojiRating rating={item.rating} emoji={item.ratingEmoji} />
+                        {item.featured && <span className="featured-badge">Featured</span>}
+                      </div>
+                    </div>
+                    <div className="item-actions">
+                      <button
+                        className="edit-btn"
+                        onClick={() => handleEdit(item)}
+                      >
+                        Edit
+                      </button>
+                      <button
+                        className="delete-btn"
+                        onClick={() => handleDelete(item)}
+                        disabled={deletingId === item.id}
+                      >
+                        {deletingId === item.id ? 'Deleting...' : 'Delete'}
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+      </main>
+
+      <style jsx>{`
+        .admin-container {
+          min-height: 100vh;
+          background: #fafafa;
+          position: relative;
+        }
+
+        .grain-overlay {
+          position: fixed;
+          top: -50%;
+          left: -50%;
+          width: 200%;
+          height: 200%;
+          pointer-events: none;
+          z-index: 0;
+          background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+          opacity: 0.18;
+        }
+
+        .admin-nav {
+          position: relative;
+          z-index: 1;
+          padding: 24px 40px;
+          max-width: 900px;
+          margin: 0 auto;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          flex-wrap: wrap;
+          gap: 12px;
+        }
+
+        .back-link {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          color: #1f2937;
+          text-decoration: none;
+          font-family: var(--font-outfit), system-ui, sans-serif;
+          font-size: 0.9rem;
+          font-weight: 500;
+          padding: 8px 16px;
+          border-radius: 8px;
+          transition: background 0.2s ease, transform 0.2s ease;
+        }
+
+        .back-link:hover {
+          background: rgba(0, 0, 0, 0.05);
+          transform: translateX(-4px);
+        }
+
+        .logout-btn {
+          padding: 8px 16px;
+          border: 1px solid #e5e7eb;
+          border-radius: 8px;
+          background: #fff;
+          font-family: system-ui, -apple-system, sans-serif;
+          font-size: 0.85rem;
+          color: #6b7280;
+          cursor: pointer;
+          transition: background 0.2s ease, border-color 0.2s ease;
+        }
+
+        .logout-btn:hover {
+          background: #f9fafb;
+          border-color: #d1d5db;
+        }
+
+        .admin-main {
+          position: relative;
+          z-index: 1;
+          max-width: 900px;
+          margin: 0 auto;
+          padding: 0 40px 80px;
+        }
+
+        .admin-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-start;
+          margin-bottom: 24px;
+          gap: 20px;
+          flex-wrap: wrap;
+        }
+
+        .header-text {
+          flex: 1;
+          min-width: 200px;
+        }
+
+        .admin-title {
+          font-family: var(--font-outfit), system-ui, sans-serif;
+          font-size: 2rem;
+          font-weight: 700;
+          color: #1f2937;
+          margin: 0 0 8px;
+        }
+
+        .admin-subtitle {
+          font-family: system-ui, -apple-system, sans-serif;
+          font-size: 1rem;
+          color: #6b7280;
+          margin: 0;
+        }
+
+        .add-btn {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          padding: 12px 20px;
+          border: none;
+          border-radius: 10px;
+          background: #1f2937;
+          font-family: var(--font-outfit), system-ui, sans-serif;
+          font-size: 0.95rem;
+          font-weight: 500;
+          color: #fff;
+          cursor: pointer;
+          transition: background 0.2s ease;
+          white-space: nowrap;
+        }
+
+        .add-btn:hover {
+          background: #374151;
+        }
+
+        .info-banner {
+          background: #eff6ff;
+          border: 1px solid #bfdbfe;
+          color: #1e40af;
+          padding: 12px 16px;
+          border-radius: 10px;
+          font-family: system-ui, -apple-system, sans-serif;
+          font-size: 0.9rem;
+          margin-bottom: 24px;
+          line-height: 1.5;
+        }
+
+        .error-message {
+          background: #fef2f2;
+          border: 1px solid #fecaca;
+          color: #dc2626;
+          padding: 12px 16px;
+          border-radius: 10px;
+          font-family: system-ui, -apple-system, sans-serif;
+          font-size: 0.9rem;
+          margin-bottom: 16px;
+        }
+
+        .success-message {
+          background: #f0fdf4;
+          border: 1px solid #bbf7d0;
+          color: #166534;
+          padding: 12px 16px;
+          border-radius: 10px;
+          font-family: system-ui, -apple-system, sans-serif;
+          font-size: 0.9rem;
+          margin-bottom: 16px;
+        }
+
+        .loading-state,
+        .empty-state {
+          text-align: center;
+          padding: 60px 20px;
+          color: #6b7280;
+          font-family: system-ui, -apple-system, sans-serif;
+          font-size: 1rem;
+        }
+
+        .items-list {
+          display: flex;
+          flex-direction: column;
+          gap: 16px;
+        }
+
+        .item-card {
+          display: flex;
+          gap: 16px;
+          background: #fff;
+          border-radius: 16px;
+          padding: 20px;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04), 0 0 0 1px rgba(0, 0, 0, 0.04);
+          align-items: center;
+          flex-wrap: wrap;
+        }
+
+        .item-image {
+          flex-shrink: 0;
+          width: 70px;
+          height: 70px;
+          border-radius: 10px;
+          overflow: hidden;
+          background: #f5f5f5;
+        }
+
+        .item-image img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+
+        .placeholder-image {
+          width: 100%;
+          height: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 1.5rem;
+        }
+
+        .item-content {
+          flex: 1;
+          min-width: 200px;
+        }
+
+        .item-name {
+          font-family: var(--font-outfit), system-ui, sans-serif;
+          font-size: 1rem;
+          font-weight: 600;
+          color: #1f2937;
+          margin: 0 0 4px;
+        }
+
+        .item-description {
+          font-family: system-ui, -apple-system, sans-serif;
+          font-size: 0.85rem;
+          color: #6b7280;
+          margin: 0 0 8px;
+          line-height: 1.4;
+        }
+
+        .item-meta {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          flex-wrap: wrap;
+        }
+
+        .item-category {
+          font-family: system-ui, -apple-system, sans-serif;
+          font-size: 0.75rem;
+          color: #6b7280;
+          background: #f3f4f6;
+          padding: 4px 10px;
+          border-radius: 10px;
+        }
+
+        .featured-badge {
+          font-family: system-ui, -apple-system, sans-serif;
+          font-size: 0.75rem;
+          color: #059669;
+          background: #d1fae5;
+          padding: 4px 10px;
+          border-radius: 10px;
+        }
+
+        .item-actions {
+          display: flex;
+          gap: 8px;
+          flex-shrink: 0;
+        }
+
+        .edit-btn,
+        .delete-btn {
+          padding: 8px 16px;
+          border: 1px solid #e5e7eb;
+          border-radius: 8px;
+          background: #fff;
+          font-family: system-ui, -apple-system, sans-serif;
+          font-size: 0.85rem;
+          cursor: pointer;
+          transition: background 0.2s ease, border-color 0.2s ease;
+        }
+
+        .edit-btn {
+          color: #374151;
+        }
+
+        .edit-btn:hover {
+          background: #f9fafb;
+          border-color: #d1d5db;
+        }
+
+        .delete-btn {
+          color: #dc2626;
+          border-color: #fecaca;
+        }
+
+        .delete-btn:hover:not(:disabled) {
+          background: #fef2f2;
+          border-color: #f87171;
+        }
+
+        .delete-btn:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+
+        @media (max-width: 768px) {
+          .admin-nav {
+            padding: 20px 20px;
+          }
+
+          .admin-main {
+            padding: 0 20px 60px;
+          }
+
+          .admin-header {
+            flex-direction: column;
+            align-items: stretch;
+          }
+
+          .add-btn {
+            justify-content: center;
+          }
+
+          .admin-title {
+            font-size: 1.75rem;
+          }
+
+          .item-card {
+            flex-direction: column;
+            align-items: stretch;
+          }
+
+          .item-image {
+            width: 100%;
+            height: 140px;
+          }
+
+          .item-content {
+            min-width: 0;
+          }
+
+          .item-description {
+            white-space: normal;
+          }
+
+          .item-actions {
+            width: 100%;
+          }
+
+          .edit-btn,
+          .delete-btn {
+            flex: 1;
+            text-align: center;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .admin-nav {
+            padding: 16px;
+          }
+
+          .admin-main {
+            padding: 0 16px 40px;
+          }
+
+          .admin-title {
+            font-size: 1.5rem;
+          }
+
+          .info-banner {
+            font-size: 0.85rem;
+            padding: 10px 14px;
+          }
+        }
+      `}</style>
+    </div>
+  );
+}
