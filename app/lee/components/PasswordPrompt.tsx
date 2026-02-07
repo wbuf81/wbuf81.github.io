@@ -14,7 +14,7 @@ export default function PasswordPrompt({ onAuthenticated }: PasswordPromptProps)
     e.preventDefault();
     setError('');
 
-    const correctPassword = process.env.NEXT_PUBLIC_LEE_PASSWORD || 'leepicks2026';
+    const correctPassword = process.env.NEXT_PUBLIC_LEE_PASSWORD || 'JuicyPeptides2026!';
 
     if (password === correctPassword) {
       localStorage.setItem('lee_authenticated', 'true');
