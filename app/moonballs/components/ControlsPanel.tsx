@@ -247,7 +247,40 @@ export default function ControlsPanel({ state, dispatch, onLogoUpload, activeTab
         .slider-group input[type='range'] {
           width: 100%;
           accent-color: #6366f1;
-          height: 4px;
+          height: 6px;
+          -webkit-appearance: none;
+          appearance: none;
+          background: transparent;
+          cursor: pointer;
+        }
+        .slider-group input[type='range']::-webkit-slider-track {
+          height: 6px;
+          border-radius: 3px;
+          background: rgba(0, 0, 0, 0.1);
+        }
+        .slider-group input[type='range']::-moz-range-track {
+          height: 6px;
+          border-radius: 3px;
+          background: rgba(0, 0, 0, 0.1);
+          border: none;
+        }
+        .slider-group input[type='range']::-webkit-slider-thumb {
+          -webkit-appearance: none;
+          width: 20px;
+          height: 20px;
+          border-radius: 50%;
+          background: #6366f1;
+          border: 2px solid white;
+          box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+          margin-top: -7px;
+        }
+        .slider-group input[type='range']::-moz-range-thumb {
+          width: 20px;
+          height: 20px;
+          border-radius: 50%;
+          background: #6366f1;
+          border: 2px solid white;
+          box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
         }
 
         /* Text alignment */
@@ -434,7 +467,25 @@ export default function ControlsPanel({ state, dispatch, onLogoUpload, activeTab
             min-height: 44px;
           }
           .slider-group input[type='range'] {
-            height: 32px;
+            height: 44px;
+            padding: 16px 0;
+          }
+          .slider-group input[type='range']::-webkit-slider-track {
+            height: 8px;
+            border-radius: 4px;
+          }
+          .slider-group input[type='range']::-moz-range-track {
+            height: 8px;
+            border-radius: 4px;
+          }
+          .slider-group input[type='range']::-webkit-slider-thumb {
+            width: 28px;
+            height: 28px;
+            margin-top: -10px;
+          }
+          .slider-group input[type='range']::-moz-range-thumb {
+            width: 28px;
+            height: 28px;
           }
           .ball-colors {
             grid-template-columns: repeat(6, 1fr);
