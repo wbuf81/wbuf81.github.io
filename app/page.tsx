@@ -479,15 +479,6 @@ export default function Home() {
           </svg>
           <span className="widget-top-link-text">MOON BALLS</span>
         </a>
-        <a href="/lee" className="widget-bottom">
-          <svg className="widget-bottom-icon" viewBox="0 0 24 24" fill="currentColor" width="32" height="32">
-            <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
-          </svg>
-          <div className="widget-bottom-text">
-            <div className="widget-bottom-title">LEE&apos;S PICKS</div>
-            <div className="widget-bottom-subtitle">Curated Recommendations</div>
-          </div>
-        </a>
       </div>
 
       {/* Channel Widget - Bottom Right */}

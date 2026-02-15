@@ -2,8 +2,6 @@
 
 import LogoPicker from './LogoPicker';
 import TextCustomizer from './TextCustomizer';
-import PositionNudge from './PositionNudge';
-import { DEFAULT_LOGO_AZIMUTH, DEFAULT_LOGO_ELEVATION } from '../GolfBallClient';
 import type { GolfBallState, GolfBallAction, Tab } from '../GolfBallClient';
 
 interface ControlsPanelProps {
@@ -80,14 +78,6 @@ export default function ControlsPanel({ state, dispatch, onLogoUpload, activeTab
                     />
                   </label>
                 </div>
-                <PositionNudge
-                  element="logo"
-                  azimuth={state.logoAzimuth}
-                  elevation={state.logoElevation}
-                  defaultAzimuth={DEFAULT_LOGO_AZIMUTH}
-                  defaultElevation={DEFAULT_LOGO_ELEVATION}
-                  dispatch={dispatch}
-                />
               </>
             )}
           </div>
