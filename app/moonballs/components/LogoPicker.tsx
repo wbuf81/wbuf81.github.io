@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useRef } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import type { GolfBallAction } from '../GolfBallClient';
 
 interface LogoPickerProps {
@@ -20,6 +20,7 @@ const PRESET_LOGOS = [
 
 export default function LogoPicker({ selectedLogo, dispatch, onLogoUpload }: LogoPickerProps) {
   const inputRef = useRef<HTMLInputElement>(null);
+  const [expanded, setExpanded] = useState(false);
 
   const handleFileChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -27,61 +28,174 @@ export default function LogoPicker({ selectedLogo, dispatch, onLogoUpload }: Log
       if (file && file.type.startsWith('image/') && onLogoUpload) {
         onLogoUpload(file);
       }
-      // Reset so the same file can be re-uploaded
       e.target.value = '';
     },
     [onLogoUpload]
   );
 
-  return (
-    <div className="logo-grid">
-      {PRESET_LOGOS.map((logo) => (
-        <button
-          key={logo.id}
-          className={`logo-item ${selectedLogo === logo.src ? 'selected' : ''}`}
-          onClick={() => {
-            if (selectedLogo === logo.src) {
-              dispatch({ type: 'SET_LOGO', url: null });
-            } else {
-              dispatch({ type: 'SET_LOGO', url: logo.src });
-            }
-          }}
-          title={logo.label}
-        >
-          <img src={logo.src} alt={logo.label} />
-          {selectedLogo === logo.src && <div className="check-badge">&#10003;</div>}
-        </button>
-      ))}
+  const selectedPreset = PRESET_LOGOS.find((l) => l.src === selectedLogo);
+  const isCustomUpload = selectedLogo && !selectedPreset;
+  const showCollapsed = selectedLogo && !expanded;
 
-      {onLogoUpload && (
-        <button
-          className="logo-item upload-btn"
-          onClick={() => inputRef.current?.click()}
-          title="Upload custom logo"
-        >
-          <input
-            ref={inputRef}
-            type="file"
-            accept="image/png,image/jpeg,image/svg+xml,image/webp"
-            onChange={handleFileChange}
-            style={{ display: 'none' }}
-          />
-          <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
-            <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"/>
-          </svg>
-          <span className="upload-label">Upload</span>
-        </button>
+  return (
+    <div className="logo-picker">
+      {/* Collapsed view: selected logo + Change button */}
+      {showCollapsed && (
+        <div className="selected-row">
+          <div className="selected-thumb">
+            {selectedPreset ? (
+              <img src={selectedPreset.src} alt={selectedPreset.label} />
+            ) : (
+              <img src={selectedLogo} alt="Custom logo" />
+            )}
+          </div>
+          <span className="selected-label">
+            {selectedPreset ? selectedPreset.label : 'Custom'}
+          </span>
+          <button className="change-btn" onClick={() => setExpanded(true)}>
+            Change
+          </button>
+          <button
+            className="remove-btn"
+            onClick={() => dispatch({ type: 'SET_LOGO', url: null })}
+            title="Remove logo"
+          >
+            &times;
+          </button>
+        </div>
       )}
 
-      <div className="future-item">
-        <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
-          <path d="M21 11.18V9.72c0-.47-.16-.92-.46-1.28L16.6 3.72c-.38-.46-.94-.72-1.54-.72H8.94c-.6 0-1.16.26-1.54.72L3.46 8.44c-.3.36-.46.81-.46 1.28v1.45c0 .8.49 1.49 1.18 1.78-.02.12-.18.55-.18.55 0 2.76 2.24 5 5 5h6c2.76 0 5-2.24 5-5 0 0-.16-.43-.18-.55.7-.29 1.18-.98 1.18-1.78zM15.29 4.58L18.7 9H15V4h.06l.23.58zM9 4h.06l-.29.58L5.3 9H9V4zm3 14c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3z"/>
-        </svg>
-        <span>AI Generate</span>
-        <span className="badge">Soon</span>
-      </div>
+      {/* Full grid: shown when nothing selected or expanded */}
+      {!showCollapsed && (
+        <div className="logo-grid">
+          {PRESET_LOGOS.map((logo) => (
+            <button
+              key={logo.id}
+              className={`logo-item ${selectedLogo === logo.src ? 'selected' : ''}`}
+              onClick={() => {
+                if (selectedLogo === logo.src) {
+                  dispatch({ type: 'SET_LOGO', url: null });
+                } else {
+                  dispatch({ type: 'SET_LOGO', url: logo.src });
+                  setExpanded(false);
+                }
+              }}
+              title={logo.label}
+            >
+              <img src={logo.src} alt={logo.label} />
+              {selectedLogo === logo.src && <div className="check-badge">&#10003;</div>}
+            </button>
+          ))}
+
+          {onLogoUpload && (
+            <button
+              className="logo-item upload-btn"
+              onClick={() => inputRef.current?.click()}
+              title="Upload custom logo"
+            >
+              <input
+                ref={inputRef}
+                type="file"
+                accept="image/png,image/jpeg,image/svg+xml,image/webp"
+                onChange={(e) => {
+                  handleFileChange(e);
+                  setExpanded(false);
+                }}
+                style={{ display: 'none' }}
+              />
+              <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+                <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"/>
+              </svg>
+              <span className="upload-label">Upload</span>
+            </button>
+          )}
+
+          <div className="future-item">
+            <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
+              <path d="M21 11.18V9.72c0-.47-.16-.92-.46-1.28L16.6 3.72c-.38-.46-.94-.72-1.54-.72H8.94c-.6 0-1.16.26-1.54.72L3.46 8.44c-.3.36-.46.81-.46 1.28v1.45c0 .8.49 1.49 1.18 1.78-.02.12-.18.55-.18.55 0 2.76 2.24 5 5 5h6c2.76 0 5-2.24 5-5 0 0-.16-.43-.18-.55.7-.29 1.18-.98 1.18-1.78zM15.29 4.58L18.7 9H15V4h.06l.23.58zM9 4h.06l-.29.58L5.3 9H9V4zm3 14c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3z"/>
+            </svg>
+            <span>AI Generate</span>
+            <span className="badge">Soon</span>
+          </div>
+        </div>
+      )}
 
       <style jsx>{`
+        .logo-picker {
+          display: flex;
+          flex-direction: column;
+        }
+
+        /* Collapsed selected row */
+        .selected-row {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          padding: 8px 10px;
+          background: rgba(255, 255, 255, 0.5);
+          border: 1px solid rgba(0, 0, 0, 0.08);
+          border-radius: 12px;
+        }
+        .selected-thumb {
+          width: 40px;
+          height: 40px;
+          border-radius: 8px;
+          overflow: hidden;
+          flex-shrink: 0;
+          background: rgba(255, 255, 255, 0.6);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        .selected-thumb img {
+          width: 100%;
+          height: 100%;
+          object-fit: contain;
+        }
+        .selected-label {
+          flex: 1;
+          font-family: var(--font-outfit), sans-serif;
+          font-size: 0.85rem;
+          font-weight: 600;
+          color: #1e293b;
+        }
+        .change-btn {
+          padding: 6px 14px;
+          border: 1px solid rgba(99, 102, 241, 0.3);
+          border-radius: 8px;
+          background: rgba(99, 102, 241, 0.08);
+          color: #6366f1;
+          font-family: var(--font-outfit), sans-serif;
+          font-size: 0.75rem;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.15s;
+        }
+        .change-btn:hover {
+          background: rgba(99, 102, 241, 0.15);
+        }
+        .remove-btn {
+          width: 32px;
+          height: 32px;
+          border: 1px solid rgba(0, 0, 0, 0.1);
+          border-radius: 8px;
+          background: rgba(0, 0, 0, 0.04);
+          color: rgba(0, 0, 0, 0.35);
+          font-size: 1.1rem;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: all 0.15s;
+          flex-shrink: 0;
+        }
+        .remove-btn:hover {
+          background: rgba(239, 68, 68, 0.08);
+          border-color: rgba(239, 68, 68, 0.3);
+          color: #dc2626;
+        }
+
+        /* Full grid */
         .logo-grid {
           display: grid;
           grid-template-columns: repeat(3, 1fr);
@@ -179,6 +293,14 @@ export default function LogoPicker({ selectedLogo, dispatch, onLogoUpload }: Log
           .logo-item {
             padding: 6px;
             border-radius: 10px;
+          }
+          .change-btn {
+            min-height: 36px;
+            padding: 6px 16px;
+          }
+          .remove-btn {
+            width: 36px;
+            height: 36px;
           }
         }
       `}</style>

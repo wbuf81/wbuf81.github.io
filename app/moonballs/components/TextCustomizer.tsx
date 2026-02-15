@@ -168,7 +168,25 @@ export default function TextCustomizer({ textLine1, textLine2, textColor, textLi
             gap: 10px;
           }
           .slider-row input[type="range"] {
-            height: 32px;
+            height: 44px;
+            padding: 16px 0;
+          }
+          .slider-row input[type="range"]::-webkit-slider-track {
+            height: 8px;
+            border-radius: 4px;
+          }
+          .slider-row input[type="range"]::-moz-range-track {
+            height: 8px;
+            border-radius: 4px;
+          }
+          .slider-row input[type="range"]::-webkit-slider-thumb {
+            width: 28px;
+            height: 28px;
+            margin-top: -10px;
+          }
+          .slider-row input[type="range"]::-moz-range-thumb {
+            width: 28px;
+            height: 28px;
           }
         }
         .slider-row {
@@ -184,6 +202,40 @@ export default function TextCustomizer({ textLine1, textLine2, textColor, textLi
         .slider-row input[type="range"] {
           flex: 1;
           accent-color: #6366f1;
+          height: 6px;
+          -webkit-appearance: none;
+          appearance: none;
+          background: transparent;
+          cursor: pointer;
+        }
+        .slider-row input[type="range"]::-webkit-slider-track {
+          height: 6px;
+          border-radius: 3px;
+          background: rgba(0, 0, 0, 0.18);
+        }
+        .slider-row input[type="range"]::-moz-range-track {
+          height: 6px;
+          border-radius: 3px;
+          background: rgba(0, 0, 0, 0.18);
+          border: none;
+        }
+        .slider-row input[type="range"]::-webkit-slider-thumb {
+          -webkit-appearance: none;
+          width: 20px;
+          height: 20px;
+          border-radius: 50%;
+          background: #6366f1;
+          border: 2px solid white;
+          box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+          margin-top: -7px;
+        }
+        .slider-row input[type="range"]::-moz-range-thumb {
+          width: 20px;
+          height: 20px;
+          border-radius: 50%;
+          background: #6366f1;
+          border: 2px solid white;
+          box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
         }
       `}</style>
     </div>

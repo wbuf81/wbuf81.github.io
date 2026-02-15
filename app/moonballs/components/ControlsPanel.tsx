@@ -256,12 +256,12 @@ export default function ControlsPanel({ state, dispatch, onLogoUpload, activeTab
         .slider-group input[type='range']::-webkit-slider-track {
           height: 6px;
           border-radius: 3px;
-          background: rgba(0, 0, 0, 0.1);
+          background: rgba(0, 0, 0, 0.18);
         }
         .slider-group input[type='range']::-moz-range-track {
           height: 6px;
           border-radius: 3px;
-          background: rgba(0, 0, 0, 0.1);
+          background: rgba(0, 0, 0, 0.18);
           border: none;
         }
         .slider-group input[type='range']::-webkit-slider-thumb {
