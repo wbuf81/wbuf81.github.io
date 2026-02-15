@@ -1,6 +1,6 @@
 'use client';
 
-import { useReducer, useCallback, useState } from 'react';
+import { useReducer, useCallback, useState, useEffect } from 'react';
 import GolfBallScene from './components/GolfBallScene';
 import ControlsPanel from './components/ControlsPanel';
 import MoonBallsBranding from './components/MoonBallsBranding';
@@ -45,7 +45,8 @@ export type GolfBallAction =
   | { type: 'SET_DRAGGING'; element: 'logo' | 'text' | null }
   | { type: 'ENTER_DESIGN_MODE' }
   | { type: 'EXIT_DESIGN_MODE' }
-  | { type: 'RESET' };
+  | { type: 'RESET' }
+  | { type: 'UNDO' };
 
 export const DEFAULT_LOGO_AZIMUTH = Math.PI / 2;
 export const DEFAULT_LOGO_ELEVATION = 0;
@@ -109,9 +110,70 @@ function reducer(state: GolfBallState, action: GolfBallAction): GolfBallState {
   }
 }
 
+// Actions that don't modify user-visible design state (no undo tracking)
+const SKIP_UNDO: Set<string> = new Set([
+  'TOGGLE_MOON_MODE', 'SET_TEE_MODE', 'SET_DRAGGING',
+  'ENTER_DESIGN_MODE', 'EXIT_DESIGN_MODE', 'UNDO',
+]);
+
+// Continuous slider actions — collapse consecutive same-type into one undo entry
+const SLIDER_ACTIONS: Set<string> = new Set([
+  'SET_LOGO_SCALE', 'SET_TEXT_LINE1_OFFSET_Y', 'SET_TEXT_LINE2_OFFSET_Y',
+  'SET_LOGO_AZIMUTH', 'SET_LOGO_ELEVATION',
+]);
+
+const MAX_UNDO = 20;
+
+interface UndoState {
+  current: GolfBallState;
+  history: GolfBallState[];
+  lastActionType: string | null;
+}
+
+function undoReducer(undoState: UndoState, action: GolfBallAction): UndoState {
+  if (action.type === 'UNDO') {
+    if (undoState.history.length === 0) return undoState;
+    const prev = undoState.history[undoState.history.length - 1];
+    return {
+      current: { ...prev, moonMode: undoState.current.moonMode, designMode: undoState.current.designMode },
+      history: undoState.history.slice(0, -1),
+      lastActionType: null,
+    };
+  }
+
+  const newState = reducer(undoState.current, action);
+  if (newState === undoState.current) return undoState;
+
+  if (SKIP_UNDO.has(action.type)) {
+    return { ...undoState, current: newState };
+  }
+
+  // For slider actions, collapse consecutive same-type (don't push a new entry)
+  if (SLIDER_ACTIONS.has(action.type) && undoState.lastActionType === action.type) {
+    return { ...undoState, current: newState };
+  }
+
+  return {
+    current: newState,
+    history: [...undoState.history.slice(-(MAX_UNDO - 1)), undoState.current],
+    lastActionType: action.type,
+  };
+}
+
 export default function GolfBallClient() {
-  const [state, dispatch] = useReducer(reducer, initialState);
+  const [undoState, dispatch] = useReducer(undoReducer, { current: initialState, history: [], lastActionType: null });
+  const state = undoState.current;
+  const canUndo = undoState.history.length > 0;
   const [activeTab, setActiveTab] = useState<Tab>('logo');
+
+  const hasContent = !!(state.logoUrl || state.textLine1 || state.textLine2);
+  const [hintDismissed, setHintDismissed] = useState(false);
+  const showHint = !hasContent && !hintDismissed;
+
+  // Dismiss hint on first interaction
+  useEffect(() => {
+    if (hasContent) setHintDismissed(true);
+  }, [hasContent]);
 
   const handleLogoUpload = useCallback((file: File) => {
     const reader = new FileReader();
@@ -133,27 +195,49 @@ export default function GolfBallClient() {
         <MoonBallsBranding />
         <MoonModeToggle state={state} dispatch={dispatch} />
         <GolfBallScene state={state} dispatch={dispatch} activeTab={activeTab} setActiveTab={setActiveTab} />
+        {/* Onboarding hint */}
+        {showHint && (
+          <div className="onboarding-hint" onClick={() => setHintDismissed(true)}>
+            <span className="hint-arrow">&#8594;</span>
+            <span>Pick a logo or add text to get started</span>
+          </div>
+        )}
+        {/* Desktop-only floating Done button */}
         {state.designMode && (
           <button
-            className="done-editing-btn"
+            className="done-editing-btn desktop-only"
             onClick={() => dispatch({ type: 'EXIT_DESIGN_MODE' })}
           >
             Done
           </button>
         )}
       </div>
+      {/* Mobile design-mode bar between scene and controls */}
+      {state.designMode && (
+        <div className="design-mode-bar mobile-only">
+          <span className="design-mode-label">Editing</span>
+          <button
+            className="design-mode-done"
+            onClick={() => dispatch({ type: 'EXIT_DESIGN_MODE' })}
+          >
+            Done
+          </button>
+        </div>
+      )}
       <ControlsPanel
         state={state}
         dispatch={dispatch}
         onLogoUpload={handleLogoUpload}
         activeTab={activeTab}
         setActiveTab={setActiveTab}
+        canUndo={canUndo}
       />
 
       <style jsx>{`
         .customizer-layout {
           display: flex;
           height: 100vh;
+          height: 100dvh;
           width: 100vw;
           overflow: hidden;
           background: #2a4a25;
@@ -162,6 +246,8 @@ export default function GolfBallClient() {
           flex: 1;
           position: relative;
           touch-action: none;
+          min-width: 0;
+          min-height: 0;
         }
         .done-editing-btn {
           position: absolute;
@@ -187,13 +273,101 @@ export default function GolfBallClient() {
           transform: translateX(-50%) scale(1.05);
           box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
         }
+        .onboarding-hint {
+          position: absolute;
+          bottom: 32px;
+          right: 24px;
+          z-index: 10;
+          pointer-events: auto;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          padding: 10px 18px;
+          background: rgba(255, 255, 255, 0.7);
+          backdrop-filter: blur(16px);
+          -webkit-backdrop-filter: blur(16px);
+          border: 1px solid rgba(255, 255, 255, 0.5);
+          border-radius: 20px;
+          font-family: var(--font-outfit), sans-serif;
+          font-size: 0.82rem;
+          font-weight: 500;
+          color: #1e293b;
+          box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+          animation: hint-pulse 2.5s ease-in-out infinite;
+        }
+        .hint-arrow {
+          font-size: 1rem;
+          animation: hint-bounce 1.5s ease-in-out infinite;
+        }
+        @keyframes hint-pulse {
+          0%, 100% { opacity: 0.85; }
+          50% { opacity: 1; }
+        }
+        @keyframes hint-bounce {
+          0%, 100% { transform: translateX(0); }
+          50% { transform: translateX(4px); }
+        }
+        .design-mode-bar {
+          display: none;
+        }
+        .mobile-only {
+          display: none;
+        }
         @media (max-width: 768px) {
           .customizer-layout {
             flex-direction: column;
           }
           .scene-container {
-            flex: 1;
-            min-height: 50vh;
+            flex: 1 1 0;
+            min-height: 0;
+          }
+          .desktop-only {
+            display: none !important;
+          }
+          .mobile-only {
+            display: flex;
+          }
+          .onboarding-hint {
+            bottom: 12px;
+            right: auto;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.75rem;
+            padding: 8px 14px;
+          }
+          .hint-arrow {
+            display: none;
+          }
+          .design-mode-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 16px;
+            background: rgba(99, 102, 241, 0.12);
+            border-top: 1px solid rgba(99, 102, 241, 0.2);
+            border-bottom: 1px solid rgba(99, 102, 241, 0.2);
+            flex-shrink: 0;
+          }
+          .design-mode-label {
+            font-family: var(--font-outfit), sans-serif;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #6366f1;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+          }
+          .design-mode-done {
+            padding: 6px 20px;
+            background: #6366f1;
+            color: white;
+            border: none;
+            border-radius: 16px;
+            font-family: var(--font-outfit), sans-serif;
+            font-size: 0.82rem;
+            font-weight: 600;
+            cursor: pointer;
+            min-height: 36px;
           }
         }
       `}</style>

@@ -27,6 +27,8 @@ export default function TextCustomizer({ textLine1, textLine2, textColor, textLi
         <label>Name / Line 1</label>
         <input
           type="text"
+          inputMode="text"
+          enterKeyHint="done"
           value={textLine1}
           onChange={(e) => {
             dispatch({ type: 'SET_TEXT_LINE1', text: e.target.value });
@@ -42,6 +44,8 @@ export default function TextCustomizer({ textLine1, textLine2, textColor, textLi
         <label>Message / Line 2</label>
         <input
           type="text"
+          inputMode="text"
+          enterKeyHint="done"
           value={textLine2}
           onChange={(e) => {
             dispatch({ type: 'SET_TEXT_LINE2', text: e.target.value });
@@ -154,6 +158,18 @@ export default function TextCustomizer({ textLine1, textLine2, textColor, textLi
         .color-swatch.selected {
           border-color: #6366f1;
           box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.4);
+        }
+        @media (max-width: 768px) {
+          .color-swatch {
+            width: 40px;
+            height: 40px;
+          }
+          .color-row {
+            gap: 10px;
+          }
+          .slider-row input[type="range"] {
+            height: 32px;
+          }
         }
         .slider-row {
           display: flex;

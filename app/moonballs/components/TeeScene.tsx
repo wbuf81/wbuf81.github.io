@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useMemo, useRef, useCallback, useState } from 'react';
 import * as THREE from 'three';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Environment, Stars } from '@react-three/drei';
@@ -65,11 +65,54 @@ function TeeSceneLighting({ moonMode }: { moonMode: boolean }) {
 }
 
 export default function TeeScene({ state, dispatch }: TeeSceneProps) {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [shareStatus, setShareStatus] = useState<'idle' | 'saving' | 'done'>('idle');
+
+  const handleShare = useCallback(async () => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    setShareStatus('saving');
+
+    // Small delay to let any animation settle
+    await new Promise((r) => setTimeout(r, 100));
+
+    try {
+      const dataUrl = canvas.toDataURL('image/png');
+
+      // Try native sharing first (mobile)
+      if (navigator.share && navigator.canShare) {
+        const blob = await (await fetch(dataUrl)).blob();
+        const file = new File([blob], 'moonball.png', { type: 'image/png' });
+        if (navigator.canShare({ files: [file] })) {
+          await navigator.share({
+            title: 'My Moon Ball',
+            files: [file],
+          });
+          setShareStatus('done');
+          setTimeout(() => setShareStatus('idle'), 2000);
+          return;
+        }
+      }
+
+      // Fallback: download
+      const link = document.createElement('a');
+      link.download = 'moonball.png';
+      link.href = dataUrl;
+      link.click();
+      setShareStatus('done');
+      setTimeout(() => setShareStatus('idle'), 2000);
+    } catch {
+      setShareStatus('idle');
+    }
+  }, []);
+
   return (
     <div className="tee-scene-wrapper">
       <Canvas
+        ref={canvasRef}
         dpr={[1, 1.5]}
-        gl={{ stencil: true }}
+        gl={{ stencil: true, preserveDrawingBuffer: true }}
         camera={{ position: [0, 0, 4], fov: 40 }}
         style={{ width: '100%', height: '100%' }}
       >
@@ -96,8 +139,12 @@ export default function TeeScene({ state, dispatch }: TeeSceneProps) {
       </button>
       <MoonBallsBranding />
       <MoonModeToggle state={state} dispatch={dispatch} />
-      <button className="order-btn" disabled>
-        Coming Soon
+      <button
+        className="share-btn"
+        onClick={handleShare}
+        disabled={shareStatus === 'saving'}
+      >
+        {shareStatus === 'saving' ? 'Saving...' : shareStatus === 'done' ? 'Saved!' : 'Share'}
       </button>
 
       <style jsx>{`
@@ -105,12 +152,13 @@ export default function TeeScene({ state, dispatch }: TeeSceneProps) {
           position: relative;
           width: 100vw;
           height: 100vh;
+          height: 100dvh;
           background: #0f0f0f;
         }
         .back-to-edit {
           position: absolute;
-          top: 20px;
-          left: 20px;
+          top: max(20px, env(safe-area-inset-top));
+          left: max(20px, env(safe-area-inset-left));
           z-index: 10;
           padding: 8px 16px;
           background: rgba(0, 0, 0, 0.5);
@@ -122,13 +170,16 @@ export default function TeeScene({ state, dispatch }: TeeSceneProps) {
           font-size: 0.9rem;
           cursor: pointer;
           transition: background 0.2s;
+          min-height: 44px;
+          display: flex;
+          align-items: center;
         }
         .back-to-edit:hover {
           background: rgba(99, 102, 241, 0.3);
         }
-        .order-btn {
+        .share-btn {
           position: absolute;
-          bottom: 32px;
+          bottom: max(32px, calc(16px + env(safe-area-inset-bottom)));
           left: 50%;
           transform: translateX(-50%);
           z-index: 10;
@@ -141,8 +192,18 @@ export default function TeeScene({ state, dispatch }: TeeSceneProps) {
           font-size: 1rem;
           font-weight: 700;
           letter-spacing: 0.05em;
-          opacity: 0.5;
-          cursor: not-allowed;
+          cursor: pointer;
+          min-height: 48px;
+          transition: transform 0.15s, box-shadow 0.15s, opacity 0.2s;
+          box-shadow: 0 2px 16px rgba(99, 102, 241, 0.4);
+        }
+        .share-btn:hover {
+          transform: translateX(-50%) scale(1.03);
+          box-shadow: 0 4px 24px rgba(99, 102, 241, 0.55);
+        }
+        .share-btn:disabled {
+          opacity: 0.7;
+          cursor: wait;
         }
       `}</style>
     </div>

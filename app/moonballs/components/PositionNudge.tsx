@@ -127,6 +127,16 @@ export default function PositionNudge({
           color: rgba(0, 0, 0, 0.3);
           text-align: center;
         }
+        @media (max-width: 768px) {
+          .nudge-btn {
+            width: 40px;
+            height: 40px;
+          }
+          .nudge-spacer {
+            width: 40px;
+            height: 40px;
+          }
+        }
       `}</style>
     </div>
   );

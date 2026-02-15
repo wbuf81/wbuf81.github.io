@@ -464,6 +464,32 @@ export default function Home() {
         </a>
       </div>
 
+      {/* Moonballs Widget - Bottom Left */}
+      <div className="widget widget-bottom-left">
+        <a href="/moonballs" className="widget-top-link moonballs-link">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="48" height="48">
+            <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" strokeWidth="1.5"/>
+            <circle cx="8" cy="9" r="1.2"/>
+            <circle cx="14" cy="7" r="1"/>
+            <circle cx="16" cy="12" r="1.2"/>
+            <circle cx="11" cy="14" r="1"/>
+            <circle cx="7" cy="14" r="0.8"/>
+            <circle cx="14" cy="17" r="0.9"/>
+            <circle cx="10" cy="10" r="0.6"/>
+          </svg>
+          <span className="widget-top-link-text">MOON BALLS</span>
+        </a>
+        <a href="/lee" className="widget-bottom">
+          <svg className="widget-bottom-icon" viewBox="0 0 24 24" fill="currentColor" width="32" height="32">
+            <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
+          </svg>
+          <div className="widget-bottom-text">
+            <div className="widget-bottom-title">LEE&apos;S PICKS</div>
+            <div className="widget-bottom-subtitle">Curated Recommendations</div>
+          </div>
+        </a>
+      </div>
+
       {/* Channel Widget - Bottom Right */}
       <div className="widget widget-bottom-right channel-widget">
         <div className="channel-display">
@@ -1070,9 +1096,18 @@ export default function Home() {
           right: 40px;
         }
 
+        .widget-bottom-left {
+          bottom: 40px;
+          left: 40px;
+        }
+
         .widget-bottom-right {
           bottom: 40px;
           right: 40px;
+        }
+
+        .moonballs-link:hover {
+          color: #6366f1;
         }
 
         .channel-widget {
@@ -1491,6 +1526,11 @@ export default function Home() {
             right: 16px;
           }
 
+          .widget-bottom-left {
+            bottom: 20px;
+            left: 16px;
+          }
+
           .widget-bottom-right {
             bottom: auto;
             top: 24px;
@@ -1621,6 +1661,11 @@ export default function Home() {
             right: 10px;
           }
 
+          .widget-bottom-left {
+            bottom: 16px;
+            left: 10px;
+          }
+
           .widget-bottom-right {
             top: 16px;
             right: 10px;
@@ -1748,6 +1793,11 @@ export default function Home() {
           .widget-top-right {
             bottom: 10px;
             right: 6px;
+          }
+
+          .widget-bottom-left {
+            bottom: 10px;
+            left: 6px;
           }
 
           .widget-bottom-right {

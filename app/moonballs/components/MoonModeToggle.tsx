@@ -21,8 +21,8 @@ export default function MoonModeToggle({ state, dispatch }: MoonModeToggleProps)
       <style jsx>{`
         .moon-toggle {
           position: absolute;
-          top: 20px;
-          right: 20px;
+          top: max(20px, env(safe-area-inset-top));
+          right: max(20px, env(safe-area-inset-right));
           z-index: 10;
           pointer-events: auto;
           padding: 8px 16px;
@@ -34,6 +34,11 @@ export default function MoonModeToggle({ state, dispatch }: MoonModeToggleProps)
           font-size: 1.2rem;
           line-height: 1;
           transition: background 0.2s;
+          min-width: 44px;
+          min-height: 44px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
         }
         .moon-toggle:hover {
           background: rgba(99, 102, 241, 0.3);
