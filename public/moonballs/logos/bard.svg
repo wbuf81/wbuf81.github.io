@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="#000">
+  <!-- Bard/minstrel with lute and hat -->
+  <!-- Feathered hat -->
+  <ellipse cx="128" cy="56" rx="40" ry="20"/>
+  <path d="M88 56 Q80 24, 108 16 Q96 32, 100 48"/>
+  <path d="M168 48 Q188 20, 172 8 Q180 28, 168 48" fill="#000"/>
+  <!-- Head -->
+  <circle cx="128" cy="84" r="24"/>
+  <!-- Body -->
+  <path d="M108 104 L96 180 L160 180 L148 104 Z"/>
+  <!-- Lute -->
+  <ellipse cx="172" cy="156" rx="24" ry="32"/>
+  <ellipse cx="172" cy="156" rx="16" ry="22" fill="#fff"/>
+  <rect x="168" y="100" width="8" height="56"/>
+  <circle cx="172" cy="156" r="4"/>
+  <!-- Arms -->
+  <path d="M108 116 Q88 140, 160 140" stroke="#000" stroke-width="8" fill="none" stroke-linecap="round"/>
+</svg>

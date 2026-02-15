@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="#000">
+  <!-- Dog face silhouette -->
+  <path d="M48 80 C48 60, 60 32, 80 24 L96 56 L96 80 Z"/>
+  <path d="M208 80 C208 60, 196 32, 176 24 L160 56 L160 80 Z"/>
+  <ellipse cx="128" cy="140" rx="72" ry="68"/>
+  <ellipse cx="128" cy="156" rx="48" ry="44" fill="#fff"/>
+  <ellipse cx="106" cy="124" rx="10" ry="12"/>
+  <ellipse cx="150" cy="124" rx="10" ry="12"/>
+  <ellipse cx="128" cy="148" rx="14" ry="10"/>
+  <path d="M118 164 Q128 178 138 164" stroke="#000" stroke-width="4" fill="none"/>
+  <ellipse cx="128" cy="200" rx="20" ry="8"/>
+</svg>

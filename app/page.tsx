@@ -464,29 +464,6 @@ export default function Home() {
         </a>
       </div>
 
-      {/* Articles & Uses Widget - Bottom Left */}
-      <div className="widget widget-bottom-left">
-        <div className="widget-top">
-          <a href="/articles" className="widget-top-link">
-            {/* Articles/Pen Icon */}
-            <svg viewBox="0 0 24 24" fill="currentColor" width="48" height="48">
-              <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
-            </svg>
-            <span className="widget-top-link-text">ARTICLES</span>
-          </a>
-        </div>
-        <a href="/uses" className="widget-bottom">
-          {/* Recs/Star Icon */}
-          <svg className="widget-bottom-icon" viewBox="0 0 24 24" fill="currentColor" width="32" height="32">
-            <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
-          </svg>
-          <div className="widget-bottom-text">
-            <div className="widget-bottom-title">GEAR</div>
-            <div className="widget-bottom-subtitle">What I Use and Recommend</div>
-          </div>
-        </a>
-      </div>
-
       {/* Channel Widget - Bottom Right */}
       <div className="widget widget-bottom-right channel-widget">
         <div className="channel-display">
@@ -1088,11 +1065,6 @@ export default function Home() {
           box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
         }
 
-        .widget-bottom-left {
-          bottom: 40px;
-          left: 40px;
-        }
-
         .widget-top-right {
           top: 40px;
           right: 40px;
@@ -1395,10 +1367,6 @@ export default function Home() {
           transform: scale(1.05);
         }
 
-        .widget-bottom-left .widget-top-link:hover {
-          color: #0077b5;
-        }
-
         .widget-top-link-text {
           margin-top: 12px;
           font-family: system-ui, -apple-system, sans-serif;
@@ -1515,11 +1483,6 @@ export default function Home() {
           .widget {
             width: 130px;
             border-radius: 16px;
-          }
-
-          .widget-bottom-left {
-            bottom: 20px;
-            left: 16px;
           }
 
           .widget-top-right {
@@ -1653,11 +1616,6 @@ export default function Home() {
             border-radius: 12px;
           }
 
-          .widget-bottom-left {
-            bottom: 16px;
-            left: 10px;
-          }
-
           .widget-top-right {
             bottom: 16px;
             right: 10px;
@@ -1785,11 +1743,6 @@ export default function Home() {
           .widget {
             width: 95px;
             border-radius: 10px;
-          }
-
-          .widget-bottom-left {
-            bottom: 10px;
-            left: 6px;
           }
 
           .widget-top-right {
