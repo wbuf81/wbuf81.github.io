@@ -108,7 +108,7 @@ export default function HomePage() {
 
           <div className="company">
             <h3 className="company-name">Newfold Digital</h3>
-            <p className="company-note">formerly Web.com / Endurance International — 9 years</p>
+            <p className="company-note">formerly Web.com / Endurance International — 11+ years</p>
 
             <div className="role">
               <div className="role-header">
