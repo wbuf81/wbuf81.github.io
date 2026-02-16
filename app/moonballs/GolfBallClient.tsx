@@ -1,6 +1,6 @@
 'use client';
 
-import { useReducer, useCallback, useState, useEffect } from 'react';
+import { useReducer, useState, useEffect, useCallback } from 'react';
 import GolfBallScene from './components/GolfBallScene';
 import ControlsPanel from './components/ControlsPanel';
 import MoonBallsBranding from './components/MoonBallsBranding';
@@ -18,8 +18,16 @@ export interface GolfBallState {
   logoElevation: number;
   textLine1: string;
   textLine2: string;
-  textColor: string;
-  textAlign: 'left' | 'center' | 'right';
+  textLine1Color: string;
+  textLine2Color: string;
+  textLine1Font: string;
+  textLine2Font: string;
+  textLine1Size: number;
+  textLine2Size: number;
+  textLine1Bold: boolean;
+  textLine2Bold: boolean;
+  textLine1Italic: boolean;
+  textLine2Italic: boolean;
   textLine1OffsetY: number;
   textLine2OffsetY: number;
   moonMode: boolean;
@@ -36,8 +44,16 @@ export type GolfBallAction =
   | { type: 'SET_LOGO_ELEVATION'; elevation: number }
   | { type: 'SET_TEXT_LINE1'; text: string }
   | { type: 'SET_TEXT_LINE2'; text: string }
-  | { type: 'SET_TEXT_COLOR'; color: string }
-  | { type: 'SET_TEXT_ALIGN'; align: 'left' | 'center' | 'right' }
+  | { type: 'SET_TEXT_LINE1_COLOR'; color: string }
+  | { type: 'SET_TEXT_LINE2_COLOR'; color: string }
+  | { type: 'SET_TEXT_LINE1_FONT'; font: string }
+  | { type: 'SET_TEXT_LINE2_FONT'; font: string }
+  | { type: 'SET_TEXT_LINE1_SIZE'; size: number }
+  | { type: 'SET_TEXT_LINE2_SIZE'; size: number }
+  | { type: 'TOGGLE_TEXT_LINE1_BOLD' }
+  | { type: 'TOGGLE_TEXT_LINE2_BOLD' }
+  | { type: 'TOGGLE_TEXT_LINE1_ITALIC' }
+  | { type: 'TOGGLE_TEXT_LINE2_ITALIC' }
   | { type: 'SET_TEXT_LINE1_OFFSET_Y'; offset: number }
   | { type: 'SET_TEXT_LINE2_OFFSET_Y'; offset: number }
   | { type: 'TOGGLE_MOON_MODE' }
@@ -59,8 +75,16 @@ const initialState: GolfBallState = {
   logoElevation: DEFAULT_LOGO_ELEVATION,
   textLine1: '',
   textLine2: '',
-  textColor: '#000000',
-  textAlign: 'center',
+  textLine1Color: '#000000',
+  textLine2Color: '#000000',
+  textLine1Font: 'Outfit',
+  textLine2Font: 'Outfit',
+  textLine1Size: 44,
+  textLine2Size: 36,
+  textLine1Bold: true,
+  textLine2Bold: false,
+  textLine1Italic: false,
+  textLine2Italic: false,
   textLine1OffsetY: 0.15,
   textLine2OffsetY: 0.85,
   moonMode: false,
@@ -68,6 +92,44 @@ const initialState: GolfBallState = {
   draggingElement: null,
   designMode: false,
 };
+
+// Design fields that get saved to localStorage
+const DESIGN_KEYS = [
+  'ballColor', 'logoUrl', 'logoScale', 'logoAzimuth', 'logoElevation',
+  'textLine1', 'textLine2',
+  'textLine1Color', 'textLine2Color', 'textLine1Font', 'textLine2Font',
+  'textLine1Size', 'textLine2Size', 'textLine1Bold', 'textLine2Bold',
+  'textLine1Italic', 'textLine2Italic', 'textLine1OffsetY', 'textLine2OffsetY',
+] as const;
+
+const STORAGE_KEY = 'moonballs-design';
+
+function loadDesignFromStorage(): Partial<GolfBallState> {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return {};
+    const saved = JSON.parse(raw);
+    // Discard stale data: URL logos (from before upload removal)
+    if (typeof saved.logoUrl === 'string' && saved.logoUrl.startsWith('data:')) {
+      saved.logoUrl = null;
+    }
+    return saved;
+  } catch {
+    return {};
+  }
+}
+
+function saveDesignToStorage(state: GolfBallState) {
+  try {
+    const design: Record<string, unknown> = {};
+    for (const key of DESIGN_KEYS) {
+      design[key] = state[key];
+    }
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(design));
+  } catch {
+    // quota exceeded or private browsing — silently ignore
+  }
+}
 
 function reducer(state: GolfBallState, action: GolfBallAction): GolfBallState {
   switch (action.type) {
@@ -85,10 +147,26 @@ function reducer(state: GolfBallState, action: GolfBallAction): GolfBallState {
       return { ...state, textLine1: action.text };
     case 'SET_TEXT_LINE2':
       return { ...state, textLine2: action.text };
-    case 'SET_TEXT_COLOR':
-      return { ...state, textColor: action.color };
-    case 'SET_TEXT_ALIGN':
-      return { ...state, textAlign: action.align };
+    case 'SET_TEXT_LINE1_COLOR':
+      return { ...state, textLine1Color: action.color };
+    case 'SET_TEXT_LINE2_COLOR':
+      return { ...state, textLine2Color: action.color };
+    case 'SET_TEXT_LINE1_FONT':
+      return { ...state, textLine1Font: action.font };
+    case 'SET_TEXT_LINE2_FONT':
+      return { ...state, textLine2Font: action.font };
+    case 'SET_TEXT_LINE1_SIZE':
+      return { ...state, textLine1Size: action.size };
+    case 'SET_TEXT_LINE2_SIZE':
+      return { ...state, textLine2Size: action.size };
+    case 'TOGGLE_TEXT_LINE1_BOLD':
+      return { ...state, textLine1Bold: !state.textLine1Bold };
+    case 'TOGGLE_TEXT_LINE2_BOLD':
+      return { ...state, textLine2Bold: !state.textLine2Bold };
+    case 'TOGGLE_TEXT_LINE1_ITALIC':
+      return { ...state, textLine1Italic: !state.textLine1Italic };
+    case 'TOGGLE_TEXT_LINE2_ITALIC':
+      return { ...state, textLine2Italic: !state.textLine2Italic };
     case 'SET_TEXT_LINE1_OFFSET_Y':
       return { ...state, textLine1OffsetY: action.offset };
     case 'SET_TEXT_LINE2_OFFSET_Y':
@@ -120,6 +198,7 @@ const SKIP_UNDO: Set<string> = new Set([
 const SLIDER_ACTIONS: Set<string> = new Set([
   'SET_LOGO_SCALE', 'SET_TEXT_LINE1_OFFSET_Y', 'SET_TEXT_LINE2_OFFSET_Y',
   'SET_LOGO_AZIMUTH', 'SET_LOGO_ELEVATION',
+  'SET_TEXT_LINE1_SIZE', 'SET_TEXT_LINE2_SIZE',
 ]);
 
 const MAX_UNDO = 20;
@@ -160,29 +239,72 @@ function undoReducer(undoState: UndoState, action: GolfBallAction): UndoState {
   };
 }
 
+function initUndoState(): UndoState {
+  const saved = loadDesignFromStorage();
+  return {
+    current: { ...initialState, ...saved },
+    history: [],
+    lastActionType: null,
+  };
+}
+
 export default function GolfBallClient() {
-  const [undoState, dispatch] = useReducer(undoReducer, { current: initialState, history: [], lastActionType: null });
+  const [undoState, dispatch] = useReducer(undoReducer, undefined, initUndoState);
   const state = undoState.current;
   const canUndo = undoState.history.length > 0;
   const [activeTab, setActiveTab] = useState<Tab>('logo');
 
-  const hasContent = !!(state.logoUrl || state.textLine1 || state.textLine2);
-  const [hintDismissed, setHintDismissed] = useState(false);
-  const showHint = !hasContent && !hintDismissed;
+  // Welcome overlay — shows once per device
+  const [showWelcome, setShowWelcome] = useState(() => {
+    try {
+      return !localStorage.getItem('moonballs-welcomed');
+    } catch {
+      return false;
+    }
+  });
 
-  // Dismiss hint on first interaction
+  const dismissWelcome = useCallback(() => {
+    setShowWelcome(false);
+    try { localStorage.setItem('moonballs-welcomed', '1'); } catch {}
+    setActiveTab('logo');
+  }, []);
+
+  // Persist design to localStorage on design field changes
   useEffect(() => {
-    if (hasContent) setHintDismissed(true);
-  }, [hasContent]);
+    saveDesignToStorage(state);
+  }, [
+    state.ballColor, state.logoUrl, state.logoScale, state.logoAzimuth, state.logoElevation,
+    state.textLine1, state.textLine2,
+    state.textLine1Color, state.textLine2Color, state.textLine1Font, state.textLine2Font,
+    state.textLine1Size, state.textLine2Size, state.textLine1Bold, state.textLine2Bold,
+    state.textLine1Italic, state.textLine2Italic,
+    state.textLine1OffsetY, state.textLine2OffsetY,
+  ]);
 
-  const handleLogoUpload = useCallback((file: File) => {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      if (e.target?.result) {
-        dispatch({ type: 'SET_LOGO', url: e.target.result as string });
+  // Clear localStorage on reset
+  useEffect(() => {
+    if (
+      state.ballColor === initialState.ballColor &&
+      state.logoUrl === null &&
+      state.textLine1 === '' &&
+      state.textLine2 === ''
+    ) {
+      try { localStorage.removeItem(STORAGE_KEY); } catch {}
+    }
+  }, [state.ballColor, state.logoUrl, state.textLine1, state.textLine2]);
+
+  // Ctrl+Z / Cmd+Z keyboard shortcut
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'z' && !e.shiftKey) {
+        const tag = (e.target as HTMLElement)?.tagName;
+        if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+        e.preventDefault();
+        dispatch({ type: 'UNDO' });
       }
     };
-    reader.readAsDataURL(file);
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
   }, []);
 
   if (state.teeMode) {
@@ -195,13 +317,6 @@ export default function GolfBallClient() {
         <MoonBallsBranding />
         <MoonModeToggle state={state} dispatch={dispatch} />
         <GolfBallScene state={state} dispatch={dispatch} activeTab={activeTab} setActiveTab={setActiveTab} />
-        {/* Onboarding hint */}
-        {showHint && (
-          <div className="onboarding-hint" onClick={() => setHintDismissed(true)}>
-            <span className="hint-arrow">&#8594;</span>
-            <span>Pick a logo or add text to get started</span>
-          </div>
-        )}
         {/* Desktop-only floating Done button */}
         {state.designMode && (
           <button
@@ -227,11 +342,27 @@ export default function GolfBallClient() {
       <ControlsPanel
         state={state}
         dispatch={dispatch}
-        onLogoUpload={handleLogoUpload}
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         canUndo={canUndo}
       />
+
+      {/* Welcome overlay */}
+      {showWelcome && (
+        <div className="welcome-overlay" onClick={dismissWelcome}>
+          <div className="welcome-card" onClick={(e) => e.stopPropagation()}>
+            <h2 className="welcome-title">Design Your Custom Golf Ball</h2>
+            <ol className="welcome-steps">
+              <li><span className="step-num">1</span> Choose a logo from the gallery</li>
+              <li><span className="step-num">2</span> Add your name and a custom message</li>
+              <li><span className="step-num">3</span> Pick your ball color and share it</li>
+            </ol>
+            <button className="welcome-btn" onClick={dismissWelcome}>
+              Let&apos;s Go
+            </button>
+          </div>
+        </div>
+      )}
 
       <style jsx>{`
         .customizer-layout {
@@ -273,47 +404,95 @@ export default function GolfBallClient() {
           transform: translateX(-50%) scale(1.05);
           box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
         }
-        .onboarding-hint {
-          position: absolute;
-          bottom: 32px;
-          right: 24px;
-          z-index: 10;
-          pointer-events: auto;
-          cursor: pointer;
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          padding: 10px 18px;
-          background: rgba(255, 255, 255, 0.7);
-          backdrop-filter: blur(16px);
-          -webkit-backdrop-filter: blur(16px);
-          border: 1px solid rgba(255, 255, 255, 0.5);
-          border-radius: 20px;
-          font-family: var(--font-outfit), sans-serif;
-          font-size: 0.82rem;
-          font-weight: 500;
-          color: #1e293b;
-          box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-          animation: hint-pulse 2.5s ease-in-out infinite;
-        }
-        .hint-arrow {
-          font-size: 1rem;
-          animation: hint-bounce 1.5s ease-in-out infinite;
-        }
-        @keyframes hint-pulse {
-          0%, 100% { opacity: 0.85; }
-          50% { opacity: 1; }
-        }
-        @keyframes hint-bounce {
-          0%, 100% { transform: translateX(0); }
-          50% { transform: translateX(4px); }
-        }
         .design-mode-bar {
           display: none;
         }
         .mobile-only {
           display: none;
         }
+
+        /* Welcome overlay */
+        .welcome-overlay {
+          position: fixed;
+          inset: 0;
+          z-index: 100;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: rgba(0, 0, 0, 0.5);
+          backdrop-filter: blur(8px);
+          -webkit-backdrop-filter: blur(8px);
+        }
+        .welcome-card {
+          background: rgba(255, 255, 255, 0.85);
+          backdrop-filter: blur(40px);
+          -webkit-backdrop-filter: blur(40px);
+          border: 1px solid rgba(255, 255, 255, 0.6);
+          border-radius: 24px;
+          padding: 36px 32px 28px;
+          max-width: 380px;
+          width: calc(100% - 48px);
+          text-align: center;
+          box-shadow: 0 8px 40px rgba(0, 0, 0, 0.15);
+        }
+        .welcome-title {
+          font-family: var(--font-outfit), sans-serif;
+          font-size: 1.3rem;
+          font-weight: 700;
+          color: #1e293b;
+          margin: 0 0 24px;
+        }
+        .welcome-steps {
+          list-style: none;
+          padding: 0;
+          margin: 0 0 28px;
+          text-align: left;
+          display: flex;
+          flex-direction: column;
+          gap: 14px;
+        }
+        .welcome-steps li {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          font-family: var(--font-outfit), sans-serif;
+          font-size: 0.9rem;
+          color: #334155;
+          line-height: 1.3;
+        }
+        .step-num {
+          width: 28px;
+          height: 28px;
+          border-radius: 50%;
+          background: linear-gradient(135deg, #6366f1, #4f46e5);
+          color: white;
+          font-size: 0.8rem;
+          font-weight: 700;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
+        }
+        .welcome-btn {
+          width: 100%;
+          padding: 14px 0;
+          background: linear-gradient(135deg, #6366f1, #4f46e5);
+          color: white;
+          border: none;
+          border-radius: 14px;
+          font-family: var(--font-outfit), sans-serif;
+          font-size: 1rem;
+          font-weight: 700;
+          cursor: pointer;
+          letter-spacing: 0.03em;
+          transition: transform 0.15s, box-shadow 0.15s;
+          box-shadow: 0 2px 12px rgba(99, 102, 241, 0.35);
+        }
+        .welcome-btn:hover {
+          transform: scale(1.02);
+          box-shadow: 0 4px 20px rgba(99, 102, 241, 0.5);
+        }
+
         @media (max-width: 768px) {
           .customizer-layout {
             flex-direction: column;
@@ -327,17 +506,6 @@ export default function GolfBallClient() {
           }
           .mobile-only {
             display: flex;
-          }
-          .onboarding-hint {
-            bottom: 12px;
-            right: auto;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 0.75rem;
-            padding: 8px 14px;
-          }
-          .hint-arrow {
-            display: none;
           }
           .design-mode-bar {
             display: flex;
@@ -368,6 +536,12 @@ export default function GolfBallClient() {
             font-weight: 600;
             cursor: pointer;
             min-height: 36px;
+          }
+          .welcome-card {
+            padding: 28px 24px 24px;
+          }
+          .welcome-title {
+            font-size: 1.15rem;
           }
         }
       `}</style>

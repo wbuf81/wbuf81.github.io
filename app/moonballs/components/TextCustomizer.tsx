@@ -5,10 +5,28 @@ import type { GolfBallAction } from '../GolfBallClient';
 interface TextCustomizerProps {
   textLine1: string;
   textLine2: string;
-  textColor: string;
+  textLine1Color: string;
+  textLine2Color: string;
+  textLine1Font: string;
+  textLine2Font: string;
+  textLine1Size: number;
+  textLine2Size: number;
+  textLine1Bold: boolean;
+  textLine2Bold: boolean;
+  textLine1Italic: boolean;
+  textLine2Italic: boolean;
   textLine1OffsetY: number;
   textLine2OffsetY: number;
   dispatch: React.Dispatch<GolfBallAction>;
+}
+
+const LINE1_MAX = 20;
+const LINE2_MAX = 24;
+
+function counterWarn(len: number, max: number): string {
+  if (len >= max) return 'red';
+  if (len > max * 0.8) return 'amber';
+  return '';
 }
 
 const TEXT_COLORS = [
@@ -20,111 +38,238 @@ const TEXT_COLORS = [
   { id: 'gold', color: '#ca8a04', label: 'Gold' },
 ];
 
-export default function TextCustomizer({ textLine1, textLine2, textColor, textLine1OffsetY, textLine2OffsetY, dispatch }: TextCustomizerProps) {
+const FONTS = [
+  { id: 'Outfit', label: 'Outfit' },
+  { id: 'Georgia', label: 'Georgia' },
+  { id: 'Courier New', label: 'Courier' },
+];
+
+export default function TextCustomizer({
+  textLine1, textLine2,
+  textLine1Color, textLine2Color,
+  textLine1Font, textLine2Font,
+  textLine1Size, textLine2Size,
+  textLine1Bold, textLine2Bold,
+  textLine1Italic, textLine2Italic,
+  textLine1OffsetY, textLine2OffsetY,
+  dispatch,
+}: TextCustomizerProps) {
   return (
     <div className="text-customizer">
-      <div className="field">
-        <label>Name / Line 1</label>
-        <input
-          type="text"
-          inputMode="text"
-          enterKeyHint="done"
-          value={textLine1}
-          onChange={(e) => {
-            dispatch({ type: 'SET_TEXT_LINE1', text: e.target.value });
-            if (e.target.value && !textLine1) {
-              dispatch({ type: 'ENTER_DESIGN_MODE' });
-            }
-          }}
-          placeholder="Your name"
-          maxLength={20}
-        />
-      </div>
-      <div className="field">
-        <label>Message / Line 2</label>
-        <input
-          type="text"
-          inputMode="text"
-          enterKeyHint="done"
-          value={textLine2}
-          onChange={(e) => {
-            dispatch({ type: 'SET_TEXT_LINE2', text: e.target.value });
-            if (e.target.value && !textLine2) {
-              dispatch({ type: 'ENTER_DESIGN_MODE' });
-            }
-          }}
-          placeholder="Custom message"
-          maxLength={24}
-        />
-      </div>
-      <div className="field">
-        <label>Text Color</label>
-        <div className="color-row">
-          {TEXT_COLORS.map((c) => (
-            <button
-              key={c.id}
-              className={`color-swatch ${textColor === c.color ? 'selected' : ''}`}
-              style={{ background: c.color }}
-              onClick={() => dispatch({ type: 'SET_TEXT_COLOR', color: c.color })}
-              title={c.label}
-            />
-          ))}
-        </div>
-      </div>
-      {textLine1 && (
+      {/* LINE 1 */}
+      <div className="line-section">
+        <span className="line-heading">Line 1</span>
         <div className="field">
-          <label>Line 1 Position</label>
-          <div className="slider-row">
-            <span className="slider-label">Top</span>
+          <div className="input-wrap">
             <input
-              type="range"
-              min={0}
-              max={1}
-              step={0.05}
-              value={textLine1OffsetY}
-              onChange={(e) => dispatch({ type: 'SET_TEXT_LINE1_OFFSET_Y', offset: parseFloat(e.target.value) })}
+              type="text"
+              inputMode="text"
+              enterKeyHint="done"
+              value={textLine1}
+              onChange={(e) => {
+                dispatch({ type: 'SET_TEXT_LINE1', text: e.target.value });
+                if (e.target.value && !textLine1) {
+                  dispatch({ type: 'ENTER_DESIGN_MODE' });
+                }
+              }}
+              placeholder="Your name"
+              maxLength={LINE1_MAX}
             />
-            <span className="slider-label">Bottom</span>
+            <span className="char-counter" data-warn={counterWarn(textLine1.length, LINE1_MAX)}>
+              {textLine1.length}/{LINE1_MAX}
+            </span>
           </div>
         </div>
-      )}
-      {textLine2 && (
+        {textLine1 && (
+          <div className="line-controls">
+            <div className="font-row">
+              <div className="font-btns">
+                {FONTS.map((f) => (
+                  <button
+                    key={f.id}
+                    className={`font-btn ${textLine1Font === f.id ? 'active' : ''}`}
+                    style={{ fontFamily: `${f.id}, sans-serif` }}
+                    onClick={() => dispatch({ type: 'SET_TEXT_LINE1_FONT', font: f.id })}
+                  >
+                    {f.label}
+                  </button>
+                ))}
+              </div>
+              <div className="style-btns">
+                <button
+                  className={`style-btn ${textLine1Bold ? 'active' : ''}`}
+                  onClick={() => dispatch({ type: 'TOGGLE_TEXT_LINE1_BOLD' })}
+                  title="Bold"
+                >
+                  <strong>B</strong>
+                </button>
+                <button
+                  className={`style-btn ${textLine1Italic ? 'active' : ''}`}
+                  onClick={() => dispatch({ type: 'TOGGLE_TEXT_LINE1_ITALIC' })}
+                  title="Italic"
+                >
+                  <em>I</em>
+                </button>
+              </div>
+            </div>
+            <div className="slider-row">
+              <span className="slider-label">Size</span>
+              <input
+                type="range"
+                min={20}
+                max={60}
+                step={1}
+                value={textLine1Size}
+                onChange={(e) => dispatch({ type: 'SET_TEXT_LINE1_SIZE', size: parseInt(e.target.value) })}
+              />
+            </div>
+            <div className="color-row">
+              {TEXT_COLORS.map((c) => (
+                <button
+                  key={c.id}
+                  className={`color-swatch ${textLine1Color === c.color ? 'selected' : ''}`}
+                  style={{ background: c.color }}
+                  onClick={() => dispatch({ type: 'SET_TEXT_LINE1_COLOR', color: c.color })}
+                  title={c.label}
+                />
+              ))}
+            </div>
+            <div className="slider-row">
+              <span className="slider-label">Top</span>
+              <input
+                type="range"
+                min={0}
+                max={1}
+                step={0.05}
+                value={textLine1OffsetY}
+                onChange={(e) => dispatch({ type: 'SET_TEXT_LINE1_OFFSET_Y', offset: parseFloat(e.target.value) })}
+              />
+              <span className="slider-label">Bottom</span>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* LINE 2 */}
+      <div className="line-section">
+        <span className="line-heading">Line 2</span>
         <div className="field">
-          <label>Line 2 Position</label>
-          <div className="slider-row">
-            <span className="slider-label">Top</span>
+          <div className="input-wrap">
             <input
-              type="range"
-              min={0}
-              max={1}
-              step={0.05}
-              value={textLine2OffsetY}
-              onChange={(e) => dispatch({ type: 'SET_TEXT_LINE2_OFFSET_Y', offset: parseFloat(e.target.value) })}
+              type="text"
+              inputMode="text"
+              enterKeyHint="done"
+              value={textLine2}
+              onChange={(e) => {
+                dispatch({ type: 'SET_TEXT_LINE2', text: e.target.value });
+                if (e.target.value && !textLine2) {
+                  dispatch({ type: 'ENTER_DESIGN_MODE' });
+                }
+              }}
+              placeholder="Custom message"
+              maxLength={LINE2_MAX}
             />
-            <span className="slider-label">Bottom</span>
+            <span className="char-counter" data-warn={counterWarn(textLine2.length, LINE2_MAX)}>
+              {textLine2.length}/{LINE2_MAX}
+            </span>
           </div>
         </div>
-      )}
+        {textLine2 && (
+          <div className="line-controls">
+            <div className="font-row">
+              <div className="font-btns">
+                {FONTS.map((f) => (
+                  <button
+                    key={f.id}
+                    className={`font-btn ${textLine2Font === f.id ? 'active' : ''}`}
+                    style={{ fontFamily: `${f.id}, sans-serif` }}
+                    onClick={() => dispatch({ type: 'SET_TEXT_LINE2_FONT', font: f.id })}
+                  >
+                    {f.label}
+                  </button>
+                ))}
+              </div>
+              <div className="style-btns">
+                <button
+                  className={`style-btn ${textLine2Bold ? 'active' : ''}`}
+                  onClick={() => dispatch({ type: 'TOGGLE_TEXT_LINE2_BOLD' })}
+                  title="Bold"
+                >
+                  <strong>B</strong>
+                </button>
+                <button
+                  className={`style-btn ${textLine2Italic ? 'active' : ''}`}
+                  onClick={() => dispatch({ type: 'TOGGLE_TEXT_LINE2_ITALIC' })}
+                  title="Italic"
+                >
+                  <em>I</em>
+                </button>
+              </div>
+            </div>
+            <div className="slider-row">
+              <span className="slider-label">Size</span>
+              <input
+                type="range"
+                min={20}
+                max={60}
+                step={1}
+                value={textLine2Size}
+                onChange={(e) => dispatch({ type: 'SET_TEXT_LINE2_SIZE', size: parseInt(e.target.value) })}
+              />
+            </div>
+            <div className="color-row">
+              {TEXT_COLORS.map((c) => (
+                <button
+                  key={c.id}
+                  className={`color-swatch ${textLine2Color === c.color ? 'selected' : ''}`}
+                  style={{ background: c.color }}
+                  onClick={() => dispatch({ type: 'SET_TEXT_LINE2_COLOR', color: c.color })}
+                  title={c.label}
+                />
+              ))}
+            </div>
+            <div className="slider-row">
+              <span className="slider-label">Top</span>
+              <input
+                type="range"
+                min={0}
+                max={1}
+                step={0.05}
+                value={textLine2OffsetY}
+                onChange={(e) => dispatch({ type: 'SET_TEXT_LINE2_OFFSET_Y', offset: parseFloat(e.target.value) })}
+              />
+              <span className="slider-label">Bottom</span>
+            </div>
+          </div>
+        )}
+      </div>
 
       <style jsx>{`
         .text-customizer {
           display: flex;
           flex-direction: column;
-          gap: 16px;
+          gap: 20px;
         }
-        .field label {
-          display: block;
-          font-size: 0.75rem;
-          color: rgba(0, 0, 0, 0.35);
-          margin-bottom: 6px;
+        .line-section {
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+        }
+        .line-heading {
           font-family: var(--font-outfit), sans-serif;
+          font-size: 0.75rem;
+          font-weight: 600;
           text-transform: uppercase;
           letter-spacing: 0.08em;
-          font-weight: 500;
+          color: rgba(0, 0, 0, 0.35);
+        }
+        .field .input-wrap {
+          position: relative;
         }
         .field input {
           width: 100%;
           padding: 10px 12px;
+          padding-right: 48px;
           background: rgba(255, 255, 255, 0.5);
           border: 1px solid rgba(0, 0, 0, 0.1);
           border-radius: 10px;
@@ -140,13 +285,96 @@ export default function TextCustomizer({ textLine1, textLine2, textColor, textLi
         .field input::placeholder {
           color: rgba(0, 0, 0, 0.25);
         }
+        .char-counter {
+          position: absolute;
+          right: 10px;
+          top: 50%;
+          transform: translateY(-50%);
+          font-family: var(--font-outfit), sans-serif;
+          font-size: 0.65rem;
+          font-weight: 500;
+          color: rgba(0, 0, 0, 0.25);
+          pointer-events: none;
+          transition: color 0.15s;
+        }
+        .char-counter[data-warn='amber'] {
+          color: #d97706;
+        }
+        .char-counter[data-warn='red'] {
+          color: #dc2626;
+          font-weight: 600;
+        }
+        .line-controls {
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+        }
+        .font-row {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+        }
+        .font-btns {
+          display: flex;
+          gap: 4px;
+          flex: 1;
+        }
+        .font-btn {
+          flex: 1;
+          padding: 6px 4px;
+          border: 1px solid rgba(0, 0, 0, 0.1);
+          border-radius: 6px;
+          background: rgba(255, 255, 255, 0.6);
+          color: rgba(0, 0, 0, 0.5);
+          font-size: 0.72rem;
+          cursor: pointer;
+          transition: all 0.15s;
+          white-space: nowrap;
+        }
+        .font-btn:hover {
+          background: rgba(255, 255, 255, 0.9);
+          color: rgba(0, 0, 0, 0.7);
+        }
+        .font-btn.active {
+          background: rgba(99, 102, 241, 0.1);
+          border-color: #6366f1;
+          color: #6366f1;
+        }
+        .style-btns {
+          display: flex;
+          gap: 4px;
+        }
+        .style-btn {
+          width: 32px;
+          height: 32px;
+          border: 1px solid rgba(0, 0, 0, 0.1);
+          border-radius: 6px;
+          background: rgba(255, 255, 255, 0.6);
+          color: rgba(0, 0, 0, 0.5);
+          font-family: var(--font-outfit), sans-serif;
+          font-size: 0.82rem;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: all 0.15s;
+        }
+        .style-btn:hover {
+          background: rgba(255, 255, 255, 0.9);
+          color: rgba(0, 0, 0, 0.7);
+        }
+        .style-btn.active {
+          background: rgba(99, 102, 241, 0.1);
+          border-color: #6366f1;
+          color: #6366f1;
+        }
         .color-row {
           display: flex;
           gap: 8px;
         }
         .color-swatch {
-          width: 32px;
-          height: 32px;
+          width: 28px;
+          height: 28px;
           border-radius: 50%;
           border: 2px solid rgba(0, 0, 0, 0.1);
           cursor: pointer;
@@ -158,36 +386,6 @@ export default function TextCustomizer({ textLine1, textLine2, textColor, textLi
         .color-swatch.selected {
           border-color: #6366f1;
           box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.4);
-        }
-        @media (max-width: 768px) {
-          .color-swatch {
-            width: 40px;
-            height: 40px;
-          }
-          .color-row {
-            gap: 10px;
-          }
-          .slider-row input[type="range"] {
-            height: 44px;
-            padding: 16px 0;
-          }
-          .slider-row input[type="range"]::-webkit-slider-track {
-            height: 8px;
-            border-radius: 4px;
-          }
-          .slider-row input[type="range"]::-moz-range-track {
-            height: 8px;
-            border-radius: 4px;
-          }
-          .slider-row input[type="range"]::-webkit-slider-thumb {
-            width: 28px;
-            height: 28px;
-            margin-top: -10px;
-          }
-          .slider-row input[type="range"]::-moz-range-thumb {
-            width: 28px;
-            height: 28px;
-          }
         }
         .slider-row {
           display: flex;
@@ -201,41 +399,83 @@ export default function TextCustomizer({ textLine1, textLine2, textColor, textLi
         }
         .slider-row input[type="range"] {
           flex: 1;
-          accent-color: #6366f1;
-          height: 6px;
+          height: 8px;
           -webkit-appearance: none;
           appearance: none;
           background: transparent;
+          border-radius: 4px;
           cursor: pointer;
+          outline: none;
         }
-        .slider-row input[type="range"]::-webkit-slider-track {
-          height: 6px;
-          border-radius: 3px;
-          background: rgba(0, 0, 0, 0.18);
+        .slider-row input[type="range"]::-webkit-slider-runnable-track {
+          height: 8px;
+          border-radius: 4px;
+          background: rgba(0, 0, 0, 0.12);
         }
         .slider-row input[type="range"]::-moz-range-track {
-          height: 6px;
-          border-radius: 3px;
-          background: rgba(0, 0, 0, 0.18);
+          height: 8px;
+          border-radius: 4px;
+          background: rgba(0, 0, 0, 0.12);
           border: none;
         }
         .slider-row input[type="range"]::-webkit-slider-thumb {
           -webkit-appearance: none;
-          width: 20px;
-          height: 20px;
+          width: 22px;
+          height: 22px;
           border-radius: 50%;
           background: #6366f1;
-          border: 2px solid white;
-          box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+          border: 2.5px solid white;
+          box-shadow: 0 1px 6px rgba(0, 0, 0, 0.25);
           margin-top: -7px;
         }
         .slider-row input[type="range"]::-moz-range-thumb {
-          width: 20px;
-          height: 20px;
+          width: 22px;
+          height: 22px;
           border-radius: 50%;
           background: #6366f1;
-          border: 2px solid white;
-          box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+          border: 2.5px solid white;
+          box-shadow: 0 1px 6px rgba(0, 0, 0, 0.25);
+        }
+        @media (max-width: 768px) {
+          .color-swatch {
+            width: 36px;
+            height: 36px;
+          }
+          .color-row {
+            gap: 10px;
+          }
+          .style-btn {
+            width: 40px;
+            height: 40px;
+            min-height: 44px;
+          }
+          .font-btn {
+            min-height: 40px;
+            font-size: 0.78rem;
+          }
+          .slider-row input[type="range"] {
+            height: 10px;
+            border-radius: 5px;
+            padding: 0;
+            min-height: 44px;
+          }
+          .slider-row input[type="range"]::-webkit-slider-runnable-track {
+            height: 10px;
+            border-radius: 5px;
+          }
+          .slider-row input[type="range"]::-moz-range-track {
+            height: 10px;
+            border-radius: 5px;
+          }
+          .slider-row input[type="range"]::-webkit-slider-thumb {
+            width: 30px;
+            height: 30px;
+            margin-top: -10px;
+          }
+          .slider-row input[type="range"]::-moz-range-thumb {
+            width: 30px;
+            height: 30px;
+          }
         }
       `}</style>
     </div>

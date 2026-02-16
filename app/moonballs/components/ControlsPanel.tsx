@@ -7,7 +7,6 @@ import type { GolfBallState, GolfBallAction, Tab } from '../GolfBallClient';
 interface ControlsPanelProps {
   state: GolfBallState;
   dispatch: React.Dispatch<GolfBallAction>;
-  onLogoUpload: (file: File) => void;
   activeTab: Tab;
   setActiveTab: (tab: Tab) => void;
   canUndo?: boolean;
@@ -28,9 +27,7 @@ const TAB_CONFIG: { key: Tab; label: string }[] = [
   { key: 'color', label: 'Color' },
 ];
 
-export default function ControlsPanel({ state, dispatch, onLogoUpload, activeTab, setActiveTab, canUndo }: ControlsPanelProps) {
-  const hasText = !!(state.textLine1 || state.textLine2);
-
+export default function ControlsPanel({ state, dispatch, activeTab, setActiveTab, canUndo }: ControlsPanelProps) {
   const handleTabChange = (tab: Tab) => {
     setActiveTab(tab);
     if (tab === 'color') {
@@ -60,7 +57,7 @@ export default function ControlsPanel({ state, dispatch, onLogoUpload, activeTab
       <div className="tab-content">
         {activeTab === 'logo' && (
           <div className="section">
-            <LogoPicker selectedLogo={state.logoUrl} dispatch={dispatch} onLogoUpload={onLogoUpload} />
+            <LogoPicker selectedLogo={state.logoUrl} dispatch={dispatch} />
             {state.logoUrl && (
               <>
                 <div className="slider-group">
@@ -88,36 +85,20 @@ export default function ControlsPanel({ state, dispatch, onLogoUpload, activeTab
             <TextCustomizer
               textLine1={state.textLine1}
               textLine2={state.textLine2}
-              textColor={state.textColor}
+              textLine1Color={state.textLine1Color}
+              textLine2Color={state.textLine2Color}
+              textLine1Font={state.textLine1Font}
+              textLine2Font={state.textLine2Font}
+              textLine1Size={state.textLine1Size}
+              textLine2Size={state.textLine2Size}
+              textLine1Bold={state.textLine1Bold}
+              textLine2Bold={state.textLine2Bold}
+              textLine1Italic={state.textLine1Italic}
+              textLine2Italic={state.textLine2Italic}
               textLine1OffsetY={state.textLine1OffsetY}
               textLine2OffsetY={state.textLine2OffsetY}
               dispatch={dispatch}
             />
-            {hasText && (
-              <div className="align-wrap">
-                <span className="align-label">Alignment</span>
-                <div className="align-btns">
-                  {(['left', 'center', 'right'] as const).map((a) => (
-                    <button
-                      key={a}
-                      className={`align-btn ${state.textAlign === a ? 'active' : ''}`}
-                      onClick={() => dispatch({ type: 'SET_TEXT_ALIGN', align: a })}
-                      title={`Align ${a}`}
-                    >
-                      {a === 'left' && (
-                        <svg width="16" height="16" viewBox="0 0 16 16"><path d="M2 3h12M2 7h8M2 11h10M2 15h6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>
-                      )}
-                      {a === 'center' && (
-                        <svg width="16" height="16" viewBox="0 0 16 16"><path d="M2 3h12M4 7h8M3 11h10M5 15h6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>
-                      )}
-                      {a === 'right' && (
-                        <svg width="16" height="16" viewBox="0 0 16 16"><path d="M2 3h12M6 7h8M4 11h10M8 15h6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>
-                      )}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
           </div>
         )}
 
@@ -246,83 +227,42 @@ export default function ControlsPanel({ state, dispatch, onLogoUpload, activeTab
         }
         .slider-group input[type='range'] {
           width: 100%;
-          accent-color: #6366f1;
-          height: 6px;
+          height: 8px;
           -webkit-appearance: none;
           appearance: none;
           background: transparent;
+          border-radius: 4px;
           cursor: pointer;
+          outline: none;
         }
-        .slider-group input[type='range']::-webkit-slider-track {
-          height: 6px;
-          border-radius: 3px;
-          background: rgba(0, 0, 0, 0.18);
+        .slider-group input[type='range']::-webkit-slider-runnable-track {
+          height: 8px;
+          border-radius: 4px;
+          background: rgba(0, 0, 0, 0.12);
         }
         .slider-group input[type='range']::-moz-range-track {
-          height: 6px;
-          border-radius: 3px;
-          background: rgba(0, 0, 0, 0.18);
+          height: 8px;
+          border-radius: 4px;
+          background: rgba(0, 0, 0, 0.12);
           border: none;
         }
         .slider-group input[type='range']::-webkit-slider-thumb {
           -webkit-appearance: none;
-          width: 20px;
-          height: 20px;
+          width: 22px;
+          height: 22px;
           border-radius: 50%;
           background: #6366f1;
-          border: 2px solid white;
-          box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+          border: 2.5px solid white;
+          box-shadow: 0 1px 6px rgba(0, 0, 0, 0.25);
           margin-top: -7px;
         }
         .slider-group input[type='range']::-moz-range-thumb {
-          width: 20px;
-          height: 20px;
+          width: 22px;
+          height: 22px;
           border-radius: 50%;
           background: #6366f1;
-          border: 2px solid white;
-          box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
-        }
-
-        /* Text alignment */
-        .align-wrap {
-          margin-top: 14px;
-        }
-        .align-label {
-          font-family: var(--font-outfit), sans-serif;
-          font-size: 0.75rem;
-          font-weight: 500;
-          text-transform: uppercase;
-          letter-spacing: 0.08em;
-          color: rgba(0, 0, 0, 0.35);
-          display: block;
-          margin-bottom: 8px;
-        }
-        .align-btns {
-          display: flex;
-          gap: 4px;
-        }
-        .align-btn {
-          flex: 1;
-          padding: 8px 0;
-          border: 1px solid rgba(0, 0, 0, 0.1);
-          border-radius: 8px;
-          background: rgba(255, 255, 255, 0.6);
-          color: rgba(0, 0, 0, 0.45);
-          cursor: pointer;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          transition: all 0.15s;
-        }
-        .align-btn:hover {
-          background: rgba(255, 255, 255, 0.9);
-          color: rgba(0, 0, 0, 0.7);
-          border-color: rgba(0, 0, 0, 0.2);
-        }
-        .align-btn.active {
-          background: rgba(99, 102, 241, 0.1);
-          border-color: #6366f1;
-          color: #6366f1;
+          border: 2.5px solid white;
+          box-shadow: 0 1px 6px rgba(0, 0, 0, 0.25);
         }
 
         /* Ball color swatches */
@@ -453,9 +393,6 @@ export default function ControlsPanel({ state, dispatch, onLogoUpload, activeTab
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
           }
-          .align-btn {
-            min-height: 44px;
-          }
           .panel-footer {
             padding: 10px 12px;
             padding-bottom: max(10px, env(safe-area-inset-bottom));
@@ -467,25 +404,27 @@ export default function ControlsPanel({ state, dispatch, onLogoUpload, activeTab
             min-height: 44px;
           }
           .slider-group input[type='range'] {
-            height: 44px;
-            padding: 16px 0;
+            height: 10px;
+            border-radius: 5px;
+            padding: 0;
+            min-height: 44px;
           }
-          .slider-group input[type='range']::-webkit-slider-track {
-            height: 8px;
-            border-radius: 4px;
+          .slider-group input[type='range']::-webkit-slider-runnable-track {
+            height: 10px;
+            border-radius: 5px;
           }
           .slider-group input[type='range']::-moz-range-track {
-            height: 8px;
-            border-radius: 4px;
+            height: 10px;
+            border-radius: 5px;
           }
           .slider-group input[type='range']::-webkit-slider-thumb {
-            width: 28px;
-            height: 28px;
+            width: 30px;
+            height: 30px;
             margin-top: -10px;
           }
           .slider-group input[type='range']::-moz-range-thumb {
-            width: 28px;
-            height: 28px;
+            width: 30px;
+            height: 30px;
           }
           .ball-colors {
             grid-template-columns: repeat(6, 1fr);

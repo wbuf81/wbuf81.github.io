@@ -65,11 +65,19 @@ export default function GolfBall({ state, dispatch, activeTab, setActiveTab }: G
   const roughnessMap = useMemo(() => getDimpleRoughnessMap(), []);
   const displacementMap = useMemo(() => getDimpleDisplacementMap(), []);
 
-  const textLine1Texture = useCanvasTextureLine(state.textLine1, state.textColor, 48, 'bold');
-  const textLine2Texture = useCanvasTextureLine(state.textLine2, state.textColor, 36, 'normal');
+  const textLine1Texture = useCanvasTextureLine(
+    state.textLine1, state.textLine1Color, state.textLine1Size,
+    state.textLine1Bold ? 'bold' : 'normal',
+    state.textLine1Italic ? 'italic' : 'normal',
+    state.textLine1Font
+  );
+  const textLine2Texture = useCanvasTextureLine(
+    state.textLine2, state.textLine2Color, state.textLine2Size,
+    state.textLine2Bold ? 'bold' : 'normal',
+    state.textLine2Italic ? 'italic' : 'normal',
+    state.textLine2Font
+  );
 
-  // Shift decal azimuth for text alignment (avoids inverted curvature from canvas flip)
-  const textAlignOffset = state.textAlign === 'left' ? 0.20 : state.textAlign === 'right' ? -0.20 : 0;
   const { texture: logoTexture, aspectRatio: logoAspect } = useLogoTexture(state.logoUrl);
   const titleistTexture = useTitleistTexture();
   const printZoneTexture = usePrintZoneTexture();
@@ -121,11 +129,11 @@ export default function GolfBall({ state, dispatch, activeTab, setActiveTab }: G
   }, []);
   const printZoneRotation = logoRotation;
 
-  // Text line positions (shifted by alignment offset)
-  const line1Position = useMemo(() => textLinePosition(state.textLine1OffsetY, textAlignOffset), [state.textLine1OffsetY, textAlignOffset]);
-  const line2Position = useMemo(() => textLinePosition(state.textLine2OffsetY, textAlignOffset), [state.textLine2OffsetY, textAlignOffset]);
-  const line1Rotation = useMemo(() => textLineRotation(state.textLine1OffsetY, textAlignOffset), [state.textLine1OffsetY, textAlignOffset]);
-  const line2Rotation = useMemo(() => textLineRotation(state.textLine2OffsetY, textAlignOffset), [state.textLine2OffsetY, textAlignOffset]);
+  // Text line positions
+  const line1Position = useMemo(() => textLinePosition(state.textLine1OffsetY), [state.textLine1OffsetY]);
+  const line2Position = useMemo(() => textLinePosition(state.textLine2OffsetY), [state.textLine2OffsetY]);
+  const line1Rotation = useMemo(() => textLineRotation(state.textLine1OffsetY), [state.textLine1OffsetY]);
+  const line2Rotation = useMemo(() => textLineRotation(state.textLine2OffsetY), [state.textLine2OffsetY]);
 
   const onPointerOver = useCallback(() => {
     if (hasLogo || hasText) {

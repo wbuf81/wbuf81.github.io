@@ -9,7 +9,9 @@ export function useCanvasTextureLine(
   text: string,
   color: string,
   fontSize: number = 48,
-  fontWeight: string = 'bold'
+  fontWeight: string = 'bold',
+  fontStyle: string = 'normal',
+  fontFamily: string = 'Outfit'
 ): THREE.CanvasTexture | null {
   const [fontReady, setFontReady] = useState(false);
 
@@ -32,7 +34,7 @@ export function useCanvasTextureLine(
 
     ctx.fillStyle = color;
     ctx.textBaseline = 'middle';
-    ctx.font = `${fontWeight} ${fontSize}px Outfit, sans-serif`;
+    ctx.font = `${fontStyle} ${fontWeight} ${fontSize}px ${fontFamily}, sans-serif`;
 
     // Always center text on canvas; alignment is handled by shifting the decal
     // position on the sphere, which avoids inverted curvature distortion
@@ -42,7 +44,7 @@ export function useCanvasTextureLine(
     const tex = new THREE.CanvasTexture(canvas);
     tex.needsUpdate = true;
     return tex;
-  }, [text, color, fontSize, fontWeight, fontReady]);
+  }, [text, color, fontSize, fontWeight, fontStyle, fontFamily, fontReady]);
 
   return texture;
 }
