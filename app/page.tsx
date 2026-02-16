@@ -70,6 +70,23 @@ export default function HomePage() {
 
       {/* Hero */}
       <section className="hero">
+        {/* Subtle falling Tetris blocks background */}
+        <div className="tetris-bg">
+          <div className="tetris-piece piece-i" style={{ left: '4%', animationDelay: '0s', animationDuration: '14s' }} />
+          <div className="tetris-piece piece-o" style={{ left: '12%', animationDelay: '3s', animationDuration: '12s' }} />
+          <div className="tetris-piece piece-t" style={{ left: '20%', animationDelay: '1.5s', animationDuration: '15s' }} />
+          <div className="tetris-piece piece-l" style={{ left: '28%', animationDelay: '5s', animationDuration: '11s' }} />
+          <div className="tetris-piece piece-j" style={{ left: '36%', animationDelay: '0.8s', animationDuration: '13s' }} />
+          <div className="tetris-piece piece-s" style={{ left: '44%', animationDelay: '4s', animationDuration: '16s' }} />
+          <div className="tetris-piece piece-z" style={{ left: '52%', animationDelay: '2s', animationDuration: '10s' }} />
+          <div className="tetris-piece piece-i" style={{ left: '60%', animationDelay: '6s', animationDuration: '14.5s' }} />
+          <div className="tetris-piece piece-t" style={{ left: '68%', animationDelay: '1s', animationDuration: '12.5s' }} />
+          <div className="tetris-piece piece-o" style={{ left: '76%', animationDelay: '4.5s', animationDuration: '15.5s' }} />
+          <div className="tetris-piece piece-l" style={{ left: '84%', animationDelay: '2.5s', animationDuration: '11.5s' }} />
+          <div className="tetris-piece piece-j" style={{ left: '92%', animationDelay: '7s', animationDuration: '13.5s' }} />
+          <div className="tetris-piece piece-s" style={{ left: '8%', animationDelay: '8s', animationDuration: '12s' }} />
+          <div className="tetris-piece piece-z" style={{ left: '48%', animationDelay: '9s', animationDuration: '14s' }} />
+        </div>
         <div className="hero-inner">
           <div className="hero-text">
             <h1 className="hero-name">Wesley Bard</h1>
@@ -338,6 +355,8 @@ export default function HomePage() {
         .hero {
           padding: 64px 24px;
           background: #fff;
+          position: relative;
+          overflow: hidden;
         }
         .hero-inner {
           max-width: 1000px;
@@ -346,6 +365,8 @@ export default function HomePage() {
           align-items: center;
           justify-content: space-between;
           gap: 48px;
+          position: relative;
+          z-index: 1;
         }
         .hero-text {
           flex: 1;
@@ -367,6 +388,104 @@ export default function HomePage() {
         }
         .hero-headshot {
           flex-shrink: 0;
+        }
+
+        /* Tetris background */
+        .tetris-bg {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          pointer-events: none;
+          overflow: hidden;
+          z-index: 0;
+        }
+        .tetris-piece {
+          position: absolute;
+          top: -80px;
+          opacity: 0.25;
+          animation: tetris-fall linear infinite;
+        }
+        @keyframes tetris-fall {
+          0% {
+            transform: translateY(0) rotate(0deg);
+          }
+          24.9% {
+            transform: translateY(150px) rotate(0deg);
+          }
+          25% {
+            transform: translateY(150px) rotate(90deg);
+          }
+          49.9% {
+            transform: translateY(300px) rotate(90deg);
+          }
+          50% {
+            transform: translateY(300px) rotate(180deg);
+          }
+          74.9% {
+            transform: translateY(450px) rotate(180deg);
+          }
+          75% {
+            transform: translateY(450px) rotate(270deg);
+          }
+          100% {
+            transform: translateY(600px) rotate(270deg);
+          }
+        }
+        /* I-piece */
+        .piece-i {
+          width: 18px;
+          height: 72px;
+          background: #d1d5db;
+          box-shadow: inset -2px -2px 0 rgba(0,0,0,0.15), inset 2px 2px 0 rgba(255,255,255,0.4);
+        }
+        /* O-piece */
+        .piece-o {
+          width: 36px;
+          height: 36px;
+          background: #e5e7eb;
+          box-shadow: inset -2px -2px 0 rgba(0,0,0,0.15), inset 2px 2px 0 rgba(255,255,255,0.4);
+        }
+        /* T-piece */
+        .piece-t {
+          width: 54px;
+          height: 36px;
+          background: #9ca3af;
+          clip-path: polygon(33% 0%, 66% 0%, 66% 50%, 100% 50%, 100% 100%, 0% 100%, 0% 50%, 33% 50%);
+          box-shadow: inset -2px -2px 0 rgba(0,0,0,0.15), inset 2px 2px 0 rgba(255,255,255,0.4);
+        }
+        /* L-piece */
+        .piece-l {
+          width: 36px;
+          height: 54px;
+          background: #c4c8d0;
+          clip-path: polygon(0% 0%, 50% 0%, 50% 66%, 100% 66%, 100% 100%, 0% 100%);
+          box-shadow: inset -2px -2px 0 rgba(0,0,0,0.15), inset 2px 2px 0 rgba(255,255,255,0.4);
+        }
+        /* J-piece */
+        .piece-j {
+          width: 36px;
+          height: 54px;
+          background: #d1d5db;
+          clip-path: polygon(50% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 66%, 50% 66%);
+          box-shadow: inset -2px -2px 0 rgba(0,0,0,0.15), inset 2px 2px 0 rgba(255,255,255,0.4);
+        }
+        /* S-piece */
+        .piece-s {
+          width: 54px;
+          height: 36px;
+          background: #e5e7eb;
+          clip-path: polygon(33% 0%, 100% 0%, 100% 50%, 66% 50%, 66% 100%, 0% 100%, 0% 50%, 33% 50%);
+          box-shadow: inset -2px -2px 0 rgba(0,0,0,0.15), inset 2px 2px 0 rgba(255,255,255,0.4);
+        }
+        /* Z-piece */
+        .piece-z {
+          width: 54px;
+          height: 36px;
+          background: #9ca3af;
+          clip-path: polygon(0% 0%, 66% 0%, 66% 50%, 100% 50%, 100% 100%, 33% 100%, 33% 50%, 0% 50%);
+          box-shadow: inset -2px -2px 0 rgba(0,0,0,0.15), inset 2px 2px 0 rgba(255,255,255,0.4);
         }
 
         /* Sections */
