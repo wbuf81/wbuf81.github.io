@@ -2,6 +2,7 @@
 
 import { useState, useMemo, useRef } from 'react';
 import Link from 'next/link';
+import { Nav } from '../components/Nav';
 import { UsesItem as UsesItemType, Category, CATEGORY_LABELS } from '@/types/uses';
 
 interface UsesClientProps {
@@ -501,13 +502,10 @@ export default function UsesClient({ items, allTags }: UsesClientProps) {
     <div className="uses-container">
       <div className="grain-overlay" />
 
+      <Nav />
+
       {/* Header */}
       <header className="page-header">
-        <nav className="uses-nav">
-          <Link href="/" className="back-link">
-            ← Home
-          </Link>
-        </nav>
 
         <div className="hero">
           <h1 className="page-title">Gear I Love</h1>
@@ -675,27 +673,6 @@ export default function UsesClient({ items, allTags }: UsesClientProps) {
           z-index: 1;
           background: linear-gradient(180deg, #fff 0%, #fafafa 100%);
           border-bottom: 1px solid #f0f0f0;
-        }
-
-        .uses-nav {
-          max-width: 1100px;
-          margin: 0 auto;
-          padding: 20px 32px;
-        }
-
-        .back-link {
-          display: inline-flex;
-          align-items: center;
-          color: #6b7280;
-          text-decoration: none;
-          font-family: var(--font-outfit), system-ui, sans-serif;
-          font-size: 0.9rem;
-          font-weight: 500;
-          transition: color 0.2s ease;
-        }
-
-        .back-link:hover {
-          color: #1f2937;
         }
 
         .hero {
@@ -1107,10 +1084,6 @@ export default function UsesClient({ items, allTags }: UsesClientProps) {
         }
 
         @media (max-width: 480px) {
-          .uses-nav {
-            padding: 16px 16px;
-          }
-
           .hero {
             padding: 0 16px 24px;
           }

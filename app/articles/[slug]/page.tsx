@@ -1,6 +1,6 @@
-import Link from 'next/link';
 import { getArticleBySlug, getArticleSlugs } from '@/lib/articles';
 import { MDXRemote } from 'next-mdx-remote/rsc';
+import { Nav } from '../../components/Nav';
 
 export function generateStaticParams() {
   const slugs = getArticleSlugs();
@@ -24,12 +24,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
 
   return (
     <>
-      <nav>
-        <ul>
-          <li><Link href="/">Home</Link></li>
-          <li><Link href="/articles">Articles</Link></li>
-        </ul>
-      </nav>
+      <Nav />
       <main>
         <article>
           <header style={{ marginBottom: '2rem' }}>

@@ -141,7 +141,6 @@ interface TetrisState {
   lineClear: LineClearAnim | null;
   gameOver: GameOverAnim | null;
   celebration: TetrisCelebration | null;
-  paused: boolean;
 }
 
 // ── Helpers ────────────────────────────────────────────────────────────
@@ -364,7 +363,6 @@ const TetrisBackground = forwardRef<TetrisHandle, TetrisProps>(function TetrisBa
       lineClear: null,
       gameOver: null,
       celebration: null,
-      paused: false,
     };
     state.active = spawnPiece(state);
     if (state.active && state.mode === 'auto') {
@@ -688,7 +686,6 @@ const TetrisBackground = forwardRef<TetrisHandle, TetrisProps>(function TetrisBa
 
     function update(now: number) {
       const state = stateRef.current!;
-      if (state.paused) return;
 
       // Handle game over animation
       if (state.gameOver) {

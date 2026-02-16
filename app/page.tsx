@@ -6,6 +6,12 @@ import Link from 'next/link';
 import { Nav } from './components/Nav';
 import TetrisBackground from './components/TetrisBackground';
 import type { TetrisHandle } from './components/TetrisBackground';
+import MsPacManBackground from './components/MsPacManBackground';
+import type { MsPacManHandle } from './components/MsPacManBackground';
+import GalagaBackground from './components/GalagaBackground';
+import type { GalagaHandle } from './components/GalagaBackground';
+
+type GameType = 'tetris' | 'pacman' | 'galaga';
 
 const EXPERTISE_TAGS = [
   'PCI-DSS', 'ISO 27001', 'ISO 27701', 'SOC-2', 'SOX',
@@ -67,12 +73,41 @@ const INTEREST_CARDS = [
 ];
 
 export default function HomePage() {
+  const [activeGame, setActiveGame] = useState<GameType>('tetris');
   const tetrisRef = useRef<TetrisHandle>(null);
-  const [tetris, setTetris] = useState({ isPlaying: false, score: 0, lines: 0 });
+  const pacmanRef = useRef<MsPacManHandle>(null);
+  const galagaRef = useRef<GalagaHandle>(null);
+  const [gameState, setGameState] = useState({ isPlaying: false, score: 0, secondary: 0 });
 
   const handleTetrisState = useCallback((state: { isPlaying: boolean; score: number; lines: number }) => {
-    setTetris(state);
+    setGameState({ isPlaying: state.isPlaying, score: state.score, secondary: state.lines });
   }, []);
+
+  const handlePacmanState = useCallback((state: { isPlaying: boolean; score: number; level: number }) => {
+    setGameState({ isPlaying: state.isPlaying, score: state.score, secondary: state.level });
+  }, []);
+
+  const handleGalagaState = useCallback((state: { isPlaying: boolean; score: number; stage: number }) => {
+    setGameState({ isPlaying: state.isPlaying, score: state.score, secondary: state.stage });
+  }, []);
+
+  const handleTogglePlay = useCallback(() => {
+    if (activeGame === 'tetris') tetrisRef.current?.togglePlay();
+    else if (activeGame === 'pacman') pacmanRef.current?.togglePlay();
+    else galagaRef.current?.togglePlay();
+  }, [activeGame]);
+
+  const handleSwitchGame = useCallback((game: GameType) => {
+    if (game === activeGame) return;
+    setGameState({ isPlaying: false, score: 0, secondary: 0 });
+    setActiveGame(game);
+  }, [activeGame]);
+
+  const gameLabels = {
+    tetris: { play: 'Play Tetris', auto: 'Auto-play', stat: 'Lines' },
+    pacman: { play: 'Play Pac-Man', auto: 'Auto-play', stat: 'Level' },
+    galaga: { play: 'Play Galaga', auto: 'Auto-play', stat: 'Stage' },
+  };
 
   return (
     <>
@@ -80,15 +115,53 @@ export default function HomePage() {
 
       {/* Hero */}
       <section className="hero">
-        <TetrisBackground ref={tetrisRef} onStateChange={handleTetrisState} />
+        {activeGame === 'tetris' && <TetrisBackground ref={tetrisRef} onStateChange={handleTetrisState} />}
+        {activeGame === 'pacman' && <MsPacManBackground ref={pacmanRef} onStateChange={handlePacmanState} />}
+        {activeGame === 'galaga' && <GalagaBackground ref={galagaRef} onStateChange={handleGalagaState} />}
         <div className="hero-inner">
           <div className="hero-text">
             <h1 className="hero-name">Wesley Bard</h1>
             <p className="hero-subtitle">VP, Risk & Compliance | Engineer | AI Builder</p>
-            <div className="tetris-stats" style={{ opacity: tetris.isPlaying ? 1 : 0 }}>
-              <span>Score: {tetris.score.toLocaleString()}</span>
-              <span className="tetris-stats-sep">&middot;</span>
-              <span>Lines: {tetris.lines}</span>
+            <div className="game-row">
+              <div className="game-selector">
+                <button
+                  className={`game-selector-text${activeGame === 'tetris' ? ' game-selector-active' : ''}`}
+                  onClick={() => handleSwitchGame('tetris')}
+                >
+                  Tetris
+                </button>
+                <span className="game-selector-divider">|</span>
+                <button
+                  className={`game-selector-text${activeGame === 'pacman' ? ' game-selector-active' : ''}`}
+                  onClick={() => handleSwitchGame('pacman')}
+                >
+                  Ms. Pac-Man
+                </button>
+                <span className="game-selector-divider">|</span>
+                <button
+                  className={`game-selector-text${activeGame === 'galaga' ? ' game-selector-active' : ''}`}
+                  onClick={() => handleSwitchGame('galaga')}
+                >
+                  Galaga
+                </button>
+              </div>
+              <button
+                className="game-play-btn"
+                onClick={handleTogglePlay}
+              >
+                {gameState.isPlaying ? '⏹ Stop' : '▶ Play'}
+              </button>
+            </div>
+            <div className="game-stats" style={{ opacity: gameState.isPlaying ? 1 : 0 }}>
+              <span>Score: {gameState.score.toLocaleString()}</span>
+              <span className="game-stats-sep">&middot;</span>
+              <span>{gameLabels[activeGame].stat}: {gameState.secondary}</span>
+              <span className="game-stats-sep">&middot;</span>
+              <span className="game-controls-inline">
+                {activeGame === 'tetris' && <>arrows move &middot; space drop</>}
+                {activeGame === 'pacman' && <>arrows steer</>}
+                {activeGame === 'galaga' && <>arrows move &middot; space fire</>}
+              </span>
             </div>
           </div>
           <div className="hero-headshot">
@@ -100,21 +173,6 @@ export default function HomePage() {
               priority
               style={{ borderRadius: '50%', objectFit: 'cover', width: '200px', height: '200px' }}
             />
-            <button
-              className="tetris-play-btn"
-              onClick={() => tetrisRef.current?.togglePlay()}
-            >
-              {tetris.isPlaying ? 'Auto-play' : 'Play Tetris'}
-            </button>
-            <div className="tetris-controls" style={{ opacity: tetris.isPlaying ? 1 : 0 }}>
-              <span>&larr; &rarr;</span> move
-              <span className="tetris-controls-sep">&middot;</span>
-              <span>&darr;</span> soft drop
-              <span className="tetris-controls-sep">&middot;</span>
-              <span>&uarr;</span> rotate
-              <span className="tetris-controls-sep">&middot;</span>
-              <span>space</span> hard drop
-            </div>
           </div>
         </div>
       </section>
@@ -127,7 +185,7 @@ export default function HomePage() {
             I&apos;ve spent the last 20 years somewhere between engineering and compliance — starting as a software engineer at Lockheed Martin, and eventually finding my way into risk and compliance leadership at Newfold Digital. That path wasn&apos;t planned, but I&apos;m grateful it gave me a feel for both sides: how systems are built and how they&apos;re governed.
           </p>
           <p className="about-text" style={{ marginTop: '16px' }}>
-            These days, I lead global privacy, risk, and compliance programs at Newfold — work I genuinely enjoy. I also like to build things. Lately that&apos;s meant putting together small tools for problems my company deals with every day — reviewing contracts faster, keeping tabs on service marks, scanning sites for compliance gaps. Most of it&apos;s built with Claude and the Anthropic API. Nothing groundbreaking, but it keeps me sharp and occasionally makes the day job easier.
+            These days, I lead global privacy, risk, and compliance programs at Newfold — work I genuinely enjoy. I also like to build things. Lately that&apos;s meant building tools and agents for problems my company deals with every day — reviewing contracts faster, keeping tabs on service marks, scanning sites for compliance gaps. Most of it&apos;s built with Claude and the Anthropic API. It keeps me sharp, makes everyone's day job easier, and lowers the company's risk portfolio.
           </p>
         </div>
       </section>
@@ -326,7 +384,7 @@ export default function HomePage() {
         <div className="section-inner">
           <h2 className="section-heading">Connect</h2>
           <p className="connect-text">
-            Feel free to reach out.
+            Feel free to reach out.  Resume available upon request.
           </p>
           <div className="connect-links">
             <a href="https://www.linkedin.com/in/wesleybard/" target="_blank" rel="noopener noreferrer" className="connect-btn connect-btn-primary">
@@ -408,57 +466,79 @@ export default function HomePage() {
           gap: 12px;
         }
 
-        /* Tetris UI */
-        .tetris-stats {
+        /* Game UI */
+        .game-row {
           display: flex;
           align-items: center;
-          gap: 6px;
-          margin-top: 12px;
+          gap: 16px;
+          margin-top: 16px;
+        }
+        .game-selector {
+          display: flex;
+          align-items: center;
+          gap: 0;
+        }
+        .game-selector-text {
           font-family: var(--font-outfit), system-ui, sans-serif;
-          font-size: 0.8rem;
-          color: #9ca3af;
-          transition: opacity 0.3s ease;
+          font-size: 0.85rem;
+          font-weight: 400;
+          color: #b0b5bd;
+          background: none;
+          border: none;
+          cursor: pointer;
+          padding: 2px 0;
+          transition: color 0.2s ease;
         }
-        .tetris-stats-sep {
+        .game-selector-text:hover {
+          color: #6b7280;
+        }
+        .game-selector-text.game-selector-active {
+          color: #6b7280;
+          font-weight: 500;
+        }
+        .game-selector-divider {
+          font-family: var(--font-outfit), system-ui, sans-serif;
+          font-size: 0.85rem;
           color: #d1d5db;
+          margin: 0 10px;
+          user-select: none;
         }
-        .tetris-play-btn {
+        .game-play-btn {
           font-family: var(--font-outfit), system-ui, sans-serif;
           font-size: 0.8rem;
           font-weight: 500;
           color: #9ca3af;
-          background: rgba(255,255,255,0.8);
+          background: none;
           border: 1px solid #e5e7eb;
           border-radius: 6px;
-          padding: 5px 14px;
+          padding: 4px 12px;
           cursor: pointer;
-          transition: color 0.2s ease, background 0.2s ease;
-          backdrop-filter: blur(4px);
+          transition: color 0.2s ease, border-color 0.2s ease;
         }
-        .tetris-play-btn:hover {
+        .game-play-btn:hover {
           color: #374151;
-          background: rgba(255,255,255,0.95);
+          border-color: #9ca3af;
         }
-        .tetris-controls {
+        .game-stats {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          margin-top: 8px;
           font-family: var(--font-outfit), system-ui, sans-serif;
-          font-size: 0.65rem;
+          font-size: 0.75rem;
           color: #b0b5bd;
-          text-align: center;
-          line-height: 1.6;
           transition: opacity 0.3s ease;
         }
-        .tetris-controls span {
-          color: #9ca3af;
+        .game-stats-sep {
+          color: #d1d5db;
         }
-        .tetris-controls-sep {
-          margin: 0 2px;
-          color: #d1d5db !important;
+        .game-controls-inline {
+          color: #c9cdd3;
         }
 
         @media (max-width: 767px) {
-          .tetris-play-btn,
-          .tetris-controls,
-          .tetris-stats {
+          .game-row,
+          .game-stats {
             display: none;
           }
         }

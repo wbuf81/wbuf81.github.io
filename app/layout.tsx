@@ -15,13 +15,13 @@ const outfit = Outfit({
 });
 
 export const metadata: Metadata = {
-  title: 'Wesley Bard',
-  description: 'Risk & Compliance Leader, Engineer, AI Builder',
+  title: 'Wesley Bard — VP, Risk & Compliance',
+  description: 'Risk and compliance executive with 20 years of experience spanning Lockheed Martin and Newfold Digital. Engineer. AI Builder.',
   metadataBase: new URL('https://wbuf81.github.io'),
   manifest: '/manifest.json',
   openGraph: {
-    title: 'Wesley Bard',
-    description: 'Risk & Compliance Leader, Engineer, AI Builder',
+    title: 'Wesley Bard — VP, Risk & Compliance',
+    description: 'Risk and compliance executive with 20 years of experience spanning Lockheed Martin and Newfold Digital. Engineer. AI Builder.',
     url: 'https://wbuf81.github.io',
     siteName: 'Wesley Bard',
     locale: 'en_US',
@@ -37,8 +37,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Wesley Bard',
-    description: 'Risk & Compliance Leader, Engineer, AI Builder',
+    title: 'Wesley Bard — VP, Risk & Compliance',
+    description: 'Risk and compliance executive with 20 years of experience spanning Lockheed Martin and Newfold Digital. Engineer. AI Builder.',
     images: ['/og-image.svg'],
   },
   other: {
@@ -52,14 +52,14 @@ const jsonLd = {
   '@type': 'Person',
   name: 'Wesley Bard',
   alternateName: 'Wes',
-  description: 'Risk & Compliance Leader, Engineer, AI Builder',
+  description: 'Risk and compliance executive with 20 years of experience spanning Lockheed Martin and Newfold Digital. Engineer. AI Builder.',
   url: 'https://wbuf81.github.io',
   sameAs: [
     'https://www.linkedin.com/in/wesleybard/',
     'https://github.com/wbuf81',
     'https://www.instagram.com/wb81',
   ],
-  jobTitle: 'Risk and Compliance Leader',
+  jobTitle: 'VP, Risk and Compliance',
   knowsAbout: ['Risk Management', 'Compliance', 'AI', 'Engineering'],
 };
 

@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { Nav } from '../components/Nav';
 
 interface Article {
   slug: string;
@@ -15,14 +16,7 @@ export default function ArticlesClient({ articles }: { articles: Article[] }) {
       {/* Grain texture overlay */}
       <div className="grain-overlay" />
 
-      <nav className="articles-nav">
-        <Link href="/" className="back-link">
-          <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
-            <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
-          </svg>
-          Back to Home
-        </Link>
-      </nav>
+      <Nav />
 
       <main className="articles-main">
         <header className="articles-header">
@@ -94,33 +88,6 @@ export default function ArticlesClient({ articles }: { articles: Article[] }) {
           70% { transform: translate(-1%, -1%); }
           80% { transform: translate(1%, 1%); }
           90% { transform: translate(-2%, -1%); }
-        }
-
-        .articles-nav {
-          position: relative;
-          z-index: 1;
-          padding: 24px 40px;
-          max-width: 900px;
-          margin: 0 auto;
-        }
-
-        .back-link {
-          display: inline-flex;
-          align-items: center;
-          gap: 8px;
-          color: #1f2937;
-          text-decoration: none;
-          font-family: var(--font-outfit), system-ui, sans-serif;
-          font-size: 0.9rem;
-          font-weight: 500;
-          padding: 8px 16px;
-          border-radius: 8px;
-          transition: background 0.2s ease, transform 0.2s ease;
-        }
-
-        .back-link:hover {
-          background: rgba(0, 0, 0, 0.05);
-          transform: translateX(-4px);
         }
 
         .articles-main {
