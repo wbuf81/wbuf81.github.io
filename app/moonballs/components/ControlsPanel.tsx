@@ -374,8 +374,8 @@ export default function ControlsPanel({ state, dispatch, activeTab, setActiveTab
             border-top: 1px solid rgba(255, 255, 255, 0.5);
             border-radius: 16px 16px 0 0;
             flex: 0 0 auto;
-            max-height: 38dvh;
-            max-height: 38vh;
+            max-height: 44dvh;
+            max-height: 44vh;
             overflow: hidden;
           }
           .seg-track {

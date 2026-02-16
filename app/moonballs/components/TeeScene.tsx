@@ -15,6 +15,8 @@ interface TeeSceneProps {
   dispatch: React.Dispatch<GolfBallAction>;
 }
 
+type ShareStatus = 'idle' | 'capturing' | 'preview' | 'sharing' | 'done';
+
 function useGradientBackground() {
   return useMemo(() => {
     const canvas = document.createElement('canvas');
@@ -64,47 +66,91 @@ function TeeSceneLighting({ moonMode }: { moonMode: boolean }) {
   );
 }
 
+function addWatermark(sourceDataUrl: string): Promise<string> {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = img.width;
+      canvas.height = img.height;
+      const ctx = canvas.getContext('2d')!;
+      ctx.drawImage(img, 0, 0);
+
+      const fontSize = Math.max(14, Math.round(img.width * 0.022));
+      ctx.font = `${fontSize}px sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.55)';
+      ctx.shadowColor = 'rgba(0, 0, 0, 0.4)';
+      ctx.shadowBlur = 4;
+      ctx.fillText('Designed with Moon Balls', img.width / 2, img.height - fontSize);
+
+      resolve(canvas.toDataURL('image/png'));
+    };
+    img.src = sourceDataUrl;
+  });
+}
+
+function buildFilename(textLine1: string): string {
+  const slug = textLine1.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  const date = new Date().toISOString().slice(0, 10);
+  return `moonball-${slug || 'custom'}-${date}.png`;
+}
+
 export default function TeeScene({ state, dispatch }: TeeSceneProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [shareStatus, setShareStatus] = useState<'idle' | 'saving' | 'done'>('idle');
+  const [shareStatus, setShareStatus] = useState<ShareStatus>('idle');
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
-  const handleShare = useCallback(async () => {
+  const handleCapture = useCallback(async () => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    setShareStatus('saving');
-
-    // Small delay to let any animation settle
+    setShareStatus('capturing');
     await new Promise((r) => setTimeout(r, 100));
 
     try {
-      const dataUrl = canvas.toDataURL('image/png');
+      const raw = canvas.toDataURL('image/png');
+      const watermarked = await addWatermark(raw);
+      setPreviewUrl(watermarked);
+      setShareStatus('preview');
+    } catch {
+      setShareStatus('idle');
+    }
+  }, []);
 
-      // Try native sharing first (mobile)
+  const handleShare = useCallback(async () => {
+    if (!previewUrl) return;
+    setShareStatus('sharing');
+
+    const filename = buildFilename(state.textLine1);
+
+    try {
       if (navigator.share && navigator.canShare) {
-        const blob = await (await fetch(dataUrl)).blob();
-        const file = new File([blob], 'moonball.png', { type: 'image/png' });
+        const blob = await (await fetch(previewUrl)).blob();
+        const file = new File([blob], filename, { type: 'image/png' });
         if (navigator.canShare({ files: [file] })) {
-          await navigator.share({
-            title: 'My Moon Ball',
-            files: [file],
-          });
+          await navigator.share({ title: 'My Moon Ball', files: [file] });
           setShareStatus('done');
-          setTimeout(() => setShareStatus('idle'), 2000);
+          setTimeout(() => { setShareStatus('idle'); setPreviewUrl(null); }, 2000);
           return;
         }
       }
 
       // Fallback: download
       const link = document.createElement('a');
-      link.download = 'moonball.png';
-      link.href = dataUrl;
+      link.download = filename;
+      link.href = previewUrl;
       link.click();
       setShareStatus('done');
-      setTimeout(() => setShareStatus('idle'), 2000);
+      setTimeout(() => { setShareStatus('idle'); setPreviewUrl(null); }, 2000);
     } catch {
-      setShareStatus('idle');
+      setShareStatus('preview'); // back to preview on cancel
     }
+  }, [previewUrl, state.textLine1]);
+
+  const handleRetake = useCallback(() => {
+    setPreviewUrl(null);
+    setShareStatus('idle');
   }, []);
 
   return (
@@ -139,13 +185,35 @@ export default function TeeScene({ state, dispatch }: TeeSceneProps) {
       </button>
       <MoonBallsBranding />
       <MoonModeToggle state={state} dispatch={dispatch} />
-      <button
-        className="share-btn"
-        onClick={handleShare}
-        disabled={shareStatus === 'saving'}
-      >
-        {shareStatus === 'saving' ? 'Saving...' : shareStatus === 'done' ? 'Saved!' : 'Share'}
-      </button>
+
+      {shareStatus === 'done' ? (
+        <button className="share-btn" disabled>Saved!</button>
+      ) : shareStatus === 'capturing' ? (
+        <button className="share-btn" disabled>Capturing...</button>
+      ) : shareStatus !== 'preview' && shareStatus !== 'sharing' ? (
+        <button className="share-btn" onClick={handleCapture}>Share</button>
+      ) : null}
+
+      {/* Preview modal */}
+      {(shareStatus === 'preview' || shareStatus === 'sharing') && previewUrl && (
+        <div className="preview-overlay" onClick={handleRetake}>
+          <div className="preview-modal" onClick={(e) => e.stopPropagation()}>
+            <img src={previewUrl} alt="Ball preview" className="preview-img" />
+            <div className="preview-actions">
+              <button className="preview-btn secondary" onClick={handleRetake}>
+                Retake
+              </button>
+              <button
+                className="preview-btn primary"
+                onClick={handleShare}
+                disabled={shareStatus === 'sharing'}
+              >
+                {shareStatus === 'sharing' ? 'Sharing...' : 'Share'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <style jsx>{`
         .tee-scene-wrapper {
@@ -202,6 +270,71 @@ export default function TeeScene({ state, dispatch }: TeeSceneProps) {
           box-shadow: 0 4px 24px rgba(99, 102, 241, 0.55);
         }
         .share-btn:disabled {
+          opacity: 0.7;
+          cursor: wait;
+        }
+
+        /* Preview overlay */
+        .preview-overlay {
+          position: fixed;
+          inset: 0;
+          z-index: 50;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: rgba(0, 0, 0, 0.7);
+          backdrop-filter: blur(8px);
+          -webkit-backdrop-filter: blur(8px);
+        }
+        .preview-modal {
+          background: rgba(30, 30, 30, 0.95);
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          border-radius: 20px;
+          padding: 16px;
+          max-width: 420px;
+          width: calc(100% - 32px);
+          box-shadow: 0 8px 40px rgba(0, 0, 0, 0.4);
+        }
+        .preview-img {
+          width: 100%;
+          border-radius: 12px;
+          display: block;
+        }
+        .preview-actions {
+          display: flex;
+          gap: 10px;
+          margin-top: 14px;
+        }
+        .preview-btn {
+          flex: 1;
+          padding: 12px 0;
+          border: none;
+          border-radius: 12px;
+          font-family: var(--font-outfit), sans-serif;
+          font-size: 0.9rem;
+          font-weight: 600;
+          cursor: pointer;
+          min-height: 44px;
+          transition: transform 0.15s, box-shadow 0.15s;
+        }
+        .preview-btn.secondary {
+          background: rgba(255, 255, 255, 0.1);
+          color: rgba(255, 255, 255, 0.8);
+          border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+        .preview-btn.secondary:hover {
+          background: rgba(255, 255, 255, 0.15);
+        }
+        .preview-btn.primary {
+          background: linear-gradient(135deg, #6366f1, #4f46e5);
+          color: white;
+          box-shadow: 0 2px 12px rgba(99, 102, 241, 0.35);
+        }
+        .preview-btn.primary:hover {
+          transform: scale(1.02);
+          box-shadow: 0 4px 20px rgba(99, 102, 241, 0.5);
+        }
+        .preview-btn:disabled {
           opacity: 0.7;
           cursor: wait;
         }

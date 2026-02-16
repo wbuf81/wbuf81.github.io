@@ -145,6 +145,7 @@ function SceneContent({ state, dispatch, activeTab, setActiveTab }: GolfBallScen
         enablePan={false}
         enableDamping
         dampingFactor={0.08}
+        rotateSpeed={0.5}
         minDistance={2}
         maxDistance={5}
         enabled={controlsEnabled}

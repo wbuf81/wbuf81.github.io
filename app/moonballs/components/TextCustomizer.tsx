@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import type { GolfBallAction } from '../GolfBallClient';
 
 interface TextCustomizerProps {
@@ -54,6 +55,9 @@ export default function TextCustomizer({
   textLine1OffsetY, textLine2OffsetY,
   dispatch,
 }: TextCustomizerProps) {
+  const [line1StyleOpen, setLine1StyleOpen] = useState(false);
+  const [line2StyleOpen, setLine2StyleOpen] = useState(false);
+
   return (
     <div className="text-customizer">
       {/* LINE 1 */}
@@ -81,72 +85,82 @@ export default function TextCustomizer({
           </div>
         </div>
         {textLine1 && (
-          <div className="line-controls">
-            <div className="font-row">
-              <div className="font-btns">
-                {FONTS.map((f) => (
-                  <button
-                    key={f.id}
-                    className={`font-btn ${textLine1Font === f.id ? 'active' : ''}`}
-                    style={{ fontFamily: `${f.id}, sans-serif` }}
-                    onClick={() => dispatch({ type: 'SET_TEXT_LINE1_FONT', font: f.id })}
-                  >
-                    {f.label}
-                  </button>
-                ))}
+          <>
+            <button
+              className="style-toggle"
+              onClick={() => setLine1StyleOpen(!line1StyleOpen)}
+            >
+              Style {line1StyleOpen ? '\u25B4' : '\u25BE'}
+            </button>
+            <div className={`line-controls-collapse ${line1StyleOpen ? 'open' : ''}`}>
+              <div className="line-controls">
+                <div className="font-row">
+                  <div className="font-btns">
+                    {FONTS.map((f) => (
+                      <button
+                        key={f.id}
+                        className={`font-btn ${textLine1Font === f.id ? 'active' : ''}`}
+                        style={{ fontFamily: `${f.id}, sans-serif` }}
+                        onClick={() => dispatch({ type: 'SET_TEXT_LINE1_FONT', font: f.id })}
+                      >
+                        {f.label}
+                      </button>
+                    ))}
+                  </div>
+                  <div className="style-btns">
+                    <button
+                      className={`style-btn ${textLine1Bold ? 'active' : ''}`}
+                      onClick={() => dispatch({ type: 'TOGGLE_TEXT_LINE1_BOLD' })}
+                      title="Bold"
+                    >
+                      <strong>B</strong>
+                    </button>
+                    <button
+                      className={`style-btn ${textLine1Italic ? 'active' : ''}`}
+                      onClick={() => dispatch({ type: 'TOGGLE_TEXT_LINE1_ITALIC' })}
+                      title="Italic"
+                    >
+                      <em>I</em>
+                    </button>
+                  </div>
+                </div>
+                <div className="slider-row">
+                  <span className="slider-label">Size</span>
+                  <input
+                    type="range"
+                    min={20}
+                    max={60}
+                    step={1}
+                    value={textLine1Size}
+                    onChange={(e) => dispatch({ type: 'SET_TEXT_LINE1_SIZE', size: parseInt(e.target.value) })}
+                  />
+                </div>
+                <div className="color-row">
+                  {TEXT_COLORS.map((c) => (
+                    <button
+                      key={c.id}
+                      className={`color-swatch ${textLine1Color === c.color ? 'selected' : ''}`}
+                      style={{ background: c.color }}
+                      onClick={() => dispatch({ type: 'SET_TEXT_LINE1_COLOR', color: c.color })}
+                      title={c.label}
+                    />
+                  ))}
+                </div>
+                <div className="slider-row">
+                  <span className="slider-label">Top</span>
+                  <input
+                    type="range"
+                    min={0}
+                    max={1}
+                    step={0.05}
+                    value={textLine1OffsetY}
+                    onChange={(e) => dispatch({ type: 'SET_TEXT_LINE1_OFFSET_Y', offset: parseFloat(e.target.value) })}
+                  />
+                  <span className="slider-label">Bottom</span>
+                </div>
               </div>
-              <div className="style-btns">
-                <button
-                  className={`style-btn ${textLine1Bold ? 'active' : ''}`}
-                  onClick={() => dispatch({ type: 'TOGGLE_TEXT_LINE1_BOLD' })}
-                  title="Bold"
-                >
-                  <strong>B</strong>
-                </button>
-                <button
-                  className={`style-btn ${textLine1Italic ? 'active' : ''}`}
-                  onClick={() => dispatch({ type: 'TOGGLE_TEXT_LINE1_ITALIC' })}
-                  title="Italic"
-                >
-                  <em>I</em>
-                </button>
-              </div>
             </div>
-            <div className="slider-row">
-              <span className="slider-label">Size</span>
-              <input
-                type="range"
-                min={20}
-                max={60}
-                step={1}
-                value={textLine1Size}
-                onChange={(e) => dispatch({ type: 'SET_TEXT_LINE1_SIZE', size: parseInt(e.target.value) })}
-              />
-            </div>
-            <div className="color-row">
-              {TEXT_COLORS.map((c) => (
-                <button
-                  key={c.id}
-                  className={`color-swatch ${textLine1Color === c.color ? 'selected' : ''}`}
-                  style={{ background: c.color }}
-                  onClick={() => dispatch({ type: 'SET_TEXT_LINE1_COLOR', color: c.color })}
-                  title={c.label}
-                />
-              ))}
-            </div>
-            <div className="slider-row">
-              <span className="slider-label">Top</span>
-              <input
-                type="range"
-                min={0}
-                max={1}
-                step={0.05}
-                value={textLine1OffsetY}
-                onChange={(e) => dispatch({ type: 'SET_TEXT_LINE1_OFFSET_Y', offset: parseFloat(e.target.value) })}
-              />
-              <span className="slider-label">Bottom</span>
-            </div>
-          </div>
+          </>
         )}
       </div>
 
@@ -175,72 +189,82 @@ export default function TextCustomizer({
           </div>
         </div>
         {textLine2 && (
-          <div className="line-controls">
-            <div className="font-row">
-              <div className="font-btns">
-                {FONTS.map((f) => (
-                  <button
-                    key={f.id}
-                    className={`font-btn ${textLine2Font === f.id ? 'active' : ''}`}
-                    style={{ fontFamily: `${f.id}, sans-serif` }}
-                    onClick={() => dispatch({ type: 'SET_TEXT_LINE2_FONT', font: f.id })}
-                  >
-                    {f.label}
-                  </button>
-                ))}
+          <>
+            <button
+              className="style-toggle"
+              onClick={() => setLine2StyleOpen(!line2StyleOpen)}
+            >
+              Style {line2StyleOpen ? '\u25B4' : '\u25BE'}
+            </button>
+            <div className={`line-controls-collapse ${line2StyleOpen ? 'open' : ''}`}>
+              <div className="line-controls">
+                <div className="font-row">
+                  <div className="font-btns">
+                    {FONTS.map((f) => (
+                      <button
+                        key={f.id}
+                        className={`font-btn ${textLine2Font === f.id ? 'active' : ''}`}
+                        style={{ fontFamily: `${f.id}, sans-serif` }}
+                        onClick={() => dispatch({ type: 'SET_TEXT_LINE2_FONT', font: f.id })}
+                      >
+                        {f.label}
+                      </button>
+                    ))}
+                  </div>
+                  <div className="style-btns">
+                    <button
+                      className={`style-btn ${textLine2Bold ? 'active' : ''}`}
+                      onClick={() => dispatch({ type: 'TOGGLE_TEXT_LINE2_BOLD' })}
+                      title="Bold"
+                    >
+                      <strong>B</strong>
+                    </button>
+                    <button
+                      className={`style-btn ${textLine2Italic ? 'active' : ''}`}
+                      onClick={() => dispatch({ type: 'TOGGLE_TEXT_LINE2_ITALIC' })}
+                      title="Italic"
+                    >
+                      <em>I</em>
+                    </button>
+                  </div>
+                </div>
+                <div className="slider-row">
+                  <span className="slider-label">Size</span>
+                  <input
+                    type="range"
+                    min={20}
+                    max={60}
+                    step={1}
+                    value={textLine2Size}
+                    onChange={(e) => dispatch({ type: 'SET_TEXT_LINE2_SIZE', size: parseInt(e.target.value) })}
+                  />
+                </div>
+                <div className="color-row">
+                  {TEXT_COLORS.map((c) => (
+                    <button
+                      key={c.id}
+                      className={`color-swatch ${textLine2Color === c.color ? 'selected' : ''}`}
+                      style={{ background: c.color }}
+                      onClick={() => dispatch({ type: 'SET_TEXT_LINE2_COLOR', color: c.color })}
+                      title={c.label}
+                    />
+                  ))}
+                </div>
+                <div className="slider-row">
+                  <span className="slider-label">Top</span>
+                  <input
+                    type="range"
+                    min={0}
+                    max={1}
+                    step={0.05}
+                    value={textLine2OffsetY}
+                    onChange={(e) => dispatch({ type: 'SET_TEXT_LINE2_OFFSET_Y', offset: parseFloat(e.target.value) })}
+                  />
+                  <span className="slider-label">Bottom</span>
+                </div>
               </div>
-              <div className="style-btns">
-                <button
-                  className={`style-btn ${textLine2Bold ? 'active' : ''}`}
-                  onClick={() => dispatch({ type: 'TOGGLE_TEXT_LINE2_BOLD' })}
-                  title="Bold"
-                >
-                  <strong>B</strong>
-                </button>
-                <button
-                  className={`style-btn ${textLine2Italic ? 'active' : ''}`}
-                  onClick={() => dispatch({ type: 'TOGGLE_TEXT_LINE2_ITALIC' })}
-                  title="Italic"
-                >
-                  <em>I</em>
-                </button>
-              </div>
             </div>
-            <div className="slider-row">
-              <span className="slider-label">Size</span>
-              <input
-                type="range"
-                min={20}
-                max={60}
-                step={1}
-                value={textLine2Size}
-                onChange={(e) => dispatch({ type: 'SET_TEXT_LINE2_SIZE', size: parseInt(e.target.value) })}
-              />
-            </div>
-            <div className="color-row">
-              {TEXT_COLORS.map((c) => (
-                <button
-                  key={c.id}
-                  className={`color-swatch ${textLine2Color === c.color ? 'selected' : ''}`}
-                  style={{ background: c.color }}
-                  onClick={() => dispatch({ type: 'SET_TEXT_LINE2_COLOR', color: c.color })}
-                  title={c.label}
-                />
-              ))}
-            </div>
-            <div className="slider-row">
-              <span className="slider-label">Top</span>
-              <input
-                type="range"
-                min={0}
-                max={1}
-                step={0.05}
-                value={textLine2OffsetY}
-                onChange={(e) => dispatch({ type: 'SET_TEXT_LINE2_OFFSET_Y', offset: parseFloat(e.target.value) })}
-              />
-              <span className="slider-label">Bottom</span>
-            </div>
-          </div>
+          </>
         )}
       </div>
 
@@ -303,6 +327,12 @@ export default function TextCustomizer({
         .char-counter[data-warn='red'] {
           color: #dc2626;
           font-weight: 600;
+        }
+        .style-toggle {
+          display: none;
+        }
+        .line-controls-collapse {
+          display: contents;
         }
         .line-controls {
           display: flex;
@@ -437,6 +467,39 @@ export default function TextCustomizer({
           box-shadow: 0 1px 6px rgba(0, 0, 0, 0.25);
         }
         @media (max-width: 768px) {
+          .text-customizer {
+            gap: 14px;
+          }
+          .line-controls {
+            gap: 8px;
+          }
+          .style-toggle {
+            display: block;
+            align-self: flex-start;
+            padding: 6px 12px;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.6);
+            color: rgba(0, 0, 0, 0.45);
+            font-family: var(--font-outfit), sans-serif;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s;
+          }
+          .style-toggle:hover {
+            background: rgba(255, 255, 255, 0.9);
+            color: rgba(0, 0, 0, 0.65);
+          }
+          .line-controls-collapse {
+            display: block;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.25s ease;
+          }
+          .line-controls-collapse.open {
+            max-height: 300px;
+          }
           .color-swatch {
             width: 36px;
             height: 36px;
