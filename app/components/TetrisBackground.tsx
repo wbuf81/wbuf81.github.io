@@ -117,6 +117,8 @@ interface GameOverAnim {
   phase: 'fill' | 'clear';
   row: number;
   lastRowTime: number;
+  finalScore: number;
+  finalLines: number;
 }
 
 interface TetrisCelebration {
@@ -527,6 +529,43 @@ const TetrisBackground = forwardRef<TetrisHandle, TetrisProps>(function TetrisBa
         }
       }
 
+      // Game over text overlay
+      if (state.gameOver && state.gameOver.phase === 'fill' && state.gameOver.row > ROWS * 0.4) {
+        const textProgress = Math.min((state.gameOver.row - ROWS * 0.4) / (ROWS * 0.4), 1);
+        const alpha = textProgress * 0.9;
+
+        ctx.save();
+        ctx.globalAlpha = alpha;
+
+        // "GAME OVER" text
+        const goFontSize = cs * 1.8;
+        ctx.font = `800 ${goFontSize}px var(--font-playfair), Georgia, serif`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+
+        const textX = ox + boardW / 2;
+        const textY = oy + boardH * 0.42;
+
+        ctx.fillStyle = 'rgba(0,0,0,0.08)';
+        ctx.fillText('GAME OVER', textX + 1, textY + 2);
+        ctx.fillStyle = '#374151';
+        ctx.fillText('GAME OVER', textX, textY);
+
+        // Final score
+        if (state.gameOver.finalScore > 0) {
+          const scoreFontSize = cs * 0.9;
+          ctx.font = `600 ${scoreFontSize}px var(--font-outfit), system-ui, sans-serif`;
+          ctx.fillStyle = '#6b7280';
+          ctx.fillText(
+            `${state.gameOver.finalScore.toLocaleString()} pts  ·  ${state.gameOver.finalLines} lines`,
+            textX,
+            textY + goFontSize * 0.8,
+          );
+        }
+
+        ctx.restore();
+      }
+
       // Board outline when playing
       if (isPlayingRef.current) {
         ctx.strokeStyle = 'rgba(0,0,0,0.08)';
@@ -665,6 +704,7 @@ const TetrisBackground = forwardRef<TetrisHandle, TetrisProps>(function TetrisBa
           } else {
             state.gameOver.row++;
             if (state.gameOver.row >= ROWS) {
+              const wasPlaying = state.mode === 'player';
               state.gameOver = null;
               state.score = 0;
               state.lines = 0;
@@ -673,6 +713,13 @@ const TetrisBackground = forwardRef<TetrisHandle, TetrisProps>(function TetrisBa
               state.active = spawnPiece(state);
               state.lastGravity = now;
               state.lockTimer = null;
+              // After game over, revert to auto mode
+              if (wasPlaying) {
+                state.mode = 'auto';
+                isPlayingRef.current = false;
+                if (canvasRef.current) canvasRef.current.style.opacity = '0.2';
+                onStateChangeRef.current?.({ isPlaying: false, score: 0, lines: 0 });
+              }
               if (state.active && state.mode === 'auto') {
                 state.aiTarget = computeAiTarget(state.grid, state.active);
               }
@@ -698,7 +745,7 @@ const TetrisBackground = forwardRef<TetrisHandle, TetrisProps>(function TetrisBa
           state.lineClear = null;
           state.active = spawnPiece(state);
           if (!state.active) {
-            state.gameOver = { phase: 'fill', row: 0, lastRowTime: now };
+            state.gameOver = { phase: 'fill', row: 0, lastRowTime: now, finalScore: state.score, finalLines: state.lines };
             return;
           }
           state.lastGravity = now;
@@ -793,7 +840,7 @@ const TetrisBackground = forwardRef<TetrisHandle, TetrisProps>(function TetrisBa
           } else {
             state.active = spawnPiece(state);
             if (!state.active) {
-              state.gameOver = { phase: 'fill', row: 0, lastRowTime: now };
+              state.gameOver = { phase: 'fill', row: 0, lastRowTime: now, finalScore: state.score, finalLines: state.lines };
               return;
             }
             state.lastGravity = now;
@@ -882,7 +929,7 @@ const TetrisBackground = forwardRef<TetrisHandle, TetrisProps>(function TetrisBa
           } else {
             state.active = spawnPiece(state);
             if (!state.active) {
-              state.gameOver = { phase: 'fill', row: 0, lastRowTime: performance.now() };
+              state.gameOver = { phase: 'fill', row: 0, lastRowTime: performance.now(), finalScore: state.score, finalLines: state.lines };
               return;
             }
             state.lastGravity = performance.now();
