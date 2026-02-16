@@ -10,6 +10,7 @@ interface ControlsPanelProps {
   activeTab: Tab;
   setActiveTab: (tab: Tab) => void;
   canUndo?: boolean;
+  onTeeUp: () => void;
 }
 
 const BALL_COLORS = [
@@ -27,7 +28,7 @@ const TAB_CONFIG: { key: Tab; label: string }[] = [
   { key: 'color', label: 'Color' },
 ];
 
-export default function ControlsPanel({ state, dispatch, activeTab, setActiveTab, canUndo }: ControlsPanelProps) {
+export default function ControlsPanel({ state, dispatch, activeTab, setActiveTab, canUndo, onTeeUp }: ControlsPanelProps) {
   const handleTabChange = (tab: Tab) => {
     setActiveTab(tab);
     if (tab === 'color') {
@@ -124,7 +125,7 @@ export default function ControlsPanel({ state, dispatch, activeTab, setActiveTab
       <div className="panel-footer">
         <button
           className="tee-btn"
-          onClick={() => dispatch({ type: 'SET_TEE_MODE', active: true })}
+          onClick={onTeeUp}
         >
           Tee It Up
         </button>

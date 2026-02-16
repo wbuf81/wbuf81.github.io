@@ -153,12 +153,14 @@ export default function LogoPicker({ selectedLogo, dispatch }: LogoPickerProps) 
         /* Full grid */
         .logo-grid {
           display: grid;
-          grid-template-columns: repeat(3, 1fr);
+          grid-template-columns: repeat(3, minmax(0, 1fr));
           gap: 8px;
+          overflow: hidden;
         }
         .logo-item {
           position: relative;
           width: 100%;
+          min-width: 0;
           aspect-ratio: 1;
           border: 2px solid rgba(0, 0, 0, 0.08);
           border-radius: 12px;
@@ -169,6 +171,7 @@ export default function LogoPicker({ selectedLogo, dispatch }: LogoPickerProps) 
           justify-content: center;
           padding: 10px;
           transition: all 0.2s ease;
+          overflow: hidden;
         }
         .logo-item:hover {
           border-color: rgba(99, 102, 241, 0.4);
@@ -201,7 +204,7 @@ export default function LogoPicker({ selectedLogo, dispatch }: LogoPickerProps) 
         }
         @media (max-width: 768px) {
           .logo-grid {
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(3, minmax(0, 1fr));
             gap: 6px;
           }
           .logo-item {

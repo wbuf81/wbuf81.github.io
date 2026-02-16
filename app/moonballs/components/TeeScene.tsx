@@ -13,6 +13,7 @@ import type { GolfBallState, GolfBallAction } from '../GolfBallClient';
 interface TeeSceneProps {
   state: GolfBallState;
   dispatch: React.Dispatch<GolfBallAction>;
+  onExit: () => void;
 }
 
 type ShareStatus = 'idle' | 'capturing' | 'preview' | 'sharing' | 'done';
@@ -96,7 +97,7 @@ function buildFilename(textLine1: string): string {
   return `moonball-${slug || 'custom'}-${date}.png`;
 }
 
-export default function TeeScene({ state, dispatch }: TeeSceneProps) {
+export default function TeeScene({ state, dispatch, onExit }: TeeSceneProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [shareStatus, setShareStatus] = useState<ShareStatus>('idle');
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -179,7 +180,7 @@ export default function TeeScene({ state, dispatch }: TeeSceneProps) {
 
       <button
         className="back-to-edit"
-        onClick={() => dispatch({ type: 'SET_TEE_MODE', active: false })}
+        onClick={onExit}
       >
         &larr; Back to Edit
       </button>

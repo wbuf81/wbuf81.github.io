@@ -1,6 +1,6 @@
 'use client';
 
-import { useReducer, useState, useEffect, useCallback } from 'react';
+import { useReducer, useState, useEffect, useCallback, useRef } from 'react';
 import GolfBallScene from './components/GolfBallScene';
 import ControlsPanel from './components/ControlsPanel';
 import MoonBallsBranding from './components/MoonBallsBranding';
@@ -254,19 +254,51 @@ export default function GolfBallClient() {
   const canUndo = undoState.history.length > 0;
   const [activeTab, setActiveTab] = useState<Tab>('logo');
 
-  // Welcome overlay — shows once per device
-  const [showWelcome, setShowWelcome] = useState(() => {
-    try {
-      return !localStorage.getItem('moonballs-welcomed');
-    } catch {
-      return false;
-    }
-  });
+  // Welcome overlay — shows on every fresh page load
+  const [showWelcome, setShowWelcome] = useState(true);
 
   const dismissWelcome = useCallback(() => {
     setShowWelcome(false);
-    try { localStorage.setItem('moonballs-welcomed', '1'); } catch {}
     setActiveTab('logo');
+  }, []);
+
+  // Cross-fade transition between customizer and tee scene
+  const [transitionPhase, setTransitionPhase] = useState<'none' | 'fade-out' | 'fade-in'>('none');
+  const transitionRef = useRef<number | null>(null);
+
+  const handleTeeUp = useCallback(() => {
+    if (transitionPhase !== 'none') return;
+    setTransitionPhase('fade-out');
+    transitionRef.current = window.setTimeout(() => {
+      dispatch({ type: 'SET_TEE_MODE', active: true });
+      setTransitionPhase('fade-in');
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          setTransitionPhase('none');
+        });
+      });
+    }, 300);
+  }, [dispatch, transitionPhase]);
+
+  const handleExitTee = useCallback(() => {
+    if (transitionPhase !== 'none') return;
+    setTransitionPhase('fade-out');
+    transitionRef.current = window.setTimeout(() => {
+      dispatch({ type: 'SET_TEE_MODE', active: false });
+      setTransitionPhase('fade-in');
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          setTransitionPhase('none');
+        });
+      });
+    }, 300);
+  }, [dispatch, transitionPhase]);
+
+  // Clean up pending transition timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (transitionRef.current) clearTimeout(transitionRef.current);
+    };
   }, []);
 
   // Persist design to localStorage on design field changes
@@ -307,11 +339,23 @@ export default function GolfBallClient() {
     return () => window.removeEventListener('keydown', handler);
   }, []);
 
+  const transitionStyle: React.CSSProperties = {
+    opacity: transitionPhase === 'fade-out' || transitionPhase === 'fade-in' ? 0 : 1,
+    transition: transitionPhase === 'fade-in' ? 'none' : 'opacity 300ms ease',
+    width: '100%',
+    height: '100%',
+  };
+
   if (state.teeMode) {
-    return <TeeScene state={state} dispatch={dispatch} />;
+    return (
+      <div style={transitionStyle}>
+        <TeeScene state={state} dispatch={dispatch} onExit={handleExitTee} />
+      </div>
+    );
   }
 
   return (
+    <div style={transitionStyle}>
     <div className="customizer-layout">
       <div className="scene-container">
         <MoonBallsBranding />
@@ -345,13 +389,14 @@ export default function GolfBallClient() {
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         canUndo={canUndo}
+        onTeeUp={handleTeeUp}
       />
 
       {/* Welcome overlay */}
       {showWelcome && (
         <div className="welcome-overlay" onClick={dismissWelcome}>
           <div className="welcome-card" onClick={(e) => e.stopPropagation()}>
-            <h2 className="welcome-title">Design Your Custom Golf Ball</h2>
+            <h2 className="welcome-title">Welcome to Moon Balls Design Studio</h2>
             <ol className="welcome-steps">
               <li><span className="step-num">1</span> Choose a logo from the gallery</li>
               <li><span className="step-num">2</span> Add your name and a custom message</li>
@@ -545,6 +590,7 @@ export default function GolfBallClient() {
           }
         }
       `}</style>
+    </div>
     </div>
   );
 }
