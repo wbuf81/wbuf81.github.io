@@ -185,7 +185,7 @@ export default function HomePage() {
             I&apos;ve spent the last 20 years somewhere between engineering and compliance — starting as a software engineer at Lockheed Martin, and eventually finding my way into risk and compliance leadership at Newfold Digital. That path wasn&apos;t planned, but I&apos;m grateful it gave me a feel for both sides: how systems are built and how they&apos;re governed.
           </p>
           <p className="about-text" style={{ marginTop: '16px' }}>
-            These days, I lead global privacy, risk, and compliance programs at Newfold — work I genuinely enjoy. I also like to build things. Lately that&apos;s meant building tools and agents for problems my company deals with every day — reviewing contracts faster, keeping tabs on service marks, scanning sites for compliance gaps. Most of it&apos;s built with Claude and the Anthropic API. It keeps me sharp, makes everyone's day job easier, and lowers the company's risk portfolio.
+            These days, I lead global privacy, risk, and compliance programs at Newfold — work I genuinely enjoy. I also like to build things. Lately that&apos;s meant building internal tools and agents — the kind of things that make the day job faster and less error-prone. It keeps me sharp and lowers the company&apos;s risk portfolio.
           </p>
         </div>
       </section>
