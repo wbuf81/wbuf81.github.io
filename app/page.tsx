@@ -185,14 +185,16 @@ export default function HomePage() {
             </div>
           </div>
           <div className="hero-headshot">
-            <Image
-              src="/headshot.jpg"
-              alt="Wesley Bard"
-              width={200}
-              height={200}
-              priority
-              style={{ borderRadius: '50%', objectFit: 'cover', width: '200px', height: '200px' }}
-            />
+            <a href="/headshot.jpg" target="_blank" rel="noopener noreferrer" className="headshot-link">
+              <Image
+                src="/headshot-thumb.jpg"
+                alt="Wesley Bard"
+                width={200}
+                height={200}
+                priority
+                style={{ borderRadius: '50%', objectFit: 'cover', width: '200px', height: '200px' }}
+              />
+            </a>
           </div>
         </div>
       </section>
@@ -486,6 +488,14 @@ export default function HomePage() {
           flex-direction: column;
           align-items: center;
           gap: 12px;
+        }
+        .headshot-link {
+          display: block;
+          border-radius: 50%;
+          transition: opacity 0.2s ease;
+        }
+        .headshot-link:hover {
+          opacity: 0.88;
         }
 
         /* Game UI */
