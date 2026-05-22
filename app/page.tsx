@@ -799,7 +799,8 @@ export default function HomePage() {
           transition: transform 0.5s ease, filter 0.4s ease;
           filter: grayscale(100%) brightness(1.15) contrast(0.78);
         }
-        .beyond-card-link:hover .agent-img {
+        .beyond-card-link:hover .agent-img,
+        .agent-card:hover .agent-img {
           transform: scale(1.05);
           filter: grayscale(0%) brightness(1) contrast(1);
         }
