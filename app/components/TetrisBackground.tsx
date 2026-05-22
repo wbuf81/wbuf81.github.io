@@ -961,7 +961,7 @@ const TetrisBackground = forwardRef<TetrisHandle, TetrisProps>(function TetrisBa
       state.lastInput = performance.now();
       state.aiTarget = null;
       isPlayingRef.current = true;
-      if (canvasRef.current) canvasRef.current.style.opacity = '0.3';
+      if (canvasRef.current) canvasRef.current.style.opacity = '0.75';
     }
     onStateChangeRef.current?.({ isPlaying: isPlayingRef.current, score: state.score, lines: state.lines });
   }, []);
