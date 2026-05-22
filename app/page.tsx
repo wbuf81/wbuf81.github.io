@@ -207,7 +207,7 @@ export default function HomePage() {
             I&apos;ve spent the last 20 years somewhere between engineering and compliance — starting as a software engineer at Lockheed Martin, and eventually finding my way into risk and compliance leadership at Newfold Digital. That path wasn&apos;t planned, but it gave me something most compliance leaders don&apos;t have: a real feel for both sides, how systems are built and how they&apos;re governed.
           </p>
           <p className="about-text" style={{ marginTop: '16px' }}>
-            These days I&apos;m a compliance leader who still builds things. I bring a technical, automation-first approach to risk and compliance — lowering the risk portfolio not just through policy, but through tooling, AI agents, and smarter workflows. I lead global programs at Newfold and I ship internal tools in Claude Code. Both matter.
+            These days I&apos;m a compliance leader who still builds things. I bring a technical, automation-first approach to risk and compliance — lowering the risk portfolio not just through policy, but through tooling, AI agents, and smarter workflows. I lead global programs at Newfold and I ship internal tools in Claude Code.
           </p>
         </div>
       </section>
