@@ -24,7 +24,7 @@ const REPO_CARDS = [
   {
     title: 'OSCAR',
     subtitle: 'Obligation Scanning & Compliance Analysis Reporter',
-    description: 'Internal AI agent that continuously scans all Newfold Digital websites for legal compliance gaps — privacy notices, cookie banners, GDPR requirements, hidden footer links — with automated reporting and email alerts.',
+    description: 'AI agent that continuously scans company web properties for legal compliance gaps — privacy notices, cookie banners, GDPR requirements, hidden footer links — with automated reporting and email alerts.',
     href: null,
     badge: 'Private Repo',
     image: '/agents/oscar.jpg',
@@ -41,7 +41,7 @@ const REPO_CARDS = [
   {
     title: 'MAISIE',
     subtitle: 'Monitoring Agent for International Sanctions & Intelligence Engine',
-    description: 'Monitors all domains registered through Newfold brands against the OFAC Specially Designated Nationals list. Syncs sanctions data, flags matches, and tracks compliance status across registrar portfolios.',
+    description: 'Monitors domains across the company\'s brand portfolio against the OFAC Specially Designated Nationals list. Syncs sanctions data, flags potential matches, and tracks compliance status across the portfolio.',
     href: null,
     badge: 'Private Repo',
     image: '/agents/maisie.jpg',
@@ -49,7 +49,7 @@ const REPO_CARDS = [
   {
     title: 'SNOOP',
     subtitle: 'Direct Navigator for Oversight of Organizational Policies',
-    description: 'Monitors and manages all organizational policies and compliance frameworks with SharePoint integration. Tracks policy lifecycles, detects gaps in framework coverage, and keeps documentation current.',
+    description: 'Monitors and manages organizational policies across compliance frameworks. Tracks policy lifecycles, detects gaps in framework coverage, and keeps documentation current.',
     href: null,
     badge: 'Private Repo',
     image: '/agents/snoop.jpg',
@@ -57,7 +57,7 @@ const REPO_CARDS = [
   {
     title: 'RHINO',
     subtitle: 'Risk Hub for Identification, Notification & Oversight',
-    description: 'Maintains the enterprise risk register — every material risk with owner, residual score, and mitigation plan in one place. Quarterly assessment cadence with full audit trail and financial exposure tracking.',
+    description: 'Maintains the enterprise risk register — material risks with likelihood, residual score, and mitigation plan in one place. Quarterly assessment cadence with full audit trail and portfolio-level exposure tracking.',
     href: null,
     badge: 'Private Repo',
     image: '/agents/rhino.jpg',
@@ -65,7 +65,7 @@ const REPO_CARDS = [
   {
     title: 'PABSTY',
     subtitle: 'Privacy Analytics & Benchmarking for Subject Tasks',
-    description: 'Transforms raw OneTrust DSAR data into executive-ready analytics. Tracks monthly DSAR volumes by region, brand, and regulation type — automated monthly snapshots, no Claude session required.',
+    description: 'Transforms privacy request data into executive-ready analytics. Tracks DSAR volumes by region, brand, and regulation type — automated monthly snapshots delivered without manual intervention.',
     href: null,
     badge: 'Private Repo',
     image: '/agents/pabsty.jpg',
@@ -74,7 +74,7 @@ const REPO_CARDS = [
   {
     title: 'OSCAR Extension',
     subtitle: 'Open Source Chrome Companion',
-    description: 'The public companion to the internal OSCAR agent. A Chrome extension anyone can install to scan websites for privacy policies, cookie banners, terms of service, and other compliance elements.',
+    description: 'A free, open source Chrome extension that scans any website for privacy policies, cookie banners, terms of service, and other compliance elements. Available on GitHub.',
     href: 'https://github.com/wbuf81/oscar-extension',
     badge: 'Open Source',
     image: null,
