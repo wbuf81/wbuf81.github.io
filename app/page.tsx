@@ -182,10 +182,10 @@ export default function HomePage() {
         <div className="section-inner">
           <h2 className="section-heading">About</h2>
           <p className="about-text">
-            I&apos;ve spent the last 20 years somewhere between engineering and compliance — starting as a software engineer at Lockheed Martin, and eventually finding my way into risk and compliance leadership at Newfold Digital. That path wasn&apos;t planned, but I&apos;m grateful it gave me a feel for both sides: how systems are built and how they&apos;re governed.
+            I&apos;ve spent the last 20 years somewhere between engineering and compliance — starting as a software engineer at Lockheed Martin, and eventually finding my way into risk and compliance leadership at Newfold Digital. That path wasn&apos;t planned, but it gave me something most compliance leaders don&apos;t have: a real feel for both sides, how systems are built and how they&apos;re governed.
           </p>
           <p className="about-text" style={{ marginTop: '16px' }}>
-            These days, I lead global privacy, risk, and compliance programs at Newfold — work I genuinely enjoy. I also like to build things. Lately that&apos;s meant building internal tools and agents — the kind of things that make the day job faster and less error-prone. It keeps me sharp and lowers the company&apos;s risk portfolio.
+            These days I&apos;m a compliance leader who still builds things. I bring a technical, automation-first approach to risk and compliance — lowering the risk portfolio not just through policy, but through tooling, AI agents, and smarter workflows. I lead global programs at Newfold and I ship internal tools in Claude Code. Both matter.
           </p>
         </div>
       </section>
@@ -204,7 +204,7 @@ export default function HomePage() {
                 <span className="role-title">Vice President, Risk and Compliance</span>
                 <span className="role-dates">Jun 2021 – Present</span>
               </div>
-              <p className="role-desc">I oversee our global compliance programs — PCI-DSS, ISO 27001, SOC-2, GDPR, CCPA, ICANN and registry compliance, OFAC sanctions, and consumer protection — with a great team spread across multiple regions. Lately I&apos;ve been spending a lot of time exploring how AI can help with the more repetitive parts of the work, like evidence gathering and cross-framework mapping.</p>
+              <p className="role-desc">I lead global compliance programs across PCI-DSS, ISO 27001, SOC-2, GDPR, CCPA, ICANN and registry compliance, OFAC sanctions, and consumer protection — spanning 7 countries and 60+ internal policies. I co-chair the Executive Risk Committee and personally negotiate and sign engagements with external audit firms and assessors. I also established the company&apos;s first AI governance program with formal guardrails on enterprise LLM usage. Beyond the program work, I&apos;ve designed and shipped internal agentic tools in Claude Code that perform compliance gap analysis across our policy library, draft executive compliance reporting, and organize audit evidence across certified entities.</p>
             </div>
 
             <div className="role">
@@ -230,7 +230,7 @@ export default function HomePage() {
 
             <div className="role">
               <div className="role-header">
-                <span className="role-title">Software Engineering Manager, Immersive Training</span>
+                <span className="role-title">Product Manager & Technical Lead — Prepar3D</span>
                 <span className="role-dates">Feb 2011 – Feb 2015</span>
               </div>
               <p className="role-desc">Ran the product and engineering side of Prepar3D, a flight simulation platform. Touched everything from the technical architecture to patent filings to figuring out commercial licensing — a little bit of everything.</p>
