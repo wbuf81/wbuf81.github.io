@@ -2,7 +2,6 @@
 
 import { useState, useRef, useCallback } from 'react';
 import Image from 'next/image';
-import Link from 'next/link';
 import { Nav } from './components/Nav';
 import TetrisBackground from './components/TetrisBackground';
 import type { TetrisHandle } from './components/TetrisBackground';
@@ -23,44 +22,48 @@ const EXPERTISE_TAGS = [
 
 const REPO_CARDS = [
   {
-    title: 'DAISY',
-    description: 'An AI-assisted contract review tool built with Next.js and Claude. Helps speed up the early read-through of agreements — not a replacement for legal review, just a head start.',
-    href: null,
-    badge: 'Private Repo',
-  },
-  {
-    title: 'SMORES',
-    description: 'Service mark monitoring and review tooling. Keeps tabs on trademark and brand compliance obligations so things don\u2019t slip through the cracks.',
-    href: null,
-    badge: 'Private Repo',
-  },
-  {
-    title: 'Compliance Scanner',
-    description: 'A multi-language website scanner that checks for GDPR and CCPA compliance elements — privacy notices, cookie banners, required links — across six languages.',
-    href: null,
-    badge: 'Private Repo',
-  },
-  {
     title: 'OSCAR',
-    description: 'A Chrome extension that scans websites for privacy policies, cookie banners, terms of service, and other compliance elements. Free and open source.',
+    subtitle: 'Obligation Scanning & Compliance Analysis Reporter',
+    description: 'Scans all Newfold Digital websites for legal compliance gaps — privacy notices, cookie banners, GDPR requirements, hidden footer links — with automated reporting and email alerts.',
     href: 'https://github.com/wbuf81/oscar-extension',
     badge: 'Open Source',
   },
-];
-
-const DEMO_CARDS = [
   {
-    title: 'Interactive Playground',
-    description: 'A canvas-based experiment with animations, blob reveals, and parallax effects. Mostly just an excuse to play with the Canvas API.',
-    href: '/playground',
+    title: 'SMORES',
+    subtitle: 'Service Mark Ongoing Review & Enhancement System',
+    description: 'Tracks all service marks, renewals, and filing deadlines across the brand portfolio. Monitors trademark lifecycles and fires alerts before anything lapses.',
+    href: null,
+    badge: 'Private Repo',
   },
   {
-    title: 'Moonballs',
-    description: 'A 3D golf ball customizer — pick logos, add text, spin it around. Built with Three.js because I wanted to learn it and I like golf.',
-    href: '/moonballs',
+    title: 'MAISIE',
+    subtitle: 'Monitoring Agent for International Sanctions & Intelligence Engine',
+    description: 'Monitors all domains registered through Newfold brands against the OFAC Specially Designated Nationals list. Syncs sanctions data, flags matches, and tracks compliance status across registrar portfolios.',
+    href: null,
+    badge: 'Private Repo',
+  },
+  {
+    title: 'SNOOP',
+    subtitle: 'Direct Navigator for Oversight of Organizational Policies',
+    description: 'Monitors and manages all organizational policies and compliance frameworks with SharePoint integration. Tracks policy lifecycles, detects gaps in framework coverage, and keeps documentation current.',
+    href: null,
+    badge: 'Private Repo',
+  },
+  {
+    title: 'RHINO',
+    subtitle: 'Risk Hub for Identification, Notification & Oversight',
+    description: 'Maintains the enterprise risk register — every material risk with owner, residual score, and mitigation plan in one place. Quarterly assessment cadence with full audit trail and financial exposure tracking.',
+    href: null,
+    badge: 'Private Repo',
+  },
+  {
+    title: 'PABSTY',
+    subtitle: 'Privacy Analytics & Benchmarking for Subject Tasks',
+    description: 'Transforms raw OneTrust DSAR data into executive-ready analytics. Tracks monthly DSAR volumes by region, brand, and regulation type — automated monthly snapshots, no Claude session required.',
+    href: null,
+    badge: 'Private Repo',
   },
 ];
-
 const INTEREST_CARDS = [
   {
     title: 'STEM Mentoring',
@@ -315,7 +318,7 @@ export default function HomePage() {
       <section id="beyond" className="section">
         <div className="section-inner">
           <h2 className="section-heading">Projects</h2>
-          <div className="beyond-grid">
+          <div className="beyond-grid beyond-grid-three">
             {REPO_CARDS.map((card) => {
               const inner = (
                 <>
@@ -323,6 +326,7 @@ export default function HomePage() {
                     <h3 className="beyond-title">{card.title}</h3>
                     {card.badge && <span className="beyond-badge">{card.badge}</span>}
                   </div>
+                  {'subtitle' in card && card.subtitle && <p className="beyond-subtitle">{card.subtitle}</p>}
                   <p className="beyond-desc">{card.description}</p>
                   {card.href && <span className="beyond-link">View &rarr;</span>}
                 </>
@@ -337,16 +341,6 @@ export default function HomePage() {
                 </div>
               );
             })}
-          </div>
-
-          <div className="beyond-grid" style={{ marginTop: '24px' }}>
-            {DEMO_CARDS.map((card) => (
-              <Link key={card.title} href={card.href} className="beyond-card beyond-card-link">
-                <h3 className="beyond-title">{card.title}</h3>
-                <p className="beyond-desc">{card.description}</p>
-                <span className="beyond-link">View &rarr;</span>
-              </Link>
-            ))}
           </div>
 
           {/* GitHub Activity */}
@@ -725,8 +719,18 @@ export default function HomePage() {
           grid-template-columns: repeat(2, 1fr);
           gap: 24px;
         }
+        .beyond-grid-three {
+          grid-template-columns: repeat(3, 1fr);
+        }
         .beyond-grid-narrow {
           margin-top: 0;
+        }
+        .beyond-subtitle {
+          font-family: var(--font-outfit), system-ui, sans-serif;
+          font-size: 0.75rem;
+          color: #9ca3af;
+          margin: 2px 0 10px;
+          font-style: italic;
         }
         .beyond-card {
           background: #fff;
@@ -914,6 +918,9 @@ export default function HomePage() {
           }
           .beyond-grid {
             grid-template-columns: 1fr;
+          }
+          .beyond-grid-three {
+            grid-template-columns: repeat(2, 1fr);
           }
           .role-header {
             flex-direction: column;
