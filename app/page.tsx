@@ -28,14 +28,7 @@ const REPO_CARDS = [
     href: null,
     badge: 'Private Repo',
     image: '/agents/oscar.jpg',
-  },
-  {
-    title: 'OSCAR Extension',
-    subtitle: 'Open Source Chrome Companion',
-    description: 'The public companion to the internal agent. A Chrome extension anyone can install to scan websites for privacy policies, cookie banners, terms of service, and other compliance elements.',
-    href: 'https://github.com/wbuf81/oscar-extension',
-    badge: 'Open Source',
-    image: null,
+    fullWidth: false,
   },
   {
     title: 'SMORES',
@@ -76,6 +69,16 @@ const REPO_CARDS = [
     href: null,
     badge: 'Private Repo',
     image: '/agents/pabsty.jpg',
+    fullWidth: false,
+  },
+  {
+    title: 'OSCAR Extension',
+    subtitle: 'Open Source Chrome Companion',
+    description: 'The public companion to the internal OSCAR agent. A Chrome extension anyone can install to scan websites for privacy policies, cookie banners, terms of service, and other compliance elements.',
+    href: 'https://github.com/wbuf81/oscar-extension',
+    badge: 'Open Source',
+    image: null,
+    fullWidth: true,
   },
 ];
 const INTEREST_CARDS = [
@@ -354,12 +357,14 @@ export default function HomePage() {
                   </div>
                 </>
               );
+              const isFullWidth = 'fullWidth' in card && card.fullWidth;
+              const cardClass = `beyond-card agent-card${isFullWidth ? ' agent-card-full' : ''}`;
               return card.href ? (
-                <a key={card.title} href={card.href} className="beyond-card beyond-card-link agent-card" target="_blank" rel="noopener noreferrer">
+                <a key={card.title} href={card.href} className={`beyond-card-link ${cardClass}`} target="_blank" rel="noopener noreferrer">
                   {inner}
                 </a>
               ) : (
-                <div key={card.title} className="beyond-card agent-card">
+                <div key={card.title} className={cardClass}>
                   {inner}
                 </div>
               );
@@ -774,6 +779,7 @@ export default function HomePage() {
           height: 160px;
           overflow: hidden;
           background: #f3f4f6;
+          border-radius: 12px 12px 0 0;
         }
         .agent-img {
           width: 100%;
@@ -781,7 +787,7 @@ export default function HomePage() {
           object-fit: cover;
           object-position: center top;
           transition: transform 0.5s ease;
-          filter: grayscale(100%);
+          filter: grayscale(100%) brightness(1.15) contrast(0.78);
         }
         .beyond-card-link:hover .agent-img {
           transform: scale(1.05);
@@ -789,13 +795,42 @@ export default function HomePage() {
         .agent-img-overlay {
           position: absolute;
           inset: 0;
-          background: linear-gradient(to bottom, transparent 50%, rgba(0,0,0,0.08) 100%);
+          background: linear-gradient(to bottom, transparent 50%, rgba(0,0,0,0.06) 100%);
         }
         .agent-body {
           padding: 20px;
           flex: 1;
           display: flex;
           flex-direction: column;
+        }
+        .agent-card-full {
+          grid-column: 1 / -1;
+          flex-direction: row;
+          align-items: center;
+          gap: 0;
+          padding: 28px 36px;
+        }
+        .agent-card-full .agent-body {
+          padding: 0;
+          flex-direction: row;
+          align-items: center;
+          gap: 40px;
+          flex-wrap: wrap;
+        }
+        .agent-card-full .beyond-header {
+          flex-shrink: 0;
+        }
+        .agent-card-full .beyond-subtitle {
+          display: none;
+        }
+        .agent-card-full .beyond-desc {
+          flex: 1;
+          min-width: 200px;
+          margin: 0;
+        }
+        .agent-card-full .beyond-link {
+          margin-top: 0;
+          flex-shrink: 0;
         }
         .beyond-card {
           background: #fff;
