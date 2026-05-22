@@ -35,7 +35,7 @@ const REPO_CARDS = [
     description: 'The public companion to the internal agent. A Chrome extension anyone can install to scan websites for privacy policies, cookie banners, terms of service, and other compliance elements.',
     href: 'https://github.com/wbuf81/oscar-extension',
     badge: 'Open Source',
-    image: '/agents/oscar.jpg',
+    image: null,
   },
   {
     title: 'SMORES',
