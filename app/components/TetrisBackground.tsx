@@ -428,7 +428,7 @@ const TetrisBackground = forwardRef<TetrisHandle, TetrisProps>(function TetrisBa
       const oy = boardOffsetRef.current.y;
       const boardW = cs * COLS;
       const boardH = cs * ROWS;
-      const palette = isPlayingRef.current ? COLORS_VIVID : COLORS_SUBTLE;
+      const palette = COLORS_VIVID;
 
       ctx.clearRect(0, 0, rect.width, rect.height);
 
