@@ -24,9 +24,18 @@ const REPO_CARDS = [
   {
     title: 'OSCAR',
     subtitle: 'Obligation Scanning & Compliance Analysis Reporter',
-    description: 'Scans all Newfold Digital websites for legal compliance gaps — privacy notices, cookie banners, GDPR requirements, hidden footer links — with automated reporting and email alerts.',
+    description: 'Internal AI agent that continuously scans all Newfold Digital websites for legal compliance gaps — privacy notices, cookie banners, GDPR requirements, hidden footer links — with automated reporting and email alerts.',
+    href: null,
+    badge: 'Private Repo',
+    image: '/agents/oscar.jpg',
+  },
+  {
+    title: 'OSCAR Extension',
+    subtitle: 'Open Source Chrome Companion',
+    description: 'The public companion to the internal agent. A Chrome extension anyone can install to scan websites for privacy policies, cookie banners, terms of service, and other compliance elements.',
     href: 'https://github.com/wbuf81/oscar-extension',
     badge: 'Open Source',
+    image: '/agents/oscar.jpg',
   },
   {
     title: 'SMORES',
@@ -34,6 +43,7 @@ const REPO_CARDS = [
     description: 'Tracks all service marks, renewals, and filing deadlines across the brand portfolio. Monitors trademark lifecycles and fires alerts before anything lapses.',
     href: null,
     badge: 'Private Repo',
+    image: '/agents/smores.jpg',
   },
   {
     title: 'MAISIE',
@@ -41,6 +51,7 @@ const REPO_CARDS = [
     description: 'Monitors all domains registered through Newfold brands against the OFAC Specially Designated Nationals list. Syncs sanctions data, flags matches, and tracks compliance status across registrar portfolios.',
     href: null,
     badge: 'Private Repo',
+    image: '/agents/maisie.jpg',
   },
   {
     title: 'SNOOP',
@@ -48,6 +59,7 @@ const REPO_CARDS = [
     description: 'Monitors and manages all organizational policies and compliance frameworks with SharePoint integration. Tracks policy lifecycles, detects gaps in framework coverage, and keeps documentation current.',
     href: null,
     badge: 'Private Repo',
+    image: '/agents/snoop.jpg',
   },
   {
     title: 'RHINO',
@@ -55,6 +67,7 @@ const REPO_CARDS = [
     description: 'Maintains the enterprise risk register — every material risk with owner, residual score, and mitigation plan in one place. Quarterly assessment cadence with full audit trail and financial exposure tracking.',
     href: null,
     badge: 'Private Repo',
+    image: '/agents/rhino.jpg',
   },
   {
     title: 'PABSTY',
@@ -62,6 +75,7 @@ const REPO_CARDS = [
     description: 'Transforms raw OneTrust DSAR data into executive-ready analytics. Tracks monthly DSAR volumes by region, brand, and regulation type — automated monthly snapshots, no Claude session required.',
     href: null,
     badge: 'Private Repo',
+    image: '/agents/pabsty.jpg',
   },
 ];
 const INTEREST_CARDS = [
@@ -318,25 +332,34 @@ export default function HomePage() {
       <section id="beyond" className="section">
         <div className="section-inner">
           <h2 className="section-heading">Projects</h2>
-          <div className="beyond-grid beyond-grid-three">
+          <div className="agent-grid">
             {REPO_CARDS.map((card) => {
               const inner = (
                 <>
-                  <div className="beyond-header">
-                    <h3 className="beyond-title">{card.title}</h3>
-                    {card.badge && <span className="beyond-badge">{card.badge}</span>}
+                  {'image' in card && card.image && (
+                    <div className="agent-img-wrap">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={card.image} alt={card.title} className="agent-img" />
+                      <div className="agent-img-overlay" />
+                    </div>
+                  )}
+                  <div className="agent-body">
+                    <div className="beyond-header">
+                      <h3 className="beyond-title">{card.title}</h3>
+                      {card.badge && <span className="beyond-badge">{card.badge}</span>}
+                    </div>
+                    {'subtitle' in card && card.subtitle && <p className="beyond-subtitle">{card.subtitle}</p>}
+                    <p className="beyond-desc">{card.description}</p>
+                    {card.href && <span className="beyond-link">View &rarr;</span>}
                   </div>
-                  {'subtitle' in card && card.subtitle && <p className="beyond-subtitle">{card.subtitle}</p>}
-                  <p className="beyond-desc">{card.description}</p>
-                  {card.href && <span className="beyond-link">View &rarr;</span>}
                 </>
               );
               return card.href ? (
-                <a key={card.title} href={card.href} className="beyond-card beyond-card-link" target="_blank" rel="noopener noreferrer">
+                <a key={card.title} href={card.href} className="beyond-card beyond-card-link agent-card" target="_blank" rel="noopener noreferrer">
                   {inner}
                 </a>
               ) : (
-                <div key={card.title} className="beyond-card">
+                <div key={card.title} className="beyond-card agent-card">
                   {inner}
                 </div>
               );
@@ -732,6 +755,48 @@ export default function HomePage() {
           margin: 2px 0 10px;
           font-style: italic;
         }
+
+        /* Agent grid */
+        .agent-grid {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 24px;
+        }
+        .agent-card {
+          padding: 0;
+          overflow: hidden;
+          display: flex;
+          flex-direction: column;
+        }
+        .agent-img-wrap {
+          position: relative;
+          width: 100%;
+          height: 160px;
+          overflow: hidden;
+          background: #f3f4f6;
+        }
+        .agent-img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          object-position: center top;
+          transition: transform 0.5s ease;
+          filter: grayscale(100%);
+        }
+        .beyond-card-link:hover .agent-img {
+          transform: scale(1.05);
+        }
+        .agent-img-overlay {
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(to bottom, transparent 50%, rgba(0,0,0,0.08) 100%);
+        }
+        .agent-body {
+          padding: 20px;
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+        }
         .beyond-card {
           background: #fff;
           border-radius: 16px;
@@ -922,6 +987,12 @@ export default function HomePage() {
           .beyond-grid-three {
             grid-template-columns: repeat(2, 1fr);
           }
+          .agent-grid {
+            grid-template-columns: repeat(2, 1fr);
+          }
+          .agent-img-wrap {
+            height: 140px;
+          }
           .role-header {
             flex-direction: column;
             gap: 2px;
@@ -946,6 +1017,9 @@ export default function HomePage() {
           }
           .beyond-card {
             padding: 20px;
+          }
+          .agent-grid {
+            grid-template-columns: 1fr;
           }
           .footer-inner {
             flex-direction: column;
