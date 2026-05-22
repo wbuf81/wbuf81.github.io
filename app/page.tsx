@@ -790,19 +790,21 @@ export default function HomePage() {
           overflow: hidden;
           background: #f3f4f6;
           border-radius: 12px 12px 0 0;
+          filter: grayscale(100%) brightness(1.15) contrast(0.78);
+          transition: filter 0.4s ease;
+        }
+        .agent-card:hover .agent-img-wrap {
+          filter: grayscale(0%) brightness(1) contrast(1);
         }
         .agent-img {
           width: 100%;
           height: 100%;
           object-fit: cover;
           object-position: center top;
-          transition: transform 0.5s ease, filter 0.4s ease;
-          filter: grayscale(100%) brightness(1.15) contrast(0.78);
+          transition: transform 0.5s ease;
         }
-        .beyond-card-link:hover .agent-img,
         .agent-card:hover .agent-img {
           transform: scale(1.05);
-          filter: grayscale(0%) brightness(1) contrast(1);
         }
         .agent-img-overlay {
           position: absolute;
