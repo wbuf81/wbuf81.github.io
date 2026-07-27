@@ -17,12 +17,14 @@ const outfit = Outfit({
 export const metadata: Metadata = {
   title: 'Wesley Bard — VP, Risk & Compliance',
   description: 'Risk and compliance executive with 20 years of experience spanning Lockheed Martin and Newfold Digital. Engineer. AI Builder.',
-  metadataBase: new URL('https://wbuf81.github.io'),
+  // The canonical host. Relative URLs in OpenGraph/Twitter cards resolve
+  // against this, so it has to be the custom domain, not the github.io origin.
+  metadataBase: new URL('https://wesleybard.com'),
   manifest: '/manifest.json',
   openGraph: {
     title: 'Wesley Bard — VP, Risk & Compliance',
     description: 'Risk and compliance executive with 20 years of experience spanning Lockheed Martin and Newfold Digital. Engineer. AI Builder.',
-    url: 'https://wbuf81.github.io',
+    url: 'https://wesleybard.com',
     siteName: 'Wesley Bard',
     locale: 'en_US',
     type: 'website',
@@ -53,7 +55,7 @@ const jsonLd = {
   name: 'Wesley Bard',
   alternateName: 'Wes',
   description: 'Risk and compliance executive with 20 years of experience spanning Lockheed Martin and Newfold Digital. Engineer. AI Builder.',
-  url: 'https://wbuf81.github.io',
+  url: 'https://wesleybard.com',
   sameAs: [
     'https://www.linkedin.com/in/wesleybard/',
     'https://github.com/wbuf81',

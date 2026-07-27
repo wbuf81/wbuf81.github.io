@@ -11,11 +11,31 @@ import {
 import HealthDashboard from './components/HealthDashboard';
 import './health.css';
 
+const TITLE = "Wes's Health";
+const DESCRIPTION = 'Weekly tracker — weight, training, and nutrition.';
+
 export const metadata: Metadata = {
-  title: 'Health',
+  title: TITLE,
+  description: DESCRIPTION,
   // Unlinked from the site and kept out of the sitemap; this asks crawlers to
   // skip it too.
   robots: { index: false, follow: false },
+  // Without these the page inherits the site-wide card from layout.tsx, so
+  // sharing the link showed "VP, Risk & Compliance". noindex does not affect
+  // link unfurling — messaging apps read these tags regardless.
+  openGraph: {
+    title: TITLE,
+    description: DESCRIPTION,
+    url: 'https://wesleybard.com/health',
+    siteName: 'Wesley Bard',
+    locale: 'en_US',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary',
+    title: TITLE,
+    description: DESCRIPTION,
+  },
 };
 
 export default function HealthPage() {
