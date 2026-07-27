@@ -2,5 +2,8 @@
 User-agent: *
 Allow: /
 
+# Personal tracker page — unlinked and not for indexing
+Disallow: /health
+
 # Sitemap location
-Sitemap: https://wbuf81.github.io/sitemap.xml
+Sitemap: https://wesleybard.com/sitemap.xml

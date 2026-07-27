@@ -1,0 +1,106 @@
+{
+  "lastUpdated": "2026-07-27",
+  "units": {
+    "weight": "lb"
+  },
+  "days": [
+    {
+      "date": "2026-07-20",
+      "day": "Mon",
+      "cals": 2271,
+      "protein": 217,
+      "carbs": 216,
+      "fat": 65,
+      "weight": 210.2,
+      "steps": 12922,
+      "workout": "Lee - Legs A",
+      "cardio": false,
+      "cardioMinutes": null,
+      "notes": ""
+    },
+    {
+      "date": "2026-07-21",
+      "day": "Tue",
+      "cals": 2356,
+      "protein": 215,
+      "carbs": 234,
+      "fat": 68,
+      "weight": 208.8,
+      "steps": 14306,
+      "workout": "Lee - Push",
+      "cardio": true,
+      "cardioMinutes": 30,
+      "notes": "30 mins 12.5 / 3.0"
+    },
+    {
+      "date": "2026-07-22",
+      "day": "Wed",
+      "cals": 2171,
+      "protein": 210,
+      "carbs": 212,
+      "fat": 59,
+      "weight": 208.1,
+      "steps": 13469,
+      "workout": "Lee - Pull",
+      "cardio": false,
+      "cardioMinutes": null,
+      "notes": ""
+    },
+    {
+      "date": "2026-07-23",
+      "day": "Thu",
+      "cals": 2325,
+      "protein": 167,
+      "carbs": 232,
+      "fat": 49,
+      "weight": 207.7,
+      "steps": 13284,
+      "workout": "",
+      "cardio": true,
+      "cardioMinutes": 30,
+      "notes": "30 mins 12.5 / 3.0"
+    },
+    {
+      "date": "2026-07-24",
+      "day": "Fri",
+      "cals": 2000,
+      "protein": 199,
+      "carbs": 192,
+      "fat": 54,
+      "weight": 208.3,
+      "steps": 17645,
+      "workout": "Lee - Legs B",
+      "cardio": false,
+      "cardioMinutes": null,
+      "notes": ""
+    },
+    {
+      "date": "2026-07-25",
+      "day": "Sat",
+      "cals": 2725,
+      "protein": 202,
+      "carbs": 266,
+      "fat": 103,
+      "weight": 208.3,
+      "steps": 16202,
+      "workout": "Lee - Upper",
+      "cardio": true,
+      "cardioMinutes": 30,
+      "notes": "30 mins 12.5 / 3.0"
+    },
+    {
+      "date": "2026-07-26",
+      "day": "Sun",
+      "cals": 2488,
+      "protein": 195,
+      "carbs": 154,
+      "fat": 125,
+      "weight": 207.9,
+      "steps": 17600,
+      "workout": "",
+      "cardio": false,
+      "cardioMinutes": null,
+      "notes": ""
+    }
+  ]
+}
