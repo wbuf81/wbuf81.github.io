@@ -1,5 +1,13 @@
 import type { Metadata } from 'next';
-import { buildWeightSeries, getHealthData, groupIntoWeeks, summarize } from '@/lib/health';
+import {
+  buildPhases,
+  buildWeeklyTrend,
+  buildWeightSeries,
+  currentPhase,
+  getHealthData,
+  groupIntoWeeks,
+  summarize,
+} from '@/lib/health';
 import HealthDashboard from './components/HealthDashboard';
 import './health.css';
 
@@ -15,6 +23,9 @@ export default function HealthPage() {
   const weeks = groupIntoWeeks(data.days);
   const summary = summarize(data.days);
   const weightSeries = buildWeightSeries(data.days);
+  const weeklyTrend = buildWeeklyTrend(data.days);
+  const phases = buildPhases(data.days, data.phases);
+  const markers = [...(data.markers ?? [])].sort((a, b) => a.date.localeCompare(b.date));
 
   return (
     <main className="health-main">
@@ -30,6 +41,10 @@ export default function HealthPage() {
         weeks={weeks}
         summary={summary}
         weightSeries={weightSeries}
+        weeklyTrend={weeklyTrend}
+        phases={phases}
+        activePhase={currentPhase(phases)}
+        markers={markers}
         lastUpdated={data.lastUpdated}
         weightUnit={data.units.weight}
       />

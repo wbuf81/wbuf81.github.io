@@ -2,9 +2,12 @@ import {
   groupIntoWeeks,
   summarize,
   buildWeightSeries,
+  buildWeeklyTrend,
+  buildPhases,
+  currentPhase,
   parseHealthTsv,
 } from '@/lib/health';
-import { HealthDay } from '@/types/health';
+import { HealthDay, HealthPhase } from '@/types/health';
 
 function day(overrides: Partial<HealthDay> & { date: string; day: string }): HealthDay {
   return {
@@ -121,9 +124,48 @@ describe('summarize', () => {
     expect(summarize(throughSaturday).activeStreak).toBe(6);
   });
 
-  test('a full rest day ends the streak', () => {
-    // Jul 26 has neither a workout nor cardio.
-    expect(summarize(WEEK_ONE).activeStreak).toBe(0);
+  test('a Sunday rest day does not break the streak', () => {
+    // Jul 26 is a Sunday with neither a workout nor cardio. Sunday is a
+    // scheduled rest day, so it is passed over rather than ending the run.
+    expect(summarize(WEEK_ONE).activeStreak).toBe(6);
+  });
+
+  test('a Sunday rest day does not count toward the streak either', () => {
+    // Six active days Mon-Sat, plus a rest Sunday, is still six.
+    const streak = summarize(WEEK_ONE).activeStreak;
+
+    expect(streak).not.toBe(7);
+    expect(streak).toBe(6);
+  });
+
+  test('an active Sunday does count toward the streak', () => {
+    const days = [
+      day({ date: '2026-07-24', day: 'Fri', workout: 'Lee - Legs B' }),
+      day({ date: '2026-07-25', day: 'Sat', workout: 'Lee - Upper' }),
+      day({ date: '2026-07-26', day: 'Sun', cardio: true, cardioMinutes: 30 }),
+    ];
+
+    expect(summarize(days).activeStreak).toBe(3);
+  });
+
+  test('a rest day on any other weekday still ends the streak', () => {
+    const days = [
+      day({ date: '2026-07-20', day: 'Mon', workout: 'Lee - Legs A' }),
+      day({ date: '2026-07-21', day: 'Tue' }),
+      day({ date: '2026-07-22', day: 'Wed', workout: 'Lee - Pull' }),
+    ];
+
+    // Tuesday was an unplanned rest, so only Wednesday survives.
+    expect(summarize(days).activeStreak).toBe(1);
+  });
+
+  test('a streak of only rest Sundays is zero, not a running total', () => {
+    const days = [
+      day({ date: '2026-07-19', day: 'Sun' }),
+      day({ date: '2026-07-26', day: 'Sun' }),
+    ];
+
+    expect(summarize(days).activeStreak).toBe(0);
   });
 
   test('this week counts reflect the most recent week only', () => {
@@ -178,6 +220,205 @@ describe('buildWeightSeries', () => {
     const days = [day({ date: '2026-07-20', day: 'Mon', weight: null })];
 
     expect(buildWeightSeries(days)[0].weight).toBeNull();
+  });
+});
+
+describe('buildPhases', () => {
+  const CUT: HealthPhase = { start: '2026-07-20', type: 'cut', label: 'Summer cut' };
+
+  test('an open-ended latest phase is still running', () => {
+    const [phase] = buildPhases(WEEK_ONE, [CUT]);
+
+    expect(phase.isOngoing).toBe(true);
+    expect(phase.end).toBeNull();
+    expect(phase.label).toBe('Summer cut');
+  });
+
+  test('the next phase closes the one before it, the day before it starts', () => {
+    const phases = buildPhases(WEEK_ONE, [
+      CUT,
+      { start: '2026-07-24', type: 'bulk' },
+    ]);
+
+    expect(phases[0].end).toBe('2026-07-23');
+    expect(phases[0].isOngoing).toBe(false);
+    expect(phases[1].isOngoing).toBe(true);
+  });
+
+  test('an explicit end is respected, leaving a gap with no phase', () => {
+    const [phase] = buildPhases(WEEK_ONE, [
+      { start: '2026-07-20', end: '2026-07-22', type: 'cut' },
+    ]);
+
+    expect(phase.end).toBe('2026-07-22');
+    expect(phase.isOngoing).toBe(false);
+    expect(phase.dayCount).toBe(3);
+  });
+
+  test('falls back to the type as a label when none is given', () => {
+    const [phase] = buildPhases(WEEK_ONE, [{ start: '2026-07-20', type: 'bulk' }]);
+
+    expect(phase.label.toLowerCase()).toContain('bulk');
+  });
+
+  test('measures change from the first to the last recorded weight inside the range', () => {
+    const [phase] = buildPhases(WEEK_ONE, [CUT]);
+
+    expect(phase.startWeight).toBe(210.2);
+    expect(phase.currentWeight).toBe(207.9);
+    expect(phase.weightChange).toBeCloseTo(-2.3, 5);
+  });
+
+  test('only counts days inside the range', () => {
+    const phases = buildPhases(WEEK_ONE, [
+      { start: '2026-07-20', end: '2026-07-22', type: 'cut' },
+      { start: '2026-07-23', type: 'bulk' },
+    ]);
+
+    expect(phases[0].dayCount).toBe(3);
+    expect(phases[1].dayCount).toBe(4);
+    expect(phases[0].workouts).toBe(3);
+  });
+
+  test('reports goal progress for a cut', () => {
+    const [phase] = buildPhases(WEEK_ONE, [{ ...CUT, goalWeight: 200 }]);
+
+    // Started 210.2, now 207.9, goal 200: 2.3 of 10.2 lb done.
+    expect(phase.goalRemaining).toBeCloseTo(7.9, 5);
+    expect(phase.goalPercent).toBeCloseTo((2.3 / 10.2) * 100, 4);
+  });
+
+  test('reports goal progress for a bulk, where the target is above the start', () => {
+    const gaining = [
+      day({ date: '2026-07-20', day: 'Mon', weight: 200 }),
+      day({ date: '2026-07-21', day: 'Tue', weight: 202 }),
+    ];
+
+    const [phase] = buildPhases(gaining, [
+      { start: '2026-07-20', type: 'bulk', goalWeight: 210 },
+    ]);
+
+    expect(phase.goalRemaining).toBeCloseTo(8, 5);
+    expect(phase.goalPercent).toBeCloseTo(20, 4);
+  });
+
+  test('clamps progress at 100 when the goal is passed', () => {
+    const [phase] = buildPhases(WEEK_ONE, [{ ...CUT, goalWeight: 209 }]);
+
+    expect(phase.goalPercent).toBe(100);
+  });
+
+  test('goal fields are null when no goal is set', () => {
+    const [phase] = buildPhases(WEEK_ONE, [CUT]);
+
+    expect(phase.goalWeight).toBeNull();
+    expect(phase.goalRemaining).toBeNull();
+    expect(phase.goalPercent).toBeNull();
+  });
+
+  test('a phase with no recorded days reports nulls rather than throwing', () => {
+    const [phase] = buildPhases(WEEK_ONE, [{ start: '2027-01-01', type: 'cut' }]);
+
+    expect(phase.dayCount).toBe(0);
+    expect(phase.startWeight).toBeNull();
+    expect(phase.weightChange).toBeNull();
+    expect(phase.workouts).toBe(0);
+  });
+
+  test('orders phases by start date regardless of how they were written', () => {
+    const phases = buildPhases(WEEK_ONE, [
+      { start: '2026-07-24', type: 'bulk' },
+      { start: '2026-07-20', type: 'cut' },
+    ]);
+
+    expect(phases.map((p) => p.start)).toEqual(['2026-07-20', '2026-07-24']);
+  });
+
+  test('returns nothing when no phases are defined', () => {
+    expect(buildPhases(WEEK_ONE, [])).toEqual([]);
+    expect(buildPhases(WEEK_ONE, undefined)).toEqual([]);
+  });
+});
+
+describe('currentPhase', () => {
+  test('is the ongoing phase when there is one', () => {
+    const phases = buildPhases(WEEK_ONE, [{ start: '2026-07-20', type: 'cut' }]);
+
+    expect(currentPhase(phases)?.isOngoing).toBe(true);
+  });
+
+  test('is null when the latest phase has already ended', () => {
+    const phases = buildPhases(WEEK_ONE, [
+      { start: '2026-07-20', end: '2026-07-22', type: 'cut' },
+    ]);
+
+    expect(currentPhase(phases)).toBeNull();
+  });
+
+  test('is null when there are no phases', () => {
+    expect(currentPhase([])).toBeNull();
+  });
+});
+
+describe('buildWeeklyTrend', () => {
+  const weekTwo: HealthDay[] = [
+    day({ date: '2026-07-27', day: 'Mon', weight: 207.4, cals: 2310, protein: 208, steps: 14010, workout: 'Lee - Legs A' }),
+    day({ date: '2026-07-28', day: 'Tue', weight: 207.0, cals: 2410, protein: 220, steps: 15220, workout: 'Lee - Push', cardio: true, cardioMinutes: 30 }),
+  ];
+
+  test('reports one row per week, oldest first', () => {
+    const rows = buildWeeklyTrend([...WEEK_ONE, ...weekTwo]);
+
+    expect(rows).toHaveLength(2);
+    expect(rows[0].weekStart).toBe('2026-07-20');
+    expect(rows[1].weekStart).toBe('2026-07-27');
+  });
+
+  test('the first week has no change to report', () => {
+    const rows = buildWeeklyTrend(WEEK_ONE);
+
+    expect(rows[0].weightChange).toBeNull();
+  });
+
+  test('change compares this week average weight to the previous week', () => {
+    const rows = buildWeeklyTrend([...WEEK_ONE, ...weekTwo]);
+    const weekOneAvg = (210.2 + 208.8 + 208.1 + 207.7 + 208.3 + 208.3 + 207.9) / 7;
+    const weekTwoAvg = (207.4 + 207.0) / 2;
+
+    expect(rows[1].weightChange).toBeCloseTo(weekTwoAvg - weekOneAvg, 5);
+  });
+
+  test('carries the per-week aggregates through', () => {
+    const rows = buildWeeklyTrend([...WEEK_ONE, ...weekTwo]);
+
+    expect(rows[0].workouts).toBe(5);
+    expect(rows[0].cardioSessions).toBe(3);
+    expect(rows[0].cardioMinutes).toBe(90);
+    expect(rows[0].dayCount).toBe(7);
+    expect(rows[1].dayCount).toBe(2);
+  });
+
+  test('marks a partial week so a short first or last week is not read as a drop', () => {
+    const rows = buildWeeklyTrend([...WEEK_ONE, ...weekTwo]);
+
+    expect(rows[0].isPartial).toBe(false);
+    expect(rows[1].isPartial).toBe(true);
+  });
+
+  test('change is null when a week has no weigh-ins at all', () => {
+    const noWeights = [
+      day({ date: '2026-07-27', day: 'Mon', weight: null }),
+      day({ date: '2026-07-28', day: 'Tue', weight: null }),
+    ];
+
+    const rows = buildWeeklyTrend([...WEEK_ONE, ...noWeights]);
+
+    expect(rows[1].avgWeight).toBeNull();
+    expect(rows[1].weightChange).toBeNull();
+  });
+
+  test('returns nothing for an empty dataset', () => {
+    expect(buildWeeklyTrend([])).toEqual([]);
   });
 });
 

@@ -65,7 +65,10 @@ export default function StatTiles({ summary, weightUnit }: Props) {
     {
       label: 'Active streak',
       value: summary.activeStreak === 1 ? '1 day' : `${summary.activeStreak} days`,
-      detail: summary.activeStreak === 0 ? 'last recorded day was a rest day' : 'consecutive active days',
+      detail:
+        summary.activeStreak === 0
+          ? 'an unplanned rest day ended the run'
+          : 'consecutive active days — rest Sundays skipped',
     },
     {
       label: 'Tracked',

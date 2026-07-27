@@ -3,9 +3,14 @@ import path from 'path';
 import {
   HealthData,
   HealthDay,
+  HealthPhase,
   HealthSummary,
   ParsedImport,
+  PhaseSummary,
+  PhaseType,
+  HealthMarker,
   WeekSummary,
+  WeeklyTrendRow,
   WeightPoint,
 } from '@/types/health';
 
@@ -118,14 +123,39 @@ export function groupIntoWeeks(days: HealthDay[]): WeekSummary[] {
     }));
 }
 
-/** Consecutive active days counted backwards from the most recent record. */
+/** getUTCDay value for Sunday, which is a scheduled rest day. */
+const SCHEDULED_REST_WEEKDAY = 0;
+
+function isScheduledRest(day: HealthDay): boolean {
+  // Derived from the date rather than the sheet's day column, so a mislabelled
+  // row can't change the rule.
+  return toUtc(day.date).getUTCDay() === SCHEDULED_REST_WEEKDAY;
+}
+
+/**
+ * Consecutive active days counted backwards from the most recent record.
+ *
+ * Sunday is a planned rest day, so an inactive Sunday is passed over: it
+ * neither ends the streak nor adds to it. An unplanned rest on any other
+ * weekday does end it. A Sunday that *was* trained counts normally.
+ */
 function activeStreak(days: HealthDay[]): number {
   const sorted = sortDays(days);
   let streak = 0;
+
   for (let i = sorted.length - 1; i >= 0; i--) {
-    if (!isActive(sorted[i])) break;
-    streak++;
+    const day = sorted[i];
+
+    if (isActive(day)) {
+      streak++;
+      continue;
+    }
+
+    if (isScheduledRest(day)) continue;
+
+    break;
   }
+
   return streak;
 }
 
@@ -162,6 +192,130 @@ export function summarize(days: HealthDay[]): HealthSummary {
     weekCount: weeks.length,
     showMovingAverage: sorted.length >= MOVING_AVERAGE_MIN_DAYS,
   };
+}
+
+const PHASE_LABELS: Record<PhaseType, string> = {
+  cut: 'Cut',
+  bulk: 'Bulk',
+  maintain: 'Maintenance',
+};
+
+/**
+ * Resolve each phase's date range and measure what happened inside it.
+ *
+ * A phase runs until the next one starts, or indefinitely when it is the latest
+ * — an explicit `end` is only needed to leave a deliberate gap. Progress is
+ * signed against the goal, so the same arithmetic serves a cut and a bulk.
+ */
+export function buildPhases(days: HealthDay[], phases?: HealthPhase[]): PhaseSummary[] {
+  if (!phases || phases.length === 0) return [];
+
+  const sorted = sortDays(days);
+  const ordered = [...phases].sort((a, b) => a.start.localeCompare(b.start));
+
+  return ordered.map((phase, index) => {
+    const next = ordered[index + 1];
+
+    // An explicit end wins; otherwise the following phase closes this one.
+    const end = phase.end ?? (next ? addDays(next.start, -1) : null);
+
+    const inRange = sorted.filter(
+      (day) => day.date >= phase.start && (end === null || day.date <= end)
+    );
+    const weighed = inRange.filter((day) => day.weight !== null);
+
+    const startWeight = weighed.length ? weighed[0].weight : null;
+    const currentWeight = weighed.length ? weighed[weighed.length - 1].weight : null;
+    const goalWeight = phase.goalWeight ?? null;
+
+    let goalRemaining: number | null = null;
+    let goalPercent: number | null = null;
+
+    if (goalWeight !== null && currentWeight !== null) {
+      // A magnitude, not a signed delta: "7.9 lb to go" reads the same whether
+      // the goal is above or below where you are.
+      goalRemaining = Math.abs(goalWeight - currentWeight);
+
+      if (startWeight !== null) {
+        const total = goalWeight - startWeight;
+        const done = currentWeight - startWeight;
+        // A goal equal to the starting weight has no distance to measure.
+        goalPercent = total === 0 ? null : Math.max(0, Math.min(100, (done / total) * 100));
+      }
+    }
+
+    return {
+      type: phase.type,
+      label: phase.label ?? PHASE_LABELS[phase.type],
+      note: phase.note ?? '',
+      start: phase.start,
+      end,
+      isOngoing: end === null,
+      startLabel: shortLabel(phase.start),
+      endLabel: end === null ? null : shortLabel(end),
+      dayCount: inRange.length,
+      weekCount: groupIntoWeeks(inRange).length,
+      startWeight,
+      currentWeight,
+      weightChange:
+        startWeight !== null && currentWeight !== null ? currentWeight - startWeight : null,
+      goalWeight,
+      goalRemaining,
+      goalPercent,
+      avgCals: mean(inRange.map((d) => d.cals)),
+      avgProtein: mean(inRange.map((d) => d.protein)),
+      avgSteps: mean(inRange.map((d) => d.steps)),
+      workouts: inRange.filter((d) => d.workout.trim() !== '').length,
+      cardioSessions: inRange.filter((d) => d.cardio).length,
+      cardioMinutes: inRange.reduce((sum, d) => sum + (d.cardioMinutes ?? 0), 0),
+    };
+  });
+}
+
+/** The phase currently running, or null if the latest one has already closed. */
+export function currentPhase(phases: PhaseSummary[]): PhaseSummary | null {
+  const last = phases[phases.length - 1];
+  return last && last.isOngoing ? last : null;
+}
+
+/**
+ * Week-by-week summary, oldest first. Each row carries its own averages plus the
+ * change in average weight against the week before, which is the number that
+ * actually shows whether a week moved things.
+ *
+ * A week with fewer than seven recorded days is flagged: a short first or last
+ * week has a legitimately different average, and reading it as a real swing
+ * would be wrong.
+ */
+export function buildWeeklyTrend(days: HealthDay[]): WeeklyTrendRow[] {
+  const weeks = groupIntoWeeks(days);
+
+  return weeks.map((week, index) => {
+    const previous = index > 0 ? weeks[index - 1] : null;
+
+    const weightChange =
+      week.avgWeight !== null && previous?.avgWeight !== null && previous?.avgWeight !== undefined
+        ? week.avgWeight - previous.avgWeight
+        : null;
+
+    return {
+      weekStart: week.weekStart,
+      weekEnd: week.weekEnd,
+      label: week.label,
+      dayCount: week.days.length,
+      isPartial: week.days.length < 7,
+      avgWeight: week.avgWeight,
+      weightChange,
+      avgCals: week.avgCals,
+      avgProtein: week.avgProtein,
+      avgCarbs: week.avgCarbs,
+      avgFat: week.avgFat,
+      avgSteps: week.avgSteps,
+      workouts: week.workouts,
+      cardioSessions: week.cardioSessions,
+      cardioMinutes: week.cardioMinutes,
+    };
+  });
 }
 
 /**
@@ -386,7 +540,22 @@ export function getHealthData(): HealthData {
 
   const fileContents = fs.readFileSync(healthFilePath, 'utf8');
   const data = JSON.parse(fileContents) as HealthData;
-  return { ...data, days: sortDays(data.days ?? []) };
+  return {
+    ...data,
+    days: sortDays(data.days ?? []),
+    phases: data.phases ?? [],
+    markers: data.markers ?? [],
+  };
+}
+
+export function getPhases(): PhaseSummary[] {
+  const data = getHealthData();
+  return buildPhases(data.days, data.phases);
+}
+
+export function getMarkers(): HealthMarker[] {
+  const markers = getHealthData().markers ?? [];
+  return [...markers].sort((a, b) => a.date.localeCompare(b.date));
 }
 
 export function getWeeks(): WeekSummary[] {

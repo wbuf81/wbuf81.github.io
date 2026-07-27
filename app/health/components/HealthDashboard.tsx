@@ -1,13 +1,24 @@
 'use client';
 
-import { HealthDay, HealthSummary, WeekSummary, WeightPoint } from '@/types/health';
+import {
+  HealthDay,
+  HealthMarker,
+  HealthSummary,
+  PhaseSummary,
+  WeekSummary,
+  WeeklyTrendRow,
+  WeightPoint,
+} from '@/types/health';
 import CaloriesChart from './CaloriesChart';
 import ConsistencyGrid from './ConsistencyGrid';
 import DayTable from './DayTable';
 import MacroChart from './MacroChart';
+import PhaseBanner from './PhaseBanner';
+import PhaseTable from './PhaseTable';
 import StatTiles from './StatTiles';
 import StepsChart from './StepsChart';
 import WeeklyConsistencyChart from './WeeklyConsistencyChart';
+import WeekTable from './WeekTable';
 import WeightChart from './WeightChart';
 
 interface Props {
@@ -15,6 +26,10 @@ interface Props {
   weeks: WeekSummary[];
   summary: HealthSummary;
   weightSeries: WeightPoint[];
+  weeklyTrend: WeeklyTrendRow[];
+  phases: PhaseSummary[];
+  activePhase: PhaseSummary | null;
+  markers: HealthMarker[];
   lastUpdated: string;
   weightUnit: string;
 }
@@ -44,6 +59,10 @@ export default function HealthDashboard({
   weeks,
   summary,
   weightSeries,
+  weeklyTrend,
+  phases,
+  activePhase,
+  markers,
   lastUpdated,
   weightUnit,
 }: Props) {
@@ -55,6 +74,8 @@ export default function HealthDashboard({
 
   return (
     <>
+      {activePhase && <PhaseBanner phase={activePhase} weightUnit={weightUnit} />}
+
       <StatTiles summary={summary} weightUnit={weightUnit} />
 
       <Section
@@ -65,7 +86,12 @@ export default function HealthDashboard({
             : 'Daily readings. The 7-day average line appears once there are two weeks of data.'
         }
       >
-        <WeightChart data={weightSeries} showTrend={summary.showMovingAverage} />
+        <WeightChart
+          data={weightSeries}
+          showTrend={summary.showMovingAverage}
+          phases={phases}
+          markers={markers}
+        />
       </Section>
 
       <Section
@@ -105,6 +131,21 @@ export default function HealthDashboard({
       >
         <CaloriesChart days={days} average={summary.avgCals} />
       </Section>
+
+      {hasMultipleWeeks && (
+        <Section
+          title="By week"
+          note="Weekly averages, and how each week's average weight moved against the one before."
+        >
+          <WeekTable rows={weeklyTrend} weightUnit={weightUnit} />
+        </Section>
+      )}
+
+      {phases.length > 1 && (
+        <Section title="Phases" note="Every block, and what happened during it.">
+          <PhaseTable phases={phases} weightUnit={weightUnit} />
+        </Section>
+      )}
 
       <Section title="The data">
         <DayTable days={days} />

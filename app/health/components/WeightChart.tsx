@@ -4,21 +4,36 @@ import {
   CartesianGrid,
   Line,
   LineChart,
+  ReferenceArea,
+  ReferenceLine,
   ResponsiveContainer,
   Tooltip,
   XAxis,
   YAxis,
 } from 'recharts';
-import { WeightPoint } from '@/types/health';
+import { HealthMarker, PhaseSummary, WeightPoint } from '@/types/health';
 import ChartLegend from './ChartLegend';
 import ChartTooltip from './ChartTooltip';
-import { ANIMATE, MUTED_MARK, SERIES, SURFACE, axisProps, gridProps } from './chartTheme';
+import { ANIMATE, MUTED_MARK, SERIES, SURFACE, TEXT_MUTED, axisProps, gridProps } from './chartTheme';
 
 interface Props {
   data: WeightPoint[];
   /** False until 14 days exist, when a 7-day mean starts to mean something. */
   showTrend: boolean;
+  phases: PhaseSummary[];
+  markers: HealthMarker[];
 }
+
+/**
+ * Phases are washes behind the data, not marks in it: a tint at ~7% so the plot
+ * reads on top of it. Only the goal line is allowed to be a real mark, because
+ * it is a number you are aiming at.
+ */
+const PHASE_TINT: Record<string, string> = {
+  cut: 'rgba(42, 120, 214, 0.07)',
+  bulk: 'rgba(235, 104, 52, 0.07)',
+  maintain: 'rgba(27, 175, 122, 0.07)',
+};
 
 /**
  * The y-axis is deliberately zoomed to the data range rather than anchored at
@@ -36,8 +51,48 @@ function zoomedDomain(data: WeightPoint[]): [number, number] {
   return [Math.floor((min - pad) * 2) / 2, Math.ceil((max + pad) * 2) / 2];
 }
 
-export default function WeightChart({ data, showTrend }: Props) {
+export default function WeightChart({ data, showTrend, phases, markers }: Props) {
   const domain = zoomedDomain(data);
+
+  // The x-axis is categorical (point labels), so a date has to be mapped to the
+  // nearest plotted point rather than used as a raw coordinate.
+  const labelFor = (iso: string, edge: 'start' | 'end'): string | null => {
+    const inside = data.filter((point) => (edge === 'start' ? point.date >= iso : point.date <= iso));
+    if (inside.length === 0) return null;
+    return edge === 'start' ? inside[0].label : inside[inside.length - 1].label;
+  };
+
+  const bands = phases
+    .map((phase) => {
+      const x1 = labelFor(phase.start, 'start');
+      const x2 = labelFor(phase.end ?? data[data.length - 1]?.date ?? phase.start, 'end');
+      return x1 && x2 ? { phase, x1, x2 } : null;
+    })
+    .filter((band): band is { phase: PhaseSummary; x1: string; x2: string } => band !== null);
+
+  // Recharts centres a vertical reference-line label on the line, so a marker on
+  // the first or last plotted day spills over the edge into the axis. Nudge those
+  // inward rather than letting the text clip.
+  const flags = markers
+    .map((marker) => {
+      const index = data.findIndex((point) => point.date === marker.date);
+      if (index === -1) return null;
+
+      const dx = index === 0 ? 30 : index === data.length - 1 ? -30 : 0;
+      return { marker, x: data[index].label, dx };
+    })
+    .filter((flag): flag is { marker: HealthMarker; x: string; dx: number } => flag !== null);
+
+  // A goal far below the current range would force the axis to zoom out and
+  // flatten the daily movement, so it is only drawn when it is already in view.
+  // The phase banner reports the goal and the distance to it either way.
+  const goalLines = phases.filter(
+    (phase) =>
+      phase.isOngoing &&
+      phase.goalWeight !== null &&
+      phase.goalWeight >= domain[0] &&
+      phase.goalWeight <= domain[1]
+  );
 
   return (
     <>
@@ -63,6 +118,55 @@ export default function WeightChart({ data, showTrend }: Props) {
           content={<ChartTooltip unit="lb" digits={1} />}
           cursor={{ stroke: MUTED_MARK, strokeWidth: 1 }}
         />
+
+        {bands.map(({ phase, x1, x2 }) => (
+          <ReferenceArea
+            key={phase.start}
+            x1={x1}
+            x2={x2}
+            fill={PHASE_TINT[phase.type] ?? PHASE_TINT.maintain}
+            fillOpacity={1}
+            stroke="none"
+            label={{
+              value: phase.label,
+              position: 'insideBottomLeft',
+              fill: TEXT_MUTED,
+              fontSize: 11,
+            }}
+          />
+        ))}
+
+        {goalLines.map((phase) => (
+          <ReferenceLine
+            key={`goal-${phase.start}`}
+            y={phase.goalWeight as number}
+            stroke={SERIES.blue}
+            strokeWidth={1}
+            strokeDasharray="4 4"
+            label={{
+              value: `goal ${phase.goalWeight}`,
+              position: 'insideBottomRight',
+              fill: TEXT_MUTED,
+              fontSize: 11,
+            }}
+          />
+        ))}
+
+        {flags.map(({ marker, x, dx }) => (
+          <ReferenceLine
+            key={`${marker.date}-${marker.label}`}
+            x={x}
+            stroke={TEXT_MUTED}
+            strokeWidth={1}
+            label={{
+              value: marker.label,
+              position: 'insideTop',
+              fill: TEXT_MUTED,
+              fontSize: 11,
+              dx,
+            }}
+          />
+        ))}
 
         <Line
           type="monotone"

@@ -19,6 +19,26 @@ The script appends to `data/health.json`. **Hard errors** (wrong column count, u
 
 Derivation logic is in `lib/health.ts` (pure functions, unit-tested in `__tests__/health.test.ts`). Never edit `data/health.json` by hand — use the script so the tested parser and validation run.
 
+### Phases and markers
+`data/health.json` also holds `phases` (blocks like a cut) and `markers` (dated one-off events). These are hand-edited — the import script only touches `days`.
+
+```json
+"phases": [
+  { "start": "2026-07-20", "type": "cut", "label": "Cut", "goalWeight": null, "note": "" }
+],
+"markers": [
+  { "date": "2026-08-03", "label": "Deload" }
+]
+```
+- `type` is `cut` | `bulk` | `maintain`. `label` defaults to the type.
+- A phase runs until the next one starts; the latest with no `end` is ongoing. Set `end` explicitly **only** to leave a deliberate gap with no phase.
+- `goalWeight` is optional. When set, the banner shows distance and percent complete — signed so the same arithmetic serves a cut and a bulk. `goalRemaining` is a magnitude, always positive.
+- To start a new block, append a phase with the new `start`; that automatically closes the previous one. Don't set `end` on the old phase as well.
+- The goal line is drawn on the weight chart **only when the goal falls inside the visible y-range**. That axis is zoomed to the data on purpose, and stretching it to reach a distant goal would flatten the daily movement. The banner reports the goal regardless — this is not a bug.
+
+### Streak rule
+Sunday is a scheduled rest day: an inactive Sunday neither breaks nor extends the streak. An unplanned rest on any other weekday does break it. A Sunday that *was* trained counts normally.
+
 Chart rules that are deliberate, not accidental:
 - **No dual-axis charts.** Cardio minutes are not plotted against session counts; the total is a stat tile.
 - Weight y-axis is zoomed to the data range, never anchored at zero.

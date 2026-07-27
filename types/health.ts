@@ -19,10 +19,73 @@ export interface HealthDay {
   notes: string;
 }
 
+export type PhaseType = 'cut' | 'bulk' | 'maintain';
+
+/** A training/nutrition block, as recorded by hand in data/health.json. */
+export interface HealthPhase {
+  /** ISO date the phase began. */
+  start: string;
+  /**
+   * ISO date it ended. Omit (or null) to let the next phase's start close it,
+   * or to mark it as still running when it is the latest phase. Set explicitly
+   * only to leave a deliberate gap with no phase.
+   */
+  end?: string | null;
+  type: PhaseType;
+  /** Display name. Falls back to the type when absent. */
+  label?: string;
+  /** Optional target weight for this phase. */
+  goalWeight?: number | null;
+  note?: string;
+}
+
+/** A single dated event worth marking on the timeline. */
+export interface HealthMarker {
+  date: string;
+  label: string;
+  note?: string;
+}
+
 export interface HealthData {
   lastUpdated: string;
   units: { weight: string };
   days: HealthDay[];
+  phases?: HealthPhase[];
+  markers?: HealthMarker[];
+}
+
+/** A phase with its date range resolved and its outcome measured. */
+export interface PhaseSummary {
+  type: PhaseType;
+  label: string;
+  note: string;
+  start: string;
+  /** Resolved end: explicit, the day before the next phase, or null if running. */
+  end: string | null;
+  isOngoing: boolean;
+  startLabel: string;
+  endLabel: string | null;
+  /** Recorded days falling inside the range. */
+  dayCount: number;
+  weekCount: number;
+  /** First and last recorded weights inside the range. */
+  startWeight: number | null;
+  currentWeight: number | null;
+  weightChange: number | null;
+  goalWeight: number | null;
+  /**
+   * Weight still to go to reach the goal, as a magnitude — positive whether the
+   * goal is above or below the current weight. Null without a goal.
+   */
+  goalRemaining: number | null;
+  /** 0-100, clamped. Null without a goal, or when the goal equals the start. */
+  goalPercent: number | null;
+  avgCals: number | null;
+  avgProtein: number | null;
+  avgSteps: number | null;
+  workouts: number;
+  cardioSessions: number;
+  cardioMinutes: number;
 }
 
 export interface WeekSummary {
@@ -62,6 +125,28 @@ export interface HealthSummary {
   weekCount: number;
   /** False until there are enough days for a 7-day average to mean anything. */
   showMovingAverage: boolean;
+}
+
+/** One row of the week-by-week summary. */
+export interface WeeklyTrendRow {
+  weekStart: string;
+  weekEnd: string;
+  label: string;
+  /** How many days of this week were actually recorded. */
+  dayCount: number;
+  /** True when the week has fewer than seven recorded days. */
+  isPartial: boolean;
+  avgWeight: number | null;
+  /** Change in average weight against the previous week. Null for the first. */
+  weightChange: number | null;
+  avgCals: number | null;
+  avgProtein: number | null;
+  avgCarbs: number | null;
+  avgFat: number | null;
+  avgSteps: number | null;
+  workouts: number;
+  cardioSessions: number;
+  cardioMinutes: number;
 }
 
 export interface WeightPoint {

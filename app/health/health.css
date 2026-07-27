@@ -20,6 +20,152 @@
   margin-top: 0.5rem;
 }
 
+/* ---------- Current phase banner ---------- */
+
+.phase-banner {
+  background: #fff;
+  border: 1px solid #e8e8e6;
+  border-radius: 8px;
+  padding: 1.25rem 1.5rem 1.4rem;
+  margin-bottom: 1.75rem;
+}
+
+.phase-banner-head {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-bottom: 1.1rem;
+}
+
+.phase-chip {
+  display: inline-block;
+  padding: 0.15rem 0.55rem;
+  border-radius: 4px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #1a1a1a;
+  background: #f0efec;
+  white-space: nowrap;
+}
+
+/* A tint of the same hue the chart band uses, so the two read as one thing. */
+.phase-chip.is-cut {
+  background: rgba(42, 120, 214, 0.13);
+}
+
+.phase-chip.is-bulk {
+  background: rgba(235, 104, 52, 0.15);
+}
+
+.phase-chip.is-maintain {
+  background: rgba(27, 175, 122, 0.15);
+}
+
+.phase-range {
+  font-size: 0.82rem;
+  color: #8a8985;
+}
+
+.phase-figures {
+  display: flex;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 1.75rem;
+}
+
+.phase-figure {
+  min-width: 6rem;
+}
+
+.phase-figure.is-goal {
+  min-width: 11rem;
+}
+
+.phase-value {
+  font-family: var(--font-playfair);
+  font-size: 1.75rem;
+  line-height: 1.15;
+  margin-top: 0.3rem;
+  color: #1a1a1a;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.phase-value.is-good {
+  color: #146c4f;
+}
+
+.phase-value.is-up {
+  color: #a8382c;
+}
+
+.phase-arrow {
+  font-size: 1.25rem;
+  color: #c2c1bd;
+  align-self: center;
+  margin: 0 -0.75rem;
+}
+
+.phase-progress {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.6rem;
+}
+
+.phase-progress::before {
+  content: '';
+  position: absolute;
+  inset: 0 2.5rem 0 0;
+  height: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #f0efec;
+  border-radius: 3px;
+}
+
+.phase-progress-fill {
+  position: relative;
+  height: 6px;
+  border-radius: 3px;
+  background: #2a78d6;
+  max-width: calc(100% - 2.5rem);
+  min-width: 2px;
+}
+
+.phase-progress-text {
+  position: absolute;
+  right: 0;
+  font-size: 0.78rem;
+  color: #52514e;
+  font-variant-numeric: tabular-nums;
+}
+
+.phase-note {
+  margin-top: 1rem;
+  font-size: 0.85rem;
+  color: #52514e;
+  max-width: 60ch;
+}
+
+@media (max-width: 640px) {
+  .phase-figures {
+    gap: 1.1rem;
+  }
+
+  .phase-arrow {
+    display: none;
+  }
+
+  .phase-value {
+    font-size: 1.4rem;
+  }
+}
+
 /* ---------- Stat tiles ---------- */
 
 .stat-tiles {
@@ -299,6 +445,36 @@
 
 .health-table .is-rest {
   color: #8a8985;
+}
+
+.health-table .is-week {
+  font-weight: 600;
+  color: #1a1a1a;
+  font-size: 0.85rem;
+  letter-spacing: normal;
+  text-transform: none;
+}
+
+.health-table .is-good {
+  color: #146c4f;
+}
+
+.health-table .is-up {
+  color: #a8382c;
+}
+
+.is-partial {
+  display: inline-block;
+  margin-left: 0.4rem;
+  padding: 0.05rem 0.35rem;
+  border-radius: 3px;
+  background: #f0efec;
+  color: #8a8985;
+  font-size: 0.65rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  vertical-align: 1px;
 }
 
 .health-table .is-notes {

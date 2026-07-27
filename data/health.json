@@ -3,6 +3,16 @@
   "units": {
     "weight": "lb"
   },
+  "phases": [
+    {
+      "start": "2026-07-20",
+      "type": "cut",
+      "label": "Cut",
+      "goalWeight": null,
+      "note": ""
+    }
+  ],
+  "markers": [],
   "days": [
     {
       "date": "2026-07-20",
