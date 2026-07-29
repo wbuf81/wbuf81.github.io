@@ -204,10 +204,10 @@ export default function HomePage() {
         <div className="section-inner">
           <h2 className="section-heading">About</h2>
           <p className="about-text">
-            I&apos;ve spent the last 20 years somewhere between engineering and compliance — starting as a software engineer at Lockheed Martin, and eventually finding my way into risk and compliance leadership at Newfold Digital. That path wasn&apos;t planned, but it gave me something most compliance leaders don&apos;t have: a real feel for both sides, how systems are built and how they&apos;re governed.
+            Nobody plans a career that goes from writing software at Lockheed Martin to leading risk and compliance at Newfold Digital. Mine did, and the engineering years turned out to be the best training I could have asked for. I still approach compliance the way I approached code: find the repetitive thing, automate it, move on.
           </p>
           <p className="about-text" style={{ marginTop: '16px' }}>
-            These days I&apos;m a compliance leader who still builds things. I bring a technical, automation-first approach to risk and compliance — lowering the risk portfolio not just through policy, but through tooling, AI agents, and smarter workflows. I lead global programs at Newfold and I ship internal tools in Claude Code.
+            So while my title says I run global programs, in practice I spend a lot of time building. Internal tools, AI agents, workflow automations, most of it shipped straight out of Claude Code. The best control is the one nobody has to remember to do.
           </p>
         </div>
       </section>
