@@ -14,6 +14,8 @@ import { HealthDay } from '@/types/health';
 import ChartTooltip from './ChartTooltip';
 import {
   ANIMATE,
+  DAILY_MARGIN,
+  DAILY_Y_WIDTH,
   SERIES,
   TEXT_MUTED,
   TEXT_SECONDARY,
@@ -55,12 +57,12 @@ export default function StepsChart({ days, average, minimum, goal }: Props) {
   return (
     <ResponsiveContainer width="100%" height={260}>
       {/* The right gutter holds the rule labels clear of the bars. */}
-      <BarChart data={data} margin={{ top: 8, right: 64, bottom: 0, left: 4 }}>
+      <BarChart data={data} margin={DAILY_MARGIN}>
         <CartesianGrid {...gridProps} />
         <XAxis dataKey="label" {...axisProps} interval="preserveStartEnd" />
         <YAxis
           {...axisProps}
-          width={56}
+          width={DAILY_Y_WIDTH}
           domain={domain}
           ticks={ticks}
           tickFormatter={(value: number) => (value === 0 ? '0' : `${formatNumber(value / 1000)}k`)}

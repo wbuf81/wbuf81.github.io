@@ -41,6 +41,36 @@ export const gridProps = {
 } as const;
 
 /**
+ * Shared geometry for every chart with one mark per day: weight, steps, macros,
+ * calories.
+ *
+ * These have to be identical across all of them, because the charts stack down
+ * the page and a reader compares them column by column. Any difference in the
+ * y-axis width or the horizontal margins moves a given day to a different x and
+ * the days stop lining up. They were four different combinations before.
+ *
+ * The right margin is the gutter the reference-line labels sit in. Charts with
+ * no such labels keep it anyway — reclaiming it would shift their plot area out
+ * of step with the others.
+ *
+ * The consistency grid is deliberately not in this group: it is a CSS grid of
+ * one week per row, not a 14-day axis, so there is no column to align to.
+ */
+export const DAILY_MARGIN = { top: 8, right: 64, bottom: 0, left: 4 } as const;
+
+/** Wide enough for the longest y label across those four ("3,000", "211.0"). */
+export const DAILY_Y_WIDTH = 56;
+
+/**
+ * A bar chart insets its marks by half a band; a line chart anchors its first
+ * and last point on the plot edge. Without this the weight line sits half a day
+ * out of step with the bars below it. A band scale gives the line the same
+ * inset, and unlike a fixed pixel padding it stays correct as weeks accumulate
+ * and the band narrows.
+ */
+export const DAILY_X_BAND = { scale: 'band' } as const;
+
+/**
  * Entry animation is off everywhere. The data is static and the page is read at
  * a glance; an animating chart is empty for its first second, which reads as "no
  * data" rather than "loading".

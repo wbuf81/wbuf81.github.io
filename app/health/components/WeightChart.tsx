@@ -14,7 +14,18 @@ import {
 import { PhaseSummary, WeightPoint } from '@/types/health';
 import ChartLegend from './ChartLegend';
 import ChartTooltip from './ChartTooltip';
-import { ANIMATE, MUTED_MARK, SERIES, SURFACE, TEXT_MUTED, axisProps, gridProps } from './chartTheme';
+import {
+  ANIMATE,
+  DAILY_MARGIN,
+  DAILY_X_BAND,
+  DAILY_Y_WIDTH,
+  MUTED_MARK,
+  SERIES,
+  SURFACE,
+  TEXT_MUTED,
+  axisProps,
+  gridProps,
+} from './chartTheme';
 
 interface Props {
   data: WeightPoint[];
@@ -91,14 +102,20 @@ export default function WeightChart({ data, showTrend, phases }: Props) {
       />
     )}
     <ResponsiveContainer width="100%" height={300}>
-      <LineChart data={data} margin={{ top: 8, right: 16, bottom: 0, left: 0 }}>
+      <LineChart data={data} margin={DAILY_MARGIN}>
         <CartesianGrid {...gridProps} />
-        <XAxis dataKey="label" {...axisProps} interval="preserveStartEnd" minTickGap={24} />
+        <XAxis
+          dataKey="label"
+          {...axisProps}
+          interval="preserveStartEnd"
+          minTickGap={24}
+          {...DAILY_X_BAND}
+        />
         <YAxis
           {...axisProps}
           domain={domain}
           tickFormatter={(value: number) => value.toFixed(1)}
-          width={52}
+          width={DAILY_Y_WIDTH}
         />
         <Tooltip
           content={<ChartTooltip unit="lb" digits={1} />}

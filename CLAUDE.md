@@ -61,6 +61,7 @@ Chart rules that are deliberate, not accidental:
 - Series colors are validated categorical slots — see the note in `app/health/components/chartTheme.ts` before changing any of them.
 - Entry animation is off (`ANIMATE = false`); an animating chart reads as empty on load.
 - Reference-line labels sit in a right-hand gutter (`margin.right: 64`, `position: 'right'`). Inside the plot they landed on top of the bars.
+- **The four daily charts share their geometry.** Weight, steps, macros and calories all use `DAILY_MARGIN` and `DAILY_Y_WIDTH` from `chartTheme.ts`, so a given day sits at the same x in every one and the day labels line up down the page. They were four different combinations of margin and axis width, which is why the columns did not agree. Don't set a per-chart margin or `YAxis width` on any of them; change the shared token instead. The weight chart also takes `DAILY_X_BAND` because a line chart otherwise anchors its end points on the plot edge instead of insetting them half a band like a bar.
 - The calories chart hides its all-time-average rule whenever `goalCals` is set, because the two sit a few kcal apart and stack into what looks like one line. The average is still a stat tile. Without a goal the average rule comes back.
 - The day table draws a heavier rule on the first row of each new week (`.is-week-start`) instead of banding alternate rows.
 - Each goal is a meter, not a chart: it is one magnitude against a known ceiling. Met state carries a check glyph and words as well as color.

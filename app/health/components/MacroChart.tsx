@@ -12,7 +12,16 @@ import {
 import { HealthDay } from '@/types/health';
 import ChartLegend from './ChartLegend';
 import ChartTooltip from './ChartTooltip';
-import { ANIMATE, SERIES, SURFACE, axisProps, cleanAxis, gridProps } from './chartTheme';
+import {
+  ANIMATE,
+  DAILY_MARGIN,
+  DAILY_Y_WIDTH,
+  SERIES,
+  SURFACE,
+  axisProps,
+  cleanAxis,
+  gridProps,
+} from './chartTheme';
 
 interface Props {
   days: HealthDay[];
@@ -46,10 +55,10 @@ export default function MacroChart({ days }: Props) {
     <>
     <ChartLegend items={LEGEND} />
     <ResponsiveContainer width="100%" height={280}>
-      <BarChart data={data} margin={{ top: 8, right: 16, bottom: 0, left: -4 }}>
+      <BarChart data={data} margin={DAILY_MARGIN}>
         <CartesianGrid {...gridProps} />
         <XAxis dataKey="label" {...axisProps} interval="preserveStartEnd" />
-        <YAxis {...axisProps} width={48} domain={domain} ticks={ticks} />
+        <YAxis {...axisProps} width={DAILY_Y_WIDTH} domain={domain} ticks={ticks} />
         <Tooltip content={<ChartTooltip unit="g" />} cursor={{ fill: 'rgba(0,0,0,0.04)' }} />
 
         <Bar
