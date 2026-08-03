@@ -15,7 +15,7 @@ To add a week: Wes pastes the sheet rows (tab-separated, columns Date→Notes). 
 pbpaste | npm run health:add          # or: node scripts/add-health-week.mjs < week.tsv
 node scripts/add-health-week.mjs --dry-run < week.tsv   # preview first
 ```
-Then rebuild the link-preview card, because it is drawn from that data and otherwise goes stale:
+Optionally refresh the local copy of the link-preview card (the deploy redraws it either way):
 ```
 python3 scripts/og/build-og.py health
 ```
@@ -81,7 +81,9 @@ python3 scripts/og/build-og.py health    # after importing a week
 - **PNG, never SVG.** iMessage, Teams, Slack, LinkedIn and WhatsApp all silently ignore SVG previews and fall back to a bare text card. The site shipped a `.svg` card for months for exactly this reason; don't reintroduce one.
 - `/health` must declare its own `openGraph.images`. Declaring `openGraph` on a child route **replaces** the parent's images rather than merging, so omitting them means no card at all.
 - `twitter.card` is `summary_large_image` on both. `summary` is the small square layout and crops a 1200x630 card badly.
-- The homepage card is a fixed design; the health card is **derived from `data/health.json`** and must be rebuilt when a week is imported.
+- The homepage card is a fixed design; the health card is **derived from `data/health.json`**.
+- The health card is redrawn automatically on every deploy — see the "Redraw the /health link preview" step in `.github/workflows/deploy.yml`. Importing a week is a push, so the live card is never stale. Run the generator locally too if you want the committed PNG to match, but the deploy does not depend on it.
+- If that CI step ever fails the whole deploy fails, which is deliberate: a silently stale card showing last month's weight is worse than a visible red build.
 - Cards use the site's own Playfair Display and Outfit, committed as `scripts/og/*.woff2` so a render never silently falls back to a system face.
 
 ## Favicons

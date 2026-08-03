@@ -30,6 +30,15 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      # The /health card shows real numbers from data/health.json, so it is
+      # redrawn on every deploy rather than relying on the committed PNG being
+      # current. Importing a week is a push, so the card is never stale.
+      # Chrome is preinstalled on the runner image.
+      - name: Redraw the /health link preview
+        run: |
+          python3 -m pip install --quiet --disable-pip-version-check pillow
+          python3 scripts/og/build-og.py health
+
       - name: Build
         run: npm run build
 

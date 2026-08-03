@@ -21,16 +21,48 @@ Requires: Google Chrome, and Pillow (`pip install pillow`).
 import base64
 import json
 import pathlib
+import shutil
 import subprocess
 import sys
 
 HERE = pathlib.Path(__file__).parent
 REPO = HERE.parent.parent
 PUBLIC = REPO / 'public'
-CHROME = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
 
 W, H = 1200, 630
 SCALE = 2
+
+# Set CHROME_BIN to override. The candidates cover a local mac and the Linux
+# runner that regenerates the health card on every deploy.
+CHROME_CANDIDATES = [
+    '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+    'google-chrome-stable',
+    'google-chrome',
+    'chromium-browser',
+    'chromium',
+]
+
+
+def find_chrome():
+    import os
+
+    override = os.environ.get('CHROME_BIN')
+    if override:
+        if pathlib.Path(override).exists() or shutil.which(override):
+            return override
+        raise SystemExit(f'CHROME_BIN is set to "{override}" but that is not executable.')
+
+    for candidate in CHROME_CANDIDATES:
+        if pathlib.Path(candidate).exists():
+            return candidate
+        found = shutil.which(candidate)
+        if found:
+            return found
+
+    raise SystemExit(
+        'Could not find Chrome. Install it, or set CHROME_BIN to the binary.\n'
+        f'Looked for: {", ".join(CHROME_CANDIDATES)}'
+    )
 
 
 def b64(path):
@@ -223,7 +255,8 @@ def render(name):
     out = PUBLIC / filename
     try:
         subprocess.run(
-            [CHROME, '--headless', '--disable-gpu', '--hide-scrollbars',
+            [find_chrome(), '--headless', '--disable-gpu', '--hide-scrollbars',
+             '--no-sandbox',  # required when the runner executes as root
              f'--force-device-scale-factor={SCALE}', f'--window-size={W},{H}',
              f'--screenshot={out}', f'file://{src}'],
             capture_output=True, check=True,
