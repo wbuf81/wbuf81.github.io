@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import {
   buildPhases,
+  buildWeeklyGoals,
   buildWeeklyTrend,
   buildWeightSeries,
   currentPhase,
@@ -41,11 +42,12 @@ export const metadata: Metadata = {
 export default function HealthPage() {
   const data = getHealthData();
   const weeks = groupIntoWeeks(data.days);
-  const summary = summarize(data.days);
+  const summary = summarize(data.days, data.targets);
   const weightSeries = buildWeightSeries(data.days);
   const weeklyTrend = buildWeeklyTrend(data.days);
   const phases = buildPhases(data.days, data.phases);
   const markers = [...(data.markers ?? [])].sort((a, b) => a.date.localeCompare(b.date));
+  const weeklyGoals = buildWeeklyGoals(data.days, data.targets);
 
   return (
     <main className="health-main">
@@ -66,6 +68,7 @@ export default function HealthPage() {
         activePhase={currentPhase(phases)}
         markers={markers}
         targets={data.targets ?? {}}
+        weeklyGoals={weeklyGoals}
         lastUpdated={data.lastUpdated}
         weightUnit={data.units.weight}
       />

@@ -235,11 +235,18 @@
   letter-spacing: -0.01em;
 }
 
+/*
+ * A 60ch measure wrapped these one-line notes well short of the card edge and
+ * left orphans like "to zero." on a line of their own. The wider measure lets
+ * most notes sit on one line, and `balance` splits the rest evenly instead of
+ * dropping a couple of words onto the last line.
+ */
 .health-note {
   font-size: 0.85rem;
   color: #8a8985;
   margin-top: 0.3rem;
-  max-width: 60ch;
+  max-width: 96ch;
+  text-wrap: balance;
 }
 
 .health-updated {
@@ -325,6 +332,125 @@
   flex: none;
 }
 
+/* ---------- Weekly goals ---------- */
+
+.goals {
+  margin-bottom: 1.4rem;
+  padding-bottom: 1.2rem;
+  border-bottom: 1px solid #f0efec;
+}
+
+.goals-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.4rem 1rem;
+  margin-bottom: 0.85rem;
+}
+
+.goals-week {
+  margin: 0;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #8a8985;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.goals-partial {
+  margin-left: 0.45rem;
+  padding: 0.05rem 0.35rem;
+  border-radius: 3px;
+  background: #f0efec;
+  color: #8a8985;
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+}
+
+.goals-streak {
+  margin: 0;
+  font-size: 0.82rem;
+  color: #52514e;
+}
+
+.goals-streak strong {
+  color: #1a1a1a;
+  font-weight: 600;
+}
+
+.goals-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.goal-top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.4rem;
+}
+
+.goal-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.goal-count {
+  font-size: 0.95rem;
+  color: #1a1a1a;
+  font-variant-numeric: tabular-nums;
+}
+
+.goal-of {
+  color: #8a8985;
+  font-size: 0.8rem;
+}
+
+/* The meter is a magnitude against a known ceiling, so it reads as a bar. */
+.goal-meter {
+  height: 6px;
+  border-radius: 3px;
+  background: #f0efec;
+  overflow: hidden;
+}
+
+.goal-meter-fill {
+  display: block;
+  height: 100%;
+  border-radius: 3px;
+  background: #c2c1bd;
+}
+
+/* Met state is carried by the check and the words too, never by color alone. */
+.goal.is-met .goal-meter-fill {
+  background: #1baf7a;
+}
+
+.goal-status {
+  margin: 0.4rem 0 0;
+  font-size: 0.75rem;
+  color: #8a8985;
+}
+
+.goal.is-met .goal-status {
+  color: #146c4f;
+}
+
+@media (max-width: 640px) {
+  .goals-list {
+    grid-template-columns: 1fr;
+    gap: 0.85rem;
+  }
+}
+
 /* ---------- Consistency grid ---------- */
 
 .consistency {
@@ -407,10 +533,10 @@
   flex: none;
 }
 
-/* Extenuating notes for the days above: why an off day was off. */
+/* Extenuating notes, below the consistency charts: why an off day was off. */
 .consistency-notes {
-  margin-top: 0.85rem;
-  padding-top: 0.7rem;
+  margin-top: 1.2rem;
+  padding-top: 0.8rem;
   border-top: 1px solid #e8e8e6;
 }
 
@@ -451,6 +577,10 @@
   font-size: 0.9rem;
   line-height: 1;
   flex: none;
+}
+
+.consistency-note-detail {
+  color: #8a8985;
 }
 
 /* ---------- Table ---------- */

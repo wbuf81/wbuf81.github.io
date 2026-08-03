@@ -18,12 +18,15 @@
       "date": "2026-07-30",
       "label": "Lightning strike",
       "icon": "⚡",
-      "note": "House was struck by lightning — no gym that day."
+      "note": "Couldn't get to the gym."
     }
   ],
   "targets": {
     "stepsMinimum": 10000,
-    "stepsGoal": 13500
+    "stepsGoal": 13500,
+    "weighInsPerWeek": 7,
+    "liftsPerWeek": 5,
+    "cardioPerWeek": 3
   },
   "days": [
     {

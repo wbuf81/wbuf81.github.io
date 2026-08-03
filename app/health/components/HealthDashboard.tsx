@@ -6,13 +6,16 @@ import {
   HealthSummary,
   HealthTargets,
   PhaseSummary,
+  WeeklyGoals,
   WeekSummary,
   WeeklyTrendRow,
   WeightPoint,
 } from '@/types/health';
 import CaloriesChart from './CaloriesChart';
 import ConsistencyGrid from './ConsistencyGrid';
+import ConsistencyNotes from './ConsistencyNotes';
 import DayTable from './DayTable';
+import GoalTracker from './GoalTracker';
 import MacroChart from './MacroChart';
 import PhaseBanner from './PhaseBanner';
 import PhaseTable from './PhaseTable';
@@ -32,6 +35,7 @@ interface Props {
   activePhase: PhaseSummary | null;
   markers: HealthMarker[];
   targets: HealthTargets;
+  weeklyGoals: WeeklyGoals[];
   lastUpdated: string;
   weightUnit: string;
 }
@@ -66,6 +70,7 @@ export default function HealthDashboard({
   activePhase,
   markers,
   targets,
+  weeklyGoals,
   lastUpdated,
   weightUnit,
 }: Props) {
@@ -121,7 +126,6 @@ export default function HealthDashboard({
           data={weightSeries}
           showTrend={summary.showMovingAverage}
           phases={phases}
-          markers={markers}
         />
       </Section>
 
@@ -138,12 +142,14 @@ export default function HealthDashboard({
         title="Consistency"
         note={
           hasMultipleWeeks
-            ? 'Lifts and cardio by day, and totals per week.'
-            : 'Lifts and cardio by day. Weekly totals appear once there is more than one week.'
+            ? 'Goals for the current week, lifts and cardio by day, and totals per week.'
+            : 'Goals for the current week, and lifts and cardio by day. Weekly totals appear once there is more than one week.'
         }
       >
+        <GoalTracker rows={weeklyGoals} streak={summary.goalStreak} />
         <ConsistencyGrid weeks={weeks} markers={markers} />
         {hasMultipleWeeks && <WeeklyConsistencyChart weeks={weeks} />}
+        <ConsistencyNotes markers={markers} weeks={weeks} />
       </Section>
 
       <Section title="Macros" note="Grams per day, stacked.">

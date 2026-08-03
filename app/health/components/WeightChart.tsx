@@ -11,7 +11,7 @@ import {
   XAxis,
   YAxis,
 } from 'recharts';
-import { HealthMarker, PhaseSummary, WeightPoint } from '@/types/health';
+import { PhaseSummary, WeightPoint } from '@/types/health';
 import ChartLegend from './ChartLegend';
 import ChartTooltip from './ChartTooltip';
 import { ANIMATE, MUTED_MARK, SERIES, SURFACE, TEXT_MUTED, axisProps, gridProps } from './chartTheme';
@@ -21,7 +21,6 @@ interface Props {
   /** False until 14 days exist, when a 7-day mean starts to mean something. */
   showTrend: boolean;
   phases: PhaseSummary[];
-  markers: HealthMarker[];
 }
 
 /**
@@ -51,7 +50,7 @@ function zoomedDomain(data: WeightPoint[]): [number, number] {
   return [Math.floor((min - pad) * 2) / 2, Math.ceil((max + pad) * 2) / 2];
 }
 
-export default function WeightChart({ data, showTrend, phases, markers }: Props) {
+export default function WeightChart({ data, showTrend, phases }: Props) {
   const domain = zoomedDomain(data);
 
   // The x-axis is categorical (point labels), so a date has to be mapped to the
@@ -69,19 +68,6 @@ export default function WeightChart({ data, showTrend, phases, markers }: Props)
       return x1 && x2 ? { phase, x1, x2 } : null;
     })
     .filter((band): band is { phase: PhaseSummary; x1: string; x2: string } => band !== null);
-
-  // Recharts centres a vertical reference-line label on the line, so a marker on
-  // the first or last plotted day spills over the edge into the axis. Nudge those
-  // inward rather than letting the text clip.
-  const flags = markers
-    .map((marker) => {
-      const index = data.findIndex((point) => point.date === marker.date);
-      if (index === -1) return null;
-
-      const dx = index === 0 ? 30 : index === data.length - 1 ? -30 : 0;
-      return { marker, x: data[index].label, dx };
-    })
-    .filter((flag): flag is { marker: HealthMarker; x: string; dx: number } => flag !== null);
 
   // A goal far below the current range would force the axis to zoom out and
   // flatten the daily movement, so it is only drawn when it is already in view.
@@ -148,22 +134,6 @@ export default function WeightChart({ data, showTrend, phases, markers }: Props)
               position: 'insideBottomRight',
               fill: TEXT_MUTED,
               fontSize: 11,
-            }}
-          />
-        ))}
-
-        {flags.map(({ marker, x, dx }) => (
-          <ReferenceLine
-            key={`${marker.date}-${marker.label}`}
-            x={x}
-            stroke={TEXT_MUTED}
-            strokeWidth={1}
-            label={{
-              value: marker.label,
-              position: 'insideTop',
-              fill: TEXT_MUTED,
-              fontSize: 11,
-              dx,
             }}
           />
         ))}

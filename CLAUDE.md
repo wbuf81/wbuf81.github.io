@@ -29,7 +29,10 @@ Derivation logic is in `lib/health.ts` (pure functions, unit-tested in `__tests_
 "markers": [
   { "date": "2026-08-03", "label": "Deload", "icon": "⚡", "note": "" }
 ],
-"targets": { "stepsMinimum": 10000, "stepsGoal": 13500 }
+"targets": {
+  "stepsMinimum": 10000, "stepsGoal": 13500,
+  "weighInsPerWeek": 7, "liftsPerWeek": 5, "cardioPerWeek": 3
+}
 ```
 - `type` is `cut` | `bulk` | `maintain`. `label` defaults to the type.
 - A phase runs until the next one starts; the latest with no `end` is ongoing. Set `end` explicitly **only** to leave a deliberate gap with no phase.
@@ -37,10 +40,14 @@ Derivation logic is in `lib/health.ts` (pure functions, unit-tested in `__tests_
 - To start a new block, append a phase with the new `start`; that automatically closes the previous one. Don't set `end` on the old phase as well.
 - The goal line is drawn on the weight chart **only when the goal falls inside the visible y-range**. That axis is zoomed to the data on purpose, and stretching it to reach a distant goal would flatten the daily movement. The banner reports the goal regardless — this is not a bug.
 - `goalCals` is the phase's daily calorie target, drawn as a dashed rule on the calories chart. It is phase-scoped because it changes when the block changes — a bulk gets its own number. Steps targets live in `targets` instead, because they are standing habits rather than properties of a block.
-- A marker's `icon` (a single emoji) is drawn in that day's consistency-grid cell **in place of the rest dash**, and the marker gets a line in the Notes list under the grid. That list is where the reason for an off day lives; it only shows markers falling inside the recorded date range. Markers also still flag the weight chart — that is the pre-existing behavior, not a duplicate bug.
+- A marker's `icon` (a single emoji) is drawn in that day's consistency-grid cell **in place of the rest dash**. The matching note lives in `ConsistencyNotes`, rendered **below** the consistency charts so the marks come first; it only lists markers inside the charted date range. Markers are deliberately **not** drawn on the weight chart — that flag was removed on request.
 
-### Streak rule
-Sunday is a scheduled rest day: an inactive Sunday neither breaks nor extends the streak. An unplanned rest on any other weekday does break it. A Sunday that *was* trained counts normally.
+### Goals and streak
+Three standing goals live in `targets`, all expressed per week so one rule scores them all: `weighInsPerWeek` (7 = measure every day), `liftsPerWeek`, `cardioPerWeek`. A goal left unset is **not scored**, rather than counted as zero.
+
+`buildWeeklyGoals` scores each week; `goalStreak` counts consecutive weeks back from the newest where every goal was met. The newest week is **passed over, not counted against, while it is still filling up** — a Wednesday is not a failed week. The "Goal streak" stat tile and the goals panel at the top of the Consistency section both read from this.
+
+`activeStreak` (consecutive active days, Sunday rest days skipped) is still computed and tested but is no longer surfaced — the tile it used to fill now shows the goal streak. Its rule, if it comes back: Sunday is a scheduled rest day, so an inactive Sunday neither breaks nor extends the run; an unplanned rest on any other weekday does break it; a Sunday that *was* trained counts normally.
 
 Chart rules that are deliberate, not accidental:
 - **No dual-axis charts.** Cardio minutes are not plotted against session counts; the total is a stat tile.
@@ -51,6 +58,9 @@ Chart rules that are deliberate, not accidental:
 - Reference-line labels sit in a right-hand gutter (`margin.right: 64`, `position: 'right'`). Inside the plot they landed on top of the bars.
 - The calories chart hides its all-time-average rule whenever `goalCals` is set, because the two sit a few kcal apart and stack into what looks like one line. The average is still a stat tile. Without a goal the average rule comes back.
 - The day table draws a heavier rule on the first row of each new week (`.is-week-start`) instead of banding alternate rows.
+- Each goal is a meter, not a chart: it is one magnitude against a known ceiling. Met state carries a check glyph and words as well as color.
+- `.health-note` uses a 96ch measure with `text-wrap: balance`. The old 60ch measure wrapped one-line notes short of the card edge and left orphans like "to zero." on their own line.
+- The phase banner's "Per week" figure is `weightChangePerWeek`: the change divided by the weighed span in weeks, counted inclusively so the denominator matches the "N days tracked" beside it. Null until a full week has been weighed, since a rate from two days is noise.
 
 ## Content rules
 All copy must be external-safe. No internal vendor names (OneTrust, SharePoint), no named regulators or audit firms, no financial specifics. When in doubt, generalize: "company web properties", "brand portfolio", "privacy request data".

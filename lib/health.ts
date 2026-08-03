@@ -1,14 +1,17 @@
 import fs from 'fs';
 import path from 'path';
 import {
+  GoalLine,
   HealthData,
   HealthDay,
   HealthPhase,
   HealthSummary,
+  HealthTargets,
   ParsedImport,
   PhaseSummary,
   PhaseType,
   HealthMarker,
+  WeeklyGoals,
   WeekSummary,
   WeeklyTrendRow,
   WeightPoint,
@@ -159,7 +162,95 @@ function activeStreak(days: HealthDay[]): number {
   return streak;
 }
 
-export function summarize(days: HealthDay[]): HealthSummary {
+const DAYS_IN_WEEK = 7;
+
+/**
+ * Score each week against the three standing goals: measure every day, and hit
+ * the weekly lift and cardio counts.
+ *
+ * Every goal is expressed per week, including the daily weigh-in, so one rule
+ * covers all three and a week is either met or not. A goal left unset in
+ * `targets` is simply not scored rather than counted as zero.
+ */
+export function buildWeeklyGoals(days: HealthDay[], targets?: HealthTargets): WeeklyGoals[] {
+  const weighInGoal = targets?.weighInsPerWeek ?? null;
+  const liftGoal = targets?.liftsPerWeek ?? null;
+  const cardioGoal = targets?.cardioPerWeek ?? null;
+
+  return groupIntoWeeks(days).map((week) => {
+    const lines: GoalLine[] = [];
+
+    const add = (
+      key: GoalLine['key'],
+      label: string,
+      description: string,
+      actual: number,
+      goal: number | null
+    ) => {
+      if (goal === null || goal <= 0) return;
+      lines.push({
+        key,
+        label,
+        description,
+        actual,
+        goal,
+        met: actual >= goal,
+        remaining: Math.max(0, goal - actual),
+      });
+    };
+
+    add(
+      'measure',
+      'Measure',
+      weighInGoal === DAYS_IN_WEEK ? 'Weigh in every day' : `Weigh in ${weighInGoal}× a week`,
+      week.days.filter((day) => day.weight !== null).length,
+      weighInGoal
+    );
+    add('lifts', 'Lifts', `${liftGoal} sessions a week`, week.workouts, liftGoal);
+    add('cardio', 'Cardio', `${cardioGoal} sessions a week`, week.cardioSessions, cardioGoal);
+
+    return {
+      weekStart: week.weekStart,
+      weekEnd: week.weekEnd,
+      label: week.label,
+      dayCount: week.days.length,
+      isComplete: week.days.length >= DAYS_IN_WEEK,
+      lines,
+      allMet: lines.every((line) => line.met),
+    };
+  });
+}
+
+/**
+ * Consecutive weeks, counting back from the newest, in which every goal was met.
+ *
+ * The newest week is skipped rather than counted against when it is still
+ * filling up — a Wednesday is not a failed week. Once it is complete, or once it
+ * has already met every goal, it counts like any other.
+ */
+export function goalStreak(rows: WeeklyGoals[]): number {
+  const newest = rows[rows.length - 1];
+  if (!newest || newest.lines.length === 0) return 0;
+
+  let streak = 0;
+
+  for (let i = rows.length - 1; i >= 0; i--) {
+    const row = rows[i];
+
+    if (row.allMet) {
+      streak++;
+      continue;
+    }
+
+    if (i === rows.length - 1 && !row.isComplete) continue;
+
+    break;
+  }
+
+  return streak;
+}
+
+export function summarize(days: HealthDay[], targets?: HealthTargets): HealthSummary {
   const sorted = sortDays(days);
   const weeks = groupIntoWeeks(sorted);
   const weighed = sorted.filter((d) => d.weight !== null);
@@ -188,6 +279,7 @@ export function summarize(days: HealthDay[]): HealthSummary {
     cardioSessionsThisWeek: thisWeek?.cardioSessions ?? 0,
     cardioMinutesThisWeek: thisWeek?.cardioMinutes ?? 0,
     activeStreak: activeStreak(sorted),
+    goalStreak: goalStreak(buildWeeklyGoals(sorted, targets)),
     dayCount: sorted.length,
     weekCount: weeks.length,
     showMovingAverage: sorted.length >= MOVING_AVERAGE_MIN_DAYS,
@@ -228,6 +320,16 @@ export function buildPhases(days: HealthDay[], phases?: HealthPhase[]): PhaseSum
     const currentWeight = weighed.length ? weighed[weighed.length - 1].weight : null;
     const goalWeight = phase.goalWeight ?? null;
 
+    // Rate across the span that was actually weighed, counted inclusively so the
+    // denominator matches the "14 days tracked" the banner already reports.
+    let weightChangePerWeek: number | null = null;
+    if (weighed.length > 1 && startWeight !== null && currentWeight !== null) {
+      const spannedDays = daysBetween(weighed[0].date, weighed[weighed.length - 1].date) + 1;
+      if (spannedDays >= DAYS_IN_WEEK) {
+        weightChangePerWeek = (currentWeight - startWeight) / (spannedDays / DAYS_IN_WEEK);
+      }
+    }
+
     let goalRemaining: number | null = null;
     let goalPercent: number | null = null;
 
@@ -259,6 +361,7 @@ export function buildPhases(days: HealthDay[], phases?: HealthPhase[]): PhaseSum
       currentWeight,
       weightChange:
         startWeight !== null && currentWeight !== null ? currentWeight - startWeight : null,
+      weightChangePerWeek,
       goalWeight,
       goalRemaining,
       goalPercent,

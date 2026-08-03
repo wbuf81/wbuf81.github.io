@@ -63,12 +63,12 @@ export default function StatTiles({ summary, weightUnit }: Props) {
       detail: `${formatNumber(summary.cardioMinutesThisWeek)} cardio minutes`,
     },
     {
-      label: 'Active streak',
-      value: summary.activeStreak === 1 ? '1 day' : `${summary.activeStreak} days`,
+      label: 'Goal streak',
+      value: summary.goalStreak === 1 ? '1 week' : `${summary.goalStreak} weeks`,
       detail:
-        summary.activeStreak === 0
-          ? 'an unplanned rest day ended the run'
-          : 'consecutive active days — rest Sundays skipped',
+        summary.goalStreak === 0
+          ? 'no full week with all three goals met yet'
+          : 'weeks in a row hitting all three goals',
     },
     {
       label: 'Tracked',

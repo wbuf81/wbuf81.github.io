@@ -11,21 +11,10 @@ interface Props {
 
 const DAY_ORDER = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
-const MONTHS = [
-  'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-  'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
-];
-
 function addDays(iso: string, days: number): string {
   const [y, m, d] = iso.split('-').map(Number);
   const date = new Date(Date.UTC(y, m - 1, d + days));
   return date.toISOString().slice(0, 10);
-}
-
-/** "2026-07-30" -> "Jul 30" */
-function shortLabel(iso: string): string {
-  const [y, m, d] = iso.split('-').map(Number);
-  return `${MONTHS[m - 1]} ${d}`;
 }
 
 /**
@@ -33,24 +22,15 @@ function shortLabel(iso: string): string {
  * orange dot marks cardio, so a day that had both shows both. Identity is
  * carried by the legend and each cell's title text, never by color alone.
  *
- * A marker with an icon draws that glyph in its day's cell and gets a line in
- * the notes list below, which is where the reason for an off day lives. The
- * glyph replaces the rest dash rather than sitting beside it: it explains the
- * same fact more specifically.
+ * A marker with an icon draws that glyph in its day's cell. The matching note
+ * lives in ConsistencyNotes, rendered below the charts. The glyph replaces the
+ * rest dash rather than sitting beside it: it explains the same fact more
+ * specifically.
  */
 export default function ConsistencyGrid({ weeks, markers = [] }: Props) {
   const iconByDate = new Map(
     markers.filter((marker) => marker.icon).map((marker) => [marker.date, marker])
   );
-
-  // Only annotate what the grid actually shows, so a marker outside the recorded
-  // range never strands a note under an empty week.
-  const firstDate = weeks.length ? weeks[0].weekStart : null;
-  const lastDate = weeks.length ? weeks[weeks.length - 1].weekEnd : null;
-  const notes =
-    firstDate && lastDate
-      ? markers.filter((marker) => marker.date >= firstDate && marker.date <= lastDate)
-      : [];
 
   return (
     <div className="consistency">
@@ -120,25 +100,6 @@ export default function ConsistencyGrid({ weeks, markers = [] }: Props) {
           <span className="consistency-rest" aria-hidden="true" /> Rest
         </span>
       </p>
-
-      {notes.length > 0 && (
-        <div className="consistency-notes">
-          <h3 className="consistency-notes-title">Notes</h3>
-          <ul className="consistency-notes-list">
-            {notes.map((marker) => (
-              <li key={`${marker.date}-${marker.label}`} className="consistency-note">
-                <span className="consistency-note-date">{shortLabel(marker.date)}</span>
-                {marker.icon && (
-                  <span className="consistency-note-icon" aria-hidden="true">
-                    {marker.icon}
-                  </span>
-                )}
-                <span className="consistency-note-label">{marker.label}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
     </div>
   );
 }

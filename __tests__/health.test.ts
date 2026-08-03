@@ -4,6 +4,8 @@ import {
   buildWeightSeries,
   buildWeeklyTrend,
   buildPhases,
+  buildWeeklyGoals,
+  goalStreak,
   currentPhase,
   parseHealthTsv,
 } from '@/lib/health';
@@ -564,5 +566,123 @@ describe('parseHealthTsv', () => {
 
     expect(result.days[0].date).toBe('2026-12-28');
     expect(result.days[1].date).toBe('2027-01-03');
+  });
+});
+
+const GOALS = { weighInsPerWeek: 7, liftsPerWeek: 5, cardioPerWeek: 3 };
+
+describe('buildWeeklyGoals', () => {
+  test('scores a week that hits all three goals', () => {
+    const [week] = buildWeeklyGoals(WEEK_ONE, GOALS);
+
+    expect(week.allMet).toBe(true);
+    expect(week.isComplete).toBe(true);
+    expect(week.lines.map((line) => [line.key, line.actual, line.goal, line.met])).toEqual([
+      ['measure', 7, 7, true],
+      ['lifts', 5, 5, true],
+      ['cardio', 3, 3, true],
+    ]);
+  });
+
+  test('a missed weigh-in fails the measure goal and reports what is left', () => {
+    const days = WEEK_ONE.map((d) => (d.date === '2026-07-22' ? { ...d, weight: null } : d));
+    const [week] = buildWeeklyGoals(days, GOALS);
+
+    const measure = week.lines.find((line) => line.key === 'measure');
+    expect(measure).toMatchObject({ actual: 6, met: false, remaining: 1 });
+    expect(week.allMet).toBe(false);
+  });
+
+  test('exceeding a goal still reads as met with nothing remaining', () => {
+    const days = WEEK_ONE.map((d) =>
+      d.date === '2026-07-26' ? { ...d, cardio: true, cardioMinutes: 30 } : d
+    );
+    const [week] = buildWeeklyGoals(days, GOALS);
+
+    const cardio = week.lines.find((line) => line.key === 'cardio');
+    expect(cardio).toMatchObject({ actual: 4, goal: 3, met: true, remaining: 0 });
+  });
+
+  test('a goal left unset is not scored rather than counted as zero', () => {
+    const [week] = buildWeeklyGoals(WEEK_ONE, { liftsPerWeek: 5 });
+
+    expect(week.lines.map((line) => line.key)).toEqual(['lifts']);
+    expect(week.allMet).toBe(true);
+  });
+
+  test('marks a week still filling up as incomplete', () => {
+    const [week] = buildWeeklyGoals(WEEK_ONE.slice(0, 3), GOALS);
+
+    expect(week.isComplete).toBe(false);
+    expect(week.dayCount).toBe(3);
+  });
+});
+
+describe('goalStreak', () => {
+  test('counts consecutive complete weeks that met every goal', () => {
+    // A second identical week on real August dates, Mon 2026-08-03 onward.
+    const second = WEEK_ONE.map((d, i) =>
+      day({ ...d, date: `2026-08-${String(3 + i).padStart(2, '0')}`, day: d.day })
+    );
+    const rows = buildWeeklyGoals([...WEEK_ONE, ...second], GOALS);
+
+    expect(rows).toHaveLength(2);
+    expect(goalStreak(rows)).toBe(2);
+  });
+
+  test('a missed goal in the newest complete week ends the streak', () => {
+    const second = WEEK_ONE.map((d, i) =>
+      day({ ...d, date: `2026-08-${String(3 + i).padStart(2, '0')}`, day: d.day, cardio: false, cardioMinutes: null })
+    );
+    const rows = buildWeeklyGoals([...WEEK_ONE, ...second], GOALS);
+
+    expect(goalStreak(rows)).toBe(0);
+  });
+
+  test('a partial newest week is passed over rather than breaking the streak', () => {
+    const partial = WEEK_ONE.slice(0, 2).map((d, i) =>
+      day({ ...d, date: `2026-08-${String(3 + i).padStart(2, '0')}`, day: d.day })
+    );
+    const rows = buildWeeklyGoals([...WEEK_ONE, ...partial], GOALS);
+
+    expect(rows[1].isComplete).toBe(false);
+    expect(rows[1].allMet).toBe(false);
+    expect(goalStreak(rows)).toBe(1);
+  });
+
+  test('is zero when no goals are configured', () => {
+    expect(goalStreak(buildWeeklyGoals(WEEK_ONE, {}))).toBe(0);
+    expect(goalStreak([])).toBe(0);
+  });
+});
+
+describe('phase weight change per week', () => {
+  const phase: HealthPhase[] = [{ start: '2026-07-20', type: 'cut' }];
+
+  test('divides the change by the weighed span in weeks', () => {
+    // 210.2 on Jul 20 to 207.9 on Jul 26 is -2.3 lb across 7 days spanned.
+    const [summary] = buildPhases(WEEK_ONE, phase);
+
+    expect(summary.weightChange).toBeCloseTo(-2.3, 5);
+    expect(summary.weightChangePerWeek).toBeCloseTo(-2.3, 5);
+  });
+
+  test('halves the rate when the same change takes two weeks', () => {
+    const second = WEEK_ONE.map((d, i) =>
+      day({ ...d, date: `2026-07-${String(27 + i)}`, day: d.day, weight: null })
+    );
+    // Move the final weigh-in to the end of week two, same value.
+    second[second.length - 1] = day({ ...second[second.length - 1], weight: 207.9 });
+    const [summary] = buildPhases([...WEEK_ONE, ...second], phase);
+
+    expect(summary.weightChange).toBeCloseTo(-2.3, 5);
+    expect(summary.weightChangePerWeek).toBeCloseTo(-1.15, 5);
+  });
+
+  test('is null until a full week has been weighed', () => {
+    const [summary] = buildPhases(WEEK_ONE.slice(0, 3), phase);
+
+    expect(summary.weightChange).not.toBeNull();
+    expect(summary.weightChangePerWeek).toBeNull();
   });
 });

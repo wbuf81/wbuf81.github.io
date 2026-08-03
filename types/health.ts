@@ -59,6 +59,40 @@ export interface HealthTargets {
   stepsMinimum?: number | null;
   /** The number being aimed at. */
   stepsGoal?: number | null;
+  /** Weigh-ins per week. 7 is "measure every day". */
+  weighInsPerWeek?: number | null;
+  /** Lifting sessions per week. */
+  liftsPerWeek?: number | null;
+  /** Cardio sessions per week. */
+  cardioPerWeek?: number | null;
+}
+
+/** One of the three weekly goals, measured against a single week. */
+export interface GoalLine {
+  key: 'measure' | 'lifts' | 'cardio';
+  /** Short name, e.g. "Lifts". */
+  label: string;
+  /** What the goal asks for, in plain words. */
+  description: string;
+  actual: number;
+  goal: number;
+  met: boolean;
+  /** How many more are needed. 0 once met. */
+  remaining: number;
+}
+
+/** A week scored against every goal that is configured. */
+export interface WeeklyGoals {
+  weekStart: string;
+  weekEnd: string;
+  label: string;
+  /** Recorded days in this week. */
+  dayCount: number;
+  /** False while the week is still filling up. */
+  isComplete: boolean;
+  lines: GoalLine[];
+  /** True when every configured goal was hit. Vacuously true with no goals. */
+  allMet: boolean;
 }
 
 export interface HealthData {
@@ -88,6 +122,12 @@ export interface PhaseSummary {
   startWeight: number | null;
   currentWeight: number | null;
   weightChange: number | null;
+  /**
+   * Average weight change per week across the weighed span, signed the same way
+   * as `weightChange`. Null until a full week has been weighed — a rate drawn
+   * from two days is noise.
+   */
+  weightChangePerWeek: number | null;
   goalWeight: number | null;
   /**
    * Weight still to go to reach the goal, as a magnitude — positive whether the
@@ -139,6 +179,8 @@ export interface HealthSummary {
   cardioMinutesThisWeek: number;
   /** Consecutive active days ending at the most recent recorded day. */
   activeStreak: number;
+  /** Consecutive weeks, most recent first, where every goal was met. */
+  goalStreak: number;
   dayCount: number;
   weekCount: number;
   /** False until there are enough days for a 7-day average to mean anything. */

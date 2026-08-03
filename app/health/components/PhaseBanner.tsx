@@ -11,7 +11,15 @@ interface Props {
  * things are now, and — if a goal is set — how far along it is.
  */
 export default function PhaseBanner({ phase, weightUnit }: Props) {
-  const { startWeight, currentWeight, weightChange, goalWeight, goalRemaining, goalPercent } = phase;
+  const {
+    startWeight,
+    currentWeight,
+    weightChange,
+    weightChangePerWeek,
+    goalWeight,
+    goalRemaining,
+    goalPercent,
+  } = phase;
 
   // Down is the goal for a cut, up for a bulk; maintenance has no good direction.
   const desired = phase.type === 'cut' ? -1 : phase.type === 'bulk' ? 1 : 0;
@@ -56,6 +64,15 @@ export default function PhaseBanner({ phase, weightUnit }: Props) {
           <p className="stat-label">Change</p>
           <p className={`phase-value${moving}`}>
             {weightChange !== null ? `${formatDelta(weightChange)} ${weightUnit}` : '—'}
+          </p>
+        </div>
+
+        <div className="phase-figure">
+          <p className="stat-label">Per week</p>
+          <p className={`phase-value${moving}`}>
+            {weightChangePerWeek !== null
+              ? `${formatDelta(weightChangePerWeek)} ${weightUnit}`
+              : '—'}
           </p>
         </div>
 
