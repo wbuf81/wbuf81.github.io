@@ -9,10 +9,22 @@
       "type": "cut",
       "label": "Cut",
       "goalWeight": null,
-      "note": ""
+      "note": "",
+      "goalCals": 2350
     }
   ],
-  "markers": [],
+  "markers": [
+    {
+      "date": "2026-07-30",
+      "label": "Lightning strike",
+      "icon": "⚡",
+      "note": "House was struck by lightning — no gym that day."
+    }
+  ],
+  "targets": {
+    "stepsMinimum": 10000,
+    "stepsGoal": 13500
+  },
   "days": [
     {
       "date": "2026-07-20",

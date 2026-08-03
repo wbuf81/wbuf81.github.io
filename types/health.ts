@@ -36,6 +36,8 @@ export interface HealthPhase {
   label?: string;
   /** Optional target weight for this phase. */
   goalWeight?: number | null;
+  /** Optional daily calorie target for this phase. Drawn on the calories chart. */
+  goalCals?: number | null;
   note?: string;
 }
 
@@ -43,7 +45,20 @@ export interface HealthPhase {
 export interface HealthMarker {
   date: string;
   label: string;
+  /** Optional emoji shown in the consistency grid cell for this date. */
+  icon?: string;
   note?: string;
+}
+
+/**
+ * Standing daily targets, independent of any phase. Phase-scoped targets live on
+ * the phase itself — see `goalWeight` and `goalCals`.
+ */
+export interface HealthTargets {
+  /** The floor to clear every day. */
+  stepsMinimum?: number | null;
+  /** The number being aimed at. */
+  stepsGoal?: number | null;
 }
 
 export interface HealthData {
@@ -52,6 +67,7 @@ export interface HealthData {
   days: HealthDay[];
   phases?: HealthPhase[];
   markers?: HealthMarker[];
+  targets?: HealthTargets;
 }
 
 /** A phase with its date range resolved and its outcome measured. */
@@ -80,6 +96,8 @@ export interface PhaseSummary {
   goalRemaining: number | null;
   /** 0-100, clamped. Null without a goal, or when the goal equals the start. */
   goalPercent: number | null;
+  /** Daily calorie target for this phase, or null when none is set. */
+  goalCals: number | null;
   avgCals: number | null;
   avgProtein: number | null;
   avgSteps: number | null;

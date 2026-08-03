@@ -4,6 +4,7 @@ import {
   HealthDay,
   HealthMarker,
   HealthSummary,
+  HealthTargets,
   PhaseSummary,
   WeekSummary,
   WeeklyTrendRow,
@@ -30,6 +31,7 @@ interface Props {
   phases: PhaseSummary[];
   activePhase: PhaseSummary | null;
   markers: HealthMarker[];
+  targets: HealthTargets;
   lastUpdated: string;
   weightUnit: string;
 }
@@ -63,6 +65,7 @@ export default function HealthDashboard({
   phases,
   activePhase,
   markers,
+  targets,
   lastUpdated,
   weightUnit,
 }: Props) {
@@ -71,6 +74,34 @@ export default function HealthDashboard({
   }
 
   const hasMultipleWeeks = weeks.length > 1;
+  const stepsMinimum = targets.stepsMinimum ?? null;
+  const stepsGoal = targets.stepsGoal ?? null;
+  const calorieGoal = activePhase?.goalCals ?? null;
+
+  const stepsNote = [
+    'Daily steps.',
+    stepsMinimum !== null && stepsGoal !== null
+      ? `Dashed rules mark the ${stepsMinimum.toLocaleString('en-US')} floor and the ${stepsGoal.toLocaleString('en-US')} goal.`
+      : null,
+    summary.avgSteps !== null
+      ? `The solid rule is the all-time average of ${Math.round(summary.avgSteps).toLocaleString('en-US')}.`
+      : null,
+  ]
+    .filter(Boolean)
+    .join(' ');
+
+  // With a goal set the chart drops its average rule, so the note must not
+  // promise a solid line that isn't drawn.
+  const caloriesNote = [
+    'Daily intake.',
+    calorieGoal !== null
+      ? `The dashed rule is the ${calorieGoal.toLocaleString('en-US')} target for this ${activePhase?.label.toLowerCase()}.`
+      : summary.avgCals !== null
+        ? `The rule marks the all-time average of ${Math.round(summary.avgCals).toLocaleString('en-US')}.`
+        : null,
+  ]
+    .filter(Boolean)
+    .join(' ');
 
   return (
     <>
@@ -94,15 +125,13 @@ export default function HealthDashboard({
         />
       </Section>
 
-      <Section
-        title="Steps"
-        note={
-          summary.avgSteps !== null
-            ? `Daily steps. The rule marks the all-time average of ${Math.round(summary.avgSteps).toLocaleString('en-US')}.`
-            : 'Daily steps.'
-        }
-      >
-        <StepsChart days={days} average={summary.avgSteps} />
+      <Section title="Steps" note={stepsNote}>
+        <StepsChart
+          days={days}
+          average={summary.avgSteps}
+          minimum={stepsMinimum}
+          goal={stepsGoal}
+        />
       </Section>
 
       <Section
@@ -113,7 +142,7 @@ export default function HealthDashboard({
             : 'Lifts and cardio by day. Weekly totals appear once there is more than one week.'
         }
       >
-        <ConsistencyGrid weeks={weeks} />
+        <ConsistencyGrid weeks={weeks} markers={markers} />
         {hasMultipleWeeks && <WeeklyConsistencyChart weeks={weeks} />}
       </Section>
 
@@ -121,15 +150,8 @@ export default function HealthDashboard({
         <MacroChart days={days} />
       </Section>
 
-      <Section
-        title="Calories"
-        note={
-          summary.avgCals !== null
-            ? `Daily intake. The rule marks the all-time average of ${Math.round(summary.avgCals).toLocaleString('en-US')}.`
-            : 'Daily intake.'
-        }
-      >
-        <CaloriesChart days={days} average={summary.avgCals} />
+      <Section title="Calories" note={caloriesNote}>
+        <CaloriesChart days={days} average={summary.avgCals} goal={calorieGoal} />
       </Section>
 
       {hasMultipleWeeks && (

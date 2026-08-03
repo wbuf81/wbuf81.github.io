@@ -262,6 +262,7 @@ export function buildPhases(days: HealthDay[], phases?: HealthPhase[]): PhaseSum
       goalWeight,
       goalRemaining,
       goalPercent,
+      goalCals: phase.goalCals ?? null,
       avgCals: mean(inRange.map((d) => d.cals)),
       avgProtein: mean(inRange.map((d) => d.protein)),
       avgSteps: mean(inRange.map((d) => d.steps)),

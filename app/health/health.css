@@ -400,6 +400,59 @@
   gap: 0.35rem;
 }
 
+/* A marker glyph sits in the day cell in place of the rest dash. */
+.consistency-icon {
+  font-size: 13px;
+  line-height: 1;
+  flex: none;
+}
+
+/* Extenuating notes for the days above: why an off day was off. */
+.consistency-notes {
+  margin-top: 0.85rem;
+  padding-top: 0.7rem;
+  border-top: 1px solid #e8e8e6;
+}
+
+.consistency-notes-title {
+  margin: 0 0 0.4rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #8a8985;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.consistency-notes-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.consistency-note {
+  display: flex;
+  align-items: baseline;
+  gap: 0.45rem;
+  font-size: 0.8rem;
+  color: #52514e;
+}
+
+.consistency-note-date {
+  min-width: 3.6rem;
+  color: #8a8985;
+  font-variant-numeric: tabular-nums;
+  flex: none;
+}
+
+.consistency-note-icon {
+  font-size: 0.9rem;
+  line-height: 1;
+  flex: none;
+}
+
 /* ---------- Table ---------- */
 
 .table-scroll {
@@ -436,6 +489,11 @@
   color: #8a8985;
   font-weight: 600;
   border-bottom: 1px solid #e8e8e6;
+}
+
+/* First row of a new week. The heavier rule groups the seven-day blocks. */
+.health-table tbody tr.is-week-start td {
+  border-top: 2px solid #d4d3cf;
 }
 
 .health-table .is-num {

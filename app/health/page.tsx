@@ -65,6 +65,7 @@ export default function HealthPage() {
         phases={phases}
         activePhase={currentPhase(phases)}
         markers={markers}
+        targets={data.targets ?? {}}
         lastUpdated={data.lastUpdated}
         weightUnit={data.units.weight}
       />
