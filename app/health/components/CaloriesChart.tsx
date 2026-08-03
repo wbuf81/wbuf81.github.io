@@ -11,6 +11,7 @@ import {
   YAxis,
 } from 'recharts';
 import { HealthDay } from '@/types/health';
+import { dayTickLabel } from '@/lib/dayLabel';
 import ChartTooltip from './ChartTooltip';
 import {
   ANIMATE,
@@ -38,7 +39,7 @@ interface Props {
  */
 export default function CaloriesChart({ days, average, goal }: Props) {
   const data = days.map((day) => ({
-    label: `${day.day} ${day.date.slice(8)}`,
+    label: dayTickLabel(day),
     cals: day.cals,
   }));
 

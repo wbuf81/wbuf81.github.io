@@ -10,6 +10,7 @@ import {
   YAxis,
 } from 'recharts';
 import { HealthDay } from '@/types/health';
+import { dayTickLabel } from '@/lib/dayLabel';
 import ChartLegend from './ChartLegend';
 import ChartTooltip from './ChartTooltip';
 import {
@@ -40,7 +41,7 @@ const LEGEND = [
  */
 export default function MacroChart({ days }: Props) {
   const data = days.map((day) => ({
-    label: `${day.day} ${day.date.slice(8)}`,
+    label: dayTickLabel(day),
     protein: day.protein,
     carbs: day.carbs,
     fat: day.fat,

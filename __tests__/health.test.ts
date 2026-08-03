@@ -686,3 +686,19 @@ describe('phase weight change per week', () => {
     expect(summary.weightChangePerWeek).toBeNull();
   });
 });
+
+describe('daily chart labels', () => {
+  test('the weight series labels by weekday, matching the other daily charts', () => {
+    const series = buildWeightSeries(WEEK_ONE);
+
+    expect(series.map((p) => p.label)).toEqual([
+      'Mon 20', 'Tue 21', 'Wed 22', 'Thu 23', 'Fri 24', 'Sat 25', 'Sun 26',
+    ]);
+  });
+
+  test('keeps the leading zero so every label is the same width', () => {
+    const series = buildWeightSeries([day({ date: '2026-08-02', day: 'Sun' })]);
+
+    expect(series[0].label).toBe('Sun 02');
+  });
+});

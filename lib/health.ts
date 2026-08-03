@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import { dayTickLabel } from './dayLabel';
 import {
   GoalLine,
   HealthData,
@@ -440,7 +441,9 @@ export function buildWeightSeries(days: HealthDay[]): WeightPoint[] {
 
     return {
       date: day.date,
-      label: shortLabel(day.date),
+      // Weekday, matching the steps/macros/calories axes so the four daily
+      // charts read as one column of days down the page.
+      label: dayTickLabel(day),
       weight: day.weight,
       trend,
     };

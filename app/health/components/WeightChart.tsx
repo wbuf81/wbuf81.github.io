@@ -108,7 +108,6 @@ export default function WeightChart({ data, showTrend, phases }: Props) {
           dataKey="label"
           {...axisProps}
           interval="preserveStartEnd"
-          minTickGap={24}
           {...DAILY_X_BAND}
         />
         <YAxis

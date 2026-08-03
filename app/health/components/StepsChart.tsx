@@ -11,6 +11,7 @@ import {
   YAxis,
 } from 'recharts';
 import { HealthDay } from '@/types/health';
+import { dayTickLabel } from '@/lib/dayLabel';
 import ChartTooltip from './ChartTooltip';
 import {
   ANIMATE,
@@ -42,7 +43,7 @@ function ruleLabel(prefix: string, value: number): string {
 
 export default function StepsChart({ days, average, minimum, goal }: Props) {
   const data = days.map((day) => ({
-    label: `${day.day} ${day.date.slice(8)}`,
+    label: dayTickLabel(day),
     steps: day.steps,
   }));
 
