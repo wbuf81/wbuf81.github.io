@@ -207,7 +207,7 @@ export default function HomePage() {
             Nobody plans a career that goes from writing software at Lockheed Martin to leading risk and compliance at Newfold Digital. Mine did, and the engineering years turned out to be the best training I could have asked for. I still approach compliance the way I approached code: find the repetitive thing, automate it, move on.
           </p>
           <p className="about-text" style={{ marginTop: '16px' }}>
-            So while my title says I run global programs, in practice I spend a lot of time building. Internal tools, AI agents, workflow automations, most of it shipped straight out of Claude Code. The best control is the one nobody has to remember to do.
+            So while my title says I run global programs, in practice I spend a lot of time building. Internal tools, agents, workflow automations, most of it shipped using AI. The best control is the one nobody has to remember to do.
           </p>
         </div>
       </section>
@@ -226,7 +226,7 @@ export default function HomePage() {
                 <span className="role-title">Vice President, Risk and Compliance</span>
                 <span className="role-dates">Jun 2021 – Present</span>
               </div>
-              <p className="role-desc">I lead global compliance programs across PCI-DSS, ISO 27001, SOC-2, GDPR, CCPA, ICANN and registry compliance, OFAC sanctions, and consumer protection — spanning 7 countries and 60+ internal policies. I also established the company&apos;s first AI governance program with formal guardrails on enterprise LLM usage. Beyond the program work, I&apos;ve designed and shipped internal agentic tools in Claude Code that perform compliance gap analysis across our policy library, draft executive compliance reporting, and organize audit evidence across certified entities.</p>
+              <p className="role-desc">I lead global compliance programs across PCI-DSS, ISO 27001, SOC-2, GDPR, CCPA, ICANN and registry compliance, OFAC sanctions, and consumer protection — spanning 7 countries and 60+ internal policies. I also established the company&apos;s first AI governance program with formal guardrails on enterprise LLM usage. Beyond the program work, I&apos;ve designed and shipped internal AI agents that perform compliance gap analysis across our policy library, draft executive compliance reporting, and organize audit evidence across certified entities.</p>
             </div>
 
             <div className="role">

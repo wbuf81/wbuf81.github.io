@@ -28,9 +28,12 @@ export const metadata: Metadata = {
     siteName: 'Wesley Bard',
     locale: 'en_US',
     type: 'website',
+    // PNG, not SVG: iMessage, Teams, Slack, LinkedIn and WhatsApp all ignore
+    // SVG previews and fall back to a bare card. Rebuild with
+    // `python3 scripts/og/build-og.py main`.
     images: [
       {
-        url: '/og-image.svg',
+        url: '/og-image.png',
         width: 1200,
         height: 630,
         alt: 'Wesley Bard',
@@ -41,10 +44,10 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Wesley Bard — VP, Risk & Compliance',
     description: 'Risk and compliance executive with 20 years of experience spanning Lockheed Martin and Newfold Digital. Engineer. AI Builder.',
-    images: ['/og-image.svg'],
+    images: ['/og-image.png'],
   },
   other: {
-    'theme-color': '#6366f1',
+    'theme-color': '#14130f',
   },
 };
 

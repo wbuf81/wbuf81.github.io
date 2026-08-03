@@ -31,11 +31,25 @@ export const metadata: Metadata = {
     siteName: 'Wesley Bard',
     locale: 'en_US',
     type: 'website',
+    // Declaring openGraph here replaces the parent's images rather than merging
+    // with them, so without this the page shipped with no preview image at all.
+    // The card is drawn from data/health.json — rebuild it after importing a
+    // week with `python3 scripts/og/build-og.py health`.
+    images: [
+      {
+        url: '/og-health.png',
+        width: 1200,
+        height: 630,
+        alt: "Wes's health tracker",
+      },
+    ],
   },
   twitter: {
-    card: 'summary',
+    // summary is the small square layout; this card is 1200x630.
+    card: 'summary_large_image',
     title: TITLE,
     description: DESCRIPTION,
+    images: ['/og-health.png'],
   },
 };
 

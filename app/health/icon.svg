@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!--
+    /health gets its own tab icon so it is not mistaken for the main site.
+    A falling trend line rather than the W: the stroke is heavy on purpose,
+    because a hairline chart disappears at 16px.
+  -->
+  <rect width="32" height="32" rx="6" fill="#14130f"/>
+  <polyline points="6,9 13,18 19,14 26,23" fill="none" stroke="#5f9de4"
+    stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
