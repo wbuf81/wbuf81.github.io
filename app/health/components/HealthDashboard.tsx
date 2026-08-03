@@ -163,7 +163,7 @@ export default function HealthDashboard({
       {hasMultipleWeeks && (
         <Section
           title="By week"
-          note="Weekly averages, and how each week's average weight moved against the one before."
+          note="Weekly averages, newest first. Change compares a week's average weight to the week before."
         >
           <WeekTable rows={weeklyTrend} weightUnit={weightUnit} />
         </Section>

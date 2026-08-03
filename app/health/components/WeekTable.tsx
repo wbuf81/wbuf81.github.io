@@ -21,11 +21,13 @@ export default function WeekTable({ rows, weightUnit }: Props) {
 
   return (
     <div className="table-scroll">
-      <table className="health-table">
-        <caption className="health-table-caption">
-          Averages per week, newest first. Change compares a week&apos;s average weight to the
-          week before.
-        </caption>
+      {/*
+        No visible caption: the section heading and its note above already say
+        what this table is, and two grey lines saying it twice read as a mistake.
+        The label keeps the table named for screen readers.
+      */}
+      <table className="health-table" aria-label="Weekly averages, newest first">
+
         <thead>
           <tr>
             <th scope="col">Week of</th>
