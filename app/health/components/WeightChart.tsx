@@ -46,13 +46,16 @@ const PHASE_TINT: Record<string, string> = {
 };
 
 /**
- * The y-axis is deliberately zoomed to the data range rather than anchored at
- * zero: across a realistic spread a zero-based axis flattens real movement into
- * a straight line.
+ * The y-axis is zoomed to the data plus the active goal, never anchored at
+ * zero: across a realistic spread a zero-based axis flattens real movement
+ * into a straight line. Including the goal costs some vertical resolution on
+ * the daily wiggles, but it keeps the distance still to cover in view — the
+ * gap between the line and the floor is the point of the chart during a cut.
  */
-function zoomedDomain(data: WeightPoint[]): [number, number] {
+function zoomedDomain(data: WeightPoint[], goal: number | null): [number, number] {
   const weights = data.map((d) => d.weight).filter((w): w is number => w !== null);
   if (weights.length === 0) return [0, 1];
+  if (goal !== null) weights.push(goal);
 
   const min = Math.min(...weights);
   const max = Math.max(...weights);
@@ -62,7 +65,9 @@ function zoomedDomain(data: WeightPoint[]): [number, number] {
 }
 
 export default function WeightChart({ data, showTrend, phases }: Props) {
-  const domain = zoomedDomain(data);
+  const activeGoal =
+    phases.find((phase) => phase.isOngoing && phase.goalWeight !== null)?.goalWeight ?? null;
+  const domain = zoomedDomain(data, activeGoal);
 
   // The x-axis is categorical (point labels), so a date has to be mapped to the
   // nearest plotted point rather than used as a raw coordinate.
@@ -80,9 +85,8 @@ export default function WeightChart({ data, showTrend, phases }: Props) {
     })
     .filter((band): band is { phase: PhaseSummary; x1: string; x2: string } => band !== null);
 
-  // A goal far below the current range would force the axis to zoom out and
-  // flatten the daily movement, so it is only drawn when it is already in view.
-  // The phase banner reports the goal and the distance to it either way.
+  // The domain is stretched to keep the ongoing goal in view, so its line
+  // always draws; the range check only guards goals from already-closed phases.
   const goalLines = phases.filter(
     (phase) =>
       phase.isOngoing &&
@@ -147,8 +151,8 @@ export default function WeightChart({ data, showTrend, phases }: Props) {
             strokeDasharray="4 4"
             label={{
               value: `goal ${phase.goalWeight}`,
-              position: 'insideBottomRight',
-              fill: TEXT_MUTED,
+              position: 'right',
+              fill: SERIES.blue,
               fontSize: 11,
             }}
           />

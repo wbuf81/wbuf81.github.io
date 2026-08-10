@@ -45,7 +45,7 @@ Derivation logic is in `lib/health.ts` (pure functions, unit-tested in `__tests_
 - A phase runs until the next one starts; the latest with no `end` is ongoing. Set `end` explicitly **only** to leave a deliberate gap with no phase.
 - `goalWeight` is optional. When set, the banner shows distance and percent complete — signed so the same arithmetic serves a cut and a bulk. `goalRemaining` is a magnitude, always positive.
 - To start a new block, append a phase with the new `start`; that automatically closes the previous one. Don't set `end` on the old phase as well.
-- The goal line is drawn on the weight chart **only when the goal falls inside the visible y-range**. That axis is zoomed to the data on purpose, and stretching it to reach a distant goal would flatten the daily movement. The banner reports the goal regardless — this is not a bug.
+- The weight chart's y-axis stretches to include the **ongoing** phase's `goalWeight`, so the goal line is always in view during a block — Wes chose to trade some daily-wiggle resolution for seeing the distance left to cover (Aug 2026, reversing the earlier zoomed-to-data-only rule). Goals from already-closed phases are still only drawn when they happen to fall in range. Day-to-day resolution lives in the 7-day trend line and the weekly table instead.
 - `goalCals` is the phase's daily calorie target, drawn as a dashed rule on the calories chart. It is phase-scoped because it changes when the block changes — a bulk gets its own number. Steps targets live in `targets` instead, because they are standing habits rather than properties of a block.
 - A marker's `icon` (a single emoji) is drawn in that day's consistency-grid cell **in place of the rest dash**. The matching note lives in `ConsistencyNotes`, rendered **below** the consistency charts so the marks come first; it only lists markers inside the charted date range. Markers are deliberately **not** drawn on the weight chart — that flag was removed on request.
 
@@ -58,7 +58,7 @@ Three standing goals live in `targets`, all expressed per week so one rule score
 
 Chart rules that are deliberate, not accidental:
 - **No dual-axis charts.** Cardio minutes are not plotted against session counts; the total is a stat tile.
-- Weight y-axis is zoomed to the data range, never anchored at zero.
+- Weight y-axis is zoomed to the data range plus the active goal, never anchored at zero.
 - The 7-day trend line is hidden until 14 days exist; weekly bars until 2 weeks exist.
 - Series colors are validated categorical slots — see the note in `app/health/components/chartTheme.ts` before changing any of them.
 - Entry animation is off (`ANIMATE = false`); an animating chart reads as empty on load.
