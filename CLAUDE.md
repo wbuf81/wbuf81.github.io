@@ -24,6 +24,8 @@ The script appends to `data/health.json`. **Hard errors** (wrong column count, u
 
 Derivation logic is in `lib/health.ts` (pure functions, unit-tested in `__tests__/health.test.ts`). Never edit `data/health.json` by hand — use the script so the tested parser and validation run.
 
+**`lib/health.ts` and everything it imports must stay loadable by plain Node** — the import script loads it outside the bundler. Type imports from `@/` aliases must be `import type` (Node's type stripping keeps value-form imports and can't resolve the alias); relative imports of other `lib/` modules must be extension-explicit (`./dayLabel.ts`). The dayLabel split broke the importer this way for six days in Aug 2026. After touching `lib/health.ts`'s import graph, smoke-test with `npm run health:add -- --dry-run < /dev/null` (an empty import is fine; "Could not load lib/health.ts" is the failure).
+
 ### Phases, markers and targets
 `data/health.json` also holds `phases` (blocks like a cut), `markers` (dated one-off events) and `targets` (standing daily numbers). These are hand-edited — the import script only touches `days`.
 
