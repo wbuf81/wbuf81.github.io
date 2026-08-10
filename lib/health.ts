@@ -28,6 +28,10 @@ const MOVING_AVERAGE_MIN_DAYS = 14;
 
 const DEFAULT_CARDIO_MINUTES = 30;
 
+const CALS_PER_LB = 3500;
+/** A maintenance estimate from a single week swings with water; two settle it. */
+const MAINTENANCE_MIN_SPAN_DAYS = 14;
+
 const EXPECTED_COLUMNS = 11;
 
 // Ranges outside which a value is worth a second look, but not worth refusing.
@@ -268,6 +272,25 @@ export function summarize(days: HealthDay[], targets?: HealthTargets): HealthSum
       ? thisWeek.avgWeight - lastWeek.avgWeight
       : null;
 
+  // Intake plus the daily deficit implied by the weight change: the calories
+  // that would have held weight steady. The change happens across the
+  // *intervals* between the first and last weigh-in, so the divisor is
+  // exclusive, unlike the inclusive "days tracked" counts.
+  let estimatedMaintenance: number | null = null;
+  if (weighed.length > 1) {
+    const first = weighed[0];
+    const last = weighed[weighed.length - 1];
+    const spanDays = daysBetween(first.date, last.date);
+    const spanCals = mean(
+      sorted.filter((d) => d.date >= first.date && d.date <= last.date).map((d) => d.cals)
+    );
+
+    if (spanDays >= MAINTENANCE_MIN_SPAN_DAYS && spanCals !== null) {
+      estimatedMaintenance =
+        spanCals - ((last.weight! - first.weight!) * CALS_PER_LB) / spanDays;
+    }
+  }
+
   return {
     latestWeight,
     weightChangeWeek,
@@ -276,6 +299,7 @@ export function summarize(days: HealthDay[], targets?: HealthTargets): HealthSum
     avgCals: mean(sorted.map((d) => d.cals)),
     avgProtein: mean(sorted.map((d) => d.protein)),
     avgSteps: mean(sorted.map((d) => d.steps)),
+    estimatedMaintenance,
     workoutsThisWeek: thisWeek?.workouts ?? 0,
     cardioSessionsThisWeek: thisWeek?.cardioSessions ?? 0,
     cardioMinutesThisWeek: thisWeek?.cardioMinutes ?? 0,
@@ -300,17 +324,25 @@ const PHASE_LABELS: Record<PhaseType, string> = {
  * — an explicit `end` is only needed to leave a deliberate gap. Progress is
  * signed against the goal, so the same arithmetic serves a cut and a bulk.
  */
-export function buildPhases(days: HealthDay[], phases?: HealthPhase[]): PhaseSummary[] {
+/** Phases ordered by start, each with its end resolved against the next. */
+function resolvePhaseRanges(
+  phases?: HealthPhase[]
+): { phase: HealthPhase; end: string | null }[] {
   if (!phases || phases.length === 0) return [];
 
-  const sorted = sortDays(days);
   const ordered = [...phases].sort((a, b) => a.start.localeCompare(b.start));
 
   return ordered.map((phase, index) => {
     const next = ordered[index + 1];
-
     // An explicit end wins; otherwise the following phase closes this one.
-    const end = phase.end ?? (next ? addDays(next.start, -1) : null);
+    return { phase, end: phase.end ?? (next ? addDays(next.start, -1) : null) };
+  });
+}
+
+export function buildPhases(days: HealthDay[], phases?: HealthPhase[]): PhaseSummary[] {
+  const sorted = sortDays(days);
+
+  return resolvePhaseRanges(phases).map(({ phase, end }) => {
 
     const inRange = sorted.filter(
       (day) => day.date >= phase.start && (end === null || day.date <= end)
@@ -347,6 +379,21 @@ export function buildPhases(days: HealthDay[], phases?: HealthPhase[]): PhaseSum
       }
     }
 
+    // Where the weighed rate lands, counted from the last weigh-in. Positive
+    // weeks-to-go means the rate points at the goal; zero or negative means
+    // the goal is already reached or the weight is moving the wrong way, and
+    // there is nothing honest to project.
+    let projectedGoalDate: string | null = null;
+    if (goalWeight !== null && currentWeight !== null && weightChangePerWeek) {
+      const weeksToGo = (goalWeight - currentWeight) / weightChangePerWeek;
+      if (weeksToGo > 0) {
+        projectedGoalDate = addDays(
+          weighed[weighed.length - 1].date,
+          Math.round(weeksToGo * DAYS_IN_WEEK)
+        );
+      }
+    }
+
     return {
       type: phase.type,
       label: phase.label ?? PHASE_LABELS[phase.type],
@@ -366,6 +413,8 @@ export function buildPhases(days: HealthDay[], phases?: HealthPhase[]): PhaseSum
       goalWeight,
       goalRemaining,
       goalPercent,
+      projectedGoalDate,
+      projectedGoalLabel: projectedGoalDate === null ? null : shortLabel(projectedGoalDate),
       goalCals: phase.goalCals ?? null,
       avgCals: mean(inRange.map((d) => d.cals)),
       avgProtein: mean(inRange.map((d) => d.protein)),
@@ -392,8 +441,9 @@ export function currentPhase(phases: PhaseSummary[]): PhaseSummary | null {
  * week has a legitimately different average, and reading it as a real swing
  * would be wrong.
  */
-export function buildWeeklyTrend(days: HealthDay[]): WeeklyTrendRow[] {
+export function buildWeeklyTrend(days: HealthDay[], phases?: HealthPhase[]): WeeklyTrendRow[] {
   const weeks = groupIntoWeeks(days);
+  const ranges = resolvePhaseRanges(phases);
 
   return weeks.map((week, index) => {
     const previous = index > 0 ? weeks[index - 1] : null;
@@ -402,6 +452,14 @@ export function buildWeeklyTrend(days: HealthDay[]): WeeklyTrendRow[] {
       week.avgWeight !== null && previous?.avgWeight !== null && previous?.avgWeight !== undefined
         ? week.avgWeight - previous.avgWeight
         : null;
+
+    // A week straddling a phase boundary belongs to the phase it ended in —
+    // scored against where the week landed, not where it began.
+    const lastDay = week.days[week.days.length - 1].date;
+    const covering = ranges.find(
+      ({ phase, end }) => phase.start <= lastDay && (end === null || lastDay <= end)
+    );
+    const goalCals = covering?.phase.goalCals ?? null;
 
     return {
       weekStart: week.weekStart,
@@ -412,6 +470,8 @@ export function buildWeeklyTrend(days: HealthDay[]): WeeklyTrendRow[] {
       avgWeight: week.avgWeight,
       weightChange,
       avgCals: week.avgCals,
+      calsVsGoal:
+        week.avgCals !== null && goalCals !== null ? week.avgCals - goalCals : null,
       avgProtein: week.avgProtein,
       avgCarbs: week.avgCarbs,
       avgFat: week.avgFat,

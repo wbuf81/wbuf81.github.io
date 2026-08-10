@@ -8,7 +8,7 @@
       "start": "2026-07-20",
       "type": "cut",
       "label": "Cut",
-      "goalWeight": null,
+      "goalWeight": 190,
       "note": "",
       "goalCals": 2350
     }

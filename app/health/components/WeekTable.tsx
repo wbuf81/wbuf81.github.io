@@ -35,6 +35,7 @@ export default function WeekTable({ rows, weightUnit }: Props) {
             <th scope="col" className="is-num">Avg weight</th>
             <th scope="col" className="is-num">Change</th>
             <th scope="col" className="is-num">Avg cals</th>
+            <th scope="col" className="is-num">vs goal</th>
             <th scope="col" className="is-num">Avg protein</th>
             <th scope="col" className="is-num">Avg steps</th>
             <th scope="col" className="is-num">Lifts</th>
@@ -59,6 +60,10 @@ export default function WeekTable({ rows, weightUnit }: Props) {
                 {row.weightChange === null ? '—' : `${formatDelta(row.weightChange)} ${weightUnit}`}
               </td>
               <td className="is-num">{num(row.avgCals)}</td>
+              {/* Under the calorie goal is the good direction, like losing weight. */}
+              <td className={changeClass(row.calsVsGoal)}>
+                {row.calsVsGoal === null ? '—' : formatDelta(row.calsVsGoal, 0)}
+              </td>
               <td className="is-num">{row.avgProtein === null ? '—' : `${num(row.avgProtein)} g`}</td>
               <td className="is-num">{num(row.avgSteps)}</td>
               <td className="is-num">{row.workouts}</td>

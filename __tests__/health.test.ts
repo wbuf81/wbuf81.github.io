@@ -687,6 +687,113 @@ describe('phase weight change per week', () => {
   });
 });
 
+describe('projected goal date', () => {
+  test('extrapolates the weighed rate to the goal', () => {
+    // 210.2 -> 207.9 over week one is -2.3 lb/week; 205.6 is exactly one more
+    // week away from the last weigh-in on Jul 26.
+    const [phase] = buildPhases(WEEK_ONE, [
+      { start: '2026-07-20', type: 'cut', goalWeight: 205.6 },
+    ]);
+
+    expect(phase.projectedGoalDate).toBe('2026-08-02');
+    expect(phase.projectedGoalLabel).toBe('Aug 2');
+  });
+
+  test('is null until there is a rate to extrapolate', () => {
+    const [phase] = buildPhases(WEEK_ONE.slice(0, 3), [
+      { start: '2026-07-20', type: 'cut', goalWeight: 200 },
+    ]);
+
+    expect(phase.projectedGoalDate).toBeNull();
+  });
+
+  test('is null when the weight is moving away from the goal', () => {
+    const [phase] = buildPhases(WEEK_ONE, [
+      { start: '2026-07-20', type: 'bulk', goalWeight: 215 },
+    ]);
+
+    expect(phase.projectedGoalDate).toBeNull();
+  });
+
+  test('is null once the goal has been reached', () => {
+    const [phase] = buildPhases(WEEK_ONE, [
+      { start: '2026-07-20', type: 'cut', goalWeight: 209 },
+    ]);
+
+    expect(phase.projectedGoalDate).toBeNull();
+  });
+
+  test('is null without a goal', () => {
+    const [phase] = buildPhases(WEEK_ONE, [{ start: '2026-07-20', type: 'cut' }]);
+
+    expect(phase.projectedGoalDate).toBeNull();
+    expect(phase.projectedGoalLabel).toBeNull();
+  });
+});
+
+describe('estimated maintenance', () => {
+  /** Fifteen days, eating the same every day, losing 4 lb across the span. */
+  function steadyLoss(): HealthDay[] {
+    const dates = [
+      '2026-07-20', '2026-07-21', '2026-07-22', '2026-07-23', '2026-07-24',
+      '2026-07-25', '2026-07-26', '2026-07-27', '2026-07-28', '2026-07-29',
+      '2026-07-30', '2026-07-31', '2026-08-01', '2026-08-02', '2026-08-03',
+    ];
+    return dates.map((date, i) =>
+      day({ date, day: 'Mon', cals: 2500, weight: 210 - (4 / 14) * i })
+    );
+  }
+
+  test('adds the daily deficit implied by the weight change to average intake', () => {
+    // 2,500 in, 4 lb lost over 14 day-intervals: 1,000 kcal/day deficit.
+    const summary = summarize(steadyLoss());
+
+    expect(summary.estimatedMaintenance).toBeCloseTo(3500, 5);
+  });
+
+  test('is null until two weeks have been weighed', () => {
+    const summary = summarize(WEEK_ONE);
+
+    expect(summary.estimatedMaintenance).toBeNull();
+  });
+
+  test('is null with fewer than two weigh-ins', () => {
+    const days = steadyLoss().map((d, i) => (i === 0 ? d : { ...d, weight: null }));
+    const summary = summarize(days);
+
+    expect(summary.estimatedMaintenance).toBeNull();
+  });
+});
+
+describe('weekly calories vs goal', () => {
+  // Week one averages 2,333.71 kcal/day.
+  const WEEK_ONE_AVG = 16336 / 7;
+
+  test('reports each week against the goal of the phase it falls in', () => {
+    const [row] = buildWeeklyTrend(WEEK_ONE, [
+      { start: '2026-07-20', type: 'cut', goalCals: 2300 },
+    ]);
+
+    expect(row.calsVsGoal).toBeCloseTo(WEEK_ONE_AVG - 2300, 4);
+  });
+
+  test('uses the phase covering the last recorded day of the week', () => {
+    const [row] = buildWeeklyTrend(WEEK_ONE, [
+      { start: '2026-07-20', type: 'cut', goalCals: 2300 },
+      { start: '2026-07-24', type: 'bulk', goalCals: 3000 },
+    ]);
+
+    expect(row.calsVsGoal).toBeCloseTo(WEEK_ONE_AVG - 3000, 4);
+  });
+
+  test('is null without phases or without a calorie goal', () => {
+    expect(buildWeeklyTrend(WEEK_ONE)[0].calsVsGoal).toBeNull();
+    expect(
+      buildWeeklyTrend(WEEK_ONE, [{ start: '2026-07-20', type: 'cut' }])[0].calsVsGoal
+    ).toBeNull();
+  });
+});
+
 describe('daily chart labels', () => {
   test('the weight series labels by weekday, matching the other daily charts', () => {
     const series = buildWeightSeries(WEEK_ONE);

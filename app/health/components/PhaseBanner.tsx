@@ -19,6 +19,7 @@ export default function PhaseBanner({ phase, weightUnit }: Props) {
     goalWeight,
     goalRemaining,
     goalPercent,
+    projectedGoalLabel,
   } = phase;
 
   // Down is the goal for a cut, up for a bulk; maintenance has no good direction.
@@ -95,6 +96,9 @@ export default function PhaseBanner({ phase, weightUnit }: Props) {
                 />
                 <span className="phase-progress-text">{Math.round(goalPercent)}%</span>
               </div>
+            )}
+            {projectedGoalLabel !== null && (
+              <p className="stat-detail">on pace for {projectedGoalLabel}</p>
             )}
           </div>
         )}

@@ -136,6 +136,14 @@ export interface PhaseSummary {
   goalRemaining: number | null;
   /** 0-100, clamped. Null without a goal, or when the goal equals the start. */
   goalPercent: number | null;
+  /**
+   * ISO date the goal is reached if the weighed rate holds. Null without a
+   * goal, without a rate, once the goal is reached, or when the weight is
+   * moving the wrong way.
+   */
+  projectedGoalDate: string | null;
+  /** Short display form of `projectedGoalDate`, e.g. "Oct 17". */
+  projectedGoalLabel: string | null;
   /** Daily calorie target for this phase, or null when none is set. */
   goalCals: number | null;
   avgCals: number | null;
@@ -174,6 +182,11 @@ export interface HealthSummary {
   avgCals: number | null;
   avgProtein: number | null;
   avgSteps: number | null;
+  /**
+   * Daily calories that would have held weight steady, implied by intake vs
+   * weight change across the weighed span. Null until two weeks are weighed.
+   */
+  estimatedMaintenance: number | null;
   workoutsThisWeek: number;
   cardioSessionsThisWeek: number;
   cardioMinutesThisWeek: number;
@@ -200,6 +213,11 @@ export interface WeeklyTrendRow {
   /** Change in average weight against the previous week. Null for the first. */
   weightChange: number | null;
   avgCals: number | null;
+  /**
+   * Average calories minus the goal of the phase this week fell in. Null when
+   * no phase with a calorie goal covers the week.
+   */
+  calsVsGoal: number | null;
   avgProtein: number | null;
   avgCarbs: number | null;
   avgFat: number | null;

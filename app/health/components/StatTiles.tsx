@@ -48,6 +48,15 @@ export default function StatTiles({ summary, weightUnit }: Props) {
       detail: 'per day, all recorded days',
     },
     {
+      label: 'Est. maintenance',
+      value:
+        summary.estimatedMaintenance !== null ? formatNumber(summary.estimatedMaintenance) : '—',
+      detail:
+        summary.estimatedMaintenance !== null
+          ? 'kcal/day implied by intake vs weight change'
+          : 'needs two weighed weeks',
+    },
+    {
       label: 'Avg protein',
       value: summary.avgProtein !== null ? `${formatNumber(summary.avgProtein)} g` : '—',
       detail: 'per day',
