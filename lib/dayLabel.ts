@@ -1,4 +1,4 @@
-import { HealthDay } from '@/types/health';
+import type { HealthDay } from '@/types/health';
 
 /**
  * The x-axis label every daily chart uses: "Mon 20", "Sun 02".

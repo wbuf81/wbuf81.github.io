@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { dayTickLabel } from './dayLabel';
+import { dayTickLabel } from './dayLabel.ts';
 import {
   GoalLine,
   HealthData,
