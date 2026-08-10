@@ -30,6 +30,12 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      # Includes the add-health-week loader smoke test, so a refactor that
+      # breaks the weekly import script fails the deploy instead of surfacing
+      # on the next paste night.
+      - name: Test
+        run: npm test
+
       # The /health card shows real numbers from data/health.json, so it is
       # redrawn on every deploy rather than relying on the committed PNG being
       # current. Importing a week is a push, so the card is never stale.
