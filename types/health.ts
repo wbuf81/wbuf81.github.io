@@ -51,6 +51,20 @@ export interface HealthMarker {
 }
 
 /**
+ * Something that happens the same weekday every week — drawn in that day's
+ * consistency-grid cell. Unlike a marker, it is configured once rather than
+ * recorded per date.
+ */
+export interface HealthObservance {
+  /** 0 = Sunday, matching JavaScript's getUTCDay. */
+  weekday: number;
+  /** A single emoji. An empty string means nothing is drawn. */
+  icon: string;
+  /** Short name, used for the legend and the cell's accessible label. */
+  label: string;
+}
+
+/**
  * Standing daily targets, independent of any phase. Phase-scoped targets live on
  * the phase itself — see `goalWeight` and `goalCals`.
  */
@@ -102,6 +116,7 @@ export interface HealthData {
   phases?: HealthPhase[];
   markers?: HealthMarker[];
   targets?: HealthTargets;
+  observances?: HealthObservance[];
 }
 
 /** A phase with its date range resolved and its outcome measured. */

@@ -81,6 +81,7 @@ export default function HealthPage() {
         phases={phases}
         activePhase={currentPhase(phases)}
         markers={markers}
+        observances={data.observances ?? []}
         targets={data.targets ?? {}}
         weeklyGoals={weeklyGoals}
         lastUpdated={data.lastUpdated}

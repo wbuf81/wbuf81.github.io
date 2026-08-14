@@ -28,6 +28,13 @@
     "liftsPerWeek": 5,
     "cardioPerWeek": 3
   },
+  "observances": [
+    {
+      "weekday": 0,
+      "icon": "✝️",
+      "label": "Church"
+    }
+  ],
   "days": [
     {
       "date": "2026-07-20",

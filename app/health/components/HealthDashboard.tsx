@@ -3,6 +3,7 @@
 import {
   HealthDay,
   HealthMarker,
+  HealthObservance,
   HealthSummary,
   HealthTargets,
   PhaseSummary,
@@ -34,6 +35,7 @@ interface Props {
   phases: PhaseSummary[];
   activePhase: PhaseSummary | null;
   markers: HealthMarker[];
+  observances: HealthObservance[];
   targets: HealthTargets;
   weeklyGoals: WeeklyGoals[];
   lastUpdated: string;
@@ -69,6 +71,7 @@ export default function HealthDashboard({
   phases,
   activePhase,
   markers,
+  observances,
   targets,
   weeklyGoals,
   lastUpdated,
@@ -147,7 +150,7 @@ export default function HealthDashboard({
         }
       >
         <GoalTracker rows={weeklyGoals} streak={summary.goalStreak} />
-        <ConsistencyGrid weeks={weeks} markers={markers} />
+        <ConsistencyGrid weeks={weeks} markers={markers} observances={observances} />
         {hasMultipleWeeks && <WeeklyConsistencyChart weeks={weeks} />}
         <ConsistencyNotes markers={markers} weeks={weeks} />
       </Section>

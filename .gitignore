@@ -32,3 +32,6 @@ content/drafts/
 
 # Playwright MCP screenshots
 .playwright-mcp/
+
+# Private planning drafts — never commit (they hold positioning notes and vendor names)
+FEATURE_PLAN_*.md

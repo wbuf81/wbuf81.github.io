@@ -1,12 +1,15 @@
 'use client';
 
-import { HealthMarker, WeekSummary } from '@/types/health';
+import { HealthMarker, HealthObservance, WeekSummary } from '@/types/health';
+import { observanceFor } from '@/lib/observance';
 import { SERIES } from './chartTheme';
 
 interface Props {
   weeks: WeekSummary[];
   /** Dated one-off events. Any with an icon shows it in that day's cell. */
   markers?: HealthMarker[];
+  /** Standing weekly events, drawn in every matching weekday's cell. */
+  observances?: HealthObservance[];
 }
 
 const DAY_ORDER = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
@@ -26,8 +29,13 @@ function addDays(iso: string, days: number): string {
  * lives in ConsistencyNotes, rendered below the charts. The glyph replaces the
  * rest dash rather than sitting beside it: it explains the same fact more
  * specifically.
+ *
+ * A weekly observance draws the same way but repeats by weekday. A dated marker
+ * on the same day wins, being the more specific fact about that one day, and
+ * observances get no per-date note — a standing weekly thing said three times
+ * under the chart is noise, so the legend carries it instead.
  */
-export default function ConsistencyGrid({ weeks, markers = [] }: Props) {
+export default function ConsistencyGrid({ weeks, markers = [], observances = [] }: Props) {
   const iconByDate = new Map(
     markers.filter((marker) => marker.icon).map((marker) => [marker.date, marker])
   );
@@ -58,14 +66,16 @@ export default function ConsistencyGrid({ weeks, markers = [] }: Props) {
               }
 
               const marker = iconByDate.get(date);
+              const observance = marker ? null : observanceFor(date, observances);
+              const glyph = marker ?? observance;
               const parts = [
                 day.workout.trim() !== '' ? day.workout : null,
                 day.cardio ? `cardio ${day.cardioMinutes ?? 0} min` : null,
               ].filter(Boolean);
 
               const summary = parts.length ? parts.join(' + ') : 'rest';
-              const title = marker
-                ? `${date} — ${summary} (${marker.label})`
+              const title = glyph
+                ? `${date} — ${summary} (${glyph.label})`
                 : `${date} — ${summary}`;
 
               return (
@@ -76,12 +86,12 @@ export default function ConsistencyGrid({ weeks, markers = [] }: Props) {
                   {day.cardio && (
                     <span className="consistency-dot" style={{ background: SERIES.orange }} />
                   )}
-                  {marker && (
-                    <span className="consistency-icon" role="img" aria-label={marker.label}>
-                      {marker.icon}
+                  {glyph && (
+                    <span className="consistency-icon" role="img" aria-label={glyph.label}>
+                      {glyph.icon}
                     </span>
                   )}
-                  {parts.length === 0 && !marker && <span className="consistency-rest" />}
+                  {parts.length === 0 && !glyph && <span className="consistency-rest" />}
                 </span>
               );
             })}
@@ -99,6 +109,16 @@ export default function ConsistencyGrid({ weeks, markers = [] }: Props) {
         <span className="consistency-key">
           <span className="consistency-rest" aria-hidden="true" /> Rest
         </span>
+        {observances
+          .filter((observance) => observance.icon.trim() !== '')
+          .map((observance) => (
+            <span className="consistency-key" key={`${observance.weekday}-${observance.label}`}>
+              <span className="consistency-icon" aria-hidden="true">
+                {observance.icon}
+              </span>{' '}
+              {observance.label}
+            </span>
+          ))}
       </p>
     </div>
   );

@@ -604,10 +604,15 @@
   padding-bottom: 0.75rem;
 }
 
+/*
+  Horizontal padding is tight on purpose: the By week table carries eleven
+  columns and has to fit the card without scrolling. Widening this is what
+  pushed it into a scrollbar before.
+*/
 .health-table th,
 .health-table td {
   text-align: left;
-  padding: 0.5rem 0.6rem;
+  padding: 0.5rem 0.4rem;
   border-bottom: 1px solid #f0efec;
   white-space: nowrap;
 }

@@ -39,7 +39,10 @@ Derivation logic is in `lib/health.ts` (pure functions, unit-tested in `__tests_
 "targets": {
   "stepsMinimum": 10000, "stepsGoal": 13500,
   "weighInsPerWeek": 7, "liftsPerWeek": 5, "cardioPerWeek": 3
-}
+},
+"observances": [
+  { "weekday": 0, "icon": "✝️", "label": "Church" }
+]
 ```
 - `type` is `cut` | `bulk` | `maintain`. `label` defaults to the type.
 - A phase runs until the next one starts; the latest with no `end` is ongoing. Set `end` explicitly **only** to leave a deliberate gap with no phase.
@@ -47,6 +50,7 @@ Derivation logic is in `lib/health.ts` (pure functions, unit-tested in `__tests_
 - To start a new block, append a phase with the new `start`; that automatically closes the previous one. Don't set `end` on the old phase as well.
 - The weight chart's y-axis stretches to include the **ongoing** phase's `goalWeight`, so the goal line is always in view during a block — Wes chose to trade some daily-wiggle resolution for seeing the distance left to cover (Aug 2026, reversing the earlier zoomed-to-data-only rule). Goals from already-closed phases are still only drawn when they happen to fall in range. Day-to-day resolution lives in the 7-day trend line and the weekly table instead.
 - `goalCals` is the phase's daily calorie target, drawn as a dashed rule on the calories chart. It is phase-scoped because it changes when the block changes — a bulk gets its own number. Steps targets live in `targets` instead, because they are standing habits rather than properties of a block.
+- `observances` are standing **weekly** events, matched by `weekday` (0 = Sunday, JS `getUTCDay`) rather than by date, so they don't need re-adding every week. They draw in the grid cell like a marker icon and get a legend key, but deliberately **no per-date note** — a weekly fact repeated under every chart is noise. A dated marker on the same day wins, being more specific about that one day. Logic is `lib/observance.ts` (its own client-safe module, same reason as `lib/dayLabel.ts`), tested in `__tests__/observance.test.ts`. To skip one week, the honest options are a dated marker that overrides it or removing the observance — there is no per-date opt-out.
 - A marker's `icon` (a single emoji) is drawn in that day's consistency-grid cell **in place of the rest dash**. The matching note lives in `ConsistencyNotes`, rendered **below** the consistency charts so the marks come first; it only lists markers inside the charted date range. Markers are deliberately **not** drawn on the weight chart — that flag was removed on request.
 
 ### Goals and streak
