@@ -52,7 +52,8 @@
     },
     {
       "from": "2026-08-10",
-      "cals": 2450
+      "cals": 2450,
+      "note": "Coach Lee's advice — added mostly as carbs pre-workout"
     }
   ],
   "days": [
@@ -152,7 +153,7 @@
       "workout": "",
       "cardio": false,
       "cardioMinutes": null,
-      "notes": ""
+      "notes": "Church"
     },
     {
       "date": "2026-07-27",
@@ -250,7 +251,7 @@
       "workout": "",
       "cardio": false,
       "cardioMinutes": null,
-      "notes": ""
+      "notes": "Church"
     },
     {
       "date": "2026-08-03",
@@ -446,7 +447,7 @@
       "workout": "",
       "cardio": false,
       "cardioMinutes": null,
-      "notes": ""
+      "notes": "Church"
     }
   ]
 }
