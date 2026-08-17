@@ -48,6 +48,8 @@ export interface HealthCalorieTarget {
   /** ISO date this target took effect. */
   from: string;
   cals: number;
+  /** Why it changed. Surfaced in the change log. */
+  note?: string;
 }
 
 /** A single dated event worth marking on the timeline. */
@@ -80,7 +82,7 @@ export interface HealthNoteMark {
 }
 
 /**
- * Standing daily targets, independent of any phase. Phase-scoped targets live on
+ * Standing goals, resolved for a particular date. Phase-scoped targets live on
  * the phase itself — see `goalWeight`. Calorie targets are dated separately.
  */
 export interface HealthTargets {
@@ -94,6 +96,21 @@ export interface HealthTargets {
   liftsPerWeek?: number | null;
   /** Cardio sessions per week. */
   cardioPerWeek?: number | null;
+}
+
+/**
+ * One dated revision of the standing goals, as hand-written in
+ * `data/health.json`. Each entry **patches** the one before it, so a revision
+ * only names the goals that changed; the rest carry forward.
+ *
+ * Dated so that changing a goal does not retroactively re-score the weeks that
+ * were lived under the old one.
+ */
+export interface HealthDatedTargets extends HealthTargets {
+  /** ISO date this revision took effect. */
+  from: string;
+  /** Why it changed. Surfaced in the change log. */
+  note?: string;
 }
 
 /** One of the three weekly goals, measured against a single week. */
@@ -130,7 +147,8 @@ export interface HealthData {
   days: HealthDay[];
   phases?: HealthPhase[];
   markers?: HealthMarker[];
-  targets?: HealthTargets;
+  /** Dated revisions of the standing goals, oldest or newest first — either. */
+  targets?: HealthDatedTargets[];
   noteMarks?: HealthNoteMark[];
   calorieTargets?: HealthCalorieTarget[];
 }
@@ -254,6 +272,25 @@ export interface WeeklyTrendRow {
   workouts: number;
   cardioSessions: number;
   cardioMinutes: number;
+}
+
+/**
+ * One line of the change log: a dated change to a goal or a block.
+ *
+ * Derived from the dated config rather than hand-written, so it cannot drift
+ * from the numbers the charts are actually computed against.
+ */
+export interface HealthChangeEntry {
+  date: string;
+  /** Short display form, e.g. "Aug 10". */
+  dateLabel: string;
+  /** What changed, e.g. "Calorie target". */
+  label: string;
+  /** The previous value, or null the first time it was set. */
+  from: string | null;
+  to: string;
+  /** Why it changed, as written in the data. Empty when none was given. */
+  note: string;
 }
 
 export interface WeightPoint {

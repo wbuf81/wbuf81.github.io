@@ -569,7 +569,9 @@ describe('parseHealthTsv', () => {
   });
 });
 
-const GOALS = { weighInsPerWeek: 7, liftsPerWeek: 5, cardioPerWeek: 3 };
+const GOALS = [
+  { from: '2026-01-01', weighInsPerWeek: 7, liftsPerWeek: 5, cardioPerWeek: 3 },
+];
 
 describe('buildWeeklyGoals', () => {
   test('scores a week that hits all three goals', () => {
@@ -604,7 +606,7 @@ describe('buildWeeklyGoals', () => {
   });
 
   test('a goal left unset is not scored rather than counted as zero', () => {
-    const [week] = buildWeeklyGoals(WEEK_ONE, { liftsPerWeek: 5 });
+    const [week] = buildWeeklyGoals(WEEK_ONE, [{ from: '2026-01-01', liftsPerWeek: 5 }]);
 
     expect(week.lines.map((line) => line.key)).toEqual(['lifts']);
     expect(week.allMet).toBe(true);
@@ -615,6 +617,53 @@ describe('buildWeeklyGoals', () => {
 
     expect(week.isComplete).toBe(false);
     expect(week.dayCount).toBe(3);
+  });
+});
+
+describe('weekly goals against dated revisions', () => {
+  /** A second identical week starting Mon 2026-08-03. */
+  const WEEK_TWO = WEEK_ONE.map((d, i) =>
+    day({ ...d, date: `2026-08-${String(3 + i).padStart(2, '0')}`, day: d.day })
+  );
+
+  test('raising a goal does not re-score the weeks lived under the old one', () => {
+    const rows = buildWeeklyGoals([...WEEK_ONE, ...WEEK_TWO], [
+      { from: '2026-07-20', weighInsPerWeek: 7, liftsPerWeek: 5, cardioPerWeek: 3 },
+      { from: '2026-08-03', liftsPerWeek: 6 },
+    ]);
+
+    const [first, second] = rows;
+    expect(first.lines.find((l) => l.key === 'lifts')).toMatchObject({ goal: 5, met: true });
+    expect(first.allMet).toBe(true);
+    expect(second.lines.find((l) => l.key === 'lifts')).toMatchObject({ goal: 6, met: false });
+  });
+
+  test('a revision that names one goal leaves the others in force', () => {
+    const rows = buildWeeklyGoals([...WEEK_ONE, ...WEEK_TWO], [
+      { from: '2026-07-20', weighInsPerWeek: 7, liftsPerWeek: 5, cardioPerWeek: 3 },
+      { from: '2026-08-03', liftsPerWeek: 6 },
+    ]);
+
+    expect(rows[1].lines.find((l) => l.key === 'cardio')).toMatchObject({ goal: 3, met: true });
+    expect(rows[1].lines.find((l) => l.key === 'measure')).toMatchObject({ goal: 7, met: true });
+  });
+
+  test('a week is scored by the revision in effect on its last recorded day', () => {
+    // The revision lands mid-week; a weekly count cannot be part-scored, so the
+    // week is judged by where it ended up.
+    const rows = buildWeeklyGoals(WEEK_ONE, [
+      { from: '2026-07-20', liftsPerWeek: 5 },
+      { from: '2026-07-24', liftsPerWeek: 6 },
+    ]);
+
+    expect(rows[0].lines.find((l) => l.key === 'lifts')).toMatchObject({ goal: 6 });
+  });
+
+  test('a week before the first revision is not scored at all', () => {
+    const rows = buildWeeklyGoals(WEEK_ONE, [{ from: '2026-09-01', liftsPerWeek: 5 }]);
+
+    expect(rows[0].lines).toEqual([]);
+    expect(rows[0].allMet).toBe(true);
   });
 });
 
@@ -651,7 +700,7 @@ describe('goalStreak', () => {
   });
 
   test('is zero when no goals are configured', () => {
-    expect(goalStreak(buildWeeklyGoals(WEEK_ONE, {}))).toBe(0);
+    expect(goalStreak(buildWeeklyGoals(WEEK_ONE, []))).toBe(0);
     expect(goalStreak([])).toBe(0);
   });
 });

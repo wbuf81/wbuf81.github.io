@@ -174,9 +174,16 @@ def health_card():
     delta_txt = f'{delta:+.1f}'.replace('-', '−')
     phase = (data.get('phases') or [{}])[-1]
     weeks = max(1, round(len(data['days']) / 7))
-    t = data.get('targets', {})
-
     week = data['days'][-7:]
+
+    # `targets` is a list of dated revisions, each patching the one before it.
+    # The card shows the newest week, so resolve the goals in force on its last
+    # recorded day — the same rule buildWeeklyGoals uses.
+    t = {}
+    for revision in sorted(data.get('targets') or [], key=lambda r: r['from']):
+        if revision['from'] <= week[-1]['date']:
+            t.update({k: v for k, v in revision.items() if k not in ('from', 'note')})
+
     goals = [
         ('Measure', sum(1 for d in week if d['weight'] is not None), t.get('weighInsPerWeek', 7)),
         ('Lifts', sum(1 for d in week if d['workout'].strip()), t.get('liftsPerWeek', 5)),

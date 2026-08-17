@@ -2,10 +2,13 @@ import fs from 'fs';
 import path from 'path';
 import { dayTickLabel } from './dayLabel.ts';
 import { calorieTargetFor } from './calorieTarget.ts';
+import { targetsFor } from './targets.ts';
 import {
   GoalLine,
   HealthCalorieTarget,
+  HealthChangeEntry,
   HealthData,
+  HealthDatedTargets,
   HealthDay,
   HealthPhase,
   HealthSummary,
@@ -179,12 +182,22 @@ const DAYS_IN_WEEK = 7;
  * covers all three and a week is either met or not. A goal left unset in
  * `targets` is simply not scored rather than counted as zero.
  */
-export function buildWeeklyGoals(days: HealthDay[], targets?: HealthTargets): WeeklyGoals[] {
-  const weighInGoal = targets?.weighInsPerWeek ?? null;
-  const liftGoal = targets?.liftsPerWeek ?? null;
-  const cardioGoal = targets?.cardioPerWeek ?? null;
-
+export function buildWeeklyGoals(
+  days: HealthDay[],
+  revisions?: HealthDatedTargets[]
+): WeeklyGoals[] {
   return groupIntoWeeks(days).map((week) => {
+    // Scored by the revision in force on the week's last recorded day. A weekly
+    // count cannot be part-scored against two different numbers, so a week that
+    // straddles a change is judged by where it ended up — and, crucially, an
+    // earlier week is never re-scored against a goal set after it.
+    const lastRecorded = week.days[week.days.length - 1].date;
+    const targets = targetsFor(lastRecorded, revisions);
+
+    const weighInGoal = targets?.weighInsPerWeek ?? null;
+    const liftGoal = targets?.liftsPerWeek ?? null;
+    const cardioGoal = targets?.cardioPerWeek ?? null;
+
     const lines: GoalLine[] = [];
 
     const add = (
@@ -257,7 +270,7 @@ export function goalStreak(rows: WeeklyGoals[]): number {
   return streak;
 }
 
-export function summarize(days: HealthDay[], targets?: HealthTargets): HealthSummary {
+export function summarize(days: HealthDay[], targets?: HealthDatedTargets[]): HealthSummary {
   const sorted = sortDays(days);
   const weeks = groupIntoWeeks(sorted);
   const weighed = sorted.filter((d) => d.weight !== null);
@@ -486,6 +499,124 @@ export function buildWeeklyTrend(
       cardioMinutes: week.cardioMinutes,
     };
   });
+}
+
+/* -------------------------------------------------------------------------- */
+/* Change log                                                                 */
+/* -------------------------------------------------------------------------- */
+
+/** The goals in `targets`, in the order they should be reported. */
+const GOAL_FIELDS: { key: keyof HealthTargets; label: string }[] = [
+  { key: 'stepsMinimum', label: 'Steps floor' },
+  { key: 'stepsGoal', label: 'Steps goal' },
+  { key: 'weighInsPerWeek', label: 'Weigh-ins per week' },
+  { key: 'liftsPerWeek', label: 'Lifts per week' },
+  { key: 'cardioPerWeek', label: 'Cardio per week' },
+];
+
+function formatValue(value: number): string {
+  return value.toLocaleString('en-US');
+}
+
+/**
+ * Every dated change to a goal or a block, oldest first.
+ *
+ * Derived from `phases`, `calorieTargets` and `targets` rather than kept as its
+ * own hand-written list: a separate log would drift from the numbers the page
+ * actually computes against, and then neither could be trusted. The cost is
+ * that only config which carries a date can appear here — which is the reason
+ * calorie and goal targets are dated in the first place.
+ *
+ * Markers are deliberately absent: they are events rather than changes to a
+ * target, and `ConsistencyNotes` already lists them.
+ */
+export function buildChangeLog(
+  data: Pick<HealthData, 'phases' | 'calorieTargets' | 'targets'>
+): HealthChangeEntry[] {
+  const entries: HealthChangeEntry[] = [];
+
+  const add = (
+    date: string,
+    label: string,
+    from: string | null,
+    to: string,
+    note?: string
+  ) => {
+    entries.push({ date, dateLabel: shortLabel(date), label, from, to, note: note ?? '' });
+  };
+
+  const phases = [...(data.phases ?? [])].sort((a, b) => a.start.localeCompare(b.start));
+  phases.forEach((phase, index) => {
+    const previous = index > 0 ? phases[index - 1] : null;
+    const label = phase.label ?? PHASE_LABELS[phase.type];
+
+    add(
+      phase.start,
+      'Phase',
+      previous ? (previous.label ?? PHASE_LABELS[previous.type]) : null,
+      label,
+      phase.note
+    );
+
+    // Goal weight rides on the phase rather than carrying its own date, so it is
+    // reported at the phase start and only when it differs from the last one.
+    const goal = phase.goalWeight ?? null;
+    const previousGoal = previous?.goalWeight ?? null;
+    if (goal !== null && goal !== previousGoal) {
+      add(
+        phase.start,
+        'Goal weight',
+        previousGoal === null ? null : formatValue(previousGoal),
+        formatValue(goal)
+      );
+    }
+  });
+
+  const calorieTargets = [...(data.calorieTargets ?? [])].sort((a, b) =>
+    a.from.localeCompare(b.from)
+  );
+  calorieTargets.forEach((target, index) => {
+    const previous = index > 0 ? calorieTargets[index - 1] : null;
+    if (previous && previous.cals === target.cals) return;
+
+    add(
+      target.from,
+      'Calorie target',
+      previous ? formatValue(previous.cals) : null,
+      formatValue(target.cals),
+      target.note
+    );
+  });
+
+  const revisions = [...(data.targets ?? [])].sort((a, b) => a.from.localeCompare(b.from));
+  revisions.forEach((revision) => {
+    // Compared against what was in force the day before, so a revision that
+    // restates an unchanged number does not report a change.
+    const previous = targetsFor(addDays(revision.from, -1), revisions);
+
+    for (const { key, label } of GOAL_FIELDS) {
+      const to = revision[key] ?? null;
+      if (to === null) continue;
+
+      const from = previous?.[key] ?? null;
+      if (from === to) continue;
+
+      add(
+        revision.from,
+        label,
+        from === null ? null : formatValue(from),
+        formatValue(to),
+        revision.note
+      );
+    }
+  });
+
+  // Stable within a date: phases, then calories, then goals — the order they
+  // were pushed, which reads as cause before consequence.
+  return entries
+    .map((entry, index) => ({ entry, index }))
+    .sort((a, b) => a.entry.date.localeCompare(b.entry.date) || a.index - b.index)
+    .map(({ entry }) => entry);
 }
 
 /**

@@ -636,6 +636,10 @@
   font-variant-numeric: tabular-nums;
 }
 
+.health-table .is-was {
+  color: #8a8985;
+}
+
 .health-table .is-rest {
   color: #8a8985;
 }

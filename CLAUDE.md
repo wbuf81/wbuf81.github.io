@@ -36,17 +36,17 @@ Derivation logic is in `lib/health.ts` (pure functions, unit-tested in `__tests_
 "markers": [
   { "date": "2026-08-03", "label": "Deload", "icon": "⚡", "note": "" }
 ],
-"targets": {
-  "stepsMinimum": 10000, "stepsGoal": 13500,
-  "weighInsPerWeek": 7, "liftsPerWeek": 5, "cardioPerWeek": 3
-},
+"targets": [
+  { "from": "2026-07-20", "stepsMinimum": 10000, "stepsGoal": 13500,
+    "weighInsPerWeek": 7, "liftsPerWeek": 5, "cardioPerWeek": 3, "note": "Cut begins" }
+],
 "noteMarks": [
   { "match": "church", "icon": "✝️", "label": "Church" },
   { "match": "orange theory", "icon": "🍊", "label": "Orange Theory", "replaces": "cardio" }
 ],
 "calorieTargets": [
-  { "from": "2026-07-20", "cals": 2350 },
-  { "from": "2026-08-10", "cals": 2450 }
+  { "from": "2026-07-20", "cals": 2350, "note": "Cut begins" },
+  { "from": "2026-08-10", "cals": 2450, "note": "" }
 ]
 ```
 - `type` is `cut` | `bulk` | `maintain`. `label` defaults to the type.
@@ -60,6 +60,8 @@ Derivation logic is in `lib/health.ts` (pure functions, unit-tested in `__tests_
 
 ### Goals and streak
 Three standing goals live in `targets`, all expressed per week so one rule scores them all: `weighInsPerWeek` (7 = measure every day), `liftsPerWeek`, `cardioPerWeek`. A goal left unset is **not scored**, rather than counted as zero.
+
+**`targets` is a list of dated revisions, not one object.** Each entry has a `from` date and **patches** the one before it, so a revision names only what changed. Append a revision to change a goal — never edit an old entry. This is not decoration: `buildWeeklyGoals` scores every week, so with a single undated object, raising `liftsPerWeek` from 5 to 6 silently re-scored every past week against a rule that was not in force and could wipe out an earned streak. A week that straddles a revision is scored by the one in force on its **last recorded day**, because a weekly count cannot be part-scored. Resolver is `lib/targets.ts` (client-safe), tested in `__tests__/targets.test.ts`.
 
 `buildWeeklyGoals` scores each week; `goalStreak` counts consecutive weeks back from the newest where every goal was met. The newest week is **passed over, not counted against, while it is still filling up** — a Wednesday is not a failed week. The "Goal streak" stat tile and the goals panel at the top of the Consistency section both read from this.
 
@@ -76,10 +78,18 @@ Chart rules that are deliberate, not accidental:
 - All four label the x-axis with `dayTickLabel` from `lib/dayLabel.ts` ("Mon 20", "Sun 02"). That helper is its own module, not part of `lib/health.ts`, because the charts are client components and `lib/health.ts` touches `fs` at module scope. The weight chart used to label by date ("Jul 20") while the others labelled by weekday. The leading zero is kept so every label is the same width.
 - The calories chart hides its all-time-average rule whenever any calorie target applies, because the two sit a few kcal apart and stack into what looks like one line. The average is still a stat tile. With no target the average rule comes back.
 - The calorie target is a **stepped line** (`ComposedChart`, `type="stepAfter"`), not a flat `ReferenceLine`: the target changes mid-block, and one flat rule would silently score early days against a number that wasn't in force yet. It is drawn *after* the bars so it reads on top of them, and in neutral ink rather than the series blue, because the bars are already blue. This is a single-axis chart (kcal against kcal), so it does not break the no-dual-axis rule.
+- The steps chart's floor and goal are **stepped lines** too, for the same reason as the calorie target, and in neutral inks (`MUTED_MARK` for the floor, `TEXT_SECONDARY` for the goal) because the bars are already blue. They lost their right-gutter labels in the process; the section note states both numbers instead.
 - The day table draws a heavier rule on the first row of each new week (`.is-week-start`) instead of banding alternate rows.
 - Each goal is a meter, not a chart: it is one magnitude against a known ceiling. Met state carries a check glyph and words as well as color.
 - `.health-note` uses a 96ch measure with `text-wrap: balance`. The old 60ch measure wrapped one-line notes short of the card edge and left orphans like "to zero." on their own line.
 - The phase banner's "Per week" figure is `weightChangePerWeek`: the change divided by the weighed span in weeks, counted inclusively so the denominator matches the "N days tracked" beside it. Null until a full week has been weighed, since a rate from two days is noise.
+
+### The change log
+The **Changes** section is `buildChangeLog`, derived from `phases`, `calorieTargets` and `targets` — never hand-written, so it cannot drift from the numbers the charts compute against. That is also why those three carry dates. Consequences worth knowing:
+- Every dated entry takes an optional `note`, which becomes the "Why" column. That is the one thing derivation cannot supply — fill it in when changing a target.
+- It reads **oldest first**, unlike every other table on the page, because it is a story rather than a snapshot.
+- `goalWeight` rides on the phase rather than carrying its own date, so it is reported at the phase start. Changing it mid-phase updates that row rather than adding one; dating it would need the same treatment `calorieTargets` got.
+- Markers are deliberately excluded — they are events, not target changes, and `ConsistencyNotes` already lists them.
 
 ## Content rules
 All copy must be external-safe. No internal vendor names (OneTrust, SharePoint), no named regulators or audit firms, no financial specifics. When in doubt, generalize: "company web properties", "brand portfolio", "privacy request data".

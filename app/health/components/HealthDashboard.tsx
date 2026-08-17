@@ -6,14 +6,17 @@ import {
   HealthCalorieTarget,
   HealthNoteMark,
   HealthSummary,
-  HealthTargets,
+  HealthChangeEntry,
+  HealthDatedTargets,
   PhaseSummary,
   WeeklyGoals,
   WeekSummary,
   WeeklyTrendRow,
   WeightPoint,
 } from '@/types/health';
+import { targetsFor } from '@/lib/targets';
 import CaloriesChart from './CaloriesChart';
+import ChangeLog from './ChangeLog';
 import ConsistencyGrid from './ConsistencyGrid';
 import ConsistencyNotes from './ConsistencyNotes';
 import DayTable from './DayTable';
@@ -38,8 +41,9 @@ interface Props {
   markers: HealthMarker[];
   noteMarks: HealthNoteMark[];
   calorieTargets: HealthCalorieTarget[];
-  targets: HealthTargets;
+  targets: HealthDatedTargets[];
   weeklyGoals: WeeklyGoals[];
+  changeLog: HealthChangeEntry[];
   lastUpdated: string;
   weightUnit: string;
 }
@@ -77,6 +81,7 @@ export default function HealthDashboard({
   calorieTargets,
   targets,
   weeklyGoals,
+  changeLog,
   lastUpdated,
   weightUnit,
 }: Props) {
@@ -85,8 +90,11 @@ export default function HealthDashboard({
   }
 
   const hasMultipleWeeks = weeks.length > 1;
-  const stepsMinimum = targets.stepsMinimum ?? null;
-  const stepsGoal = targets.stepsGoal ?? null;
+  // The newest revision is what the notes should quote; the charts resolve the
+  // rest per day themselves.
+  const currentTargets = targetsFor(days[days.length - 1].date, targets);
+  const stepsMinimum = currentTargets?.stepsMinimum ?? null;
+  const stepsGoal = currentTargets?.stepsGoal ?? null;
   // The newest dated target is the one in force; earlier ones are history the
   // chart still draws.
   const sortedTargets = [...calorieTargets].sort((a, b) => a.from.localeCompare(b.from));
@@ -140,12 +148,7 @@ export default function HealthDashboard({
       </Section>
 
       <Section title="Steps" note={stepsNote}>
-        <StepsChart
-          days={days}
-          average={summary.avgSteps}
-          minimum={stepsMinimum}
-          goal={stepsGoal}
-        />
+        <StepsChart days={days} average={summary.avgSteps} targets={targets} />
       </Section>
 
       <Section
@@ -182,6 +185,15 @@ export default function HealthDashboard({
       {phases.length > 1 && (
         <Section title="Phases" note="Every block, and what happened during it.">
           <PhaseTable phases={phases} weightUnit={weightUnit} />
+        </Section>
+      )}
+
+      {changeLog.length > 0 && (
+        <Section
+          title="Changes"
+          note="Every change to a goal or a block, oldest first. Derived from the data, so it always matches the numbers above."
+        >
+          <ChangeLog entries={changeLog} />
         </Section>
       )}
 
