@@ -9,6 +9,7 @@ import {
   HealthChangeEntry,
   HealthDatedTargets,
   PhaseSummary,
+  StepStreaks as Streaks,
   WeeklyGoals,
   WeekSummary,
   WeeklyTrendRow,
@@ -25,6 +26,7 @@ import MacroChart from './MacroChart';
 import PhaseBanner from './PhaseBanner';
 import PhaseTable from './PhaseTable';
 import StatTiles from './StatTiles';
+import StepStreaks from './StepStreaks';
 import StepsChart from './StepsChart';
 import WeeklyConsistencyChart from './WeeklyConsistencyChart';
 import WeekTable from './WeekTable';
@@ -44,6 +46,7 @@ interface Props {
   targets: HealthDatedTargets[];
   weeklyGoals: WeeklyGoals[];
   changeLog: HealthChangeEntry[];
+  stepStreaks: Streaks;
   lastUpdated: string;
   weightUnit: string;
 }
@@ -82,6 +85,7 @@ export default function HealthDashboard({
   targets,
   weeklyGoals,
   changeLog,
+  stepStreaks,
   lastUpdated,
   weightUnit,
 }: Props) {
@@ -149,6 +153,7 @@ export default function HealthDashboard({
 
       <Section title="Steps" note={stepsNote}>
         <StepsChart days={days} average={summary.avgSteps} targets={targets} />
+        <StepStreaks streaks={stepStreaks} />
       </Section>
 
       <Section

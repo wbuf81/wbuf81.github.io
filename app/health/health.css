@@ -583,6 +583,31 @@
   color: #8a8985;
 }
 
+/* ---------- Step streaks ---------- */
+
+/*
+  Sits under the steps chart, above the section's own edge: the chart shows the
+  daily shape, these two say how long each threshold has held.
+*/
+.step-streaks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2.5rem;
+  margin-top: 1.25rem;
+  padding-top: 1.1rem;
+  border-top: 1px solid #f0efec;
+  list-style: none;
+}
+
+.streak-value {
+  font-family: var(--font-playfair);
+  font-size: 1.35rem;
+  line-height: 1.2;
+  margin-top: 0.3rem;
+  color: #1a1a1a;
+  font-variant-numeric: tabular-nums;
+}
+
 /* ---------- Table ---------- */
 
 .table-scroll {

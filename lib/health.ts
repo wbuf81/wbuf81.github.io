@@ -16,6 +16,8 @@ import {
   ParsedImport,
   PhaseSummary,
   PhaseType,
+  StepStreak,
+  StepStreaks,
   HealthMarker,
   WeeklyGoals,
   WeekSummary,
@@ -499,6 +501,54 @@ export function buildWeeklyTrend(
       cardioMinutes: week.cardioMinutes,
     };
   });
+}
+
+/**
+ * Runs of days clearing the step floor and the step goal.
+ *
+ * Each day is judged against the threshold in force **that day**, so raising a
+ * goal does not retroactively break a run earned under the old one — the same
+ * rule the weekly goals and the chart's stepped rules follow.
+ *
+ * A day with no steps recorded is skipped rather than counted as a miss: no
+ * reading is unknown, not a failure. `best` is the longest run so far, which is
+ * often the current one — the UI says so rather than printing it twice.
+ */
+export function buildStepStreaks(
+  days: HealthDay[],
+  revisions?: HealthDatedTargets[]
+): StepStreaks {
+  const sorted = sortDays(days).filter((day) => day.steps !== null);
+
+  const run = (key: 'stepsMinimum' | 'stepsGoal'): StepStreak => {
+    let current = 0;
+    let best = 0;
+
+    for (const day of sorted) {
+      const threshold = targetsFor(day.date, revisions)?.[key] ?? null;
+      if (threshold === null) continue;
+
+      if ((day.steps as number) >= threshold) {
+        current++;
+        best = Math.max(best, current);
+      } else {
+        current = 0;
+      }
+    }
+
+    // The trailing run is the current streak: it survived to the last reading.
+    return { current, best };
+  };
+
+  const latest = sorted[sorted.length - 1];
+  const inForce = latest ? targetsFor(latest.date, revisions) : null;
+
+  return {
+    minimum: inForce?.stepsMinimum ?? null,
+    goal: inForce?.stepsGoal ?? null,
+    aboveMinimum: run('stepsMinimum'),
+    aboveGoal: run('stepsGoal'),
+  };
 }
 
 /* -------------------------------------------------------------------------- */

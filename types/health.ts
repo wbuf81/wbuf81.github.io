@@ -274,6 +274,24 @@ export interface WeeklyTrendRow {
   cardioMinutes: number;
 }
 
+/** A run of days meeting one threshold. */
+export interface StepStreak {
+  /** Days in a row up to the latest reading. */
+  current: number;
+  /** The longest run so far, which may be the current one. */
+  best: number;
+}
+
+/** Step streaks against the floor and the goal, plus the thresholds themselves. */
+export interface StepStreaks {
+  /** The floor in force on the latest day, for labelling. Null when unset. */
+  minimum: number | null;
+  /** The goal in force on the latest day, for labelling. Null when unset. */
+  goal: number | null;
+  aboveMinimum: StepStreak;
+  aboveGoal: StepStreak;
+}
+
 /**
  * One line of the change log: a dated change to a goal or a block.
  *

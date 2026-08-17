@@ -3,6 +3,7 @@ import {
   buildPhases,
   buildWeeklyGoals,
   buildChangeLog,
+  buildStepStreaks,
   buildWeeklyTrend,
   buildWeightSeries,
   currentPhase,
@@ -64,6 +65,7 @@ export default function HealthPage() {
   const markers = [...(data.markers ?? [])].sort((a, b) => a.date.localeCompare(b.date));
   const weeklyGoals = buildWeeklyGoals(data.days, data.targets);
   const changeLog = buildChangeLog(data);
+  const stepStreaks = buildStepStreaks(data.days, data.targets);
 
   return (
     <main className="health-main">
@@ -88,6 +90,7 @@ export default function HealthPage() {
         targets={data.targets ?? []}
         weeklyGoals={weeklyGoals}
         changeLog={changeLog}
+        stepStreaks={stepStreaks}
         lastUpdated={data.lastUpdated}
         weightUnit={data.units.weight}
       />

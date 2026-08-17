@@ -1,4 +1,5 @@
 import {
+  buildStepStreaks,
   groupIntoWeeks,
   summarize,
   buildWeightSeries,
@@ -853,6 +854,74 @@ describe('weekly calories vs target', () => {
   test('is null without targets, or before the first one starts', () => {
     expect(buildWeeklyTrend(WEEK_ONE)[0].calsVsGoal).toBeNull();
     expect(buildWeeklyTrend(WEEK_ONE, [{ from: '2026-09-01', cals: 2300 }])[0].calsVsGoal).toBeNull();
+  });
+});
+
+describe('buildStepStreaks', () => {
+  const FLOOR_AND_GOAL = [{ from: '2026-01-01', stepsMinimum: 10000, stepsGoal: 13500 }];
+
+  function stepDays(counts: (number | null)[]): HealthDay[] {
+    return counts.map((steps, i) =>
+      day({ date: `2026-07-${String(20 + i).padStart(2, '0')}`, day: 'Mon', steps })
+    );
+  }
+
+  test('counts the run of days at or above each threshold, ending at the latest day', () => {
+    const streaks = buildStepStreaks(stepDays([9000, 12000, 14000, 15000]), FLOOR_AND_GOAL);
+
+    // Floor cleared on the last three; goal cleared on the last two.
+    expect(streaks.aboveMinimum.current).toBe(3);
+    expect(streaks.aboveGoal.current).toBe(2);
+  });
+
+  test('a day exactly on the threshold counts as clearing it', () => {
+    const streaks = buildStepStreaks(stepDays([10000, 13500]), FLOOR_AND_GOAL);
+
+    expect(streaks.aboveMinimum.current).toBe(2);
+    expect(streaks.aboveGoal.current).toBe(1);
+  });
+
+  test('a miss ends the current run, but the best run is remembered', () => {
+    const streaks = buildStepStreaks(stepDays([14000, 14000, 14000, 9000, 14000]), FLOOR_AND_GOAL);
+
+    expect(streaks.aboveGoal.current).toBe(1);
+    expect(streaks.aboveGoal.best).toBe(3);
+  });
+
+  test('each day is judged against the threshold in force that day', () => {
+    const raised = [
+      { from: '2026-07-20', stepsGoal: 13500 },
+      { from: '2026-07-22', stepsGoal: 18000 },
+    ];
+    // 14,000 clears the old goal but not the raised one.
+    const streaks = buildStepStreaks(stepDays([14000, 14000, 14000]), raised);
+
+    expect(streaks.aboveGoal.current).toBe(0);
+    expect(streaks.aboveGoal.best).toBe(2);
+  });
+
+  test('a day with no steps recorded is skipped rather than breaking the run', () => {
+    const streaks = buildStepStreaks(stepDays([14000, null, 14000]), FLOOR_AND_GOAL);
+
+    expect(streaks.aboveGoal.current).toBe(2);
+  });
+
+  test('reports the thresholds in force on the latest day, for labelling', () => {
+    const streaks = buildStepStreaks(stepDays([14000]), FLOOR_AND_GOAL);
+
+    expect(streaks.minimum).toBe(10000);
+    expect(streaks.goal).toBe(13500);
+  });
+
+  test('is empty rather than throwing when no thresholds are configured', () => {
+    const streaks = buildStepStreaks(stepDays([14000, 14000]), []);
+
+    expect(streaks).toMatchObject({
+      minimum: null,
+      goal: null,
+      aboveMinimum: { current: 0, best: 0 },
+      aboveGoal: { current: 0, best: 0 },
+    });
   });
 });
 
