@@ -3,7 +3,8 @@
 import {
   HealthDay,
   HealthMarker,
-  HealthObservance,
+  HealthCalorieTarget,
+  HealthNoteMark,
   HealthSummary,
   HealthTargets,
   PhaseSummary,
@@ -35,7 +36,8 @@ interface Props {
   phases: PhaseSummary[];
   activePhase: PhaseSummary | null;
   markers: HealthMarker[];
-  observances: HealthObservance[];
+  noteMarks: HealthNoteMark[];
+  calorieTargets: HealthCalorieTarget[];
   targets: HealthTargets;
   weeklyGoals: WeeklyGoals[];
   lastUpdated: string;
@@ -71,7 +73,8 @@ export default function HealthDashboard({
   phases,
   activePhase,
   markers,
-  observances,
+  noteMarks,
+  calorieTargets,
   targets,
   weeklyGoals,
   lastUpdated,
@@ -84,7 +87,11 @@ export default function HealthDashboard({
   const hasMultipleWeeks = weeks.length > 1;
   const stepsMinimum = targets.stepsMinimum ?? null;
   const stepsGoal = targets.stepsGoal ?? null;
-  const calorieGoal = activePhase?.goalCals ?? null;
+  // The newest dated target is the one in force; earlier ones are history the
+  // chart still draws.
+  const sortedTargets = [...calorieTargets].sort((a, b) => a.from.localeCompare(b.from));
+  const calorieGoal = sortedTargets.length ? sortedTargets[sortedTargets.length - 1].cals : null;
+  const targetChanged = sortedTargets.length > 1;
 
   const stepsNote = [
     'Daily steps.',
@@ -103,7 +110,7 @@ export default function HealthDashboard({
   const caloriesNote = [
     'Daily intake.',
     calorieGoal !== null
-      ? `The dashed rule is the ${calorieGoal.toLocaleString('en-US')} target for this ${activePhase?.label.toLowerCase()}.`
+      ? `The dashed rule is the daily target${targetChanged ? `, stepping to ${calorieGoal.toLocaleString('en-US')} on ${new Date(`${sortedTargets[sortedTargets.length - 1].from}T00:00:00Z`).toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' })}` : ` of ${calorieGoal.toLocaleString('en-US')}`}.`
       : summary.avgCals !== null
         ? `The rule marks the all-time average of ${Math.round(summary.avgCals).toLocaleString('en-US')}.`
         : null,
@@ -150,7 +157,7 @@ export default function HealthDashboard({
         }
       >
         <GoalTracker rows={weeklyGoals} streak={summary.goalStreak} />
-        <ConsistencyGrid weeks={weeks} markers={markers} observances={observances} />
+        <ConsistencyGrid weeks={weeks} markers={markers} noteMarks={noteMarks} />
         {hasMultipleWeeks && <WeeklyConsistencyChart weeks={weeks} />}
         <ConsistencyNotes markers={markers} weeks={weeks} />
       </Section>
@@ -160,7 +167,7 @@ export default function HealthDashboard({
       </Section>
 
       <Section title="Calories" note={caloriesNote}>
-        <CaloriesChart days={days} average={summary.avgCals} goal={calorieGoal} />
+        <CaloriesChart days={days} average={summary.avgCals} calorieTargets={calorieTargets} />
       </Section>
 
       {hasMultipleWeeks && (

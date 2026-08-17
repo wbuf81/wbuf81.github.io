@@ -1,15 +1,15 @@
 'use client';
 
-import { HealthMarker, HealthObservance, WeekSummary } from '@/types/health';
-import { observanceFor } from '@/lib/observance';
+import { HealthMarker, HealthNoteMark, WeekSummary } from '@/types/health';
+import { noteMarksFor } from '@/lib/noteMarks';
 import { SERIES } from './chartTheme';
 
 interface Props {
   weeks: WeekSummary[];
   /** Dated one-off events. Any with an icon shows it in that day's cell. */
   markers?: HealthMarker[];
-  /** Standing weekly events, drawn in every matching weekday's cell. */
-  observances?: HealthObservance[];
+  /** Glyphs drawn when a day's notes mention the configured phrase. */
+  noteMarks?: HealthNoteMark[];
 }
 
 const DAY_ORDER = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
@@ -30,12 +30,13 @@ function addDays(iso: string, days: number): string {
  * rest dash rather than sitting beside it: it explains the same fact more
  * specifically.
  *
- * A weekly observance draws the same way but repeats by weekday. A dated marker
- * on the same day wins, being the more specific fact about that one day, and
- * observances get no per-date note — a standing weekly thing said three times
- * under the chart is noise, so the legend carries it instead.
+ * A note mark draws the same way, but is triggered by the day's own notes — so
+ * a cross means church was written down that day, not that it was a Sunday. A
+ * mark flagged `replaces: 'cardio'` takes the orange dot's place instead of
+ * sitting beside it, for a session that was cardio but not the usual one. Note
+ * marks get no per-date note under the chart; the legend carries them.
  */
-export default function ConsistencyGrid({ weeks, markers = [], observances = [] }: Props) {
+export default function ConsistencyGrid({ weeks, markers = [], noteMarks = [] }: Props) {
   const iconByDate = new Map(
     markers.filter((marker) => marker.icon).map((marker) => [marker.date, marker])
   );
@@ -66,16 +67,23 @@ export default function ConsistencyGrid({ weeks, markers = [], observances = [] 
               }
 
               const marker = iconByDate.get(date);
-              const observance = marker ? null : observanceFor(date, observances);
-              const glyph = marker ?? observance;
+              const matched = noteMarksFor(day.notes, noteMarks);
+              const cardioMark = day.cardio
+                ? (matched.find((mark) => mark.replaces === 'cardio') ?? null)
+                : null;
+              const extraMarks = matched.filter((mark) => mark.replaces !== 'cardio');
+
               const parts = [
                 day.workout.trim() !== '' ? day.workout : null,
-                day.cardio ? `cardio ${day.cardioMinutes ?? 0} min` : null,
+                day.cardio
+                  ? `${cardioMark ? cardioMark.label : 'cardio'} ${day.cardioMinutes ?? 0} min`
+                  : null,
+                ...extraMarks.map((mark) => mark.label),
               ].filter(Boolean);
 
               const summary = parts.length ? parts.join(' + ') : 'rest';
-              const title = glyph
-                ? `${date} — ${summary} (${glyph.label})`
+              const title = marker
+                ? `${date} — ${summary} (${marker.label})`
                 : `${date} — ${summary}`;
 
               return (
@@ -83,15 +91,30 @@ export default function ConsistencyGrid({ weeks, markers = [], observances = [] 
                   {day.workout.trim() !== '' && (
                     <span className="consistency-dot" style={{ background: SERIES.blue }} />
                   )}
-                  {day.cardio && (
-                    <span className="consistency-dot" style={{ background: SERIES.orange }} />
-                  )}
-                  {glyph && (
-                    <span className="consistency-icon" role="img" aria-label={glyph.label}>
-                      {glyph.icon}
+                  {day.cardio &&
+                    (cardioMark ? (
+                      <span className="consistency-icon" role="img" aria-label={cardioMark.label}>
+                        {cardioMark.icon}
+                      </span>
+                    ) : (
+                      <span className="consistency-dot" style={{ background: SERIES.orange }} />
+                    ))}
+                  {extraMarks.map((mark) => (
+                    <span
+                      className="consistency-icon"
+                      role="img"
+                      aria-label={mark.label}
+                      key={mark.label}
+                    >
+                      {mark.icon}
+                    </span>
+                  ))}
+                  {marker && (
+                    <span className="consistency-icon" role="img" aria-label={marker.label}>
+                      {marker.icon}
                     </span>
                   )}
-                  {parts.length === 0 && !glyph && <span className="consistency-rest" />}
+                  {parts.length === 0 && !marker && <span className="consistency-rest" />}
                 </span>
               );
             })}
@@ -109,14 +132,14 @@ export default function ConsistencyGrid({ weeks, markers = [], observances = [] 
         <span className="consistency-key">
           <span className="consistency-rest" aria-hidden="true" /> Rest
         </span>
-        {observances
-          .filter((observance) => observance.icon.trim() !== '')
-          .map((observance) => (
-            <span className="consistency-key" key={`${observance.weekday}-${observance.label}`}>
+        {noteMarks
+          .filter((mark) => mark.icon.trim() !== '')
+          .map((mark) => (
+            <span className="consistency-key" key={mark.label}>
               <span className="consistency-icon" aria-hidden="true">
-                {observance.icon}
+                {mark.icon}
               </span>{' '}
-              {observance.label}
+              {mark.label}
             </span>
           ))}
       </p>

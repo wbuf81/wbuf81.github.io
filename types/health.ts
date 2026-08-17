@@ -36,9 +36,18 @@ export interface HealthPhase {
   label?: string;
   /** Optional target weight for this phase. */
   goalWeight?: number | null;
-  /** Optional daily calorie target for this phase. Drawn on the calories chart. */
-  goalCals?: number | null;
   note?: string;
+}
+
+/**
+ * A daily calorie target and the date it took effect, running until the next
+ * one starts. Dated rather than phase-scoped because the number changes inside
+ * a block as well as between blocks.
+ */
+export interface HealthCalorieTarget {
+  /** ISO date this target took effect. */
+  from: string;
+  cals: number;
 }
 
 /** A single dated event worth marking on the timeline. */
@@ -51,22 +60,28 @@ export interface HealthMarker {
 }
 
 /**
- * Something that happens the same weekday every week — drawn in that day's
- * consistency-grid cell. Unlike a marker, it is configured once rather than
- * recorded per date.
+ * A glyph drawn in a day's consistency-grid cell when the day's notes mention
+ * something. Configured once; the sheet's Notes column decides which days get
+ * it, so it reflects what actually happened rather than a calendar rule.
  */
-export interface HealthObservance {
-  /** 0 = Sunday, matching JavaScript's getUTCDay. */
-  weekday: number;
+export interface HealthNoteMark {
+  /** Case-insensitive phrase looked for in the day's notes. */
+  match: string;
   /** A single emoji. An empty string means nothing is drawn. */
   icon: string;
   /** Short name, used for the legend and the cell's accessible label. */
   label: string;
+  /**
+   * 'cardio' draws this icon in place of the orange cardio dot, for a session
+   * that was cardio but not the usual one. Omit to draw it alongside whatever
+   * else the day has.
+   */
+  replaces?: 'cardio' | null;
 }
 
 /**
  * Standing daily targets, independent of any phase. Phase-scoped targets live on
- * the phase itself — see `goalWeight` and `goalCals`.
+ * the phase itself — see `goalWeight`. Calorie targets are dated separately.
  */
 export interface HealthTargets {
   /** The floor to clear every day. */
@@ -116,7 +131,8 @@ export interface HealthData {
   phases?: HealthPhase[];
   markers?: HealthMarker[];
   targets?: HealthTargets;
-  observances?: HealthObservance[];
+  noteMarks?: HealthNoteMark[];
+  calorieTargets?: HealthCalorieTarget[];
 }
 
 /** A phase with its date range resolved and its outcome measured. */
@@ -159,8 +175,6 @@ export interface PhaseSummary {
   projectedGoalDate: string | null;
   /** Short display form of `projectedGoalDate`, e.g. "Oct 17". */
   projectedGoalLabel: string | null;
-  /** Daily calorie target for this phase, or null when none is set. */
-  goalCals: number | null;
   avgCals: number | null;
   avgProtein: number | null;
   avgSteps: number | null;

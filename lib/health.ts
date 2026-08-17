@@ -1,8 +1,10 @@
 import fs from 'fs';
 import path from 'path';
 import { dayTickLabel } from './dayLabel.ts';
+import { calorieTargetFor } from './calorieTarget.ts';
 import {
   GoalLine,
+  HealthCalorieTarget,
   HealthData,
   HealthDay,
   HealthPhase,
@@ -415,7 +417,6 @@ export function buildPhases(days: HealthDay[], phases?: HealthPhase[]): PhaseSum
       goalPercent,
       projectedGoalDate,
       projectedGoalLabel: projectedGoalDate === null ? null : shortLabel(projectedGoalDate),
-      goalCals: phase.goalCals ?? null,
       avgCals: mean(inRange.map((d) => d.cals)),
       avgProtein: mean(inRange.map((d) => d.protein)),
       avgSteps: mean(inRange.map((d) => d.steps)),
@@ -441,9 +442,11 @@ export function currentPhase(phases: PhaseSummary[]): PhaseSummary | null {
  * week has a legitimately different average, and reading it as a real swing
  * would be wrong.
  */
-export function buildWeeklyTrend(days: HealthDay[], phases?: HealthPhase[]): WeeklyTrendRow[] {
+export function buildWeeklyTrend(
+  days: HealthDay[],
+  calorieTargets?: HealthCalorieTarget[]
+): WeeklyTrendRow[] {
   const weeks = groupIntoWeeks(days);
-  const ranges = resolvePhaseRanges(phases);
 
   return weeks.map((week, index) => {
     const previous = index > 0 ? weeks[index - 1] : null;
@@ -453,13 +456,15 @@ export function buildWeeklyTrend(days: HealthDay[], phases?: HealthPhase[]): Wee
         ? week.avgWeight - previous.avgWeight
         : null;
 
-    // A week straddling a phase boundary belongs to the phase it ended in —
-    // scored against where the week landed, not where it began.
-    const lastDay = week.days[week.days.length - 1].date;
-    const covering = ranges.find(
-      ({ phase, end }) => phase.start <= lastDay && (end === null || lastDay <= end)
-    );
-    const goalCals = covering?.phase.goalCals ?? null;
+    // The target can change mid-week, so the week is scored against the mean of
+    // the target each recorded day actually lived under rather than a single
+    // number picked from one end of the week.
+    const dayTargets = week.days
+      .filter((day) => day.cals !== null)
+      .map((day) => calorieTargetFor(day.date, calorieTargets));
+    const goalCals = dayTargets.every((target) => target !== null)
+      ? mean(dayTargets)
+      : null;
 
     return {
       weekStart: week.weekStart,

@@ -765,32 +765,45 @@ describe('estimated maintenance', () => {
   });
 });
 
-describe('weekly calories vs goal', () => {
+describe('weekly calories vs target', () => {
   // Week one averages 2,333.71 kcal/day.
   const WEEK_ONE_AVG = 16336 / 7;
 
-  test('reports each week against the goal of the phase it falls in', () => {
-    const [row] = buildWeeklyTrend(WEEK_ONE, [
-      { start: '2026-07-20', type: 'cut', goalCals: 2300 },
-    ]);
+  test('reports the week against the target in effect', () => {
+    const [row] = buildWeeklyTrend(WEEK_ONE, [{ from: '2026-07-20', cals: 2300 }]);
 
     expect(row.calsVsGoal).toBeCloseTo(WEEK_ONE_AVG - 2300, 4);
   });
 
-  test('uses the phase covering the last recorded day of the week', () => {
+  test('a target that changes mid-week is scored per day, not by the week', () => {
+    // 2,300 for Mon-Wed, then 2,400 from Thu: the week is measured against the
+    // blended target it actually lived under.
     const [row] = buildWeeklyTrend(WEEK_ONE, [
-      { start: '2026-07-20', type: 'cut', goalCals: 2300 },
-      { start: '2026-07-24', type: 'bulk', goalCals: 3000 },
+      { from: '2026-07-20', cals: 2300 },
+      { from: '2026-07-23', cals: 2400 },
     ]);
 
-    expect(row.calsVsGoal).toBeCloseTo(WEEK_ONE_AVG - 3000, 4);
+    const blended = (2300 * 3 + 2400 * 4) / 7;
+    expect(row.calsVsGoal).toBeCloseTo(WEEK_ONE_AVG - blended, 4);
   });
 
-  test('is null without phases or without a calorie goal', () => {
+  test('only days with a recorded intake count toward the blend', () => {
+    const days = [
+      day({ date: '2026-07-20', day: 'Mon', cals: 2400 }),
+      day({ date: '2026-07-21', day: 'Tue', cals: null }),
+    ];
+
+    const [row] = buildWeeklyTrend(days, [
+      { from: '2026-07-20', cals: 2300 },
+      { from: '2026-07-21', cals: 9000 },
+    ]);
+
+    expect(row.calsVsGoal).toBeCloseTo(100, 4);
+  });
+
+  test('is null without targets, or before the first one starts', () => {
     expect(buildWeeklyTrend(WEEK_ONE)[0].calsVsGoal).toBeNull();
-    expect(
-      buildWeeklyTrend(WEEK_ONE, [{ start: '2026-07-20', type: 'cut' }])[0].calsVsGoal
-    ).toBeNull();
+    expect(buildWeeklyTrend(WEEK_ONE, [{ from: '2026-09-01', cals: 2300 }])[0].calsVsGoal).toBeNull();
   });
 });
 

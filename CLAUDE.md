@@ -27,11 +27,11 @@ Derivation logic is in `lib/health.ts` (pure functions, unit-tested in `__tests_
 **`lib/health.ts` and everything it imports must stay loadable by plain Node** — the import script loads it outside the bundler. Type imports from `@/` aliases must be `import type` (Node's type stripping keeps value-form imports and can't resolve the alias); relative imports of other `lib/` modules must be extension-explicit (`./dayLabel.ts`). The dayLabel split broke the importer this way for six days in Aug 2026. After touching `lib/health.ts`'s import graph, smoke-test with `npm run health:add -- --dry-run < /dev/null` (an empty import is fine; "Could not load lib/health.ts" is the failure).
 
 ### Phases, markers and targets
-`data/health.json` also holds `phases` (blocks like a cut), `markers` (dated one-off events) and `targets` (standing daily numbers). These are hand-edited — the import script only touches `days`.
+`data/health.json` also holds `phases` (blocks like a cut), `markers` (dated one-off events), `targets` (standing daily numbers), `noteMarks` (glyphs keyed off a day's Notes text) and `calorieTargets` (dated daily calorie goals). These are hand-edited — the import script only touches `days`.
 
 ```json
 "phases": [
-  { "start": "2026-07-20", "type": "cut", "label": "Cut", "goalWeight": null, "goalCals": 2350, "note": "" }
+  { "start": "2026-07-20", "type": "cut", "label": "Cut", "goalWeight": 190, "note": "" }
 ],
 "markers": [
   { "date": "2026-08-03", "label": "Deload", "icon": "⚡", "note": "" }
@@ -40,8 +40,13 @@ Derivation logic is in `lib/health.ts` (pure functions, unit-tested in `__tests_
   "stepsMinimum": 10000, "stepsGoal": 13500,
   "weighInsPerWeek": 7, "liftsPerWeek": 5, "cardioPerWeek": 3
 },
-"observances": [
-  { "weekday": 0, "icon": "✝️", "label": "Church" }
+"noteMarks": [
+  { "match": "church", "icon": "✝️", "label": "Church" },
+  { "match": "orange theory", "icon": "🍊", "label": "Orange Theory", "replaces": "cardio" }
+],
+"calorieTargets": [
+  { "from": "2026-07-20", "cals": 2350 },
+  { "from": "2026-08-10", "cals": 2450 }
 ]
 ```
 - `type` is `cut` | `bulk` | `maintain`. `label` defaults to the type.
@@ -49,8 +54,8 @@ Derivation logic is in `lib/health.ts` (pure functions, unit-tested in `__tests_
 - `goalWeight` is optional. When set, the banner shows distance and percent complete — signed so the same arithmetic serves a cut and a bulk. `goalRemaining` is a magnitude, always positive.
 - To start a new block, append a phase with the new `start`; that automatically closes the previous one. Don't set `end` on the old phase as well.
 - The weight chart's y-axis stretches to include the **ongoing** phase's `goalWeight`, so the goal line is always in view during a block — Wes chose to trade some daily-wiggle resolution for seeing the distance left to cover (Aug 2026, reversing the earlier zoomed-to-data-only rule). Goals from already-closed phases are still only drawn when they happen to fall in range. Day-to-day resolution lives in the 7-day trend line and the weekly table instead.
-- `goalCals` is the phase's daily calorie target, drawn as a dashed rule on the calories chart. It is phase-scoped because it changes when the block changes — a bulk gets its own number. Steps targets live in `targets` instead, because they are standing habits rather than properties of a block.
-- `observances` are standing **weekly** events, matched by `weekday` (0 = Sunday, JS `getUTCDay`) rather than by date, so they don't need re-adding every week. They draw in the grid cell like a marker icon and get a legend key, but deliberately **no per-date note** — a weekly fact repeated under every chart is noise. A dated marker on the same day wins, being more specific about that one day. Logic is `lib/observance.ts` (its own client-safe module, same reason as `lib/dayLabel.ts`), tested in `__tests__/observance.test.ts`. To skip one week, the honest options are a dated marker that overrides it or removing the observance — there is no per-date opt-out.
+- `calorieTargets` is the daily calorie target, **dated rather than phase-scoped**: each entry takes effect on its `from` date and runs until the next. The Aug 2026 cut moved 2,350 → 2,450 on Aug 10 without the block changing, which is why attaching it to the phase was wrong. To change the target, append an entry — never edit an old one, or history gets rescored against a number that wasn't in force. Resolver is `lib/calorieTarget.ts` (client-safe module, same reason as `lib/dayLabel.ts`), tested in `__tests__/calorieTarget.test.ts`. Steps targets live in `targets` because they are standing habits.
+- `noteMarks` draw a glyph in a consistency-grid cell when the day's **Notes** mention the configured phrase (case-insensitive substring). Driven by the sheet's own text so a cross means "church was written down that day", not "it was a Sunday" — an earlier weekday-based version marked every Sunday whether he went or not. `replaces: "cardio"` swaps the orange cardio dot for the icon (Orange Theory instead of the usual treadmill session); without it the glyph draws alongside. They get a legend key but deliberately **no per-date note** — a recurring fact repeated under every chart is noise. Logic is `lib/noteMarks.ts`, tested in `__tests__/noteMarks.test.ts`.
 - A marker's `icon` (a single emoji) is drawn in that day's consistency-grid cell **in place of the rest dash**. The matching note lives in `ConsistencyNotes`, rendered **below** the consistency charts so the marks come first; it only lists markers inside the charted date range. Markers are deliberately **not** drawn on the weight chart — that flag was removed on request.
 
 ### Goals and streak
@@ -69,7 +74,8 @@ Chart rules that are deliberate, not accidental:
 - Reference-line labels sit in a right-hand gutter (`margin.right: 64`, `position: 'right'`). Inside the plot they landed on top of the bars.
 - **The four daily charts share their geometry.** Weight, steps, macros and calories all use `DAILY_MARGIN` and `DAILY_Y_WIDTH` from `chartTheme.ts`, so a given day sits at the same x in every one and the day labels line up down the page. They were four different combinations of margin and axis width, which is why the columns did not agree. Don't set a per-chart margin or `YAxis width` on any of them; change the shared token instead. The weight chart also takes `DAILY_X_BAND` because a line chart otherwise anchors its end points on the plot edge instead of insetting them half a band like a bar.
 - All four label the x-axis with `dayTickLabel` from `lib/dayLabel.ts` ("Mon 20", "Sun 02"). That helper is its own module, not part of `lib/health.ts`, because the charts are client components and `lib/health.ts` touches `fs` at module scope. The weight chart used to label by date ("Jul 20") while the others labelled by weekday. The leading zero is kept so every label is the same width.
-- The calories chart hides its all-time-average rule whenever `goalCals` is set, because the two sit a few kcal apart and stack into what looks like one line. The average is still a stat tile. Without a goal the average rule comes back.
+- The calories chart hides its all-time-average rule whenever any calorie target applies, because the two sit a few kcal apart and stack into what looks like one line. The average is still a stat tile. With no target the average rule comes back.
+- The calorie target is a **stepped line** (`ComposedChart`, `type="stepAfter"`), not a flat `ReferenceLine`: the target changes mid-block, and one flat rule would silently score early days against a number that wasn't in force yet. It is drawn *after* the bars so it reads on top of them, and in neutral ink rather than the series blue, because the bars are already blue. This is a single-axis chart (kcal against kcal), so it does not break the no-dual-axis rule.
 - The day table draws a heavier rule on the first row of each new week (`.is-week-start`) instead of banding alternate rows.
 - Each goal is a meter, not a chart: it is one magnitude against a known ceiling. Met state carries a check glyph and words as well as color.
 - `.health-note` uses a 96ch measure with `text-wrap: balance`. The old 60ch measure wrapped one-line notes short of the card edge and left orphans like "to zero." on their own line.

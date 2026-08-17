@@ -9,8 +9,7 @@
       "type": "cut",
       "label": "Cut",
       "goalWeight": 190,
-      "note": "",
-      "goalCals": 2350
+      "note": ""
     }
   ],
   "markers": [
@@ -28,11 +27,27 @@
     "liftsPerWeek": 5,
     "cardioPerWeek": 3
   },
-  "observances": [
+  "noteMarks": [
     {
-      "weekday": 0,
+      "match": "church",
       "icon": "✝️",
       "label": "Church"
+    },
+    {
+      "match": "orange theory",
+      "icon": "🍊",
+      "label": "Orange Theory",
+      "replaces": "cardio"
+    }
+  ],
+  "calorieTargets": [
+    {
+      "from": "2026-07-20",
+      "cals": 2350
+    },
+    {
+      "from": "2026-08-10",
+      "cals": 2450
     }
   ],
   "days": [
@@ -328,7 +343,7 @@
       "workout": "",
       "cardio": false,
       "cardioMinutes": null,
-      "notes": ""
+      "notes": "Church"
     },
     {
       "date": "2026-08-10",

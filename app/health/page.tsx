@@ -58,7 +58,7 @@ export default function HealthPage() {
   const weeks = groupIntoWeeks(data.days);
   const summary = summarize(data.days, data.targets);
   const weightSeries = buildWeightSeries(data.days);
-  const weeklyTrend = buildWeeklyTrend(data.days, data.phases);
+  const weeklyTrend = buildWeeklyTrend(data.days, data.calorieTargets);
   const phases = buildPhases(data.days, data.phases);
   const markers = [...(data.markers ?? [])].sort((a, b) => a.date.localeCompare(b.date));
   const weeklyGoals = buildWeeklyGoals(data.days, data.targets);
@@ -81,7 +81,8 @@ export default function HealthPage() {
         phases={phases}
         activePhase={currentPhase(phases)}
         markers={markers}
-        observances={data.observances ?? []}
+        noteMarks={data.noteMarks ?? []}
+        calorieTargets={data.calorieTargets ?? []}
         targets={data.targets ?? {}}
         weeklyGoals={weeklyGoals}
         lastUpdated={data.lastUpdated}
