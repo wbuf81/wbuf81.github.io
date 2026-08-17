@@ -674,6 +674,15 @@
   vertical-align: 1px;
 }
 
+/*
+  The change log's Why column follows a right-aligned number, so without this the
+  reason butts straight up against the value it explains.
+*/
+.health-table.is-changes .is-notes,
+.health-table.is-changes thead th:last-child {
+  padding-left: 1rem;
+}
+
 .health-table .is-notes {
   color: #52514e;
   white-space: normal;

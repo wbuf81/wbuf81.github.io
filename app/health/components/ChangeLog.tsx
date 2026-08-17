@@ -15,13 +15,14 @@ interface Props {
 export default function ChangeLog({ entries }: Props) {
   return (
     <div className="table-scroll">
-      <table className="health-table" aria-label="Changes to goals and blocks, oldest first">
+      <table className="health-table is-changes" aria-label="Changes to goals and blocks, oldest first">
         <thead>
           <tr>
             <th scope="col">Date</th>
             <th scope="col">Change</th>
-            <th scope="col">From</th>
-            <th scope="col">To</th>
+            {/* is-num on the header too, or the label sits left of its own column. */}
+            <th scope="col" className="is-num">From</th>
+            <th scope="col" className="is-num">To</th>
             <th scope="col">Why</th>
           </tr>
         </thead>
