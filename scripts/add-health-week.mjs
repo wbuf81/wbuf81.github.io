@@ -6,6 +6,11 @@
  *   pbpaste | node scripts/add-health-week.mjs
  *   node scripts/add-health-week.mjs --year 2026 < week.tsv
  *   node scripts/add-health-week.mjs --dry-run < week.tsv
+ *   node scripts/add-health-week.mjs --no-cards < week.tsv
+ *
+ * A successful import also draws the week's share cards into .weekly/. That step
+ * can fail (it needs Chrome) without the import being in doubt, so it only ever
+ * warns — see buildCards.
  *
  * Input is tab-separated rows copied straight from the sheet, columns Date
  * through Notes. A pasted header row is ignored.
@@ -19,6 +24,7 @@
 
 import fs from 'fs';
 import path from 'path';
+import { spawnSync } from 'child_process';
 import { fileURLToPath } from 'url';
 import { createRequire } from 'module';
 
@@ -44,12 +50,46 @@ function loadParser() {
 }
 
 function parseArgs(argv) {
-  const args = { year: null, dryRun: false };
+  const args = { year: null, dryRun: false, cards: true };
   for (let i = 0; i < argv.length; i++) {
     if (argv[i] === '--year') args.year = Number(argv[++i]);
     else if (argv[i] === '--dry-run') args.dryRun = true;
+    else if (argv[i] === '--no-cards') args.cards = false;
   }
   return args;
+}
+
+/** Exit code build-weekly.py uses for "no complete week yet". */
+const NOTHING_TO_DRAW = 3;
+
+/**
+ * Draw the share cards for the week just imported.
+ *
+ * The data is already on disk by the time this runs, so a card problem is
+ * reported and shrugged off rather than failing the import — Chrome or Pillow
+ * missing on this machine says nothing about whether the week imported. Cards
+ * are regenerable any time with `npm run weekly:cards`.
+ */
+function buildCards() {
+  console.log('Drawing the share cards…\n');
+
+  const result = spawnSync('python3', [path.join(repoRoot, 'scripts/og/build-weekly.py')], {
+    cwd: repoRoot,
+    stdio: 'inherit',
+  });
+
+  if (result.status === 0) return;
+
+  if (result.status === NOTHING_TO_DRAW) {
+    console.log('\nNo cards: that week is not finished yet. Run `npm run weekly:cards` once it is.\n');
+    return;
+  }
+
+  console.warn(
+    '\n! The week imported fine, but the cards did not draw' +
+      (result.error ? ` (${result.error.message})` : '') +
+      '.\n  Retry with `npm run weekly:cards`. Needs python3, Chrome and Pillow.\n'
+  );
 }
 
 async function readStdin() {
@@ -133,6 +173,8 @@ function main() {
 
     fs.writeFileSync(dataPath, `${JSON.stringify(updated, null, 2)}\n`);
     console.log(`\nWrote ${merged.length} total day(s) to data/health.json\n`);
+
+    if (args.cards) buildCards();
   });
 }
 

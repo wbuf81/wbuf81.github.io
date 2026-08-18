@@ -15,6 +15,8 @@ To add a week: Wes pastes the sheet rows (tab-separated, columns Date→Notes). 
 pbpaste | npm run health:add          # or: node scripts/add-health-week.mjs < week.tsv
 node scripts/add-health-week.mjs --dry-run < week.tsv   # preview first
 ```
+A successful import also draws the week's **share cards** into `.weekly/` — see "Weekly share cards" below. Pass `--no-cards` to skip.
+
 Optionally refresh the local copy of the link-preview card (the deploy redraws it either way):
 ```
 python3 scripts/og/build-og.py health
@@ -110,6 +112,28 @@ python3 scripts/og/build-og.py health    # after importing a week
 - The health card is redrawn automatically on every deploy — see the "Redraw the /health link preview" step in `.github/workflows/deploy.yml`. Importing a week is a push, so the live card is never stale. Run the generator locally too if you want the committed PNG to match, but the deploy does not depend on it.
 - If that CI step ever fails the whole deploy fails, which is deliberate: a silently stale card showing last month's weight is worse than a visible red build.
 - Cards use the site's own Playfair Display and Outfit, committed as `scripts/og/*.woff2` so a render never silently falls back to a system face.
+
+## Weekly share cards
+Three 1080x1350 PNGs for posting to X, drawn by `scripts/og/build-weekly.py` from the newest **complete** week:
+
+```
+npm run weekly:cards            # all three
+npm run weekly:cards -- fuel    # just one
+npm run weekly:stats            # the numbers they use, as JSON
+```
+
+- `status` — the cut overall: a ladder of blocks, one per pound between the start weight and the goal, plus rate, projection and the weigh-in trend.
+- `activity` — the week's training: a row per day with a steps bar, the 13.5k goal rule, and chips for lift / cardio / Orange Theory / church.
+- `fuel` — calories and macros: bar length is the day's logged calories, the segments are that day's macro split. Those two are measured separately (grams x 4/4/9 rarely lands on a logged total), which is why the footer says which is which — don't relabel it as though the segments sum to the bar.
+
+Rules that are deliberate:
+- **No name, handle or URL on any card.** `/health` is unlinked and `noindex`; printing its address on a public post would advertise it to exactly the audience it is kept from. Don't add attribution back.
+- Output goes to `.weekly/` (gitignored). These are posts, not site assets — nothing here is served or deployed.
+- Numbers come from `scripts/weekly-stats.mjs`, which reads `lib/health.ts`. Never recompute a figure inside the card script; a card that disagrees with the page is worse than no card.
+- Only a **complete** week is drawn. With no finished week the chain exits **3**, which callers treat as a skip, not a failure.
+- Card generation runs at the end of `npm run health:add` and can only ever **warn**: the data is already written by then, and a missing Chrome says nothing about whether the week imported.
+- The palette is validated against the ink surface, not eyeballed — `#4a95e8` / `#e06a30` / `#2f9e6e` pass the lightness-band, chroma, colour-blind separation and contrast checks. Re-run a validator before changing any of them.
+- Type is Outfit only, heavy and tightly tracked. The serif belongs to the site's own cards; these have to read as a scoreboard at thumbnail size.
 
 ## Favicons
 `app/icon.svg` (the W, from the site icons and his shirt) and `app/health/icon.svg` (a falling trend line, so the tracker tab is not mistaken for the main site). Both are an ink `#14130f` rounded square. `public/icon-192.svg` and `icon-512.svg` are the PWA sizes of the W and are referenced from `manifest.json`. The old indigo gradient (`#6366f1` → `#8b5cf6`) is gone — it no longer matched anything on the site.
