@@ -211,22 +211,35 @@ def status_card(d):
         for label, value, sub in facts
     )
 
+    # The numbers above are the whole cut; these are the week just finished, so
+    # they carry their own heading rather than sitting in the same list.
+    averages = [
+        ('Weight', f"{n(week['avgWeight'], 1)} lb", delta(week['weightChange']) + ' on the week'),
+        ('Calories', n(week['avgCals']), f"{delta(week['calsVsGoal'], 0)} vs target"),
+        ('Protein', f"{n(week['avgProtein'])} g", 'a day'),
+        ('Steps', n(week['avgSteps']), 'a day'),
+    ]
+    averages_html = ''.join(
+        f'<li><p class="micro">{label}</p><p class="av">{value}</p><p class="as">{sub}</p></li>'
+        for label, value, sub in averages
+    )
+
     return f"""
 <style>
 {base_css()}
-.hero {{ margin-top: 42px; }}
+.hero {{ margin-top: 34px; }}
 .hero .big {{
-  font-size: 196px; font-weight: 800; line-height: 0.82; letter-spacing: -0.055em;
+  font-size: 172px; font-weight: 800; line-height: 0.82; letter-spacing: -0.055em;
 }}
 .hero .big span {{ font-size: 64px; font-weight: 600; color: {MUTED}; letter-spacing: -0.01em; }}
 .hero .arc {{
   margin-top: 22px; font-size: 29px; font-weight: 500; color: {MUTED};
 }}
 .hero .arc b {{ color: {PAPER}; font-weight: 700; }}
-.body {{ display: flex; gap: 46px; margin-top: 46px; flex: 1; }}
+.body {{ display: flex; gap: 46px; margin-top: 38px; flex: 1; }}
 .ladder {{ width: 150px; flex: none; }}
 .ladder ul {{ list-style: none; display: grid; gap: 5px; }}
-.ladder li {{ height: 26px; border-radius: 3px; }}
+.ladder li {{ height: 21px; border-radius: 3px; }}
 .cap {{
   display: flex; justify-content: space-between; align-items: baseline;
   font-size: 16px; font-weight: 700; letter-spacing: 0.12em;
@@ -241,17 +254,27 @@ def status_card(d):
 .count .of {{ font-size: 26px; font-weight: 600; color: {MUTED}; }}
 .count-note {{ font-size: 19px; color: {DIM}; margin-top: 10px; line-height: 1.5; }}
 .count-note b {{ color: {BLUE}; font-weight: 700; }}
-.trend {{ margin-top: 40px; }}
+.trend {{ margin-top: 30px; }}
 .trend svg {{ margin-top: 14px; display: block; }}
 .facts {{
   list-style: none; margin-top: auto;
-  display: grid; grid-template-columns: 1fr 1fr; gap: 40px 30px;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 30px 30px;
 }}
 .fv {{
-  font-size: 50px; font-weight: 800; line-height: 1; margin-top: 6px;
+  font-size: 46px; font-weight: 800; line-height: 1; margin-top: 5px;
   letter-spacing: -0.035em;
 }}
-.fs {{ font-size: 17px; color: {DIM}; margin-top: 6px; }}
+.fs {{ font-size: 16px; color: {DIM}; margin-top: 5px; }}
+.week-strip {{ margin-top: 34px; padding-top: 20px; border-top: 2px solid {PAPER}; }}
+.strip-head {{
+  font-size: 15px; font-weight: 700; letter-spacing: 0.18em;
+  text-transform: uppercase; color: {MUTED};
+}}
+.week-strip ul {{ list-style: none; display: flex; margin-top: 16px; }}
+.week-strip li {{ flex: 1; }}
+.av {{ font-size: 38px; font-weight: 800; line-height: 1; letter-spacing: -0.03em; }}
+.as {{ font-size: 15px; color: {DIM}; margin-top: 5px; }}
+.week-strip .micro {{ font-size: 13px; }}
 </style>
 <div class="card">
   <div class="head">
@@ -284,11 +307,16 @@ def status_card(d):
 
       <div class="trend">
         <p class="micro">Every weigh-in since {phase['startLabel']}</p>
-        {trend_svg(d['series'], 452, 132)}
+        {trend_svg(d['series'], 452, 104)}
       </div>
 
       <ul class="facts">{facts_html}</ul>
     </div>
+  </div>
+
+  <div class="week-strip">
+    <p class="strip-head">Week {week['number']} averages · {week['rangeLabel']}</p>
+    <ul>{averages_html}</ul>
   </div>
 
   <div class="foot">
@@ -315,9 +343,10 @@ def activity_card(d):
     saying anything.
     """
     week = d['week']
+    days = week['days']
     goal_steps = d['streaks']['goal']
-    peak = max(day['steps'] or 0 for day in week['days'])
-    total_steps = sum(day['steps'] or 0 for day in week['days'])
+    peak = max(day['steps'] or 0 for day in days)
+    total_steps = sum(day['steps'] or 0 for day in days)
 
     rows = ''
     for day in week['days']:
@@ -345,11 +374,15 @@ def activity_card(d):
 </li>
 """
 
+    # Lift and cardio counts moved up to the header, so the strip carries what
+    # the header does not rather than repeating it.
+    active_days = sum(1 for day in days if day['lifted'] or day['cardio'])
+    rest_days = len(days) - active_days
     totals = [
-        ('Lifts', str(week['lifts'])),
-        ('Cardio', str(week['cardioSessions'])),
         ('Cardio min', n(week['cardioMinutes'])),
         ('Steps', n(total_steps)),
+        ('Steps a day', n(week['avgSteps'])),
+        ('Over goal', f"{sum(1 for day in days if goal_steps and (day['steps'] or 0) >= goal_steps)} days"),
     ]
     totals_html = ''.join(
         f'<li><p class="micro">{label}</p><p class="tv">{value}</p></li>'
@@ -371,13 +404,20 @@ def activity_card(d):
     return f"""
 <style>
 {base_css()}
-.sub {{ margin-top: 28px; display: flex; align-items: baseline; gap: 20px; }}
-.sub .cal {{ font-size: 84px; font-weight: 800; line-height: 0.9; letter-spacing: -0.045em; }}
-.sub .cal span {{ font-size: 29px; font-weight: 600; color: {MUTED}; letter-spacing: -0.01em; }}
-.sub .vs {{ font-size: 20px; color: {MUTED}; line-height: 1.35; }}
-.sub .vs b {{ display: block; color: {PAPER}; font-weight: 700; font-size: 24px; }}
+.sub {{ margin-top: 30px; display: flex; align-items: flex-end; gap: 44px; }}
+.pair {{ display: flex; align-items: baseline; gap: 12px; }}
+.pv {{ font-size: 104px; font-weight: 800; line-height: 0.86; letter-spacing: -0.05em; }}
+.pl {{
+  font-size: 20px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+  line-height: 1.2; color: {MUTED};
+}}
+.pnote {{
+  margin-left: auto; text-align: right; font-size: 21px; font-weight: 600;
+  line-height: 1.35;
+}}
+.pnote em {{ font-style: normal; color: {MUTED}; font-weight: 500; font-size: 18px; }}
 .days {{
-  list-style: none; margin-top: 40px; position: relative; flex: 1;
+  list-style: none; margin-top: 38px; position: relative; flex: 1;
   display: flex; flex-direction: column; justify-content: space-between;
 }}
 .days li {{
@@ -421,8 +461,15 @@ def activity_card(d):
   </div>
 
   <div class="sub">
-    <p class="cal">{n(week['avgCals'])}<span> kcal/day</span></p>
-    <p class="vs"><b>{delta(week['calsVsGoal'], 0)}</b> against target</p>
+    <div class="pair">
+      <p class="pv">{week['lifts']}</p>
+      <p class="pl">lift<br />days</p>
+    </div>
+    <div class="pair">
+      <p class="pv">{week['cardioSessions']}</p>
+      <p class="pl">cardio<br />days</p>
+    </div>
+    <p class="pnote">{active_days} of 7 days trained<br /><em>{rest_days} rest</em></p>
   </div>
 
   <ul class="days">
