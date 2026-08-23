@@ -22,3 +22,18 @@ export function noteMarksFor(notes: string, marks?: HealthNoteMark[]): HealthNot
     return needle !== '' && mark.icon.trim() !== '' && haystack.includes(needle);
   });
 }
+
+/**
+ * A day's two note columns as one line: "30 mins 12.5 / 3.0 · Church".
+ *
+ * The sheet keeps the cardio session and everything else apart, which is the
+ * right shape to store — but both the day table and the mark matching want the
+ * whole of what was written that day, so they join it here rather than each
+ * picking a separator of its own.
+ */
+export function noteTextFor(day: { cardioNote?: string; notes?: string }): string {
+  return [day.cardioNote, day.notes]
+    .map((part) => (part ?? '').trim())
+    .filter((part) => part !== '')
+    .join(' · ');
+}

@@ -19,8 +19,11 @@ const repoRoot = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 require('ts-node/register');
 
 let health;
+let noteTextFor;
 try {
   health = require(path.join(repoRoot, 'lib/health.ts'));
+  // Joined by the same helper the page uses, so a card can't split the notes differently.
+  ({ noteTextFor } = require(path.join(repoRoot, 'lib/noteMarks.ts')));
 } catch (error) {
   console.error(
     'Could not load lib/health.ts. Run this through the npm script:\n' +
@@ -149,7 +152,7 @@ console.log(
           fat: day.fat,
           lifted: day.workout.trim() !== '',
           cardio: day.cardio,
-          marks: marksFor(day.notes),
+          marks: marksFor(noteTextFor(day)),
         })),
       },
       phase: phase && {

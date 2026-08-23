@@ -1,7 +1,7 @@
 'use client';
 
 import { HealthMarker, HealthNoteMark, WeekSummary } from '@/types/health';
-import { noteMarksFor } from '@/lib/noteMarks';
+import { noteMarksFor, noteTextFor } from '@/lib/noteMarks';
 import { SERIES } from './chartTheme';
 
 interface Props {
@@ -67,7 +67,7 @@ export default function ConsistencyGrid({ weeks, markers = [], noteMarks = [] }:
               }
 
               const marker = iconByDate.get(date);
-              const matched = noteMarksFor(day.notes, noteMarks);
+              const matched = noteMarksFor(noteTextFor(day), noteMarks);
               const cardioMark = day.cardio
                 ? (matched.find((mark) => mark.replaces === 'cardio') ?? null)
                 : null;

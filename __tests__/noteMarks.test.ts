@@ -1,4 +1,4 @@
-import { noteMarksFor } from '@/lib/noteMarks';
+import { noteMarksFor, noteTextFor } from '@/lib/noteMarks';
 import { HealthNoteMark } from '@/types/health';
 
 const CHURCH: HealthNoteMark = { match: 'church', icon: '✝️', label: 'Church' };
@@ -42,5 +42,28 @@ describe('noteMarksFor', () => {
   test('ignores a mark with no icon to draw or no phrase to match', () => {
     expect(noteMarksFor('Church', [{ match: 'church', icon: '', label: 'Church' }])).toEqual([]);
     expect(noteMarksFor('Church', [{ match: '  ', icon: '✝️', label: 'Church' }])).toEqual([]);
+  });
+});
+
+describe('noteTextFor', () => {
+  test('joins the two note columns into one line', () => {
+    expect(noteTextFor({ cardioNote: '30 mins 12.5 / 3.0', notes: 'Jags Game' })).toBe(
+      '30 mins 12.5 / 3.0 \u00b7 Jags Game'
+    );
+  });
+
+  test('gives back whichever column was written on its own', () => {
+    expect(noteTextFor({ cardioNote: '30 mins 12.5 / 3.0', notes: '' })).toBe('30 mins 12.5 / 3.0');
+    expect(noteTextFor({ cardioNote: '', notes: 'Church' })).toBe('Church');
+  });
+
+  test('is empty for a day with nothing written', () => {
+    expect(noteTextFor({ cardioNote: '', notes: '' })).toBe('');
+    expect(noteTextFor({ cardioNote: '  ', notes: '  ' })).toBe('');
+  });
+
+  test('marks still match a phrase from either column', () => {
+    const day = { cardioNote: '30 mins Orange Theory', notes: 'Church' };
+    expect(noteMarksFor(noteTextFor(day), MARKS)).toEqual([CHURCH, OTF]);
   });
 });

@@ -23,6 +23,7 @@ function day(overrides: Partial<HealthDay> & { date: string; day: string }): Hea
     workout: '',
     cardio: false,
     cardioMinutes: null,
+    cardioNote: '',
     notes: '',
     ...overrides,
   };
@@ -31,11 +32,11 @@ function day(overrides: Partial<HealthDay> & { date: string; day: string }): Hea
 /** Week 1 as recorded in the sheet: 2026-07-20 (Mon) through 2026-07-26 (Sun). */
 const WEEK_ONE: HealthDay[] = [
   day({ date: '2026-07-20', day: 'Mon', cals: 2271, protein: 217, carbs: 216, fat: 65, weight: 210.2, steps: 12922, workout: 'Lee - Legs A' }),
-  day({ date: '2026-07-21', day: 'Tue', cals: 2356, protein: 215, carbs: 234, fat: 68, weight: 208.8, steps: 14306, workout: 'Lee - Push', cardio: true, cardioMinutes: 30, notes: '30 mins 12.5 / 3.0' }),
+  day({ date: '2026-07-21', day: 'Tue', cals: 2356, protein: 215, carbs: 234, fat: 68, weight: 208.8, steps: 14306, workout: 'Lee - Push', cardio: true, cardioMinutes: 30, cardioNote: '30 mins 12.5 / 3.0' }),
   day({ date: '2026-07-22', day: 'Wed', cals: 2171, protein: 210, carbs: 212, fat: 59, weight: 208.1, steps: 13469, workout: 'Lee - Pull' }),
-  day({ date: '2026-07-23', day: 'Thu', cals: 2325, protein: 167, carbs: 232, fat: 49, weight: 207.7, steps: 13284, cardio: true, cardioMinutes: 30, notes: '30 mins 12.5 / 3.0' }),
+  day({ date: '2026-07-23', day: 'Thu', cals: 2325, protein: 167, carbs: 232, fat: 49, weight: 207.7, steps: 13284, cardio: true, cardioMinutes: 30, cardioNote: '30 mins 12.5 / 3.0' }),
   day({ date: '2026-07-24', day: 'Fri', cals: 2000, protein: 199, carbs: 192, fat: 54, weight: 208.3, steps: 17645, workout: 'Lee - Legs B' }),
-  day({ date: '2026-07-25', day: 'Sat', cals: 2725, protein: 202, carbs: 266, fat: 103, weight: 208.3, steps: 16202, workout: 'Lee - Upper', cardio: true, cardioMinutes: 30, notes: '30 mins 12.5 / 3.0' }),
+  day({ date: '2026-07-25', day: 'Sat', cals: 2725, protein: 202, carbs: 266, fat: 103, weight: 208.3, steps: 16202, workout: 'Lee - Upper', cardio: true, cardioMinutes: 30, cardioNote: '30 mins 12.5 / 3.0' }),
   day({ date: '2026-07-26', day: 'Sun', cals: 2488, protein: 195, carbs: 154, fat: 125, weight: 207.9, steps: 17600 }),
 ];
 
@@ -427,8 +428,8 @@ describe('buildWeeklyTrend', () => {
 
 describe('parseHealthTsv', () => {
   const validTsv = [
-    'Jul 20\tMon\t2,271\t217\t216\t65\t210.2\t12,922\tLee - Legs A\tFALSE\t',
-    'Jul 21\tTue\t2,356\t215\t234\t68\t208.8\t14,306\tLee - Push\tTRUE\t30 mins 12.5 / 3.0',
+    'Jul 20\tMon\t2,271\t217\t216\t65\t210.2\t12,922\tLee - Legs A\tFALSE\t\t',
+    'Jul 21\tTue\t2,356\t215\t234\t68\t208.8\t14,306\tLee - Push\tTRUE\t30 mins 12.5 / 3.0\t',
   ].join('\n');
 
   test('parses tab-separated rows into day records', () => {
@@ -463,7 +464,7 @@ describe('parseHealthTsv', () => {
   });
 
   test('a blank workout column parses as a rest day, not an error', () => {
-    const tsv = 'Jul 23\tThu\t2325\t167\t232\t49\t207.7\t13284\t\tTRUE\t30 mins';
+    const tsv = 'Jul 23\tThu\t2325\t167\t232\t49\t207.7\t13284\t\tTRUE\t30 mins\t';
 
     const result = parseHealthTsv(tsv, { year: 2026 });
 
@@ -480,7 +481,7 @@ describe('parseHealthTsv', () => {
   });
 
   test('rejects an unparseable number', () => {
-    const tsv = 'Jul 20\tMon\tabc\t217\t216\t65\t210.2\t12922\tLee - Legs A\tFALSE\t';
+    const tsv = 'Jul 20\tMon\tabc\t217\t216\t65\t210.2\t12922\tLee - Legs A\tFALSE\t\t';
 
     const result = parseHealthTsv(tsv, { year: 2026 });
 
@@ -495,7 +496,7 @@ describe('parseHealthTsv', () => {
   });
 
   test('treats an empty weight cell as null rather than zero', () => {
-    const tsv = 'Jul 20\tMon\t2271\t217\t216\t65\t\t12922\tLee - Legs A\tFALSE\t';
+    const tsv = 'Jul 20\tMon\t2271\t217\t216\t65\t\t12922\tLee - Legs A\tFALSE\t\t';
 
     const result = parseHealthTsv(tsv, { year: 2026 });
 
@@ -504,7 +505,7 @@ describe('parseHealthTsv', () => {
   });
 
   test('warns on a gap between the last recorded day and the first new one', () => {
-    const tsv = 'Aug 10\tMon\t2271\t217\t216\t65\t210.2\t12922\tLee - Legs A\tFALSE\t';
+    const tsv = 'Aug 10\tMon\t2271\t217\t216\t65\t210.2\t12922\tLee - Legs A\tFALSE\t\t';
 
     const result = parseHealthTsv(tsv, { year: 2026, existing: WEEK_ONE });
 
@@ -513,7 +514,7 @@ describe('parseHealthTsv', () => {
   });
 
   test('warns on an implausible day-over-day weight swing', () => {
-    const tsv = 'Jul 27\tMon\t2271\t217\t216\t65\t199.0\t12922\tLee - Legs A\tFALSE\t';
+    const tsv = 'Jul 27\tMon\t2271\t217\t216\t65\t199.0\t12922\tLee - Legs A\tFALSE\t\t';
 
     const result = parseHealthTsv(tsv, { year: 2026, existing: WEEK_ONE });
 
@@ -522,7 +523,7 @@ describe('parseHealthTsv', () => {
   });
 
   test('warns on out-of-range calories but still imports', () => {
-    const tsv = 'Jul 27\tMon\t9999\t217\t216\t65\t207.8\t12922\tLee - Legs A\tFALSE\t';
+    const tsv = 'Jul 27\tMon\t9999\t217\t216\t65\t207.8\t12922\tLee - Legs A\tFALSE\t\t';
 
     const result = parseHealthTsv(tsv, { year: 2026, existing: WEEK_ONE });
 
@@ -531,18 +532,56 @@ describe('parseHealthTsv', () => {
     expect(result.warnings.some((w) => /cal/i.test(w))).toBe(true);
   });
 
-  test('warns when notes state a cardio duration other than 30', () => {
-    const tsv = 'Jul 27\tMon\t2271\t217\t216\t65\t207.8\t12922\tLee - Push\tTRUE\t45 mins 12.5 / 3.0';
+  test('keeps the two note columns apart', () => {
+    const tsv = 'Jul 27\tMon\t2271\t217\t216\t65\t207.8\t12922\t\tTRUE\t30 mins 12.5 / 3.0\tJags Game';
 
     const result = parseHealthTsv(tsv, { year: 2026, existing: WEEK_ONE });
 
-    expect(result.warnings.some((w) => /45/.test(w))).toBe(true);
-    // The default is kept; the mismatch is surfaced, not silently applied.
+    expect(result.errors).toEqual([]);
+    expect(result.days[0].cardioNote).toBe('30 mins 12.5 / 3.0');
+    expect(result.days[0].notes).toBe('Jags Game');
+  });
+
+  test('takes cardioMinutes from the cardio note rather than assuming 30', () => {
+    const tsv = 'Jul 27\tMon\t2271\t217\t216\t65\t207.8\t12922\tLee - Push\tTRUE\t45 mins 12.5 / 3.0\t';
+
+    const result = parseHealthTsv(tsv, { year: 2026, existing: WEEK_ONE });
+
+    expect(result.days[0].cardioMinutes).toBe(45);
+    // The stated duration is the record, so there is nothing to flag.
+    expect(result.warnings.some((w) => /45/.test(w))).toBe(false);
+  });
+
+  test('falls back to 30 minutes and warns when the cardio note states no duration', () => {
+    const tsv = 'Jul 27\tMon\t2271\t217\t216\t65\t207.8\t12922\tLee - Push\tTRUE\ttreadmill\t';
+
+    const result = parseHealthTsv(tsv, { year: 2026, existing: WEEK_ONE });
+
     expect(result.days[0].cardioMinutes).toBe(30);
+    expect(result.warnings.some((w) => /minutes/i.test(w))).toBe(true);
+  });
+
+  test('records the default 30 minutes without a warning when no cardio note was written', () => {
+    const tsv = 'Jul 27\tMon\t2271\t217\t216\t65\t207.8\t12922\tLee - Push\tTRUE\t\t';
+
+    const result = parseHealthTsv(tsv, { year: 2026, existing: WEEK_ONE });
+
+    expect(result.days[0].cardioMinutes).toBe(30);
+    expect(result.warnings.some((w) => /minutes/i.test(w))).toBe(false);
+  });
+
+  test('warns when a cardio note was written but the box is unchecked', () => {
+    const tsv = 'Jul 27\tMon\t2271\t217\t216\t65\t207.8\t12922\tLee - Push\tFALSE\t30 mins 12.5 / 3.0\t';
+
+    const result = parseHealthTsv(tsv, { year: 2026, existing: WEEK_ONE });
+
+    expect(result.days[0].cardio).toBe(false);
+    expect(result.days[0].cardioMinutes).toBeNull();
+    expect(result.warnings.some((w) => /cardio/i.test(w))).toBe(true);
   });
 
   test('ignores a pasted header row', () => {
-    const tsv = ['Date\tDay\tCals\tProtein (g)\tCarbs (g)\tFat (g)\tWeight\tSteps\tWorkout\tCardio\tNotes', validTsv].join('\n');
+    const tsv = ['Date\tDay\tCals\tProtein (g)\tCarbs (g)\tFat (g)\tWeight\tSteps\tWorkout\tCardio\tCardio Notes\tNotes', validTsv].join('\n');
 
     const result = parseHealthTsv(tsv, { year: 2026 });
 
@@ -559,8 +598,8 @@ describe('parseHealthTsv', () => {
 
   test('rolls the year over when the sheet wraps from December to January', () => {
     const tsv = [
-      'Dec 28\tMon\t2271\t217\t216\t65\t210.2\t12922\tLee - Legs A\tFALSE\t',
-      'Jan 03\tSun\t2271\t217\t216\t65\t209.2\t12922\tLee - Push\tFALSE\t',
+      'Dec 28\tMon\t2271\t217\t216\t65\t210.2\t12922\tLee - Legs A\tFALSE\t\t',
+      'Jan 03\tSun\t2271\t217\t216\t65\t209.2\t12922\tLee - Push\tFALSE\t\t',
     ].join('\n');
 
     const result = parseHealthTsv(tsv, { year: 2026 });

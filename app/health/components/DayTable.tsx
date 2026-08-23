@@ -1,5 +1,6 @@
 import { HealthDay } from '@/types/health';
 import { formatNumber } from './chartTheme';
+import { noteTextFor } from '@/lib/noteMarks';
 
 interface Props {
   days: HealthDay[];
@@ -69,7 +70,7 @@ export default function DayTable({ days }: Props) {
               <td className="is-num">{cell(day.steps)}</td>
               <td>{day.workout || <span className="is-rest">rest</span>}</td>
               <td>{day.cardio ? `${day.cardioMinutes ?? 0} min` : '—'}</td>
-              <td className="is-notes">{day.notes || '—'}</td>
+              <td className="is-notes">{noteTextFor(day) || '—'}</td>
             </tr>
           ))}
         </tbody>

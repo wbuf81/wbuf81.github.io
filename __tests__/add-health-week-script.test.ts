@@ -29,10 +29,10 @@ describe('add-health-week.mjs --dry-run', () => {
     expect(result.status).toBe(0);
   });
 
-  it('refuses rows that do not have 11 columns', () => {
+  it('refuses rows that do not have 12 columns', () => {
     const result = runDryRun('Aug 3\tMon\t2,209\n');
     expect(result.combined).not.toContain('Could not load lib/health.ts');
-    expect(result.combined).toContain('expected 11 columns');
+    expect(result.combined).toContain('expected 12 columns');
     expect(result.status).toBe(1);
   });
 });

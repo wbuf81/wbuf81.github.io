@@ -13,9 +13,11 @@ export interface HealthDay {
   /** Empty string means a rest day, not missing data. */
   workout: string;
   cardio: boolean;
-  /** 30 when cardio is true, null when false. */
+  /** Read from the cardio note when it states one, else 30. Null when cardio is false. */
   cardioMinutes: number | null;
-  /** Stored verbatim from the sheet. */
+  /** The sheet's cardio-notes column, verbatim: "30 mins 12.5 / 3.0". */
+  cardioNote: string;
+  /** The sheet's own Notes column, verbatim — anything that isn't about the cardio session. */
   notes: string;
 }
 

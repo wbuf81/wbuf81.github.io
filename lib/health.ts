@@ -33,13 +33,17 @@ const MOVING_AVERAGE_WINDOW = 7;
 /** A 7-day mean drawn from a single window is noise, so the trend line waits for two. */
 const MOVING_AVERAGE_MIN_DAYS = 14;
 
+/** What a cardio session is when the sheet's cardio note doesn't say. */
 const DEFAULT_CARDIO_MINUTES = 30;
 
 const CALS_PER_LB = 3500;
 /** A maintenance estimate from a single week swings with water; two settle it. */
 const MAINTENANCE_MIN_SPAN_DAYS = 14;
 
-const EXPECTED_COLUMNS = 11;
+// Date, Day, Cals, Protein, Carbs, Fat, Weight, Steps, Workout, Cardio,
+// Cardio Notes, Notes. The cardio note got its own column in Aug 2026; before
+// that the two notes shared one, which is why cardioMinutes used to be assumed.
+const EXPECTED_COLUMNS = 12;
 
 // Ranges outside which a value is worth a second look, but not worth refusing.
 const PLAUSIBLE = {
@@ -762,14 +766,14 @@ export function parseHealthTsv(
     if (cells.length !== EXPECTED_COLUMNS) {
       errors.push(
         `${rowLabel}: expected ${EXPECTED_COLUMNS} columns, got ${cells.length}. ` +
-          `Copy all columns from Date through Notes.`
+          `Copy all columns from Date through Notes, including both note columns.`
       );
       continue;
     }
 
     const [
       dateCell, dayCell, calsCell, proteinCell, carbsCell,
-      fatCell, weightCell, stepsCell, workoutCell, cardioCell, notesCell,
+      fatCell, weightCell, stepsCell, workoutCell, cardioCell, cardioNoteCell, notesCell,
     ] = cells;
 
     const parsedDate = parseSheetDate(dateCell);
@@ -811,13 +815,30 @@ export function parseHealthTsv(
     }
 
     const cardio = parseCheckbox(cardioCell);
+    const cardioNote = cardioNoteCell.trim();
     const notes = notesCell.trim();
 
-    const statedMinutes = notes.match(/(\d+)\s*min/i);
-    if (cardio && statedMinutes && Number(statedMinutes[1]) !== DEFAULT_CARDIO_MINUTES) {
+    // The cardio note is the record of the session, so a stated duration is
+    // taken as written rather than warned about — a 45-minute treadmill walk
+    // used to import as 30 and need fixing by hand afterwards.
+    const statedMinutes = cardioNote.match(/(\d+)\s*min/i);
+    const cardioMinutes = cardio
+      ? statedMinutes
+        ? Number(statedMinutes[1])
+        : DEFAULT_CARDIO_MINUTES
+      : null;
+
+    if (cardio && cardioNote !== '' && !statedMinutes) {
       warnings.push(
-        `${rowLabel} (${date}): notes state ${statedMinutes[1]} minutes of cardio, but ` +
-          `${DEFAULT_CARDIO_MINUTES} was recorded. Adjust cardioMinutes by hand if the session really differed.`
+        `${rowLabel} (${date}): the cardio note "${cardioNote}" states no minutes, so ` +
+          `${DEFAULT_CARDIO_MINUTES} was recorded. Adjust cardioMinutes by hand if the session differed.`
+      );
+    }
+
+    if (!cardio && cardioNote !== '') {
+      warnings.push(
+        `${rowLabel} (${date}): a cardio note ("${cardioNote}") was written but the cardio box ` +
+          `is unchecked, so the day counts as no cardio. Check the sheet.`
       );
     }
 
@@ -840,7 +861,8 @@ export function parseHealthTsv(
       steps: numbers.steps,
       workout: workoutCell.trim(),
       cardio,
-      cardioMinutes: cardio ? DEFAULT_CARDIO_MINUTES : null,
+      cardioMinutes,
+      cardioNote,
       notes,
     });
     existingDates.add(date);

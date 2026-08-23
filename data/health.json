@@ -69,6 +69,7 @@
       "workout": "Lee - Legs A",
       "cardio": false,
       "cardioMinutes": null,
+      "cardioNote": "",
       "notes": ""
     },
     {
@@ -83,7 +84,8 @@
       "workout": "Lee - Push",
       "cardio": true,
       "cardioMinutes": 30,
-      "notes": "30 mins 12.5 / 3.0"
+      "cardioNote": "30 mins 12.5 / 3.0",
+      "notes": ""
     },
     {
       "date": "2026-07-22",
@@ -97,6 +99,7 @@
       "workout": "Lee - Pull",
       "cardio": false,
       "cardioMinutes": null,
+      "cardioNote": "",
       "notes": ""
     },
     {
@@ -111,7 +114,8 @@
       "workout": "",
       "cardio": true,
       "cardioMinutes": 30,
-      "notes": "30 mins 12.5 / 3.0"
+      "cardioNote": "30 mins 12.5 / 3.0",
+      "notes": ""
     },
     {
       "date": "2026-07-24",
@@ -125,6 +129,7 @@
       "workout": "Lee - Legs B",
       "cardio": false,
       "cardioMinutes": null,
+      "cardioNote": "",
       "notes": ""
     },
     {
@@ -139,7 +144,8 @@
       "workout": "Lee - Upper",
       "cardio": true,
       "cardioMinutes": 30,
-      "notes": "30 mins 12.5 / 3.0"
+      "cardioNote": "30 mins 12.5 / 3.0",
+      "notes": ""
     },
     {
       "date": "2026-07-26",
@@ -153,6 +159,7 @@
       "workout": "",
       "cardio": false,
       "cardioMinutes": null,
+      "cardioNote": "",
       "notes": "Church"
     },
     {
@@ -167,6 +174,7 @@
       "workout": "Lee - Legs A",
       "cardio": false,
       "cardioMinutes": null,
+      "cardioNote": "",
       "notes": ""
     },
     {
@@ -181,7 +189,8 @@
       "workout": "Lee - Push",
       "cardio": true,
       "cardioMinutes": 30,
-      "notes": "30 mins 12.5 / 3.0"
+      "cardioNote": "30 mins 12.5 / 3.0",
+      "notes": ""
     },
     {
       "date": "2026-07-29",
@@ -195,6 +204,7 @@
       "workout": "Lee - Pull",
       "cardio": false,
       "cardioMinutes": null,
+      "cardioNote": "",
       "notes": ""
     },
     {
@@ -209,6 +219,7 @@
       "workout": "",
       "cardio": false,
       "cardioMinutes": null,
+      "cardioNote": "",
       "notes": ""
     },
     {
@@ -223,7 +234,8 @@
       "workout": "Lee - Legs B",
       "cardio": true,
       "cardioMinutes": 30,
-      "notes": "30 mins 12.5 / 3.0"
+      "cardioNote": "30 mins 12.5 / 3.0",
+      "notes": ""
     },
     {
       "date": "2026-08-01",
@@ -237,7 +249,8 @@
       "workout": "Lee - Upper",
       "cardio": true,
       "cardioMinutes": 30,
-      "notes": "30 mins 12.5 / 3.0"
+      "cardioNote": "30 mins 12.5 / 3.0",
+      "notes": ""
     },
     {
       "date": "2026-08-02",
@@ -251,6 +264,7 @@
       "workout": "",
       "cardio": false,
       "cardioMinutes": null,
+      "cardioNote": "",
       "notes": "Church"
     },
     {
@@ -265,6 +279,7 @@
       "workout": "Lee - Legs A",
       "cardio": false,
       "cardioMinutes": null,
+      "cardioNote": "",
       "notes": ""
     },
     {
@@ -279,7 +294,8 @@
       "workout": "Lee - Push",
       "cardio": true,
       "cardioMinutes": 30,
-      "notes": "30 mins 12.5 / 3.0"
+      "cardioNote": "30 mins 12.5 / 3.0",
+      "notes": ""
     },
     {
       "date": "2026-08-05",
@@ -293,6 +309,7 @@
       "workout": "Lee - Pull",
       "cardio": false,
       "cardioMinutes": null,
+      "cardioNote": "",
       "notes": ""
     },
     {
@@ -307,7 +324,8 @@
       "workout": "",
       "cardio": true,
       "cardioMinutes": 30,
-      "notes": "30 mins 12.5 / 3.0"
+      "cardioNote": "30 mins 12.5 / 3.0",
+      "notes": ""
     },
     {
       "date": "2026-08-07",
@@ -321,6 +339,7 @@
       "workout": "Lee - Legs B",
       "cardio": false,
       "cardioMinutes": null,
+      "cardioNote": "",
       "notes": ""
     },
     {
@@ -335,7 +354,8 @@
       "workout": "Lee - Upper",
       "cardio": true,
       "cardioMinutes": 30,
-      "notes": "30 mins 12.5 / 3.0"
+      "cardioNote": "30 mins 12.5 / 3.0",
+      "notes": ""
     },
     {
       "date": "2026-08-09",
@@ -349,6 +369,7 @@
       "workout": "",
       "cardio": false,
       "cardioMinutes": null,
+      "cardioNote": "",
       "notes": "Church"
     },
     {
@@ -363,6 +384,7 @@
       "workout": "Lee - Legs A",
       "cardio": false,
       "cardioMinutes": null,
+      "cardioNote": "",
       "notes": ""
     },
     {
@@ -377,7 +399,8 @@
       "workout": "Lee - Push",
       "cardio": true,
       "cardioMinutes": 30,
-      "notes": "30 mins 12.5 / 3.0"
+      "cardioNote": "30 mins 12.5 / 3.0",
+      "notes": ""
     },
     {
       "date": "2026-08-12",
@@ -391,7 +414,8 @@
       "workout": "Lee - Pull",
       "cardio": true,
       "cardioMinutes": 30,
-      "notes": "30 mins 12.5 / 3.0"
+      "cardioNote": "30 mins 12.5 / 3.0",
+      "notes": ""
     },
     {
       "date": "2026-08-13",
@@ -405,7 +429,8 @@
       "workout": "",
       "cardio": true,
       "cardioMinutes": 30,
-      "notes": "30 mins Orange Theory"
+      "cardioNote": "30 mins Orange Theory",
+      "notes": ""
     },
     {
       "date": "2026-08-14",
@@ -419,7 +444,8 @@
       "workout": "Lee - Legs B",
       "cardio": true,
       "cardioMinutes": 30,
-      "notes": "30 mins 12.5 / 3.0"
+      "cardioNote": "30 mins 12.5 / 3.0",
+      "notes": ""
     },
     {
       "date": "2026-08-15",
@@ -433,7 +459,8 @@
       "workout": "Lee - Upper",
       "cardio": true,
       "cardioMinutes": 30,
-      "notes": "30 mins 12.5 / 3.0"
+      "cardioNote": "30 mins 12.5 / 3.0",
+      "notes": ""
     },
     {
       "date": "2026-08-16",
@@ -447,6 +474,7 @@
       "workout": "",
       "cardio": false,
       "cardioMinutes": null,
+      "cardioNote": "",
       "notes": "Church"
     },
     {
@@ -461,6 +489,7 @@
       "workout": "Lee - Legs A",
       "cardio": false,
       "cardioMinutes": null,
+      "cardioNote": "",
       "notes": ""
     },
     {
@@ -475,7 +504,8 @@
       "workout": "Lee - Push",
       "cardio": true,
       "cardioMinutes": 30,
-      "notes": "30 mins 12.5 / 3.0"
+      "cardioNote": "30 mins 12.5 / 3.0",
+      "notes": ""
     },
     {
       "date": "2026-08-19",
@@ -489,7 +519,8 @@
       "workout": "Lee - Pull",
       "cardio": true,
       "cardioMinutes": 30,
-      "notes": "30 mins 12.5 / 3.0"
+      "cardioNote": "30 mins 12.5 / 3.0",
+      "notes": ""
     },
     {
       "date": "2026-08-20",
@@ -503,7 +534,8 @@
       "workout": "Lee - Legs B",
       "cardio": true,
       "cardioMinutes": 45,
-      "notes": "45 mins 12.5 / 3.0"
+      "cardioNote": "45 mins 12.5 / 3.0",
+      "notes": ""
     },
     {
       "date": "2026-08-21",
@@ -517,7 +549,8 @@
       "workout": "",
       "cardio": true,
       "cardioMinutes": 30,
-      "notes": "30 mins 12.5 / 3.0 — Jags Game"
+      "cardioNote": "30 mins 12.5 / 3.0",
+      "notes": "Jags Game"
     },
     {
       "date": "2026-08-22",
@@ -531,6 +564,7 @@
       "workout": "Lee - Upper",
       "cardio": false,
       "cardioMinutes": null,
+      "cardioNote": "",
       "notes": ""
     },
     {
@@ -545,6 +579,7 @@
       "workout": "",
       "cardio": false,
       "cardioMinutes": null,
+      "cardioNote": "",
       "notes": "Church"
     }
   ]
