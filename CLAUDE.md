@@ -10,7 +10,7 @@ Pushes to `main` auto-deploy to GitHub Pages via `.github/workflows/deploy.yml`.
 ## /health — weekly tracker update
 Unlinked page (no nav link, `noindex`, `Disallow: /health` in robots.txt, absent from sitemap). Deployed publicly, so it IS reachable by URL — that tradeoff was accepted deliberately; don't "fix" it by adding auth.
 
-To add a week: Wes pastes the sheet rows (tab-separated, columns Date→Notes). Then:
+To add a week: Wes pastes the sheet rows (tab-separated, **12 columns**, Date→Notes). Then:
 ```
 pbpaste | npm run health:add          # or: node scripts/add-health-week.mjs < week.tsv
 node scripts/add-health-week.mjs --dry-run < week.tsv   # preview first
@@ -22,7 +22,14 @@ Optionally refresh the local copy of the link-preview card (the deploy redraws i
 python3 scripts/og/build-og.py health
 ```
 
-The script appends to `data/health.json`. **Hard errors** (wrong column count, unparseable number, duplicate date) refuse the import. **Warnings** (date gaps, weight swing >5 lb, cals outside 1,000–5,000, steps outside 0–50,000, cardio notes stating ≠30 min) print but still import — gaps and outliers are usually real. Always relay warnings to Wes rather than silently accepting them.
+The script appends to `data/health.json`. **Hard errors** (wrong column count, unparseable number, duplicate date) refuse the import. **Warnings** (date gaps, weight swing >5 lb, cals outside 1,000–5,000, steps outside 0–50,000, a cardio note stating no minutes, a cardio note on a day with the box unchecked) print but still import — gaps and outliers are usually real. Always relay warnings to Wes rather than silently accepting them.
+
+### The sheet's columns
+Twelve, in order: Date, Day, Cals, Protein, Carbs, Fat, Weight, Steps, Workout, Cardio, **Cardio Notes**, **Notes**. The last two are separate columns and land in separate fields — `cardioNote` ("30 mins 12.5 / 3.0") and `notes` (everything else: "Church", "Jags Game").
+
+- `cardioMinutes` is **read from the cardio note** ("45 mins …" → 45), falling back to 30 only when the note states no duration. Before Aug 2026 the two notes shared one column and 30 was assumed, so a longer session had to be corrected by hand after every import.
+- Both columns are joined for display and for `noteMarks` matching by `noteTextFor` in `lib/noteMarks.ts` ("30 mins Orange Theory · Church"). Match against that, never against `notes` alone — the Orange Theory glyph is triggered by text that lives in the *cardio* note.
+- `scripts/backfill-cardio-note.mjs` is the one-off migration that split the 35 pre-existing days. Kept as the record of that change; re-running it is a no-op.
 
 Derivation logic is in `lib/health.ts` (pure functions, unit-tested in `__tests__/health.test.ts`). Never edit `data/health.json` by hand — use the script so the tested parser and validation run.
 
@@ -85,6 +92,7 @@ Chart rules that are deliberate, not accidental:
 - The day table draws a heavier rule on the first row of each new week (`.is-week-start`) instead of banding alternate rows.
 - Each goal is a meter, not a chart: it is one magnitude against a known ceiling. Met state carries a check glyph and words as well as color.
 - `.health-note` uses a 96ch measure with `text-wrap: balance`. The old 60ch measure wrapped one-line notes short of the card edge and left orphans like "to zero." on their own line.
+- **The page leads with the newest week's averages** (`WeekLead`, above the phase banner), not with the last number on the scale. Aug 17–23 ended at 204.6 lb after starting at 203.0, which read as a gain even though the week's average *fell* 0.4 lb — a single weigh-in moves a pound or two on water. The latest reading is still a stat tile, labelled "Latest weigh-in · one reading"; the "Week over week" tile was removed because the lead now says it. Don't restore a single-day headline.
 - The phase banner's "Per week" figure is `weightChangePerWeek`: the change divided by the weighed span in weeks, counted inclusively so the denominator matches the "N days tracked" beside it. Null until a full week has been weighed, since a rate from two days is noise.
 
 ### The change log

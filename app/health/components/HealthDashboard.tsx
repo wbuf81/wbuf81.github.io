@@ -29,6 +29,7 @@ import StatTiles from './StatTiles';
 import StepStreaks from './StepStreaks';
 import StepsChart from './StepsChart';
 import WeeklyConsistencyChart from './WeeklyConsistencyChart';
+import WeekLead from './WeekLead';
 import WeekTable from './WeekTable';
 import WeightChart from './WeightChart';
 
@@ -132,6 +133,13 @@ export default function HealthDashboard({
 
   return (
     <>
+      {/*
+        Averages before any single reading: the last weigh-in of a week can be
+        up while the week's average is down, which read as a gain that never
+        happened.
+      */}
+      <WeekLead rows={weeklyTrend} weightUnit={weightUnit} />
+
       {activePhase && <PhaseBanner phase={activePhase} weightUnit={weightUnit} />}
 
       <StatTiles summary={summary} weightUnit={weightUnit} />

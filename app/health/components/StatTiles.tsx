@@ -22,25 +22,18 @@ function tone(delta: number | null | undefined, kind: Tile['tone']): string {
 
 export default function StatTiles({ summary, weightUnit }: Props) {
   const tiles: Tile[] = [
+    // The week-over-week average leads the page in WeekLead, so this is only the
+    // most recent number on the scale — labelled as the single reading it is,
+    // and scored against the start of tracking rather than against last week.
     {
-      label: 'Current weight',
+      label: 'Latest weigh-in',
       value: summary.latestWeight !== null ? `${formatNumber(summary.latestWeight, 1)} ${weightUnit}` : '—',
       detail:
         summary.weightChangeTotal !== null
-          ? `${formatDelta(summary.weightChangeTotal)} ${weightUnit} since start`
-          : undefined,
+          ? `one reading · ${formatDelta(summary.weightChangeTotal)} ${weightUnit} since start`
+          : 'one reading',
       tone: 'down-good',
       delta: summary.weightChangeTotal,
-    },
-    {
-      label: 'Week over week',
-      value:
-        summary.weightChangeWeek !== null
-          ? `${formatDelta(summary.weightChangeWeek)} ${weightUnit}`
-          : '—',
-      detail: summary.weightChangeWeek !== null ? 'vs previous week average' : 'needs a second week',
-      tone: 'down-good',
-      delta: summary.weightChangeWeek,
     },
     {
       label: 'Avg calories',
