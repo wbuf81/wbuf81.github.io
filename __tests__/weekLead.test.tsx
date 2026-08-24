@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import WeekLead from '@/app/health/components/WeekLead';
-import { WeeklyTrendRow } from '@/types/health';
+import { PhaseSummary, WeeklyTrendRow } from '@/types/health';
 
 function row(overrides: Partial<WeeklyTrendRow> & { weekStart: string }): WeeklyTrendRow {
   return {
@@ -24,6 +24,27 @@ function row(overrides: Partial<WeeklyTrendRow> & { weekStart: string }): Weekly
   };
 }
 
+const PHASE: PhaseSummary = {
+  type: 'cut',
+  label: 'Cut',
+  note: '',
+  start: '2026-07-20',
+  end: null,
+  isOngoing: true,
+  startLabel: 'Jul 20',
+  endLabel: null,
+  dayCount: 35,
+  weekCount: 5,
+  startWeight: 210.2,
+  currentWeight: 204.6,
+  weightChange: -5.6,
+  weightChangePerWeek: -1.1,
+  goalWeight: 190,
+  goalRemaining: 14.6,
+  goalPercent: 28,
+  projectedGoalLabel: 'Nov 22',
+};
+
 const WEEKS = [
   row({ weekStart: '2026-08-10', label: 'Aug 10', avgWeight: 203.9, weightChange: -0.7 }),
   row({ weekStart: '2026-08-17' }),
@@ -31,26 +52,26 @@ const WEEKS = [
 
 describe('WeekLead', () => {
   it('leads with the newest week average, not the last reading', () => {
-    render(<WeekLead rows={WEEKS} weightUnit="lb" />);
+    render(<WeekLead rows={WEEKS} phase={PHASE} weightUnit="lb" />);
 
     expect(screen.getByText('203.5 lb')).toBeInTheDocument();
     expect(screen.getByText(/−0\.4 lb vs the week before|-0\.4 lb vs the week before/)).toBeInTheDocument();
   });
 
   it('reads a falling average as the good direction', () => {
-    render(<WeekLead rows={WEEKS} weightUnit="lb" />);
+    render(<WeekLead rows={WEEKS} phase={PHASE} weightUnit="lb" />);
 
     expect(screen.getByText('203.5 lb').className).toContain('is-good');
   });
 
   it('reads a rising average as the wrong direction on a cut', () => {
-    render(<WeekLead rows={[row({ weekStart: '2026-08-17', weightChange: 0.6 })]} weightUnit="lb" />);
+    render(<WeekLead rows={[row({ weekStart: '2026-08-17', weightChange: 0.6 })]} phase={PHASE} weightUnit="lb" />);
 
     expect(screen.getByText('203.5 lb').className).toContain('is-up');
   });
 
   it('says so when there is no earlier week to compare against', () => {
-    render(<WeekLead rows={[row({ weekStart: '2026-08-17', weightChange: null })]} weightUnit="lb" />);
+    render(<WeekLead rows={[row({ weekStart: '2026-08-17', weightChange: null })]} phase={PHASE} weightUnit="lb" />);
 
     expect(screen.getByText('no earlier week to compare')).toBeInTheDocument();
   });
@@ -59,6 +80,7 @@ describe('WeekLead', () => {
     render(
       <WeekLead
         rows={[row({ weekStart: '2026-08-17', isPartial: true, dayCount: 3 })]}
+        phase={PHASE}
         weightUnit="lb"
       />
     );
@@ -68,8 +90,24 @@ describe('WeekLead', () => {
   });
 
   it('renders nothing with no weeks at all', () => {
-    const { container } = render(<WeekLead rows={[]} weightUnit="lb" />);
+    const { container } = render(<WeekLead rows={[]} phase={PHASE} weightUnit="lb" />);
 
     expect(container).toBeEmptyDOMElement();
+  });
+
+  it('tells the block story below the weekly headline', () => {
+    render(<WeekLead rows={WEEKS} phase={PHASE} weightUnit="lb" />);
+
+    expect(screen.getByText(/the cut so far/i)).toBeInTheDocument();
+    expect(screen.getByText('210.2 lb')).toBeInTheDocument();
+    expect(screen.getByText('14.6 lb to go')).toBeInTheDocument();
+    expect(screen.getByText('on pace for Nov 22')).toBeInTheDocument();
+  });
+
+  it('stands on its own with no phase running', () => {
+    render(<WeekLead rows={WEEKS} phase={null} weightUnit="lb" />);
+
+    expect(screen.getByText('203.5 lb')).toBeInTheDocument();
+    expect(screen.queryByText(/so far/i)).not.toBeInTheDocument();
   });
 });

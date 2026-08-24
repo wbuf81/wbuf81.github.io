@@ -59,10 +59,18 @@ export default function StatTiles({ summary, weightUnit }: Props) {
       value: summary.avgSteps !== null ? formatNumber(summary.avgSteps) : '—',
       detail: 'per day',
     },
+    // "This week" (lifts · cardio) now lives in the WeekLead card, which shows
+    // the newest — possibly partial — week; repeating it here said it twice.
     {
-      label: 'This week',
-      value: `${summary.workoutsThisWeek} lifts · ${summary.cardioSessionsThisWeek} cardio`,
-      detail: `${formatNumber(summary.cardioMinutesThisWeek)} cardio minutes`,
+      label: 'Est. deficit',
+      value:
+        summary.estimatedMaintenance !== null && summary.avgCals !== null
+          ? `${formatNumber(summary.estimatedMaintenance - summary.avgCals)} kcal`
+          : '—',
+      detail:
+        summary.estimatedMaintenance !== null && summary.avgCals !== null
+          ? 'per day, maintenance minus intake'
+          : 'needs two weighed weeks',
     },
     {
       label: 'Goal streak',

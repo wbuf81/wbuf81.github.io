@@ -23,8 +23,9 @@
 /* ---------- Week lead ---------- */
 
 /*
-  Reads first, above the phase banner: the newest week's averages. A single
-  weigh-in swings on water, so the page must not open on one — see WeekLead.
+  The one card up top: the newest week's averages leading, the block below.
+  A single weigh-in swings on water, so the page must not open on one — see
+  WeekLead.
 */
 .week-lead {
   background: #fff;
@@ -72,7 +73,7 @@
 .week-lead-rest {
   flex: 1 1 22rem;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(7.5rem, 1fr));
   gap: 1.25rem 1.5rem;
   align-items: start;
 }
@@ -107,6 +108,21 @@
   color: #a8382c;
 }
 
+.week-lead-phase {
+  margin-top: 1.35rem;
+  padding-top: 1.15rem;
+  border-top: 1px solid #e8e8e6;
+}
+
+.week-lead-phase-head {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: #8a8985;
+  margin-bottom: 0.9rem;
+}
+
 .week-lead-note {
   font-size: 0.8rem;
   color: #8a8985;
@@ -116,23 +132,7 @@
   text-wrap: balance;
 }
 
-/* ---------- Current phase banner ---------- */
-
-.phase-banner {
-  background: #fff;
-  border: 1px solid #e8e8e6;
-  border-radius: 8px;
-  padding: 1.25rem 1.5rem 1.4rem;
-  margin-bottom: 1.75rem;
-}
-
-.phase-banner-head {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 0.6rem;
-  margin-bottom: 1.1rem;
-}
+/* ---------- Phase chip and figures (inside the week lead and phase table) ---------- */
 
 .phase-chip {
   display: inline-block;
@@ -158,11 +158,6 @@
 
 .phase-chip.is-maintain {
   background: rgba(27, 175, 122, 0.15);
-}
-
-.phase-range {
-  font-size: 0.82rem;
-  color: #8a8985;
 }
 
 .phase-figures {

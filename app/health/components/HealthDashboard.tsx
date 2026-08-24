@@ -23,7 +23,6 @@ import ConsistencyNotes from './ConsistencyNotes';
 import DayTable from './DayTable';
 import GoalTracker from './GoalTracker';
 import MacroChart from './MacroChart';
-import PhaseBanner from './PhaseBanner';
 import PhaseTable from './PhaseTable';
 import StatTiles from './StatTiles';
 import StepStreaks from './StepStreaks';
@@ -134,13 +133,11 @@ export default function HealthDashboard({
   return (
     <>
       {/*
-        Averages before any single reading: the last weigh-in of a week can be
-        up while the week's average is down, which read as a gain that never
-        happened.
+        One card up top: the week's averages leading, the block they belong to
+        below. The last weigh-in of a week can be up while the week's average
+        is down, which read as a gain that never happened.
       */}
-      <WeekLead rows={weeklyTrend} weightUnit={weightUnit} />
-
-      {activePhase && <PhaseBanner phase={activePhase} weightUnit={weightUnit} />}
+      <WeekLead rows={weeklyTrend} phase={activePhase} weightUnit={weightUnit} />
 
       <StatTiles summary={summary} weightUnit={weightUnit} />
 
