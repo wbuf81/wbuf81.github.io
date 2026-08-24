@@ -168,13 +168,17 @@ def trend_svg(series, width, height):
 
 
 def status_card(d):
-    """The whole cut as a ladder of pounds.
+    """The week's average leading, the whole cut beneath it.
 
-    One block per pound between the starting weight and the goal, filling from
-    the top as weight comes off. The unit is the subject's own, so what is done
-    and what is left are both countable, and it descends, which is the direction
-    of the work. A percentage bar would say the same thing in a shape that could
-    belong to any project at all.
+    The card is posted weekly, so the hero is the week's news: the average
+    weight against the week before — never a single weigh-in, which moves a
+    pound or two on water (the same rule the page's lead card follows). The
+    cut runs below it as a ladder of pounds: one block per pound between the
+    starting weight and the goal, filling from the top as weight comes off.
+    The unit is the subject's own, so what is done and what is left are both
+    countable, and it descends, which is the direction of the work. The ladder
+    and the cut facts stay endpoint-based (start -> last weigh-in), matching
+    the page's block strip.
     """
     phase = d['phase']
     week = d['week']
@@ -200,6 +204,15 @@ def status_card(d):
         blocks += f'<li style="{style}"></li>'
 
 
+    # The week's move, in the good color when it fell. A first week has no
+    # comparison, which is stated rather than shown as a zero.
+    move = week['weightChange']
+    if move is None:
+        week_move = 'first tracked week'
+    else:
+        color = GREEN if move < 0 else ORANGE if move > 0 else PAPER
+        week_move = f'<b style="color:{color}">{delta(move)} lb</b> vs last week'
+
     # The recent rate, once the block is old enough to have one — the all-time
     # rate is front-loaded by the first fortnight's water, and the projection
     # (computed in lib/health) extrapolates the recent rate too.
@@ -221,10 +234,10 @@ def status_card(d):
     # The numbers above are the whole cut; these are the week just finished, so
     # they carry their own heading rather than sitting in the same list.
     averages = [
-        ('Weight', f"{n(week['avgWeight'], 1)} lb", delta(week['weightChange']) + ' on the week'),
         ('Calories', n(week['avgCals']), f"{delta(week['calsVsGoal'], 0)} vs target"),
         ('Protein', f"{n(week['avgProtein'])} g", 'a day'),
         ('Steps', n(week['avgSteps']), 'a day'),
+        ('Training', f"{week['lifts']} lifts · {week['cardioSessions']} cardio", f"{n(week['cardioMinutes'])} min total"),
     ]
     averages_html = ''.join(
         f'<li><p class="micro">{label}</p><p class="av">{value}</p><p class="as">{sub}</p></li>'
@@ -236,9 +249,9 @@ def status_card(d):
 {base_css()}
 .hero {{ margin-top: 34px; }}
 .hero .big {{
-  font-size: 172px; font-weight: 800; line-height: 0.82; letter-spacing: -0.055em;
+  font-size: 148px; font-weight: 800; line-height: 0.82; letter-spacing: -0.045em;
 }}
-.hero .big span {{ font-size: 64px; font-weight: 600; color: {MUTED}; letter-spacing: -0.01em; }}
+.hero .big span {{ font-size: 54px; font-weight: 600; color: {MUTED}; letter-spacing: -0.01em; }}
 .hero .arc {{
   margin-top: 22px; font-size: 29px; font-weight: 500; color: {MUTED};
 }}
@@ -256,7 +269,7 @@ def status_card(d):
 .cap.is-bot {{ margin-top: 11px; }}
 .cap b {{ color: {PAPER}; }}
 .mid {{ flex: 1; display: flex; flex-direction: column; }}
-.count {{ display: flex; align-items: baseline; gap: 14px; }}
+.count {{ display: flex; align-items: baseline; gap: 14px; margin-top: 14px; }}
 .count .nn {{ font-size: 74px; font-weight: 800; line-height: 1; letter-spacing: -0.04em; }}
 .count .of {{ font-size: 26px; font-weight: 600; color: {MUTED}; }}
 .count-note {{ font-size: 19px; color: {DIM}; margin-top: 10px; line-height: 1.5; }}
@@ -279,6 +292,8 @@ def status_card(d):
 }}
 .week-strip ul {{ list-style: none; display: flex; margin-top: 16px; }}
 .week-strip li {{ flex: 1; }}
+/* "5 lifts · 4 cardio" is words, not a number — it needs a wider slot than the digits do. */
+.week-strip li:last-child {{ flex: 1.7; }}
 .av {{ font-size: 38px; font-weight: 800; line-height: 1; letter-spacing: -0.03em; }}
 .as {{ font-size: 15px; color: {DIM}; margin-top: 5px; }}
 .week-strip .micro {{ font-size: 13px; }}
@@ -286,12 +301,12 @@ def status_card(d):
 <div class="card">
   <div class="head">
     <p class="tag">{phase['label']} · week {week['number']}</p>
-    <p class="tag is-dim">since {phase['startLabel']}</p>
+    <p class="tag is-dim">{week['rangeLabel']}</p>
   </div>
 
   <div class="hero">
-    <p class="big">{delta(phase['weightChange'])}<span> lb</span></p>
-    <p class="arc"><b>{n(start, 1)}</b> → <b>{n(now, 1)}</b> lb · goal <b>{n(goal)}</b></p>
+    <p class="big">{n(week['avgWeight'], 1)}<span> lb avg</span></p>
+    <p class="arc">{week_move} · weekly average, not a single weigh-in</p>
   </div>
 
   <div class="body">
@@ -303,6 +318,7 @@ def status_card(d):
 
     <div class="mid">
       <div>
+        <p class="micro">The cut so far · {n(start, 1)} → {n(now, 1)} lb since {phase['startLabel']} · goal {n(goal)}</p>
         <div class="count">
           <p class="nn">{n(lost, 1)}</p>
           <p class="of">of {n(span, 1)} lb</p>
@@ -322,12 +338,12 @@ def status_card(d):
   </div>
 
   <div class="week-strip">
-    <p class="strip-head">Week {week['number']} averages · {week['rangeLabel']}</p>
+    <p class="strip-head">Also this week, per day</p>
     <ul>{averages_html}</ul>
   </div>
 
   <div class="foot">
-    <p>Now {n(now, 1)} lb · goal {n(goal)} lb</p>
+    <p>Last weigh-in {n(now, 1)} lb · goal {n(goal)} lb</p>
     <p>One block, one pound</p>
   </div>
 </div>
