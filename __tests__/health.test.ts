@@ -776,6 +776,62 @@ describe('phase weight change per week', () => {
   });
 });
 
+describe('recent pace', () => {
+  /**
+   * Five weeks of Monday weigh-ins: a fast first fortnight (2 lb/wk), then a
+   * settled 0.5 lb/wk. The all-time rate blends them; the recent rate must not.
+   */
+  function frontLoaded(): HealthDay[] {
+    const mondays: [string, number][] = [
+      ['2026-07-20', 210.0],
+      ['2026-07-27', 208.0],
+      ['2026-08-03', 206.0],
+      ['2026-08-10', 205.5],
+      ['2026-08-17', 205.0],
+    ];
+    return mondays.map(([date, weight]) => day({ date, day: 'Mon', weight }));
+  }
+
+  const phase: HealthPhase[] = [{ start: '2026-07-20', type: 'cut', goalWeight: 200 }];
+
+  test('measures only the trailing three weeks, not the whole span', () => {
+    const [summary] = buildPhases(frontLoaded(), phase);
+
+    // Fitted over the last three Mondays (206, 205.5, 205): -0.5 lb/wk. The
+    // slope is fitted, not endpoint-to-endpoint, so no single reading owns it.
+    expect(summary.recentChangePerWeek).toBeCloseTo(-0.5, 5);
+    // The all-time rate still blends the fast start in.
+    expect(summary.weightChangePerWeek).toBeCloseTo(-5.0 / (29 / 7), 5);
+  });
+
+  test('is null while the phase is no older than the window', () => {
+    // Three Mondays span 15 days — the "recent" window IS the whole cut, so
+    // there is no distinct recent rate to report.
+    const [summary] = buildPhases(frontLoaded().slice(0, 3), phase);
+
+    expect(summary.recentChangePerWeek).toBeNull();
+    expect(summary.weightChangePerWeek).not.toBeNull();
+  });
+
+  test('the projection extrapolates the recent rate once it exists', () => {
+    const [summary] = buildPhases(frontLoaded(), phase);
+
+    // 5 lb to go at the fitted 0.5 lb/wk is 10 weeks -> 70 days from Aug 17,
+    // where the blended all-time rate would have promised late September.
+    expect(summary.projectedGoalDate).toBe('2026-10-26');
+  });
+
+  test('a recent stall projects nothing rather than a stale date', () => {
+    const stalled = frontLoaded();
+    stalled[3] = day({ ...stalled[3], weight: 206.0 });
+    stalled[4] = day({ ...stalled[4], weight: 206.0 });
+    const [summary] = buildPhases(stalled, phase);
+
+    expect(summary.recentChangePerWeek).toBe(0);
+    expect(summary.projectedGoalDate).toBeNull();
+  });
+});
+
 describe('projected goal date', () => {
   test('extrapolates the weighed rate to the goal', () => {
     // 210.2 -> 207.9 over week one is -2.3 lb/week; 205.6 is exactly one more
@@ -851,6 +907,21 @@ describe('estimated maintenance', () => {
     const summary = summarize(days);
 
     expect(summary.estimatedMaintenance).toBeNull();
+  });
+
+  test('reads only the trailing three weeks, so an early whoosh ages out', () => {
+    // Five weeks at 2,500 kcal: 2 lb/wk for a fortnight, then dead flat. The
+    // trailing window sees only the flat stretch, so maintenance equals intake.
+    const mondays: [string, number][] = [
+      ['2026-07-20', 210.0],
+      ['2026-07-27', 208.0],
+      ['2026-08-03', 206.0],
+      ['2026-08-10', 206.0],
+      ['2026-08-17', 206.0],
+    ];
+    const days = mondays.map(([date, weight]) => day({ date, day: 'Mon', cals: 2500, weight }));
+
+    expect(summarize(days).estimatedMaintenance).toBeCloseTo(2500, 5);
   });
 });
 

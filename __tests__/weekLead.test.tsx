@@ -39,6 +39,7 @@ const PHASE: PhaseSummary = {
   currentWeight: 204.6,
   weightChange: -5.6,
   weightChangePerWeek: -1.1,
+  recentChangePerWeek: -0.5,
   goalWeight: 190,
   goalRemaining: 14.6,
   goalPercent: 28,
@@ -101,7 +102,9 @@ describe('WeekLead', () => {
     expect(screen.getByText(/the cut so far/i)).toBeInTheDocument();
     expect(screen.getByText('210.2 lb')).toBeInTheDocument();
     expect(screen.getByText('14.6 lb to go')).toBeInTheDocument();
-    expect(screen.getByText('on pace for Nov 22')).toBeInTheDocument();
+    expect(screen.getByText('on pace for Nov 22 at the recent pace')).toBeInTheDocument();
+    expect(screen.getByText('−0.5 lb')).toBeInTheDocument();
+    expect(screen.getByText('last 3 weeks')).toBeInTheDocument();
   });
 
   it('stands on its own with no phase running', () => {

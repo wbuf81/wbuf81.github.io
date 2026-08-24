@@ -46,7 +46,7 @@ export default function StatTiles({ summary, weightUnit }: Props) {
         summary.estimatedMaintenance !== null ? formatNumber(summary.estimatedMaintenance) : '—',
       detail:
         summary.estimatedMaintenance !== null
-          ? 'kcal/day implied by intake vs weight change'
+          ? 'kcal/day implied by the last 3 weeks'
           : 'needs two weighed weeks',
     },
     {
@@ -69,7 +69,7 @@ export default function StatTiles({ summary, weightUnit }: Props) {
           : '—',
       detail:
         summary.estimatedMaintenance !== null && summary.avgCals !== null
-          ? 'per day, maintenance minus intake'
+          ? 'per day, last 3 weeks'
           : 'needs two weighed weeks',
     },
     {

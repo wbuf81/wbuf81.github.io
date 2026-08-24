@@ -39,6 +39,38 @@ const DEFAULT_CARDIO_MINUTES = 30;
 const CALS_PER_LB = 3500;
 /** A maintenance estimate from a single week swings with water; two settle it. */
 const MAINTENANCE_MIN_SPAN_DAYS = 14;
+/**
+ * "Recent" means the trailing three weeks. A cut front-loads its loss — the
+ * first fortnight's water made the Aug 2026 cut look like 1.1 lb/wk when the
+ * settled rate was half that — so the projection and the maintenance estimate
+ * both read this window instead of the whole span once there is enough history.
+ */
+const RECENT_WINDOW_DAYS = 21;
+
+/**
+ * Least-squares slope of weight against time, in lb per day.
+ *
+ * The recent window is too short to take a rate from its two endpoint
+ * weigh-ins — the first cut of this feature did, and one watery Sunday reading
+ * swung the projection by months. A fitted slope over every weigh-in in the
+ * window is the same idea as the chart's trend line: no single day decides it.
+ */
+function fittedDailyRate(weighed: HealthDay[]): number | null {
+  if (weighed.length < 2) return null;
+
+  const x = weighed.map((d) => daysBetween(weighed[0].date, d.date));
+  const y = weighed.map((d) => d.weight!);
+  const meanX = x.reduce((a, b) => a + b, 0) / x.length;
+  const meanY = y.reduce((a, b) => a + b, 0) / y.length;
+
+  let num = 0;
+  let den = 0;
+  for (let i = 0; i < x.length; i++) {
+    num += (x[i] - meanX) * (y[i] - meanY);
+    den += (x[i] - meanX) ** 2;
+  }
+  return den === 0 ? null : num / den;
+}
 
 // Date, Day, Cals, Protein, Carbs, Fat, Weight, Steps, Workout, Cardio,
 // Cardio Notes, Notes. The cardio note got its own column in Aug 2026; before
@@ -297,18 +329,25 @@ export function summarize(days: HealthDay[], targets?: HealthDatedTargets[]): He
   // that would have held weight steady. The change happens across the
   // *intervals* between the first and last weigh-in, so the divisor is
   // exclusive, unlike the inclusive "days tracked" counts.
+  // Measured over the trailing three weeks, not the whole span: maintenance
+  // moves as the diet goes on, and the first fortnight's water loss otherwise
+  // inflates the deficit for the rest of the block.
   let estimatedMaintenance: number | null = null;
   if (weighed.length > 1) {
-    const first = weighed[0];
-    const last = weighed[weighed.length - 1];
+    const windowStart = addDays(weighed[weighed.length - 1].date, -(RECENT_WINDOW_DAYS - 1));
+    const windowed = weighed.filter((d) => d.date >= windowStart);
+    const first = windowed[0];
+    const last = windowed[windowed.length - 1];
     const spanDays = daysBetween(first.date, last.date);
     const spanCals = mean(
       sorted.filter((d) => d.date >= first.date && d.date <= last.date).map((d) => d.cals)
     );
+    // Fitted, not endpoint-to-endpoint: a short window taken between two single
+    // readings inherits all of their water noise.
+    const dailyRate = fittedDailyRate(windowed);
 
-    if (spanDays >= MAINTENANCE_MIN_SPAN_DAYS && spanCals !== null) {
-      estimatedMaintenance =
-        spanCals - ((last.weight! - first.weight!) * CALS_PER_LB) / spanDays;
+    if (spanDays >= MAINTENANCE_MIN_SPAN_DAYS && spanCals !== null && dailyRate !== null) {
+      estimatedMaintenance = spanCals - dailyRate * CALS_PER_LB;
     }
   }
 
@@ -384,6 +423,28 @@ export function buildPhases(days: HealthDay[], phases?: HealthPhase[]): PhaseSum
       }
     }
 
+    // The same rate measured over only the trailing window. Null while the
+    // phase is no older than the window — until then "recent" and "all-time"
+    // are the same measurement and reporting both would say nothing.
+    let recentChangePerWeek: number | null = null;
+    if (weighed.length > 1) {
+      const lastDate = weighed[weighed.length - 1].date;
+      if (daysBetween(weighed[0].date, lastDate) + 1 > RECENT_WINDOW_DAYS) {
+        const windowStart = addDays(lastDate, -(RECENT_WINDOW_DAYS - 1));
+        const windowed = weighed.filter((d) => d.date >= windowStart);
+        if (windowed.length > 1) {
+          const spannedDays = daysBetween(windowed[0].date, lastDate) + 1;
+          // Fitted across every weigh-in in the window, unlike the whole-block
+          // rate above: start-to-now is a fact of the block, but a three-week
+          // rate taken between two single readings is water noise.
+          const dailyRate = fittedDailyRate(windowed);
+          if (spannedDays >= DAYS_IN_WEEK && dailyRate !== null) {
+            recentChangePerWeek = dailyRate * DAYS_IN_WEEK;
+          }
+        }
+      }
+    }
+
     let goalRemaining: number | null = null;
     let goalPercent: number | null = null;
 
@@ -400,13 +461,17 @@ export function buildPhases(days: HealthDay[], phases?: HealthPhase[]): PhaseSum
       }
     }
 
-    // Where the weighed rate lands, counted from the last weigh-in. Positive
-    // weeks-to-go means the rate points at the goal; zero or negative means
-    // the goal is already reached or the weight is moving the wrong way, and
-    // there is nothing honest to project.
+    // Where the rate lands, counted from the last weigh-in — the *recent* rate
+    // once the phase is old enough to have one, because the all-time rate is
+    // front-loaded by the first fortnight's water and projects a date the
+    // settled pace won't hit. Positive weeks-to-go means the rate points at
+    // the goal; zero or negative means the goal is already reached or the
+    // weight is moving the wrong way (or, recently, not at all), and there is
+    // nothing honest to project.
+    const projectionRate = recentChangePerWeek ?? weightChangePerWeek;
     let projectedGoalDate: string | null = null;
-    if (goalWeight !== null && currentWeight !== null && weightChangePerWeek) {
-      const weeksToGo = (goalWeight - currentWeight) / weightChangePerWeek;
+    if (goalWeight !== null && currentWeight !== null && projectionRate) {
+      const weeksToGo = (goalWeight - currentWeight) / projectionRate;
       if (weeksToGo > 0) {
         projectedGoalDate = addDays(
           weighed[weighed.length - 1].date,
@@ -431,6 +496,7 @@ export function buildPhases(days: HealthDay[], phases?: HealthPhase[]): PhaseSum
       weightChange:
         startWeight !== null && currentWeight !== null ? currentWeight - startWeight : null,
       weightChangePerWeek,
+      recentChangePerWeek,
       goalWeight,
       goalRemaining,
       goalPercent,

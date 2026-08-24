@@ -165,6 +165,7 @@ console.log(
         currentWeight: phase.currentWeight,
         weightChange: phase.weightChange,
         weightChangePerWeek: phase.weightChangePerWeek,
+        recentChangePerWeek: phase.recentChangePerWeek,
         goalWeight: phase.goalWeight,
         goalRemaining: phase.goalRemaining,
         goalPercent: phase.goalPercent,

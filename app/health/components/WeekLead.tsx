@@ -143,7 +143,23 @@ export default function WeekLead({ rows, phase, weightUnit }: Props) {
                   ? `${formatDelta(phase.weightChangePerWeek)} ${weightUnit}`
                   : '—'}
               </p>
+              {phase.recentChangePerWeek !== null && <p className="stat-detail">whole block</p>}
             </div>
+
+            {/*
+              The whole-block rate is front-loaded by the first fortnight's
+              water, so once a distinct recent rate exists it is shown beside
+              it — and the projection under the goal extrapolates this one.
+            */}
+            {phase.recentChangePerWeek !== null && (
+              <div className="phase-figure">
+                <p className="stat-label">Recent pace</p>
+                <p className={`phase-value${tone(phase.type === 'bulk' ? -phase.recentChangePerWeek : phase.recentChangePerWeek)}`}>
+                  {`${formatDelta(phase.recentChangePerWeek)} ${weightUnit}`}
+                </p>
+                <p className="stat-detail">last 3 weeks</p>
+              </div>
+            )}
 
             {phase.goalWeight !== null && (
               <div className="phase-figure is-goal">
@@ -170,7 +186,10 @@ export default function WeekLead({ rows, phase, weightUnit }: Props) {
                   </div>
                 )}
                 {phase.projectedGoalLabel !== null && (
-                  <p className="stat-detail">on pace for {phase.projectedGoalLabel}</p>
+                  <p className="stat-detail">
+                    on pace for {phase.projectedGoalLabel}
+                    {phase.recentChangePerWeek !== null ? ' at the recent pace' : ''}
+                  </p>
                 )}
               </div>
             )}

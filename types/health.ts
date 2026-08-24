@@ -179,6 +179,12 @@ export interface PhaseSummary {
    * from two days is noise.
    */
   weightChangePerWeek: number | null;
+  /**
+   * The same rate over only the trailing three weeks. Null while the phase is
+   * no older than the window — "recent" is only reported once it is a distinct
+   * measurement. The projection extrapolates this rate when it exists.
+   */
+  recentChangePerWeek: number | null;
   goalWeight: number | null;
   /**
    * Weight still to go to reach the goal, as a magnitude — positive whether the

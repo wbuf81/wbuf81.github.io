@@ -200,10 +200,17 @@ def status_card(d):
         blocks += f'<li style="{style}"></li>'
 
 
+    # The recent rate, once the block is old enough to have one — the all-time
+    # rate is front-loaded by the first fortnight's water, and the projection
+    # (computed in lib/health) extrapolates the recent rate too.
+    recent = phase.get('recentChangePerWeek')
+    rate = (f"{delta(recent)} lb", 'last 3 weeks') if recent is not None \
+        else (f"{delta(phase['weightChangePerWeek'])} lb", 'average rate')
+
     facts = [
         ('To go', f"{n(phase['goalRemaining'], 1)} lb", f"{n(phase['goalPercent'])}% of the way"),
-        ('Per week', f"{delta(phase['weightChangePerWeek'])} lb", 'average rate'),
-        ('On pace for', phase['projectedGoalLabel'] or '—', 'if the rate holds'),
+        ('Per week', *rate),
+        ('On pace for', phase['projectedGoalLabel'] or '—', 'if the pace holds'),
         ('Tracked', f"{phase['dayCount']} days", f"{phase['weekCount']} weeks, no gaps"),
     ]
     facts_html = ''.join(
