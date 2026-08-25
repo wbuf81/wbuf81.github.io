@@ -161,6 +161,11 @@ console.log(
         rangeLabel: rangeLabel(r.weekStart, r.weekEnd),
         avgWeight: r.avgWeight,
         weightChange: r.weightChange,
+        avgCals: r.avgCals,
+        avgProtein: r.avgProtein,
+        avgSteps: r.avgSteps,
+        lifts: r.workouts,
+        cardioSessions: r.cardioSessions,
       })),
       phase: phase && {
         label: phase.label,

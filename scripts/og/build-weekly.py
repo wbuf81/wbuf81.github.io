@@ -231,27 +231,39 @@ def status_card(d):
         for label, value, sub in facts
     )
 
-    # The last three weekly averages, oldest first — the trajectory, not one
-    # point of it. Food and training live on the fuel and activity cards.
-    averages = [
-        (
-            wk['rangeLabel'],
-            f"{n(wk['avgWeight'], 1)}",
-            delta(wk['weightChange']) if wk['weightChange'] is not None else 'first week',
-            GREEN if (wk['weightChange'] or 0) < 0 else ORANGE if (wk['weightChange'] or 0) > 0 else MUTED,
-        )
-        for wk in d['recentWeeks']
-    ]
-    averages_html = ''.join(
-        f'<li><p class="micro">{label}</p><p class="av">{value}<span> lb</span></p>'
-        f'<p class="as" style="color:{color}">{sub}</p></li>'
-        for label, value, sub, color in averages
-    )
+    # The last three weeks stacked, oldest first, one row each — the same
+    # averages the old strip carried, but as a trajectory instead of one point.
+    # Older rows are faded a step so the eye lands on the week being posted.
+    recents = d['recentWeeks']
+    rows = ''
+    for i, wk in enumerate(recents):
+        ch = wk['weightChange']
+        ch_color = GREEN if (ch or 0) < 0 else ORANGE if (ch or 0) > 0 else MUTED
+        ch_text = delta(ch) if ch is not None else '—'
+        faded = ' style="opacity: 0.62;"' if i < len(recents) - 1 else ''
+        rows += f'''
+    <div class="wk-row"{faded}>
+      <p class="wk-range">{wk['rangeLabel']}</p>
+      <p class="wk-num">{n(wk['avgWeight'], 1)}<span> lb </span><em style="color:{ch_color}">{ch_text}</em></p>
+      <p class="wk-num">{n(wk['avgCals'])}</p>
+      <p class="wk-num">{n(wk['avgProtein'])}<span> g</span></p>
+      <p class="wk-num">{n(wk['avgSteps'])}</p>
+      <p class="wk-num">{wk['lifts']}<span class="sep">·</span>{wk['cardioSessions']}</p>
+    </div>'''
+    averages_html = f'''
+    <div class="wk-row is-head">
+      <p class="wk-range"></p>
+      <p class="wk-num">Weight</p>
+      <p class="wk-num">Calories</p>
+      <p class="wk-num">Protein</p>
+      <p class="wk-num">Steps</p>
+      <p class="wk-num">Lifts · cardio</p>
+    </div>{rows}'''
 
     return f"""
 <style>
 {base_css()}
-.hero {{ margin-top: 34px; }}
+.hero {{ margin-top: 26px; }}
 .hero .big {{
   font-size: 148px; font-weight: 800; line-height: 0.82; letter-spacing: -0.045em;
 }}
@@ -260,7 +272,7 @@ def status_card(d):
   margin-top: 22px; font-size: 29px; font-weight: 500; color: {MUTED};
 }}
 .hero .arc b {{ color: {PAPER}; font-weight: 700; }}
-.body {{ display: flex; gap: 46px; margin-top: 38px; flex: 1; }}
+.body {{ display: flex; gap: 46px; margin-top: 30px; flex: 1; }}
 .ladder {{ width: 150px; flex: none; }}
 .ladder ul {{ list-style: none; display: grid; gap: 5px; }}
 .ladder li {{ height: 21px; border-radius: 3px; }}
@@ -289,17 +301,30 @@ def status_card(d):
   letter-spacing: -0.035em;
 }}
 .fs {{ font-size: 16px; color: {DIM}; margin-top: 5px; }}
-.week-strip {{ margin-top: 34px; padding-top: 20px; border-top: 2px solid {PAPER}; }}
+.week-strip {{ margin-top: 26px; padding-top: 18px; border-top: 2px solid {PAPER}; }}
 .strip-head {{
   font-size: 15px; font-weight: 700; letter-spacing: 0.18em;
   text-transform: uppercase; color: {MUTED};
 }}
-.week-strip ul {{ list-style: none; display: flex; margin-top: 16px; }}
-.week-strip li {{ flex: 1; }}
-.av {{ font-size: 38px; font-weight: 800; line-height: 1; letter-spacing: -0.03em; }}
-.av span {{ font-size: 20px; font-weight: 600; color: {MUTED}; }}
-.as {{ font-size: 15px; color: {DIM}; margin-top: 5px; }}
-.week-strip .micro {{ font-size: 13px; }}
+.wk-row {{
+  display: grid; grid-template-columns: 172px 1.5fr 1fr 1fr 1fr 1.1fr;
+  gap: 0 26px; align-items: baseline; padding: 13px 0;
+  border-top: 1px solid {RULE};
+}}
+.wk-row.is-head {{ border-top: none; margin-top: 14px; padding: 0 0 3px; }}
+.is-head .wk-num {{
+  font-size: 13px; font-weight: 700; letter-spacing: 0.14em;
+  text-transform: uppercase; color: {MUTED};
+}}
+.wk-range {{
+  font-size: 15px; font-weight: 700; letter-spacing: 0.1em;
+  text-transform: uppercase; color: {MUTED};
+}}
+.wk-num {{ font-size: 31px; font-weight: 800; letter-spacing: -0.02em; }}
+.wk-num span {{ font-size: 18px; font-weight: 600; color: {MUTED}; }}
+.wk-num em {{ font-style: normal; font-size: 19px; font-weight: 700; }}
+/* Spaced wide so "5 · 3" cannot scan as the decimal 5.3. */
+.wk-num .sep {{ margin: 0 10px; }}
 </style>
 <div class="card">
   <div class="head">
@@ -342,7 +367,7 @@ def status_card(d):
 
   <div class="week-strip">
     <p class="strip-head">Weekly averages</p>
-    <ul>{averages_html}</ul>
+    {averages_html}
   </div>
 
   <div class="foot">
