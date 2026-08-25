@@ -366,7 +366,7 @@ def status_card(d):
   </div>
 
   <div class="week-strip">
-    <p class="strip-head">Weekly averages</p>
+    <p class="strip-head">Weekly averages · last 3 weeks</p>
     {averages_html}
   </div>
 
