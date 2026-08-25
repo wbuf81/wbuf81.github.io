@@ -548,7 +548,7 @@ MACROS = [
 ]
 
 
-def fuel_card(d):
+def macros_card(d):
     """Calories and the macro split, day by day.
 
     Bar length is the day's recorded calories; the segments inside it are that
@@ -587,14 +587,30 @@ def fuel_card(d):
 </li>
 """
 
+    DAY_COL, GAP, CAL_COL = 78, 16, 84
+    track_w = W - 2 * 68 - DAY_COL - CAL_COL - 2 * GAP
+
     target_rule = ''
     if target:
-        DAY_COL, GAP, CAL_COL = 78, 16, 84
-        track_w = W - 2 * 68 - DAY_COL - CAL_COL - 2 * GAP
         left = DAY_COL + GAP + target / peak * track_w
         target_rule = (
             f'<div class="target" style="left: {left:.0f}px">'
             f'<span>{n(target)} target</span></div>'
+        )
+
+    # The protein goal as a rule in the protein color. Protein is the first
+    # segment and anchored at the bar's left edge, so a day whose blue segment
+    # reaches the rule ate its grams — the goal reads per day, not just as the
+    # weekly average in the legend. Positioned at goal x 4 kcal on the same
+    # scale as the bars; the logged total and grams x 4/4/9 differ by a few
+    # kcal, which at this width is under a pixel or two.
+    protein_rule = ''
+    protein_goal = week.get('proteinGoal')
+    if protein_goal:
+        left = DAY_COL + GAP + (protein_goal * 4) / peak * track_w
+        protein_rule = (
+            f'<div class="target is-protein" style="left: {left:.0f}px">'
+            f'<span>{n(protein_goal)} g protein</span></div>'
         )
 
     legend = ''.join(
@@ -622,7 +638,7 @@ def fuel_card(d):
   letter-spacing: 0.02em; text-transform: none;
 }}
 .days {{
-  list-style: none; margin-top: 36px; position: relative; flex: 1;
+  list-style: none; margin-top: 36px; margin-bottom: 34px; position: relative; flex: 1;
   display: flex; flex-direction: column; justify-content: space-between;
 }}
 .days li {{
@@ -649,10 +665,12 @@ def fuel_card(d):
   font-size: 14px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
   color: {MUTED}; white-space: nowrap;
 }}
+.target.is-protein {{ background: {BLUE}; opacity: 0.5; }}
+.target.is-protein span {{ top: auto; bottom: -30px; color: {BLUE}; }}
 </style>
 <div class="card">
   <div class="head">
-    <p class="tag">Fuel · {week['rangeLabel']}</p>
+    <p class="tag">Macros · {week['rangeLabel']}</p>
     <p class="tag is-dim">week {week['number']} of the cut</p>
   </div>
 
@@ -664,6 +682,7 @@ def fuel_card(d):
   <ul class="legend">{legend}</ul>
 
   <ul class="days">
+    {protein_rule}
     {target_rule}
     {rows}
   </ul>
@@ -679,7 +698,7 @@ def fuel_card(d):
 CARDS = {
     'status': status_card,
     'activity': activity_card,
-    'fuel': fuel_card,
+    'macros': macros_card,
 }
 
 

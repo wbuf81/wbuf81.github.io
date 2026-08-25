@@ -98,6 +98,8 @@ export interface HealthTargets {
   liftsPerWeek?: number | null;
   /** Cardio sessions per week. */
   cardioPerWeek?: number | null;
+  /** Grams of protein aimed at each day. Drawn as a rule on the macros card. */
+  proteinGoal?: number | null;
 }
 
 /**

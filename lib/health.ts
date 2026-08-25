@@ -632,6 +632,7 @@ const GOAL_FIELDS: { key: keyof HealthTargets; label: string }[] = [
   { key: 'weighInsPerWeek', label: 'Weigh-ins per week' },
   { key: 'liftsPerWeek', label: 'Lifts per week' },
   { key: 'cardioPerWeek', label: 'Cardio per week' },
+  { key: 'proteinGoal', label: 'Protein target (g)' },
 ];
 
 function formatValue(value: number): string {

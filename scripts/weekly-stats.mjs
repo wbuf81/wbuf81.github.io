@@ -20,10 +20,12 @@ require('ts-node/register');
 
 let health;
 let noteTextFor;
+let targetsFor;
 try {
   health = require(path.join(repoRoot, 'lib/health.ts'));
   // Joined by the same helper the page uses, so a card can't split the notes differently.
   ({ noteTextFor } = require(path.join(repoRoot, 'lib/noteMarks.ts')));
+  ({ targetsFor } = require(path.join(repoRoot, 'lib/targets.ts')));
 } catch (error) {
   console.error(
     'Could not load lib/health.ts. Run this through the npm script:\n' +
@@ -127,6 +129,10 @@ console.log(
         calsVsGoal: row.calsVsGoal,
         avgSteps: row.avgSteps,
         avgProtein: row.avgProtein,
+        // The goal in force on the week's last recorded day — the same rule
+        // buildWeeklyGoals scores by.
+        proteinGoal:
+          targetsFor(week.days[week.days.length - 1].date, data.targets)?.proteinGoal ?? null,
         lifts: row.workouts,
         cardioSessions: row.cardioSessions,
         cardioMinutes: row.cardioMinutes,

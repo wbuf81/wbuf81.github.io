@@ -28,6 +28,7 @@
       "weighInsPerWeek": 7,
       "liftsPerWeek": 5,
       "cardioPerWeek": 3,
+      "proteinGoal": 200,
       "note": "Cut begins"
     }
   ],

@@ -128,13 +128,13 @@ Three 1080x1350 PNGs for posting to X, drawn by `scripts/og/build-weekly.py` fro
 
 ```
 npm run weekly:cards            # all three
-npm run weekly:cards -- fuel    # just one
+npm run weekly:cards -- macros  # just one
 npm run weekly:stats            # the numbers they use, as JSON
 ```
 
 - `status` — the week's average weight vs the week before as the hero (the same never-a-single-weigh-in rule as the page's lead card; the Sunday weigh-in is named for what it is in the footer), with the cut below it: a ladder of blocks, one per pound between the start weight and the goal, plus rate, projection and the weigh-in trend. The bottom is a table of the last five weeks (or as many as exist), oldest first, older rows fading in steps toward the week being posted — each row the week's averages: weight (+delta), calories, protein, steps, lifts · cardio. It was one row of just the newest week, then briefly weight-only, then three rows; Wes wanted the full averages *and* the trajectory, then the longer window. The heading names the window ("last N weeks"). The lifts·cardio separator is deliberately wide-spaced so "5 · 3" cannot scan as 5.3. Copy is deliberately dry — facts, no narration; Wes flagged the explanatory captions as reading AI-written.
 - `activity` — the week's training: a row per day with a steps bar, the 13.5k goal rule, and chips for lift / cardio / Orange Theory / church.
-- `fuel` — calories and macros: bar length is the day's logged calories, the segments are that day's macro split. Those two are measured separately (grams x 4/4/9 rarely lands on a logged total), which is why the footer says which is which — don't relabel it as though the segments sum to the bar.
+- `macros` (was `fuel` until Aug 2026) — calories and macros: bar length is the day's logged calories, the segments are that day's macro split. Those two are measured separately (grams x 4/4/9 rarely lands on a logged total), which is why the footer says which is which — don't relabel it as though the segments sum to the bar. A rule in the protein blue marks `proteinGoal` × 4 kcal: protein is the bar's first segment, so a day's blue segment reaching the rule means the grams were eaten. `proteinGoal` lives in `targets` (data/health.json) like the other standing goals, so revising it is an append and it shows in the change log.
 
 Rules that are deliberate:
 - **No name, handle or URL on any card.** `/health` is unlinked and `noindex`; printing its address on a public post would advertise it to exactly the audience it is kept from. Don't add attribution back.
