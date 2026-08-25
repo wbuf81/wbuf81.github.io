@@ -240,7 +240,10 @@ def status_card(d):
         ch = wk['weightChange']
         ch_color = GREEN if (ch or 0) < 0 else ORANGE if (ch or 0) > 0 else MUTED
         ch_text = delta(ch) if ch is not None else '—'
-        faded = ' style="opacity: 0.62;"' if i < len(recents) - 1 else ''
+        # Older rows fade in steps toward the week being posted, so five rows
+        # read as one motion rather than a wall of equal numbers.
+        opacity = 1.0 if i == len(recents) - 1 else 0.45 + 0.4 * (i / max(len(recents) - 1, 1))
+        faded = '' if opacity == 1.0 else f' style="opacity: {opacity:.2f};"'
         rows += f'''
     <div class="wk-row"{faded}>
       <p class="wk-range">{wk['rangeLabel']}</p>
@@ -263,7 +266,7 @@ def status_card(d):
     return f"""
 <style>
 {base_css()}
-.hero {{ margin-top: 26px; }}
+.hero {{ margin-top: 20px; }}
 .hero .big {{
   font-size: 148px; font-weight: 800; line-height: 0.82; letter-spacing: -0.045em;
 }}
@@ -272,7 +275,7 @@ def status_card(d):
   margin-top: 22px; font-size: 29px; font-weight: 500; color: {MUTED};
 }}
 .hero .arc b {{ color: {PAPER}; font-weight: 700; }}
-.body {{ display: flex; gap: 46px; margin-top: 30px; flex: 1; }}
+.body {{ display: flex; gap: 46px; margin-top: 24px; flex: 1; }}
 .ladder {{ width: 150px; flex: none; }}
 .ladder ul {{ list-style: none; display: grid; gap: 5px; }}
 .ladder li {{ height: 21px; border-radius: 3px; }}
@@ -290,11 +293,11 @@ def status_card(d):
 .count .of {{ font-size: 26px; font-weight: 600; color: {MUTED}; }}
 .count-note {{ font-size: 19px; color: {DIM}; margin-top: 10px; line-height: 1.5; }}
 .count-note b {{ color: {BLUE}; font-weight: 700; }}
-.trend {{ margin-top: 30px; }}
+.trend {{ margin-top: 22px; }}
 .trend svg {{ margin-top: 14px; display: block; }}
 .facts {{
   list-style: none; margin-top: auto;
-  display: grid; grid-template-columns: 1fr 1fr; gap: 30px 30px;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 24px 30px;
 }}
 .fv {{
   font-size: 46px; font-weight: 800; line-height: 1; margin-top: 5px;
@@ -308,7 +311,7 @@ def status_card(d):
 }}
 .wk-row {{
   display: grid; grid-template-columns: 172px 1.5fr 1fr 1fr 1fr 1.1fr;
-  gap: 0 26px; align-items: baseline; padding: 13px 0;
+  gap: 0 26px; align-items: baseline; padding: 9px 0;
   border-top: 1px solid {RULE};
 }}
 .wk-row.is-head {{ border-top: none; margin-top: 14px; padding: 0 0 3px; }}
@@ -320,7 +323,7 @@ def status_card(d):
   font-size: 15px; font-weight: 700; letter-spacing: 0.1em;
   text-transform: uppercase; color: {MUTED};
 }}
-.wk-num {{ font-size: 31px; font-weight: 800; letter-spacing: -0.02em; }}
+.wk-num {{ font-size: 29px; font-weight: 800; letter-spacing: -0.02em; }}
 .wk-num span {{ font-size: 18px; font-weight: 600; color: {MUTED}; }}
 .wk-num em {{ font-style: normal; font-size: 19px; font-weight: 700; }}
 /* Spaced wide so "5 · 3" cannot scan as the decimal 5.3. */
@@ -366,7 +369,7 @@ def status_card(d):
   </div>
 
   <div class="week-strip">
-    <p class="strip-head">Weekly averages · last 3 weeks</p>
+    <p class="strip-head">Weekly averages · last {len(recents)} weeks</p>
     {averages_html}
   </div>
 
