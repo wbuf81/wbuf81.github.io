@@ -208,10 +208,10 @@ def status_card(d):
     # comparison, which is stated rather than shown as a zero.
     move = week['weightChange']
     if move is None:
-        week_move = 'first tracked week'
+        week_move = 'first week on the books'
     else:
         color = GREEN if move < 0 else ORANGE if move > 0 else PAPER
-        week_move = f'<b style="color:{color}">{delta(move)} lb</b> vs last week'
+        week_move = f'<b style="color:{color}">{delta(move)} lb</b> vs last week\u2019s avg'
 
     # The recent rate, once the block is old enough to have one — the all-time
     # rate is front-loaded by the first fortnight's water, and the projection
@@ -221,27 +221,31 @@ def status_card(d):
         else (f"{delta(phase['weightChangePerWeek'])} lb", 'average rate')
 
     facts = [
-        ('To go', f"{n(phase['goalRemaining'], 1)} lb", f"{n(phase['goalPercent'])}% of the way"),
+        ('To go', f"{n(phase['goalRemaining'], 1)} lb", f"{n(phase['goalPercent'])}% done"),
         ('Per week', *rate),
-        ('On pace for', phase['projectedGoalLabel'] or '—', 'if the pace holds'),
-        ('Tracked', f"{phase['dayCount']} days", f"{phase['weekCount']} weeks, no gaps"),
+        ('On pace for', phase['projectedGoalLabel'] or '—', 'at that rate'),
+        ('Tracked', f"{phase['dayCount']} days", 'every day'),
     ]
     facts_html = ''.join(
         f'<li><p class="micro">{label}</p><p class="fv">{value}</p><p class="fs">{sub}</p></li>'
         for label, value, sub in facts
     )
 
-    # The numbers above are the whole cut; these are the week just finished, so
-    # they carry their own heading rather than sitting in the same list.
+    # The last three weekly averages, oldest first — the trajectory, not one
+    # point of it. Food and training live on the fuel and activity cards.
     averages = [
-        ('Calories', n(week['avgCals']), f"{delta(week['calsVsGoal'], 0)} vs target"),
-        ('Protein', f"{n(week['avgProtein'])} g", 'a day'),
-        ('Steps', n(week['avgSteps']), 'a day'),
-        ('Training', f"{week['lifts']} lifts · {week['cardioSessions']} cardio", f"{n(week['cardioMinutes'])} min total"),
+        (
+            wk['rangeLabel'],
+            f"{n(wk['avgWeight'], 1)}",
+            delta(wk['weightChange']) if wk['weightChange'] is not None else 'first week',
+            GREEN if (wk['weightChange'] or 0) < 0 else ORANGE if (wk['weightChange'] or 0) > 0 else MUTED,
+        )
+        for wk in d['recentWeeks']
     ]
     averages_html = ''.join(
-        f'<li><p class="micro">{label}</p><p class="av">{value}</p><p class="as">{sub}</p></li>'
-        for label, value, sub in averages
+        f'<li><p class="micro">{label}</p><p class="av">{value}<span> lb</span></p>'
+        f'<p class="as" style="color:{color}">{sub}</p></li>'
+        for label, value, sub, color in averages
     )
 
     return f"""
@@ -292,9 +296,8 @@ def status_card(d):
 }}
 .week-strip ul {{ list-style: none; display: flex; margin-top: 16px; }}
 .week-strip li {{ flex: 1; }}
-/* "5 lifts · 4 cardio" is words, not a number — it needs a wider slot than the digits do. */
-.week-strip li:last-child {{ flex: 1.7; }}
 .av {{ font-size: 38px; font-weight: 800; line-height: 1; letter-spacing: -0.03em; }}
+.av span {{ font-size: 20px; font-weight: 600; color: {MUTED}; }}
 .as {{ font-size: 15px; color: {DIM}; margin-top: 5px; }}
 .week-strip .micro {{ font-size: 13px; }}
 </style>
@@ -306,7 +309,7 @@ def status_card(d):
 
   <div class="hero">
     <p class="big">{n(week['avgWeight'], 1)}<span> lb avg</span></p>
-    <p class="arc">{week_move} · weekly average, not a single weigh-in</p>
+    <p class="arc">{week_move}</p>
   </div>
 
   <div class="body">
@@ -318,13 +321,13 @@ def status_card(d):
 
     <div class="mid">
       <div>
-        <p class="micro">The cut so far · {n(start, 1)} → {n(now, 1)} lb since {phase['startLabel']} · goal {n(goal)}</p>
+        <p class="micro">Since {phase['startLabel']} · {n(start, 1)} → {n(now, 1)} lb · goal {n(goal)}</p>
         <div class="count">
           <p class="nn">{n(lost, 1)}</p>
           <p class="of">of {n(span, 1)} lb</p>
         </div>
         <p class="count-note">
-          {n(phase['goalRemaining'], 1)} lb still to come off.
+          {n(phase['goalRemaining'], 1)} lb to go.
         </p>
       </div>
 
@@ -338,12 +341,12 @@ def status_card(d):
   </div>
 
   <div class="week-strip">
-    <p class="strip-head">Also this week, per day</p>
+    <p class="strip-head">Weekly averages</p>
     <ul>{averages_html}</ul>
   </div>
 
   <div class="foot">
-    <p>Last weigh-in {n(now, 1)} lb · goal {n(goal)} lb</p>
+    <p>Sunday weigh-in {n(now, 1)} lb · goal {n(goal)} lb</p>
     <p>One block, one pound</p>
   </div>
 </div>

@@ -132,7 +132,7 @@ npm run weekly:cards -- fuel    # just one
 npm run weekly:stats            # the numbers they use, as JSON
 ```
 
-- `status` — the week's average weight vs the week before as the hero (the same never-a-single-weigh-in rule as the page's lead card; the last weigh-in is named for what it is in the footer), with the cut below it: a ladder of blocks, one per pound between the start weight and the goal, plus rate, projection and the weigh-in trend. The ladder and cut facts stay endpoint-based, matching the page's block strip.
+- `status` — the week's average weight vs the week before as the hero (the same never-a-single-weigh-in rule as the page's lead card; the Sunday weigh-in is named for what it is in the footer), with the cut below it: a ladder of blocks, one per pound between the start weight and the goal, plus rate, projection and the weigh-in trend. The bottom strip is the last three weekly averages with their week-over-week deltas — the trajectory, not one point. Food and training figures were moved off this card (the fuel and activity cards own them). Copy is deliberately dry — facts, no narration; Wes flagged the explanatory captions as reading AI-written.
 - `activity` — the week's training: a row per day with a steps bar, the 13.5k goal rule, and chips for lift / cardio / Orange Theory / church.
 - `fuel` — calories and macros: bar length is the day's logged calories, the segments are that day's macro split. Those two are measured separately (grams x 4/4/9 rarely lands on a logged total), which is why the footer says which is which — don't relabel it as though the segments sum to the bar.
 

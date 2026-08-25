@@ -155,6 +155,13 @@ console.log(
           marks: marksFor(noteTextFor(day)),
         })),
       },
+      // The card's week and the two before it, oldest first, so a strip can
+      // show the trajectory rather than one point of it.
+      recentWeeks: trend.slice(Math.max(0, index - 2), index + 1).map((r) => ({
+        rangeLabel: rangeLabel(r.weekStart, r.weekEnd),
+        avgWeight: r.avgWeight,
+        weightChange: r.weightChange,
+      })),
       phase: phase && {
         label: phase.label,
         type: phase.type,
