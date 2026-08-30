@@ -1,4 +1,5 @@
 import React from 'react';
+import '@testing-library/jest-dom';
 import { render, screen } from '@testing-library/react';
 import WeekLead from '@/app/health/components/WeekLead';
 import { PhaseSummary, WeeklyTrendRow } from '@/types/health';
@@ -43,7 +44,14 @@ const PHASE: PhaseSummary = {
   goalWeight: 190,
   goalRemaining: 14.6,
   goalPercent: 28,
+  projectedGoalDate: '2026-11-22',
   projectedGoalLabel: 'Nov 22',
+  avgCals: 2400,
+  avgProtein: 205,
+  avgSteps: 15578,
+  workouts: 25,
+  cardioSessions: 18,
+  cardioMinutes: 555,
 };
 
 const WEEKS = [

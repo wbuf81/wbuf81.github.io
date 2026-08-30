@@ -70,7 +70,7 @@ const REPO_CARDS = [
     description: 'Routes abuse complaints to the team that owns them — reads the incoming complaint mail, pulls out the domains, attributes each one to its brand in the portfolio, and keeps the analytics on what came in and where it went.',
     href: null,
     badge: 'Private Repo',
-    image: null,
+    image: '/agents/beasley.jpg',
   },
   {
     title: 'OSCAR Extension',
@@ -85,6 +85,7 @@ const REPO_CARDS = [
 const PERSONAL_CARDS = [
   {
     title: 'M5 Spotify Deck',
+    group: 'Microcontrollers',
     subtitle: 'wbuf81/m5-spotify-deck',
     description: 'Retro Spotify desk companion on an M5Stack Core — eight views, a real Mode 7 tilting grid, and a Wi-Fi setup portal. C++.',
     href: 'https://github.com/wbuf81/m5-spotify-deck',
@@ -93,6 +94,7 @@ const PERSONAL_CARDS = [
   },
   {
     title: 'Daisy Status Bar',
+    group: 'Everything else',
     subtitle: 'wbuf81/daisy-claude-status-bar',
     description: 'A Bernese Mountain Dog in the macOS menu bar that reacts to what Claude Code is doing. Swift, installable from a Homebrew tap.',
     href: 'https://github.com/wbuf81/daisy-claude-status-bar',
@@ -101,6 +103,7 @@ const PERSONAL_CARDS = [
   },
   {
     title: 'GBForge Tetris',
+    group: 'Everything else',
     subtitle: 'wbuf81/GBForge-Tetris',
     description: 'Game Boy Tetris ROM customizer — pixel-art title screen editor, custom music, a dedication screen, and a web GUI. Python.',
     href: 'https://github.com/wbuf81/GBForge-Tetris',
@@ -109,6 +112,7 @@ const PERSONAL_CARDS = [
   },
   {
     title: 'Omarchy Workspace Labels',
+    group: 'Omarchy Linux',
     subtitle: 'wbuf81/omarchy-workspace-labels',
     description: 'Named workspaces with per-workspace icons for the Omarchy bar — hover previews, an inline icon picker, and a keyboard-driven editor. QML.',
     href: 'https://github.com/wbuf81/omarchy-workspace-labels',
@@ -116,6 +120,9 @@ const PERSONAL_CARDS = [
     image: null,
   },
 ];
+
+/** Personal work reads in these groups, in this order. */
+const PERSONAL_GROUPS = ['Omarchy Linux', 'Microcontrollers', 'Everything else'];
 
 const INTEREST_CARDS = [
   {
@@ -244,58 +251,74 @@ export default function HomePage() {
         <div className="section-inner">
           <h2 className="section-heading">Projects</h2>
           <h3 className="subsection-heading">Work</h3>
-          <div className="agent-grid">
-            {REPO_CARDS.map((card) => {
-              const inner = (
-                <>
-                  {'image' in card && card.image && (
-                    <div className="agent-img-wrap">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={card.image} alt={card.title} className="agent-img" />
-                      <div className="agent-img-overlay" />
-                    </div>
-                  )}
-                  <div className="agent-body">
-                    <div className="beyond-header">
-                      <h3 className="beyond-title">{card.title}</h3>
-                      {card.badge && <span className="beyond-badge">{card.badge}</span>}
-                    </div>
-                    {'subtitle' in card && card.subtitle && <p className="beyond-subtitle">{card.subtitle}</p>}
-                    <p className="beyond-desc">{card.description}</p>
-                    {card.href && <span className="beyond-link">View &rarr;</span>}
-                  </div>
-                </>
-              );
-              const isFullWidth = 'fullWidth' in card && card.fullWidth;
-              const cardClass = `beyond-card agent-card${isFullWidth ? ' agent-card-full' : ''}`;
-              return card.href ? (
-                <a key={card.title} href={card.href} className={`beyond-card-link ${cardClass}`} target="_blank" rel="noopener noreferrer">
-                  {inner}
-                </a>
-              ) : (
-                <div key={card.title} className={cardClass}>
-                  {inner}
-                </div>
-              );
-            })}
-          </div>
 
-          <h3 className="subsection-heading">Personal</h3>
+          <p className="group-label">Autonomous AI Agents</p>
+          <p className="group-note">
+            Agents that take the repetitive end of legal and compliance work — scanning, monitoring,
+            reporting, chasing deadlines before they lapse. Each one is named after a teammate&apos;s
+            pet, which turns out to be the difference between a tool people are told to use and one
+            they actually open.
+          </p>
           <div className="agent-grid">
-            {PERSONAL_CARDS.map((card) => (
-              <a key={card.title} href={card.href} className="beyond-card-link beyond-card agent-card" target="_blank" rel="noopener noreferrer">
+            {REPO_CARDS.filter((card) => !card.fullWidth).map((card) => (
+              <div key={card.title} className="beyond-card agent-card">
+                {card.image && (
+                  <div className="agent-img-wrap">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={card.image} alt={card.title} className="agent-img" />
+                    <div className="agent-img-overlay" />
+                  </div>
+                )}
                 <div className="agent-body">
                   <div className="beyond-header">
-                    <h3 className="beyond-title">{card.title}</h3>
-                    <span className="beyond-badge">{card.badge}</span>
+                    <h4 className="beyond-title">{card.title}</h4>
+                    {card.badge && <span className="beyond-badge">{card.badge}</span>}
                   </div>
-                  <p className="beyond-subtitle">{card.subtitle}</p>
+                  {card.subtitle && <p className="beyond-subtitle">{card.subtitle}</p>}
+                  <p className="beyond-desc">{card.description}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <p className="group-label">Open Source</p>
+          <div className="agent-grid">
+            {REPO_CARDS.filter((card) => card.fullWidth).map((card) => (
+              <a key={card.title} href={card.href ?? undefined} className="beyond-card-link beyond-card agent-card agent-card-full" target="_blank" rel="noopener noreferrer">
+                <div className="agent-body">
+                  <div className="beyond-header">
+                    <h4 className="beyond-title">{card.title}</h4>
+                    {card.badge && <span className="beyond-badge">{card.badge}</span>}
+                  </div>
+                  {card.subtitle && <p className="beyond-subtitle">{card.subtitle}</p>}
                   <p className="beyond-desc">{card.description}</p>
                   <span className="beyond-link">View &rarr;</span>
                 </div>
               </a>
             ))}
           </div>
+
+          <h3 className="subsection-heading">Personal</h3>
+          {PERSONAL_GROUPS.map((group) => (
+            <div key={group}>
+              <p className="group-label">{group}</p>
+              <div className="agent-grid">
+                {PERSONAL_CARDS.filter((card) => card.group === group).map((card) => (
+                  <a key={card.title} href={card.href} className="beyond-card-link beyond-card agent-card agent-card-full" target="_blank" rel="noopener noreferrer">
+                    <div className="agent-body">
+                      <div className="beyond-header">
+                        <h4 className="beyond-title">{card.title}</h4>
+                        <span className="beyond-badge">{card.badge}</span>
+                      </div>
+                      <p className="beyond-subtitle">{card.subtitle}</p>
+                      <p className="beyond-desc">{card.description}</p>
+                      <span className="beyond-link">View &rarr;</span>
+                    </div>
+                  </a>
+                ))}
+              </div>
+            </div>
+          ))}
 
           {/* GitHub Activity */}
           <div className="github-activity">
@@ -686,6 +709,25 @@ export default function HomePage() {
           font-size: 0.85rem;
           font-weight: 500;
           color: #2563eb;
+        }
+        /* A category inside Work or Personal — quieter than the section heads
+           above it, so three of them down the page don't read as three sections. */
+        .group-label {
+          font-family: var(--font-outfit), system-ui, sans-serif;
+          font-size: 0.78rem;
+          font-weight: 600;
+          letter-spacing: 0.1em;
+          text-transform: uppercase;
+          color: #6b7280;
+          margin: 36px 0 16px;
+        }
+        .group-note {
+          font-family: var(--font-outfit), system-ui, sans-serif;
+          font-size: 1rem;
+          line-height: 1.65;
+          color: #4b5563;
+          max-width: 68ch;
+          margin: -6px 0 24px;
         }
         .subsection-heading {
           font-family: var(--font-playfair), Georgia, serif;

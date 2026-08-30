@@ -4,7 +4,8 @@
 Pushes to `main` auto-deploy to GitHub Pages via `.github/workflows/deploy.yml`. Build: `npm run build` (outputs to `./out`).
 
 ## Key files
-- Homepage copy & projects section: `app/page.tsx` — `REPO_CARDS` (work agents) and `PERSONAL_CARDS` (public GitHub repos) arrays
+- Homepage copy & projects section: `app/page.tsx` — `REPO_CARDS` (work agents) and `PERSONAL_CARDS` (public GitHub repos, each with a `group`) arrays
+- Projects reads: **Work** → "Autonomous AI Agents" (the pet-named compliance agents, with the note explaining why they're named that way) and "Open Source"; **Personal** → the groups listed in `PERSONAL_GROUPS` ("Omarchy Linux", "Microcontrollers", "Everything else"), rendered in that order. Adding a personal repo means adding a card with a `group`; a new group needs a `PERSONAL_GROUPS` entry too. Personal cards are full-width rows (`agent-card-full`) because they carry no mascot — in a 3-up grid a one-card group sits stranded beside two empty columns. That layout hides `subtitle`, so don't put anything load-bearing there.
 - The homepage is deliberately **not a résumé**: hero (name, Before/Now two-liner, arcade games, headshot) straight into Projects. The About/Experience/Expertise/Certifications sections were cut in Aug 2026 on outside feedback ("don't dupe LinkedIn — make it about the building"); the career history lives on LinkedIn, linked from Connect. Don't reintroduce résumé sections, and keep hero copy terse — Wes rejects anything that reads as a tagline.
 - Agent mascot images: `public/agents/*.jpg` (800×480px, soft grayscale)
 
