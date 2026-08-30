@@ -286,9 +286,8 @@ export default function HomePage() {
           <p className="group-label">Autonomous AI Agents</p>
           <p className="group-note">
             Agents that take the repetitive end of legal and compliance work — scanning, monitoring,
-            reporting, chasing deadlines before they lapse. Each one is named after a teammate&apos;s
-            pet, which turns out to be the difference between a tool people are told to use and one
-            they actually open.
+            reporting, chasing deadlines before they lapse. Each one named after a coworker&apos;s pet,
+            driving engagement and making compliance a little more fun.
           </p>
           <div className="agent-grid">
             {REPO_CARDS.filter((card) => !card.fullWidth).map((card) => (
