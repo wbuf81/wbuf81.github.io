@@ -107,7 +107,7 @@ const PERSONAL_CARDS = [
     group: 'Microcontrollers',
     shot: '/projects/knobdeck.jpg',
     subtitle: 'wbuf81/esp32-knobdeck',
-    description: 'A desk controller on a 360×360 round touchscreen you turn. It plays your music behind seven beat-reactive visualisers — and the moment a Teams call starts, the screen becomes your mic and camera as two giant buttons: red means you are on air, tap a half to toggle it. A surface is a screen plus a few fields on the wire, so the next one is the same shape of work rather than a rewrite.',
+    description: 'A desk controller on a 360×360 round touchscreen you turn. It plays your music behind seven beat-reactive visualisers — and the moment a Teams call starts, the screen becomes your mic and camera as two giant buttons: red means you are on air, tap a half to toggle it.',
     href: 'https://github.com/wbuf81/esp32-knobdeck',
     badge: 'Open Source',
     hardware: {
@@ -120,7 +120,7 @@ const PERSONAL_CARDS = [
     title: 'Personal AAC Device',
     group: 'Microcontrollers',
     subtitle: 'wbuf81/m5stack-aac-talker',
-    description: 'A dedicated speech device for augmentative and alternative communication: one tile at a time on a 320×240 screen, three buttons to move through them and speak, and an ID screen holding emergency contact details like a medical bracelet. No network, no SD card, nothing to configure — every press acts, because a swallowed press is a failed sentence.',
+    description: 'A dedicated speech device for augmentative and alternative communication: one tile at a time on a 320×240 screen, three buttons to move through them and speak, and an ID screen holding emergency contact details like a medical bracelet.',
     href: null,
     badge: 'Private Repo',
     hardware: {
