@@ -12,13 +12,6 @@ import type { GalagaHandle } from './components/GalagaBackground';
 
 type GameType = 'tetris' | 'pacman' | 'galaga';
 
-const EXPERTISE_TAGS = [
-  'PCI-DSS', 'ISO 27001', 'ISO 27701', 'SOC-2', 'SOX',
-  'GDPR', 'CCPA', 'ICANN & Registry Compliance', 'OFAC Sanctions', 'Consumer Protection',
-  'Privacy Programs', 'Risk Management', 'IT General Controls',
-  'Business Continuity', 'Corporate Governance', 'AI Governance',
-  'AI-Assisted Compliance Automation',
-];
 
 const REPO_CARDS = [
   {
@@ -81,6 +74,41 @@ const REPO_CARDS = [
     fullWidth: true,
   },
 ];
+const PERSONAL_CARDS = [
+  {
+    title: 'M5 Spotify Deck',
+    subtitle: 'wbuf81/m5-spotify-deck',
+    description: 'Retro Spotify desk companion on an M5Stack Core — eight views, a real Mode 7 tilting grid, and a Wi-Fi setup portal. C++.',
+    href: 'https://github.com/wbuf81/m5-spotify-deck',
+    badge: 'Open Source',
+    image: null,
+  },
+  {
+    title: 'Daisy Status Bar',
+    subtitle: 'wbuf81/daisy-claude-status-bar',
+    description: 'A Bernese Mountain Dog in the macOS menu bar that reacts to what Claude Code is doing. Swift, installable from a Homebrew tap.',
+    href: 'https://github.com/wbuf81/daisy-claude-status-bar',
+    badge: 'Open Source',
+    image: null,
+  },
+  {
+    title: 'GBForge Tetris',
+    subtitle: 'wbuf81/GBForge-Tetris',
+    description: 'Game Boy Tetris ROM customizer — pixel-art title screen editor, custom music, a dedication screen, and a web GUI. Python.',
+    href: 'https://github.com/wbuf81/GBForge-Tetris',
+    badge: 'Open Source',
+    image: null,
+  },
+  {
+    title: 'Omarchy Workspace Labels',
+    subtitle: 'wbuf81/omarchy-workspace-labels',
+    description: 'Named workspaces with per-workspace icons for the Omarchy bar — hover previews, an inline icon picker, and a keyboard-driven editor. QML.',
+    href: 'https://github.com/wbuf81/omarchy-workspace-labels',
+    badge: 'Open Source',
+    image: null,
+  },
+];
+
 const INTEREST_CARDS = [
   {
     title: 'STEM Mentoring',
@@ -141,7 +169,10 @@ export default function HomePage() {
         <div className="hero-inner">
           <div className="hero-text">
             <h1 className="hero-name">Wesley Bard</h1>
-            <p className="hero-subtitle">VP, Risk & Compliance | Engineer | AI Builder</p>
+            <div className="hero-then-now">
+              <p><span className="tn-label">Before</span>Engineer, Lockheed Martin</p>
+              <p><span className="tn-label">Now</span>Governance, Risk &amp; Compliance, Newfold Digital</p>
+            </div>
             <div className="game-row">
               <div className="game-selector">
                 <button
@@ -199,144 +230,11 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* About */}
-      <section id="about" className="section">
-        <div className="section-inner">
-          <h2 className="section-heading">About</h2>
-          <p className="about-text">
-            Nobody plans a career that goes from writing software at Lockheed Martin to leading risk and compliance at Newfold Digital. Mine did, and the engineering years turned out to be the best training I could have asked for. I still approach compliance the way I approached code: find the repetitive thing, automate it, move on.
-          </p>
-          <p className="about-text" style={{ marginTop: '16px' }}>
-            So while my title says I run global programs, in practice I spend a lot of time building. Internal tools, agents, workflow automations, most of it shipped using AI. The best control is the one nobody has to remember to do.
-          </p>
-        </div>
-      </section>
-
-      {/* Experience */}
-      <section id="experience" className="section section-alt">
-        <div className="section-inner">
-          <h2 className="section-heading">Experience</h2>
-
-          <div className="company">
-            <h3 className="company-name">Newfold Digital</h3>
-            <p className="company-note">formerly Web.com / Endurance International — 11+ years</p>
-
-            <div className="role">
-              <div className="role-header">
-                <span className="role-title">Vice President, Risk and Compliance</span>
-                <span className="role-dates">Jun 2021 – Present</span>
-              </div>
-              <p className="role-desc">I lead global compliance programs across PCI-DSS, ISO 27001, SOC-2, GDPR, CCPA, ICANN and registry compliance, OFAC sanctions, and consumer protection — spanning 7 countries and 60+ internal policies. I also established the company&apos;s first AI governance program with formal guardrails on enterprise LLM usage. Beyond the program work, I&apos;ve designed and shipped internal AI agents that perform compliance gap analysis across our policy library, draft executive compliance reporting, and organize audit evidence across certified entities.</p>
-            </div>
-
-            <div className="role">
-              <div className="role-header">
-                <span className="role-title">Senior Director, IT Risk and Compliance</span>
-                <span className="role-dates">Mar 2017 – Jun 2021</span>
-              </div>
-              <p className="role-desc">Stood up and ran privacy and IT compliance programs — CCPA, GDPR, PCI, ISO 27001, IT-SOX, and business continuity. This is where I really learned how compliance programs work from the ground up.</p>
-            </div>
-
-            <div className="role">
-              <div className="role-header">
-                <span className="role-title">Director, IT Compliance</span>
-                <span className="role-dates">Feb 2015 – Mar 2017</span>
-              </div>
-              <p className="role-desc">Ran the SOX compliance program, working closely with Internal Audit, Controlling, HR, and IT. My first real exposure to how governance and financial reporting risk fit together.</p>
-            </div>
-          </div>
-
-          <div className="company">
-            <h3 className="company-name">Lockheed Martin</h3>
-            <p className="company-note">10 years</p>
-
-            <div className="role">
-              <div className="role-header">
-                <span className="role-title">Product Manager & Technical Lead — Prepar3D</span>
-                <span className="role-dates">Feb 2011 – Feb 2015</span>
-              </div>
-              <p className="role-desc">Ran the product and engineering side of Prepar3D, a flight simulation platform. Touched everything from the technical architecture to patent filings to figuring out commercial licensing — a little bit of everything.</p>
-            </div>
-
-            <div className="role">
-              <div className="role-header">
-                <span className="role-title">Manager, Engineering Leadership Development Program</span>
-                <span className="role-dates">Mar 2010 – Feb 2011</span>
-              </div>
-              <p className="role-desc">Helped train and mentor early-career engineers across the company. One of those roles that taught me more than I probably taught anyone else.</p>
-            </div>
-
-            <div className="role">
-              <div className="role-header">
-                <span className="role-title">Senior Software Engineer</span>
-                <span className="role-dates">Dec 2004 – Mar 2010</span>
-              </div>
-              <p className="role-desc">Where it all started — writing code and leading small teams on simulation and training systems, including work on F-35 readiness systems, biometrics, and logistics automation.</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Expertise */}
-      <section id="expertise" className="section">
-        <div className="section-inner">
-          <h2 className="section-heading">Expertise</h2>
-          <div className="tags">
-            {EXPERTISE_TAGS.map((tag) => (
-              <span key={tag} className="tag">{tag}</span>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Certifications & Education */}
-      <section id="education" className="section section-alt">
-        <div className="section-inner">
-          <h2 className="section-heading">Certifications & Education</h2>
-          <div className="edu-grid">
-            <div className="edu-card">
-              <h3 className="edu-card-heading">Certifications</h3>
-              <div className="cert">
-                <span className="cert-name">CISA</span>
-                <span className="cert-detail">Certified Information Systems Auditor — ISACA, 2017</span>
-              </div>
-              <div className="cert">
-                <span className="cert-name">CDPSE</span>
-                <span className="cert-detail">Certified Data Privacy Solutions Engineer — ISACA, 2020</span>
-              </div>
-              <div className="cert cert-secondary">
-                <span className="cert-detail">OneTrust Certified Data Mapping Expert, 2021</span>
-              </div>
-              <div className="cert cert-secondary">
-                <span className="cert-detail">OneTrust Certified Expert, Data Subject Requests, 2020</span>
-              </div>
-              <div className="cert cert-secondary">
-                <span className="cert-detail">OneTrust Certified Expert, Cookie Consent, 2020</span>
-              </div>
-              <div className="cert cert-secondary">
-                <span className="cert-detail">OneTrust Certified Professional, 2019</span>
-              </div>
-            </div>
-            <div className="edu-card">
-              <h3 className="edu-card-heading">Education</h3>
-              <div className="edu-item">
-                <span className="edu-degree">MBA, Management</span>
-                <span className="edu-school">Crummer Graduate School of Business, Rollins College</span>
-                <span className="edu-note">Summa Cum Laude. Dr. Claudio Milman Scholarship Award (highest GPA in graduating class). Beta Gamma Sigma.</span>
-              </div>
-              <div className="edu-item">
-                <span className="edu-degree">BS, Computer Engineering & Mathematics</span>
-                <span className="edu-school">University of Florida</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* Projects & Beyond */}
       <section id="beyond" className="section">
         <div className="section-inner">
           <h2 className="section-heading">Projects</h2>
+          <h3 className="subsection-heading">Work</h3>
           <div className="agent-grid">
             {REPO_CARDS.map((card) => {
               const inner = (
@@ -371,6 +269,23 @@ export default function HomePage() {
                 </div>
               );
             })}
+          </div>
+
+          <h3 className="subsection-heading">Personal</h3>
+          <div className="agent-grid">
+            {PERSONAL_CARDS.map((card) => (
+              <a key={card.title} href={card.href} className="beyond-card-link beyond-card agent-card" target="_blank" rel="noopener noreferrer">
+                <div className="agent-body">
+                  <div className="beyond-header">
+                    <h3 className="beyond-title">{card.title}</h3>
+                    <span className="beyond-badge">{card.badge}</span>
+                  </div>
+                  <p className="beyond-subtitle">{card.subtitle}</p>
+                  <p className="beyond-desc">{card.description}</p>
+                  <span className="beyond-link">View &rarr;</span>
+                </div>
+              </a>
+            ))}
           </div>
 
           {/* GitHub Activity */}
@@ -475,12 +390,24 @@ export default function HomePage() {
           margin: 0;
           line-height: 1.1;
         }
-        .hero-subtitle {
+        .hero-then-now {
           font-family: var(--font-outfit), system-ui, sans-serif;
-          font-size: 1.25rem;
+          font-size: 1.15rem;
           color: #6b7280;
-          margin: 16px 0 0;
+          margin: 18px 0 0;
           font-weight: 400;
+        }
+        .hero-then-now p {
+          margin: 4px 0 0;
+        }
+        .tn-label {
+          display: inline-block;
+          width: 4.6em;
+          font-size: 0.72rem;
+          font-weight: 600;
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
+          color: #9ca3af;
         }
         .hero-headshot {
           flex-shrink: 0;
@@ -595,161 +522,12 @@ export default function HomePage() {
         }
 
         /* About */
-        .about-text {
-          font-family: var(--font-outfit), system-ui, sans-serif;
-          font-size: 1.1rem;
-          line-height: 1.8;
-          color: #374151;
-          max-width: 800px;
-        }
 
         /* Experience */
-        .company {
-          margin-bottom: 36px;
-        }
-        .company:last-child {
-          margin-bottom: 0;
-        }
-        .company-name {
-          font-family: var(--font-outfit), system-ui, sans-serif;
-          font-size: 1.3rem;
-          font-weight: 700;
-          color: #1f2937;
-          margin: 0;
-        }
-        .company-note {
-          font-family: var(--font-outfit), system-ui, sans-serif;
-          font-size: 0.9rem;
-          color: #9ca3af;
-          margin: 4px 0 24px;
-        }
-        .role {
-          margin-bottom: 24px;
-          padding-left: 20px;
-          border-left: 2px solid #e5e7eb;
-        }
-        .role:last-child {
-          margin-bottom: 0;
-        }
-        .role-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: baseline;
-          flex-wrap: wrap;
-          gap: 8px;
-          margin-bottom: 6px;
-        }
-        .role-title {
-          font-family: var(--font-outfit), system-ui, sans-serif;
-          font-size: 1.05rem;
-          font-weight: 600;
-          color: #1f2937;
-        }
-        .role-dates {
-          font-family: var(--font-outfit), system-ui, sans-serif;
-          font-size: 0.85rem;
-          color: #9ca3af;
-          white-space: nowrap;
-        }
-        .role-desc {
-          font-family: var(--font-outfit), system-ui, sans-serif;
-          font-size: 0.95rem;
-          line-height: 1.6;
-          color: #6b7280;
-          margin: 0;
-        }
 
         /* Expertise Tags */
-        .tags {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 10px;
-        }
-        .tag {
-          font-family: var(--font-outfit), system-ui, sans-serif;
-          font-size: 0.85rem;
-          font-weight: 500;
-          color: #374151;
-          background: #fff;
-          border: 1px solid #e5e7eb;
-          padding: 8px 16px;
-          border-radius: 20px;
-        }
 
         /* Education & Certs */
-        .edu-grid {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 32px;
-        }
-        .edu-card {
-          background: #fafafa;
-          border-radius: 16px;
-          padding: 32px;
-          border: 1px solid #f3f4f6;
-        }
-        .edu-card-heading {
-          font-family: var(--font-outfit), system-ui, sans-serif;
-          font-size: 1.1rem;
-          font-weight: 600;
-          color: #1f2937;
-          margin: 0 0 20px;
-        }
-        .cert {
-          margin-bottom: 16px;
-        }
-        .cert:last-child {
-          margin-bottom: 0;
-        }
-        .cert-name {
-          font-family: var(--font-outfit), system-ui, sans-serif;
-          font-size: 1rem;
-          font-weight: 600;
-          color: #1f2937;
-          display: block;
-        }
-        .cert-detail {
-          font-family: var(--font-outfit), system-ui, sans-serif;
-          font-size: 0.85rem;
-          color: #6b7280;
-          display: block;
-          margin-top: 2px;
-        }
-        .cert-secondary {
-          margin-bottom: 8px;
-        }
-        .cert-secondary .cert-detail {
-          font-size: 0.8rem;
-          color: #9ca3af;
-        }
-        .edu-item {
-          margin-bottom: 20px;
-        }
-        .edu-item:last-child {
-          margin-bottom: 0;
-        }
-        .edu-degree {
-          font-family: var(--font-outfit), system-ui, sans-serif;
-          font-size: 1rem;
-          font-weight: 600;
-          color: #1f2937;
-          display: block;
-        }
-        .edu-school {
-          font-family: var(--font-outfit), system-ui, sans-serif;
-          font-size: 0.9rem;
-          color: #6b7280;
-          display: block;
-          margin-top: 2px;
-        }
-        .edu-note {
-          font-family: var(--font-outfit), system-ui, sans-serif;
-          font-size: 0.8rem;
-          color: #9ca3af;
-          display: block;
-          margin-top: 4px;
-          line-height: 1.5;
-        }
 
         /* Projects & Beyond */
         .beyond-grid {
@@ -1021,14 +799,20 @@ export default function HomePage() {
           .hero-name {
             font-size: 2.5rem;
           }
-          .hero-subtitle {
-            font-size: 1.05rem;
+          .hero-then-now {
+            font-size: 1rem;
+          }
+          .hero-then-now p {
+            margin-top: 10px;
+          }
+          /* Centered hero: the label sits above its line instead of beside it,
+             so the long company line wraps under itself, not under the label. */
+          .hero-then-now .tn-label {
+            display: block;
+            width: auto;
           }
           .section {
             padding: 40px 24px;
-          }
-          .edu-grid {
-            grid-template-columns: 1fr;
           }
           .beyond-grid {
             grid-template-columns: 1fr;
@@ -1041,10 +825,6 @@ export default function HomePage() {
           }
           .agent-img-wrap {
             height: 140px;
-          }
-          .role-header {
-            flex-direction: column;
-            gap: 2px;
           }
         }
 
@@ -1060,9 +840,6 @@ export default function HomePage() {
           }
           .section-heading {
             font-size: 1.5rem;
-          }
-          .edu-card {
-            padding: 24px;
           }
           .beyond-card {
             padding: 20px;
