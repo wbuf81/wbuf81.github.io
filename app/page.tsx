@@ -87,10 +87,38 @@ const PERSONAL_CARDS = [
     title: 'M5 Spotify Deck',
     group: 'Microcontrollers',
     subtitle: 'wbuf81/m5-spotify-deck',
-    description: 'Retro Spotify desk companion on an M5Stack Core — eight views, a real Mode 7 tilting grid, and a Wi-Fi setup portal. C++.',
+    description: 'Retro Spotify desk companion — eight views, a real Mode 7 tilting grid, and a Wi-Fi setup portal. C++.',
     href: 'https://github.com/wbuf81/m5-spotify-deck',
     badge: 'Open Source',
     image: null,
+    hardware: {
+      label: 'M5Stack Core Basic v2.7',
+      href: 'https://shop.m5stack.com/products/esp32-basic-core-iot-development-kit-v2-7',
+    },
+  },
+  {
+    title: 'Knob Spotify Player',
+    group: 'Microcontrollers',
+    subtitle: 'wbuf81/esp32knobtouch',
+    description: 'A Spotify appliance for a 360×360 round touchscreen you turn. Album art floats in 3D over a beat-reactive particle field driven by the onboard mic, the bezel ring tracks the song, and the knob is the volume. Also builds as a desktop app through SDL, which is where the visuals get developed.',
+    href: null,
+    badge: 'Private Repo',
+    hardware: {
+      label: 'Waveshare ESP32-S3-Knob-Touch-LCD-1.8',
+      href: 'https://www.waveshare.com/esp32-s3-knob-touch-lcd-1.8.htm',
+    },
+  },
+  {
+    title: "Jeffrey's Talker",
+    group: 'Microcontrollers',
+    subtitle: 'wbuf81/m5stack-aac-talker',
+    description: 'A speech device built for one person: one communication tile at a time on a 320×240 screen, three buttons to move and speak, and an ID screen carrying his name and emergency contact. No network, no SD card, nothing to configure — every press acts, because a swallowed press is a failed sentence.',
+    href: null,
+    badge: 'Private Repo',
+    hardware: {
+      label: 'M5Stack Core Basic v2.7',
+      href: 'https://shop.m5stack.com/products/esp32-basic-core-iot-development-kit-v2-7',
+    },
   },
   {
     title: 'Daisy Status Bar',
@@ -304,7 +332,7 @@ export default function HomePage() {
               <p className="group-label">{group}</p>
               <div className="agent-grid">
                 {PERSONAL_CARDS.filter((card) => card.group === group).map((card) => (
-                  <a key={card.title} href={card.href} className="beyond-card-link beyond-card agent-card agent-card-full" target="_blank" rel="noopener noreferrer">
+                  <div key={card.title} className="beyond-card agent-card agent-card-full">
                     <div className="agent-body">
                       <div className="beyond-header">
                         <h4 className="beyond-title">{card.title}</h4>
@@ -312,9 +340,20 @@ export default function HomePage() {
                       </div>
                       <p className="beyond-subtitle">{card.subtitle}</p>
                       <p className="beyond-desc">{card.description}</p>
-                      <span className="beyond-link">View &rarr;</span>
+                      <div className="card-links">
+                        {card.href && (
+                          <a className="beyond-link" href={card.href} target="_blank" rel="noopener noreferrer">
+                            Repo &rarr;
+                          </a>
+                        )}
+                        {card.hardware && (
+                          <a className="hardware-link" href={card.hardware.href} target="_blank" rel="noopener noreferrer">
+                            {card.hardware.label} &#8599;
+                          </a>
+                        )}
+                      </div>
                     </div>
-                  </a>
+                  </div>
                 ))}
               </div>
             </div>
@@ -701,6 +740,30 @@ export default function HomePage() {
           line-height: 1.6;
           color: #6b7280;
           margin: 0;
+        }
+        /* A card can point at two places: the repo, and the board it runs on.
+           Stacked so the board line reads as a caption under the repo link. */
+        .card-links {
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 6px;
+          flex-shrink: 0;
+        }
+        .hardware-link {
+          font-family: var(--font-outfit), system-ui, sans-serif;
+          font-size: 0.78rem;
+          font-weight: 500;
+          color: #6b7280;
+          text-decoration: none;
+          max-width: 22ch;
+          line-height: 1.4;
+        }
+        .hardware-link:hover {
+          color: #2563eb;
+        }
+        .agent-card-full .card-links .beyond-link {
+          margin-top: 0;
         }
         .beyond-link {
           display: inline-block;
