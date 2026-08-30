@@ -7,6 +7,7 @@ thumbnails beside the link to each vendor's own product page.
 |---|---|---|
 | `m5stack-core-basic.jpg` | M5Stack Core Basic v2.7 | M5Stack — `static-cdn.m5stack.com/resource/docs/products/core/basic/basic_01.webp`, cropped to the device |
 | `waveshare-knob-touch-1.8.jpg` | Waveshare ESP32-S3-Knob-Touch-LCD-1.8 | Waveshare wiki — `ESP32-S3-Knob-Touch-LCD-1.8-6.png`, one panel cropped |
+| `elgato-stream-deck-neo.jpg` | Elgato Stream Deck Neo | Elgato — `InTheBox_StreamDeckNeo_StreamDeck.jpg`, cropped to the device on its own ground. This is the **white** unit, which is what the product page shows; there is a black variant at `/p/stream-deck-neo-black` |
 
 These images belong to their respective vendors and are used here to identify
 the hardware, each linked to the vendor's product page. Replace them with our

@@ -140,6 +140,7 @@ const PERSONAL_CARDS = [
     hardware: {
       label: 'Elgato Stream Deck Neo',
       href: 'https://www.elgato.com/us/en/p/stream-deck-neo',
+      image: '/boards/elgato-stream-deck-neo.jpg',
     },
   },
   {
