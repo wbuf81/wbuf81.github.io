@@ -103,13 +103,13 @@ const PERSONAL_CARDS = [
     },
   },
   {
-    title: 'Knob Spotify Player',
-    shot: '/projects/knob-cover-light.jpg',
+    title: 'Knobdeck',
     group: 'Microcontrollers',
-    subtitle: 'wbuf81/esp32knobtouch',
-    description: 'A Spotify appliance for a 360×360 round touchscreen you turn. Album art floats in 3D over a beat-reactive particle field driven by the onboard mic, the bezel ring tracks the song, and the knob is the volume. Also builds as a desktop app through SDL, which is where the visuals get developed.',
-    href: null,
-    badge: 'Private Repo',
+    shot: '/projects/knobdeck.jpg',
+    subtitle: 'wbuf81/esp32-knobdeck',
+    description: 'A desk controller on a 360×360 round touchscreen you turn. It plays your music behind seven beat-reactive visualisers — and the moment a Teams call starts, the screen becomes your mic and camera as two giant buttons: red means you are on air, tap a half to toggle it. A surface is a screen plus a few fields on the wire, so the next one is the same shape of work rather than a rewrite.',
+    href: 'https://github.com/wbuf81/esp32-knobdeck',
+    badge: 'Open Source',
     hardware: {
       label: 'Waveshare ESP32-S3-Knob-Touch-LCD-1.8',
       href: 'https://www.waveshare.com/esp32-s3-knob-touch-lcd-1.8.htm',
@@ -134,8 +134,8 @@ const PERSONAL_CARDS = [
     group: 'Everything else',
     subtitle: 'wbuf81/streamdeckneoclaude',
     description: 'A Node daemon that owns the USB device outright and draws every pixel itself, with the Elgato software removed from the picture. Seven live pages — Claude Code sessions, Codex tasks, Spotify, stocks, weather, football, machine vitals — and a key press acts on the thing it shows.',
-    href: null,
-    badge: 'Private Repo',
+    href: 'https://github.com/wbuf81/streamdeckneoclaude',
+    badge: 'Open Source',
     shot: '/projects/streamdeck-neo.jpg',
     hardware: {
       label: 'Elgato Stream Deck Neo',
@@ -993,7 +993,7 @@ export default function HomePage() {
             grid-template-columns: repeat(2, 1fr);
           }
           .agent-img-wrap {
-            height: 140px;
+            height: 180px;
           }
         }
 
@@ -1015,6 +1015,11 @@ export default function HomePage() {
           }
           .agent-grid {
             grid-template-columns: 1fr;
+          }
+          /* One column wide: the band can afford the height, and the extra
+             shows the screenshot rather than a letterboxed slice of it. */
+          .agent-img-wrap {
+            height: 230px;
           }
           .footer-inner {
             flex-direction: column;
