@@ -94,6 +94,7 @@ const PERSONAL_CARDS = [
     hardware: {
       label: 'M5Stack Core Basic v2.7',
       href: 'https://shop.m5stack.com/products/esp32-basic-core-iot-development-kit-v2-7',
+      image: '/boards/m5stack-core-basic.jpg',
     },
   },
   {
@@ -106,6 +107,7 @@ const PERSONAL_CARDS = [
     hardware: {
       label: 'Waveshare ESP32-S3-Knob-Touch-LCD-1.8',
       href: 'https://www.waveshare.com/esp32-s3-knob-touch-lcd-1.8.htm',
+      image: '/boards/waveshare-knob-touch-1.8.jpg',
     },
   },
   {
@@ -118,6 +120,7 @@ const PERSONAL_CARDS = [
     hardware: {
       label: 'M5Stack Core Basic v2.7',
       href: 'https://shop.m5stack.com/products/esp32-basic-core-iot-development-kit-v2-7',
+      image: '/boards/m5stack-core-basic.jpg',
     },
   },
   {
@@ -348,7 +351,9 @@ export default function HomePage() {
                         )}
                         {card.hardware && (
                           <a className="hardware-link" href={card.hardware.href} target="_blank" rel="noopener noreferrer">
-                            {card.hardware.label} &#8599;
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img src={card.hardware.image} alt={card.hardware.label} className="board-img" />
+                            <span>{card.hardware.label}&nbsp;&#8599;</span>
                           </a>
                         )}
                       </div>
@@ -678,7 +683,7 @@ export default function HomePage() {
            misaligned rows. These three tracks hold across every full-width card. */
         .agent-card-full .agent-body {
           display: grid;
-          grid-template-columns: 260px minmax(0, 1fr) 200px;
+          grid-template-columns: 260px minmax(0, 1fr) 232px;
           align-items: start;
           gap: 32px;
           padding: 0;
@@ -757,16 +762,32 @@ export default function HomePage() {
           flex-shrink: 0;
         }
         .hardware-link {
+          display: flex;
+          align-items: center;
+          gap: 10px;
           font-family: var(--font-outfit), system-ui, sans-serif;
           font-size: 0.78rem;
           font-weight: 500;
           color: #6b7280;
           text-decoration: none;
-          max-width: 22ch;
           line-height: 1.4;
         }
         .hardware-link:hover {
           color: #2563eb;
+        }
+        /* Vendor product shots, treated like the mascots so a catalog photo
+           doesn't sit on the page in full colour next to grayscale cards. */
+        .board-img {
+          width: 46px;
+          height: 46px;
+          flex-shrink: 0;
+          object-fit: contain;
+          border-radius: 6px;
+          background: #f9fafb;
+          filter: grayscale(100%) brightness(1.08) contrast(0.9);
+        }
+        .hardware-link:hover .board-img {
+          filter: none;
         }
         .agent-card-full .card-links .beyond-link {
           margin-top: 0;
