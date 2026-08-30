@@ -85,6 +85,7 @@ const REPO_CARDS = [
 const PERSONAL_CARDS = [
   {
     title: 'M5 Spotify Deck',
+    shot: '/projects/m5-spotify-deck.jpg',
     group: 'Microcontrollers',
     subtitle: 'wbuf81/m5-spotify-deck',
     description: 'Retro Spotify desk companion — eight views, a real Mode 7 tilting grid, and a Wi-Fi setup portal. C++.',
@@ -99,6 +100,7 @@ const PERSONAL_CARDS = [
   },
   {
     title: 'Knob Spotify Player',
+    shot: '/projects/knob-cover-light.jpg',
     group: 'Microcontrollers',
     subtitle: 'wbuf81/esp32knobtouch',
     description: 'A Spotify appliance for a 360×360 round touchscreen you turn. Album art floats in 3D over a beat-reactive particle field driven by the onboard mic, the bezel ring tracks the song, and the knob is the volume. Also builds as a desktop app through SDL, which is where the visuals get developed.',
@@ -138,6 +140,7 @@ const PERSONAL_CARDS = [
   },
   {
     title: 'Daisy Status Bar',
+    shot: '/projects/daisy-status-bar.jpg',
     group: 'Everything else',
     subtitle: 'wbuf81/daisy-claude-status-bar',
     description: 'A Bernese Mountain Dog in the macOS menu bar that reacts to what Claude Code is doing. Swift, installable from a Homebrew tap.',
@@ -156,6 +159,7 @@ const PERSONAL_CARDS = [
   },
   {
     title: 'Omarchy Workspace Labels',
+    shot: '/projects/omarchy-workspace-labels.jpg',
     group: 'Omarchy Linux',
     subtitle: 'wbuf81/omarchy-workspace-labels',
     description: 'Named workspaces with per-workspace icons for the Omarchy bar — hover previews, an inline icon picker, and a keyboard-driven editor. QML.',
@@ -777,12 +781,17 @@ export default function HomePage() {
         .card-aside {
           display: flex;
           flex-direction: column;
+          align-items: flex-start;
           gap: 14px;
           min-width: 0;
         }
         /* A screenshot of the thing itself, sized to the row's last column. */
+        /* Capped by height, not width: the shots range from 4:3 to square, and
+           a fixed width made the square ones tower over the row. */
         .project-shot {
-          width: 100%;
+          max-width: 100%;
+          max-height: 160px;
+          width: auto;
           border-radius: 8px;
           display: block;
           border: 1px solid #e5e7eb;
