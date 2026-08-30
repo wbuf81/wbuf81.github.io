@@ -390,7 +390,7 @@ export default function HomePage() {
                         )}
                         {card.hardware && (
                           <a className="hardware-link" href={card.hardware.href} target="_blank" rel="noopener noreferrer">
-                            {card.hardware.image && card.shot && (
+                            {card.hardware.image && (
                               /* eslint-disable-next-line @next/next/no-img-element */
                               <img src={card.hardware.image} alt={card.hardware.label} className="board-img" />
                             )}
@@ -701,12 +701,13 @@ export default function HomePage() {
         .agent-card:hover .agent-img {
           transform: scale(1.05);
         }
-        /* Screenshots keep their colour — the grayscale pass that flatters a
-           photograph turns a UI into mud — and fill the band like the mascots
-           so every tile on the page is the same shape. */
+        /* Screenshots fill the band like the mascots and share their hover:
+           grayscale at rest, colour and a small zoom on the way in. Plain
+           grayscale here, without the brightness lift the photographs get —
+           that washes a dark UI out. */
         .agent-img-wrap.is-shot {
           background: #111827;
-          filter: none;
+          filter: grayscale(100%);
         }
         .agent-img-wrap.is-shot .agent-img {
           object-position: center;
