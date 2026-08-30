@@ -151,7 +151,7 @@ Rules that are deliberate:
 - Type is Outfit only, heavy and tightly tracked. The serif belongs to the site's own cards; these have to read as a scoreboard at thumbnail size.
 
 ## Favicons
-`app/icon.svg` (the W, from the site icons and his shirt) and `app/health/icon.svg` (a falling trend line, so the tracker tab is not mistaken for the main site). Both are an ink `#14130f` rounded square. `public/icon-192.svg` and `icon-512.svg` are the PWA sizes of the W and are referenced from `manifest.json`. The old indigo gradient (`#6366f1` → `#8b5cf6`) is gone — it no longer matched anything on the site.
+`app/icon.svg` (the **W from Playfair Display**, the same face as the masthead — drawn as an outline path, since a favicon has no webfont to fall back on. The earlier hand-drawn W was a jagged zigzag that read as the Wario logo; don't redraw letterforms by hand, pull the glyph from `scripts/og/*.woff2` with fontTools.) and `app/health/icon.svg` (a falling trend line, so the tracker tab is not mistaken for the main site). Both are an ink `#14130f` rounded square. `public/icon-192.svg` and `icon-512.svg` are the PWA sizes of the same W (regenerate all three together) and are referenced from `manifest.json`. The old indigo gradient (`#6366f1` → `#8b5cf6`) is gone — it no longer matched anything on the site.
 
 Favicon strokes are deliberately heavy: a hairline chart line disappears at 16px. Check any change by rendering it at 16px, not just at 512.
 

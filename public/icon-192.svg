@@ -1,4 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192">
+  <!--
+    The W from Playfair Display, the same face as "Wesley Bard" on the page, so
+    the tab icon and the masthead are the one letterform. Drawn as an outline
+    rather than <text>: a favicon has no webfont to fall back on.
+    The old hand-drawn W was a jagged zigzag that read as the Wario logo.
+  -->
   <rect width="192" height="192" rx="36" fill="#14130f"/>
-  <path d="M30 48 L54 144 L96 84 L138 144 L162 48 L138 48 L126 108 L96 60 L66 108 L54 48 Z" fill="#f6f4ef"/>
+  <g transform="translate(37.392 141.780) scale(0.13024 -0.13024)"><path d="M907 708V688Q888 684 865.0 665.5Q842 647 828 601L639 -5Q637 -5 635.0 -5.0Q633 -5 631 -5Q629 -5 627.0 -5.0Q625 -5 623 -5L411 624Q398 663 382.0 675.0Q366 687 352 688V708Q370 707 397.0 706.0Q424 705 449 705Q488 705 522.0 706.0Q556 707 577 708V688Q547 687 529.5 682.0Q512 677 509.5 660.0Q507 643 519 604L668 143L654 131L786 546Q804 601 802.5 631.5Q801 662 780.0 674.5Q759 687 717 688V708Q746 707 776.0 706.0Q806 705 832 705Q858 705 875.0 706.0Q892 707 907 708ZM208 708V688Q182 686 170.5 678.0Q159 670 159.5 652.5Q160 635 170 604L325 131L300 106L440 553L455 529L290 -5Q288 -5 286.0 -5.0Q284 -5 282 -5Q280 -5 278.0 -5.0Q276 -5 274 -5L62 624Q49 663 29.0 675.0Q9 687 -7 688V708Q13 707 42.5 706.0Q72 705 100 705Q133 705 161.5 706.0Q190 707 208 708Z" fill="#f6f4ef"/></g>
 </svg>
