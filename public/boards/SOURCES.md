@@ -22,3 +22,5 @@ own repositories:
 | `m5-spotify-deck.jpg` | `m5-spotify-deck` — `docs/screenshots/snes.png` |
 | `knob-cover-light.jpg` | `esp32knobtouch` — `assets/screens/cover-light.png` |
 | `daisy-status-bar.jpg` | `daisy-claude-status-bar` — `art/showcase/menubar-states.png`, dark column only |
+| `gbforge-title-editor.jpg` | `GBForge-Tetris` — captured by running the project's own web GUI locally and cropping to the title-screen editor; the Nintendo original panel beside it is deliberately out of frame |
+| `oscar-extension.jpg` | `oscar-extension` — `oscar1400x560.png`, the Chrome Web Store marquee |

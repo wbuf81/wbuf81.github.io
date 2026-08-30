@@ -78,8 +78,7 @@ const REPO_CARDS = [
     description: 'A free, open source Chrome extension that scans any website for privacy policies, cookie banners, terms of service, and other compliance elements. Available on GitHub.',
     href: 'https://github.com/wbuf81/oscar-extension',
     badge: 'Open Source',
-    image: null,
-    fullWidth: true,
+    image: '/projects/oscar-extension.jpg',
   },
 ];
 const PERSONAL_CARDS = [
@@ -150,6 +149,7 @@ const PERSONAL_CARDS = [
   },
   {
     title: 'GBForge Tetris',
+    shot: '/projects/gbforge-title-editor.jpg',
     group: 'Everything else',
     subtitle: 'wbuf81/GBForge-Tetris',
     description: 'Game Boy Tetris ROM customizer — pixel-art title screen editor, custom music, a dedication screen, and a web GUI. Python.',
@@ -307,7 +307,7 @@ export default function HomePage() {
             driving engagement and making compliance a little more fun.
           </p>
           <div className="agent-grid">
-            {REPO_CARDS.filter((card) => !card.fullWidth).map((card) => (
+            {REPO_CARDS.filter((card) => card.href === null).map((card) => (
               <div key={card.title} className="beyond-card agent-card">
                 {card.image && (
                   <div className="agent-img-wrap">
@@ -330,18 +330,27 @@ export default function HomePage() {
 
           <p className="group-label">Open Source</p>
           <div className="agent-grid">
-            {REPO_CARDS.filter((card) => card.fullWidth).map((card) => (
-              <a key={card.title} href={card.href ?? undefined} className="beyond-card-link beyond-card agent-card agent-card-full" target="_blank" rel="noopener noreferrer">
+            {REPO_CARDS.filter((card) => card.href !== null).map((card) => (
+              <div key={card.title} className="beyond-card agent-card">
+                {card.image && (
+                  <div className="agent-img-wrap is-shot">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={card.image} alt={card.title} className="agent-img" />
+                  </div>
+                )}
                 <div className="agent-body">
-                  <div className="beyond-header">
+                  <div className="beyond-header is-stacked">
                     <h4 className="beyond-title">{card.title}</h4>
                     {card.badge && <span className="beyond-badge">{card.badge}</span>}
                   </div>
-                  {card.subtitle && <p className="beyond-subtitle">{card.subtitle}</p>}
                   <p className="beyond-desc">{card.description}</p>
-                  <span className="beyond-link">View &rarr;</span>
+                  <div className="card-links">
+                    <a className="beyond-link" href={card.href ?? undefined} target="_blank" rel="noopener noreferrer">
+                      Repo &rarr;
+                    </a>
+                  </div>
                 </div>
-              </a>
+              </div>
             ))}
           </div>
 
@@ -351,36 +360,38 @@ export default function HomePage() {
               <p className="group-label">{group}</p>
               <div className="agent-grid">
                 {PERSONAL_CARDS.filter((card) => card.group === group).map((card) => (
-                  <div key={card.title} className="beyond-card agent-card agent-card-full">
+                  <div key={card.title} className="beyond-card agent-card">
+                    {(card.shot || card.hardware?.image) && (
+                      <div className="agent-img-wrap is-shot">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={card.shot ?? card.hardware?.image}
+                          alt={card.shot ? `${card.title} screenshot` : card.hardware?.label}
+                          className={`agent-img${card.shot ? '' : ' is-board'}`}
+                        />
+                      </div>
+                    )}
                     <div className="agent-body">
-                      <div className="beyond-header">
+                      <div className="beyond-header is-stacked">
                         <h4 className="beyond-title">{card.title}</h4>
                         <span className="beyond-badge">{card.badge}</span>
                       </div>
-                      <p className="beyond-subtitle">{card.subtitle}</p>
                       <p className="beyond-desc">{card.description}</p>
-                      <div className="card-aside">
-                        {card.shot && (
-                          /* eslint-disable-next-line @next/next/no-img-element */
-                          <img src={card.shot} alt={`${card.title} screenshot`} className="project-shot" />
+                      <div className="card-links">
+                        {card.href && (
+                          <a className="beyond-link" href={card.href} target="_blank" rel="noopener noreferrer">
+                            Repo &rarr;
+                          </a>
                         )}
-                        <div className="card-links">
-                          {card.href && (
-                            <a className="beyond-link" href={card.href} target="_blank" rel="noopener noreferrer">
-                              Repo &rarr;
-                            </a>
-                          )}
-                          {card.hardware && (
-                            <a className="hardware-link" href={card.hardware.href} target="_blank" rel="noopener noreferrer">
-                              {/* Not every board has a photo; render the slot only when one exists. */}
-                              {card.hardware.image && (
-                                /* eslint-disable-next-line @next/next/no-img-element */
-                                <img src={card.hardware.image} alt={card.hardware.label} className="board-img" />
-                              )}
-                              <span>{card.hardware.label}&nbsp;&#8599;</span>
-                            </a>
-                          )}
-                        </div>
+                        {card.hardware && (
+                          <a className="hardware-link" href={card.hardware.href} target="_blank" rel="noopener noreferrer">
+                            {card.hardware.image && card.shot && (
+                              /* eslint-disable-next-line @next/next/no-img-element */
+                              <img src={card.hardware.image} alt={card.hardware.label} className="board-img" />
+                            )}
+                            <span>{card.hardware.label}&nbsp;&#8599;</span>
+                          </a>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -685,6 +696,28 @@ export default function HomePage() {
         .agent-card:hover .agent-img {
           transform: scale(1.05);
         }
+        /* Screenshots keep their colour — the grayscale pass that flatters a
+           photograph turns a UI into mud — and fill the band like the mascots
+           so every tile on the page is the same shape. */
+        .agent-img-wrap.is-shot {
+          background: #111827;
+          filter: none;
+        }
+        .agent-img-wrap.is-shot .agent-img {
+          object-position: center;
+        }
+        /* A board photo is a product shot on white: contain it rather than
+           crop the device out of frame. */
+        .agent-img.is-board {
+          object-fit: contain;
+          background: #f9fafb;
+          padding: 12px;
+        }
+        .beyond-header.is-stacked {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 8px;
+        }
         .agent-img-overlay {
           position: absolute;
           inset: 0;
@@ -695,41 +728,6 @@ export default function HomePage() {
           flex: 1;
           display: flex;
           flex-direction: column;
-        }
-        .agent-card-full {
-          grid-column: 1 / -1;
-          flex-direction: row;
-          align-items: stretch;
-          gap: 0;
-          padding: 28px 36px;
-        }
-        /* Fixed columns, not flex: with flex each row sized its own title and
-           link columns to their content, so stacked cards read as a set of
-           misaligned rows. These three tracks hold across every full-width card. */
-        .agent-card-full .agent-body {
-          display: grid;
-          grid-template-columns: 260px minmax(0, 1fr) 232px;
-          align-items: start;
-          gap: 32px;
-          padding: 0;
-        }
-        /* The badge drops under the title rather than trailing it: titles vary
-           in length, so an inline badge landed at a different x on every row.
-           A fourth fixed column would have cost width the descriptions need. */
-        .agent-card-full .beyond-header {
-          flex-direction: column;
-          align-items: flex-start;
-          gap: 8px;
-        }
-        .agent-card-full .beyond-subtitle {
-          display: none;
-        }
-        .agent-card-full .beyond-desc {
-          margin: 0;
-        }
-        .agent-card-full .beyond-link {
-          margin-top: 0;
-          flex-shrink: 0;
         }
         .beyond-card {
           background: #fff;
@@ -778,32 +776,17 @@ export default function HomePage() {
           margin: 0;
         }
         /* The row's last column: a screenshot when there is one, then the links. */
-        .card-aside {
-          display: flex;
-          flex-direction: column;
-          align-items: flex-start;
-          gap: 14px;
-          min-width: 0;
-        }
-        /* A screenshot of the thing itself, sized to the row's last column. */
-        /* Capped by height, not width: the shots range from 4:3 to square, and
-           a fixed width made the square ones tower over the row. */
-        .project-shot {
-          max-width: 100%;
-          max-height: 160px;
-          width: auto;
-          border-radius: 8px;
-          display: block;
-          border: 1px solid #e5e7eb;
-        }
         /* A card can point at two places: the repo, and the board it runs on.
-           Stacked so the board line reads as a caption under the repo link. */
+           Stacked so the board line reads as a caption under the repo link, and
+           pinned to the card's foot so links align across a row of tiles. */
         .card-links {
           display: flex;
           flex-direction: column;
           align-items: flex-start;
           gap: 6px;
           flex-shrink: 0;
+          margin-top: auto;
+          padding-top: 14px;
         }
         .hardware-link {
           display: flex;
@@ -832,9 +815,6 @@ export default function HomePage() {
         }
         .hardware-link:hover .board-img {
           filter: none;
-        }
-        .agent-card-full .card-links .beyond-link {
-          margin-top: 0;
         }
         .beyond-link {
           display: inline-block;
@@ -1006,11 +986,6 @@ export default function HomePage() {
           }
           .agent-grid {
             grid-template-columns: repeat(2, 1fr);
-          }
-          /* No room for three tracks — stack them and let each row read top to bottom. */
-          .agent-card-full .agent-body {
-            grid-template-columns: 1fr;
-            gap: 14px;
           }
           .agent-img-wrap {
             height: 140px;
