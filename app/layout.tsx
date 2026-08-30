@@ -15,15 +15,15 @@ const outfit = Outfit({
 });
 
 export const metadata: Metadata = {
-  title: 'Wesley Bard — VP, Risk & Compliance',
-  description: 'Risk and compliance executive with 20 years of experience spanning Lockheed Martin and Newfold Digital. Engineer. AI Builder.',
+  title: 'Wesley Bard',
+  description: 'Before: engineer at Lockheed Martin. Now: governance, risk & compliance at Newfold Digital. Still building stuff.',
   // The canonical host. Relative URLs in OpenGraph/Twitter cards resolve
   // against this, so it has to be the custom domain, not the github.io origin.
   metadataBase: new URL('https://wesleybard.com'),
   manifest: '/manifest.json',
   openGraph: {
-    title: 'Wesley Bard — VP, Risk & Compliance',
-    description: 'Risk and compliance executive with 20 years of experience spanning Lockheed Martin and Newfold Digital. Engineer. AI Builder.',
+    title: 'Wesley Bard',
+    description: 'Before: engineer at Lockheed Martin. Now: governance, risk & compliance at Newfold Digital. Still building stuff.',
     url: 'https://wesleybard.com',
     siteName: 'Wesley Bard',
     locale: 'en_US',
@@ -42,8 +42,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Wesley Bard — VP, Risk & Compliance',
-    description: 'Risk and compliance executive with 20 years of experience spanning Lockheed Martin and Newfold Digital. Engineer. AI Builder.',
+    title: 'Wesley Bard',
+    description: 'Before: engineer at Lockheed Martin. Now: governance, risk & compliance at Newfold Digital. Still building stuff.',
     images: ['/og-image.png'],
   },
   other: {
@@ -57,7 +57,7 @@ const jsonLd = {
   '@type': 'Person',
   name: 'Wesley Bard',
   alternateName: 'Wes',
-  description: 'Risk and compliance executive with 20 years of experience spanning Lockheed Martin and Newfold Digital. Engineer. AI Builder.',
+  description: 'Before: engineer at Lockheed Martin. Now: governance, risk & compliance at Newfold Digital. Still building stuff.',
   url: 'https://wesleybard.com',
   sameAs: [
     'https://www.linkedin.com/in/wesleybard/',

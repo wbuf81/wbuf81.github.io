@@ -65,6 +65,14 @@ const REPO_CARDS = [
     fullWidth: false,
   },
   {
+    title: 'BEASLEY',
+    subtitle: 'Brand Evaluation & Abuse Scoping Linked Exactly to Your-brands',
+    description: 'Routes abuse complaints to the team that owns them — reads the incoming complaint mail, pulls out the domains, attributes each one to its brand in the portfolio, and keeps the analytics on what came in and where it went.',
+    href: null,
+    badge: 'Private Repo',
+    image: null,
+  },
+  {
     title: 'OSCAR Extension',
     subtitle: 'Open Source Chrome Companion',
     description: 'A free, open source Chrome extension that scans any website for privacy policies, cookie banners, terms of service, and other compliance elements. Available on GitHub.',
@@ -172,6 +180,7 @@ export default function HomePage() {
             <div className="hero-then-now">
               <p><span className="tn-label">Before</span>Engineer, Lockheed Martin</p>
               <p><span className="tn-label">Now</span>Governance, Risk &amp; Compliance, Newfold Digital</p>
+              <p><span className="tn-label">Still</span>Building stuff</p>
             </div>
             <div className="game-row">
               <div className="game-selector">
