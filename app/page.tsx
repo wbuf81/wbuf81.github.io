@@ -238,8 +238,8 @@ export default function HomePage() {
           <div className="hero-text">
             <h1 className="hero-name">Wesley Bard</h1>
             <div className="hero-then-now">
-              <p><span className="tn-label">Then</span>Engineer, Lockheed Martin</p>
-              <p><span className="tn-label">Now</span>Governance, Risk &amp; Compliance, Newfold Digital</p>
+              <p><span className="tn-label">Then</span>Engineer @ Lockheed Martin</p>
+              <p><span className="tn-label">Now</span>Governance, Risk &amp; Compliance @ Newfold Digital</p>
               <p><span className="tn-label">Still</span>Building stuff</p>
             </div>
             <div className="game-row">
@@ -285,7 +285,7 @@ export default function HomePage() {
             </div>
           </div>
           <div className="hero-headshot">
-            <a href="/headshot.jpg" target="_blank" rel="noopener noreferrer" className="headshot-link">
+            <div className="headshot-frame">
               <Image
                 src="/headshot-thumb.jpg"
                 alt="Wesley Bard"
@@ -294,7 +294,7 @@ export default function HomePage() {
                 priority
                 style={{ borderRadius: '50%', objectFit: 'cover', width: '200px', height: '200px' }}
               />
-            </a>
+            </div>
           </div>
         </div>
       </section>
@@ -533,13 +533,32 @@ export default function HomePage() {
           align-items: center;
           gap: 12px;
         }
-        .headshot-link {
-          display: block;
+        /* The same treatment the project tiles get: grayscale at rest, colour
+           and a small zoom on hover. It used to link to the full-size file,
+           which nobody wants — the portrait is the point, not a lightbox. */
+        /*
+          The portrait is shot on white, so the circle is only visible because
+          the resting filter's contrast(0.78) tints that white to grey. Clearing
+          the filter on hover let the background blend into the page and the
+          shoulders read as square edges — hence the ring, which holds the
+          circle in both states. The frame scales rather than the image inside
+          it: same effect, and nothing to clip.
+        */
+        .headshot-frame {
+          width: 200px;
+          height: 200px;
           border-radius: 50%;
-          transition: opacity 0.2s ease;
+          overflow: hidden;
+          box-shadow: 0 0 0 1px rgba(20, 19, 15, 0.10);
+          filter: grayscale(100%) brightness(1.15) contrast(0.78);
+          transition: filter 0.4s ease, transform 0.5s ease;
         }
-        .headshot-link:hover {
-          opacity: 0.88;
+        .headshot-frame:hover {
+          filter: grayscale(0%) brightness(1) contrast(1);
+          transform: scale(1.05);
+        }
+        .headshot-frame :global(img) {
+          display: block;
         }
 
         /* Game UI */

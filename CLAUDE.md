@@ -109,6 +109,8 @@ The **Changes** section is `buildChangeLog`, derived from `phases`, `calorieTarg
 - `goalWeight` rides on the phase rather than carrying its own date, so it is reported at the phase start. Changing it mid-phase updates that row rather than adding one; dating it would need the same treatment `calorieTargets` got.
 - Markers are deliberately excluded — they are events, not target changes, and `ConsistencyNotes` already lists them.
 
+- The hero portrait takes the same treatment as the project tiles — grayscale at rest, colour and a slight zoom on hover — and is **not a link**; it used to open the full-size file, which nobody wanted. It carries a faint ring because the photograph is shot on white: the resting filter's `contrast(0.78)` is the only thing making that white read as a disc, so clearing the filter on hover made the circle vanish into the page. The frame scales, not the image inside it.
+
 ## Content rules
 All copy must be external-safe. No internal vendor names (OneTrust, SharePoint), no named regulators or audit firms, no financial specifics. When in doubt, generalize: "company web properties", "brand portfolio", "privacy request data".
 
