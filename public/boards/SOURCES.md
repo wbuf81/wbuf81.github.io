@@ -11,3 +11,7 @@ thumbnails beside the link to each vendor's own product page.
 These images belong to their respective vendors and are used here to identify
 the hardware, each linked to the vendor's product page. Replace them with our
 own photographs of the boards when there are some.
+
+Project screenshots live in `public/projects/` and are our own — see
+`streamdeck-neo.jpg`, a real rendered frame exported from the deck project's
+own screenshot script.

@@ -124,6 +124,19 @@ const PERSONAL_CARDS = [
     },
   },
   {
+    title: 'Stream Deck Neo Takeover',
+    group: 'Everything else',
+    subtitle: 'wbuf81/streamdeckneoclaude',
+    description: 'A Node daemon that owns the USB device outright and draws every pixel itself, with the Elgato software removed from the picture. Seven live pages — Claude Code sessions, Codex tasks, Spotify, stocks, weather, football, machine vitals — and a key press acts on the thing it shows. ~17,000 lines of source under 1,808 tests that need no hardware.',
+    href: null,
+    badge: 'Private Repo',
+    shot: '/projects/streamdeck-neo.jpg',
+    hardware: {
+      label: 'Elgato Stream Deck Neo',
+      href: 'https://www.elgato.com/us/en/p/stream-deck-neo',
+    },
+  },
+  {
     title: 'Daisy Status Bar',
     group: 'Everything else',
     subtitle: 'wbuf81/daisy-claude-status-bar',
@@ -342,19 +355,28 @@ export default function HomePage() {
                       </div>
                       <p className="beyond-subtitle">{card.subtitle}</p>
                       <p className="beyond-desc">{card.description}</p>
-                      <div className="card-links">
-                        {card.href && (
-                          <a className="beyond-link" href={card.href} target="_blank" rel="noopener noreferrer">
-                            Repo &rarr;
-                          </a>
+                      <div className="card-aside">
+                        {card.shot && (
+                          /* eslint-disable-next-line @next/next/no-img-element */
+                          <img src={card.shot} alt={`${card.title} screenshot`} className="project-shot" />
                         )}
-                        {card.hardware && (
-                          <a className="hardware-link" href={card.hardware.href} target="_blank" rel="noopener noreferrer">
-                            {/* eslint-disable-next-line @next/next/no-img-element */}
-                            <img src={card.hardware.image} alt={card.hardware.label} className="board-img" />
-                            <span>{card.hardware.label}&nbsp;&#8599;</span>
-                          </a>
-                        )}
+                        <div className="card-links">
+                          {card.href && (
+                            <a className="beyond-link" href={card.href} target="_blank" rel="noopener noreferrer">
+                              Repo &rarr;
+                            </a>
+                          )}
+                          {card.hardware && (
+                            <a className="hardware-link" href={card.hardware.href} target="_blank" rel="noopener noreferrer">
+                              {/* Not every board has a photo; render the slot only when one exists. */}
+                              {card.hardware.image && (
+                                /* eslint-disable-next-line @next/next/no-img-element */
+                                <img src={card.hardware.image} alt={card.hardware.label} className="board-img" />
+                              )}
+                              <span>{card.hardware.label}&nbsp;&#8599;</span>
+                            </a>
+                          )}
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -750,6 +772,20 @@ export default function HomePage() {
           line-height: 1.6;
           color: #6b7280;
           margin: 0;
+        }
+        /* The row's last column: a screenshot when there is one, then the links. */
+        .card-aside {
+          display: flex;
+          flex-direction: column;
+          gap: 14px;
+          min-width: 0;
+        }
+        /* A screenshot of the thing itself, sized to the row's last column. */
+        .project-shot {
+          width: 100%;
+          border-radius: 8px;
+          display: block;
+          border: 1px solid #e5e7eb;
         }
         /* A card can point at two places: the repo, and the board it runs on.
            Stacked so the board line reads as a caption under the repo link. */
