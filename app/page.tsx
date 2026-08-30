@@ -109,10 +109,10 @@ const PERSONAL_CARDS = [
     },
   },
   {
-    title: "Jeffrey's Talker",
+    title: 'Personal AAC Device',
     group: 'Microcontrollers',
     subtitle: 'wbuf81/m5stack-aac-talker',
-    description: 'A speech device built for one person: one communication tile at a time on a 320×240 screen, three buttons to move and speak, and an ID screen carrying his name and emergency contact. No network, no SD card, nothing to configure — every press acts, because a swallowed press is a failed sentence.',
+    description: 'A dedicated speech device for augmentative and alternative communication: one tile at a time on a 320×240 screen, three buttons to move through them and speak, and an ID screen holding emergency contact details like a medical bracelet. No network, no SD card, nothing to configure — every press acts, because a swallowed press is a failed sentence.',
     href: null,
     badge: 'Private Repo',
     hardware: {
@@ -213,7 +213,7 @@ export default function HomePage() {
           <div className="hero-text">
             <h1 className="hero-name">Wesley Bard</h1>
             <div className="hero-then-now">
-              <p><span className="tn-label">Before</span>Engineer, Lockheed Martin</p>
+              <p><span className="tn-label">Then</span>Engineer, Lockheed Martin</p>
               <p><span className="tn-label">Now</span>Governance, Risk &amp; Compliance, Newfold Digital</p>
               <p><span className="tn-label">Still</span>Building stuff</p>
             </div>
@@ -669,26 +669,32 @@ export default function HomePage() {
         .agent-card-full {
           grid-column: 1 / -1;
           flex-direction: row;
-          align-items: center;
+          align-items: stretch;
           gap: 0;
           padding: 28px 36px;
         }
+        /* Fixed columns, not flex: with flex each row sized its own title and
+           link columns to their content, so stacked cards read as a set of
+           misaligned rows. These three tracks hold across every full-width card. */
         .agent-card-full .agent-body {
+          display: grid;
+          grid-template-columns: 260px minmax(0, 1fr) 200px;
+          align-items: start;
+          gap: 32px;
           padding: 0;
-          flex-direction: row;
-          align-items: center;
-          gap: 40px;
-          flex-wrap: wrap;
         }
+        /* The badge drops under the title rather than trailing it: titles vary
+           in length, so an inline badge landed at a different x on every row.
+           A fourth fixed column would have cost width the descriptions need. */
         .agent-card-full .beyond-header {
-          flex-shrink: 0;
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 8px;
         }
         .agent-card-full .beyond-subtitle {
           display: none;
         }
         .agent-card-full .beyond-desc {
-          flex: 1;
-          min-width: 200px;
           margin: 0;
         }
         .agent-card-full .beyond-link {
@@ -789,7 +795,6 @@ export default function HomePage() {
           font-size: 1rem;
           line-height: 1.65;
           color: #4b5563;
-          max-width: 68ch;
           margin: -6px 0 24px;
         }
         .subsection-heading {
@@ -936,6 +941,11 @@ export default function HomePage() {
           }
           .agent-grid {
             grid-template-columns: repeat(2, 1fr);
+          }
+          /* No room for three tracks — stack them and let each row read top to bottom. */
+          .agent-card-full .agent-body {
+            grid-template-columns: 1fr;
+            gap: 14px;
           }
           .agent-img-wrap {
             height: 140px;
