@@ -81,6 +81,11 @@ const REPO_CARDS = [
     image: '/projects/oscar-extension.jpg',
   },
 ];
+/*
+ * Project cards describe what a thing does and what it runs on. No line counts,
+ * test counts, or other repo statistics — they say nothing to a reader and date
+ * the moment the repo moves on.
+ */
 const PERSONAL_CARDS = [
   {
     title: 'M5 Spotify Deck',
@@ -128,7 +133,7 @@ const PERSONAL_CARDS = [
     title: 'Stream Deck Neo Takeover',
     group: 'Everything else',
     subtitle: 'wbuf81/streamdeckneoclaude',
-    description: 'A Node daemon that owns the USB device outright and draws every pixel itself, with the Elgato software removed from the picture. Seven live pages — Claude Code sessions, Codex tasks, Spotify, stocks, weather, football, machine vitals — and a key press acts on the thing it shows. ~17,000 lines of source under 1,808 tests that need no hardware.',
+    description: 'A Node daemon that owns the USB device outright and draws every pixel itself, with the Elgato software removed from the picture. Seven live pages — Claude Code sessions, Codex tasks, Spotify, stocks, weather, football, machine vitals — and a key press acts on the thing it shows.',
     href: null,
     badge: 'Private Repo',
     shot: '/projects/streamdeck-neo.jpg',
