@@ -72,14 +72,6 @@ const REPO_CARDS = [
     badge: 'Private Repo',
     image: '/agents/beasley.jpg',
   },
-  {
-    title: 'OSCAR Extension',
-    subtitle: 'Open Source Chrome Companion',
-    description: 'A free, open source Chrome extension that scans any website for privacy policies, cookie banners, terms of service, and other compliance elements. Available on GitHub.',
-    href: 'https://github.com/wbuf81/oscar-extension',
-    badge: 'Open Source',
-    image: '/projects/oscar-extension.jpg',
-  },
 ];
 /*
  * Project cards describe what a thing does and what it runs on. No line counts,
@@ -162,6 +154,14 @@ const PERSONAL_CARDS = [
     href: 'https://github.com/wbuf81/GBForge-Tetris',
     badge: 'Open Source',
     image: null,
+  },
+  {
+    title: 'Idle Screen Counter',
+    group: 'Omarchy Linux',
+    subtitle: 'wbuf81/omarchy-idle-screencounter',
+    description: 'A theme-aware mechanical split-flap countdown that appears before Omarchy starts the screensaver. QML.',
+    href: 'https://github.com/wbuf81/omarchy-idle-screencounter',
+    badge: 'Open Source',
   },
   {
     title: 'Omarchy Workspace Labels',
@@ -329,32 +329,6 @@ export default function HomePage() {
                   </div>
                   {card.subtitle && <p className="beyond-subtitle">{card.subtitle}</p>}
                   <p className="beyond-desc">{card.description}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <p className="group-label">Open Source</p>
-          <div className="agent-grid">
-            {REPO_CARDS.filter((card) => card.href !== null).map((card) => (
-              <div key={card.title} className="beyond-card agent-card">
-                {card.image && (
-                  <div className="agent-img-wrap is-shot">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={card.image} alt={card.title} className="agent-img" />
-                  </div>
-                )}
-                <div className="agent-body">
-                  <div className="beyond-header is-stacked">
-                    <h4 className="beyond-title">{card.title}</h4>
-                    {card.badge && <span className="beyond-badge">{card.badge}</span>}
-                  </div>
-                  <p className="beyond-desc">{card.description}</p>
-                  <div className="card-links">
-                    <a className="beyond-link" href={card.href ?? undefined} target="_blank" rel="noopener noreferrer">
-                      Repo &rarr;
-                    </a>
-                  </div>
                 </div>
               </div>
             ))}
