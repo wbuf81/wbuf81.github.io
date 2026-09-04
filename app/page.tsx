@@ -157,6 +157,7 @@ const PERSONAL_CARDS = [
   },
   {
     title: 'Idle Screen Counter',
+    shot: 'https://raw.githubusercontent.com/wbuf81/omarchy-idle-screencounter/main/preview.png',
     group: 'Omarchy Linux',
     subtitle: 'wbuf81/omarchy-idle-screencounter',
     description: 'A theme-aware mechanical split-flap countdown that appears before Omarchy starts the screensaver. QML.',
