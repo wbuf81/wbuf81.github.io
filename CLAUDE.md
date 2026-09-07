@@ -3,6 +3,14 @@
 ## Deploy
 Pushes to `main` auto-deploy to GitHub Pages via `.github/workflows/deploy.yml`. Build: `npm run build` (outputs to `./out`).
 
+## Setting up a new machine
+A clone carries the playbook (this file), the scripts and the data, but not the tools they run on. Install:
+- **Node 25** (`.nvmrc` pins it; `nvm use`). The health importer relies on Node's built-in TypeScript stripping, so an old LTS fails with "Could not load lib/health.ts". Then `npm install`.
+- **Python 3 with Pillow** (`pip3 install pillow`) and **Google Chrome** — only for the link-preview card and the weekly share cards. Importing a week works without them and just warns.
+- Push access to the repo (SSH key or HTTPS token). Importing a week is a push.
+
+Smoke-test with `npm test` and `npm run health:add -- --dry-run < /dev/null`.
+
 ## Key files
 - Homepage copy & projects section: `app/page.tsx` — `REPO_CARDS` (work agents) and `PERSONAL_CARDS` (public GitHub repos, each with a `group`) arrays
 - Projects reads: **Work** → "Autonomous AI Agents" (the pet-named compliance agents, with the note explaining why they're named that way) and "Open Source"; **Personal** → the groups listed in `PERSONAL_GROUPS` ("Omarchy Linux", "Microcontrollers", "Everything else"), rendered in that order. Adding a personal repo means adding a card with a `group`; a new group needs a `PERSONAL_GROUPS` entry too.
