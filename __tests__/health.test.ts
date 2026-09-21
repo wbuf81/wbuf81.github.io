@@ -50,6 +50,12 @@ describe('groupIntoWeeks', () => {
     expect(weeks[0].days).toHaveLength(7);
   });
 
+  test('names the week for the Sunday it ends on, even while it is still filling', () => {
+    expect(groupIntoWeeks(WEEK_ONE)[0].label).toBe('Jul 26');
+    // A partial week is still labelled by its scheduled end, not its last recorded day.
+    expect(groupIntoWeeks(WEEK_ONE.slice(0, 3))[0].label).toBe('Jul 26');
+  });
+
   test('counts workouts, cardio sessions and cardio minutes per week', () => {
     const [week] = groupIntoWeeks(WEEK_ONE);
 

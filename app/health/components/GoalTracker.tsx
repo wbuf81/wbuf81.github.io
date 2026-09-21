@@ -28,7 +28,7 @@ export default function GoalTracker({ rows, streak }: Props) {
     <div className="goals">
       <div className="goals-head">
         <p className="goals-week">
-          Week of {week.label}
+          Week ending {week.label}
           {!week.isComplete && <span className="goals-partial">in progress</span>}
         </p>
         <p className="goals-streak">

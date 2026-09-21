@@ -30,7 +30,7 @@ export default function WeekTable({ rows, weightUnit }: Props) {
 
         <thead>
           <tr>
-            <th scope="col">Week of</th>
+            <th scope="col">Week ending</th>
             <th scope="col" className="is-num">Days</th>
             <th scope="col" className="is-num">Avg weight</th>
             <th scope="col" className="is-num">Change</th>

@@ -18,6 +18,12 @@
       "label": "Lightning strike",
       "icon": "⚡",
       "note": "Couldn't get to the gym."
+    },
+    {
+      "date": "2026-09-12",
+      "label": "Florida vs Campbell · home game",
+      "icon": "🐊",
+      "note": "In the Swamp for the Gators’ home game."
     }
   ],
   "targets": [

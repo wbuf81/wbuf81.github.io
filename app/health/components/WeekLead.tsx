@@ -60,14 +60,14 @@ export default function WeekLead({ rows, phase, weightUnit }: Props) {
   const phaseTone = phase ? tone(phase.type === 'bulk' ? -(phase.weightChange ?? 0) : phase.weightChange) : '';
 
   return (
-    <section className="week-lead" aria-label={`Averages for the week of ${week.label}`}>
+    <section className="week-lead" aria-label={`Averages for the week ending ${week.label}`}>
       <div className="week-lead-head">
         {phase && <span className={`phase-chip is-${phase.type}`}>{phase.label}</span>}
         <span className="week-lead-chip">
           {week.isPartial ? 'This week so far' : 'Last full week'}
         </span>
         <span className="week-lead-range">
-          Week of {week.label} · {week.dayCount === 1 ? '1 day' : `${week.dayCount} days`} recorded
+          Week ending {week.label} · {week.dayCount === 1 ? '1 day' : `${week.dayCount} days`} recorded
         </span>
       </div>
 

@@ -160,7 +160,11 @@ export function groupIntoWeeks(days: HealthDay[]): WeekSummary[] {
     .map(([weekStart, weekDays]) => ({
       weekStart,
       weekEnd: addDays(weekStart, 6),
-      label: shortLabel(weekStart),
+      // Weeks are named for the Sunday they end on, not the Monday they start,
+      // because the week is posted after it closes — "week ending Sep 20" is
+      // how Wes talks about it. Every label on the page reads from this one
+      // field, so the lead card, the tables and the chart axes agree.
+      label: shortLabel(addDays(weekStart, 6)),
       days: weekDays,
       avgCals: mean(weekDays.map((d) => d.cals)),
       avgProtein: mean(weekDays.map((d) => d.protein)),
