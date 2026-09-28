@@ -23,6 +23,7 @@ the site serves.
 
 Requires: Google Chrome, Pillow, and Node (for the stats step).
 """
+import datetime
 import importlib.util
 import json
 import os
@@ -183,6 +184,15 @@ def status_card(d):
     phase = d['phase']
     week = d['week']
     start, goal, now = phase['startWeight'], phase['goalWeight'], phase['currentWeight']
+
+    # Name the last weigh-in by the day it was taken. It is usually the Sunday,
+    # but a missed Sunday makes it Saturday's reading, and calling that the
+    # Sunday weigh-in would print a number the day never had.
+    series = d.get('series') or []
+    last_day = (
+        datetime.date.fromisoformat(series[-1]['date']).strftime('%A')
+        if series else 'Latest'
+    )
 
     span = start - goal
     lost = start - now
@@ -374,7 +384,7 @@ def status_card(d):
   </div>
 
   <div class="foot">
-    <p>Sunday weigh-in {n(now, 1)} lb · goal {n(goal)} lb</p>
+    <p>{last_day} weigh-in {n(now, 1)} lb · goal {n(goal)} lb</p>
     <p>One block, one pound</p>
   </div>
 </div>
