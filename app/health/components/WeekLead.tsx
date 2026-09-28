@@ -125,6 +125,7 @@ export default function WeekLead({ rows, phase, weightUnit }: Props) {
                   ? `${formatNumber(phase.currentWeight, 1)} ${weightUnit}`
                   : '—'}
               </p>
+              <p className="stat-detail">week avg</p>
             </div>
 
             <div className="phase-figure">

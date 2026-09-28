@@ -40,6 +40,9 @@ const WEEK_ONE: HealthDay[] = [
   day({ date: '2026-07-26', day: 'Sun', cals: 2488, protein: 195, carbs: 154, fat: 125, weight: 207.9, steps: 17600 }),
 ];
 
+/** The mean of every WEEK_ONE weigh-in — the block's "now" once the week is in. */
+const WEEK_ONE_AVG = (210.2 + 208.8 + 208.1 + 207.7 + 208.3 + 208.3 + 207.9) / 7;
+
 describe('groupIntoWeeks', () => {
   test('groups seven consecutive days into one Mon-Sun week', () => {
     const weeks = groupIntoWeeks(WEEK_ONE);
@@ -271,12 +274,39 @@ describe('buildPhases', () => {
     expect(phase.label.toLowerCase()).toContain('bulk');
   });
 
-  test('measures change from the first to the last recorded weight inside the range', () => {
+  test('measures change from the first reading to the newest week\'s average', () => {
     const [phase] = buildPhases(WEEK_ONE, [CUT]);
 
     expect(phase.startWeight).toBe(210.2);
-    expect(phase.currentWeight).toBe(207.9);
-    expect(phase.weightChange).toBeCloseTo(-2.3, 5);
+    expect(phase.currentWeight).toBeCloseTo(WEEK_ONE_AVG, 5);
+    expect(phase.weightChange).toBeCloseTo(WEEK_ONE_AVG - 210.2, 5);
+  });
+
+  test('a single reading on the last day does not move the block\'s current weight', () => {
+    // Sunday jumps 3.6 lb on water; the week's average barely moves.
+    const spiked = WEEK_ONE.map((d) => (d.date === '2026-07-26' ? day({ ...d, weight: 211.5 }) : d));
+    const [phase] = buildPhases(spiked, [CUT]);
+
+    expect(phase.currentWeight).toBeCloseTo((WEEK_ONE_AVG * 7 - 207.9 + 211.5) / 7, 5);
+    expect(phase.currentWeight).toBeLessThan(211.5);
+  });
+
+  test('reads the newest week only, not the whole block', () => {
+    const second = WEEK_ONE.map((d, i) =>
+      day({ ...d, date: `2026-07-${String(27 + i)}`, day: d.day, weight: 205 })
+    );
+    const [phase] = buildPhases([...WEEK_ONE, ...second], [CUT]);
+
+    expect(phase.currentWeight).toBeCloseTo(205, 5);
+  });
+
+  test('falls back to the last week that has a weigh-in', () => {
+    const unweighed = WEEK_ONE.map((d, i) =>
+      day({ ...d, date: `2026-07-${String(27 + i)}`, day: d.day, weight: null })
+    );
+    const [phase] = buildPhases([...WEEK_ONE, ...unweighed], [CUT]);
+
+    expect(phase.currentWeight).toBeCloseTo(WEEK_ONE_AVG, 5);
   });
 
   test('only counts days inside the range', () => {
@@ -293,9 +323,9 @@ describe('buildPhases', () => {
   test('reports goal progress for a cut', () => {
     const [phase] = buildPhases(WEEK_ONE, [{ ...CUT, goalWeight: 200 }]);
 
-    // Started 210.2, now 207.9, goal 200: 2.3 of 10.2 lb done.
-    expect(phase.goalRemaining).toBeCloseTo(7.9, 5);
-    expect(phase.goalPercent).toBeCloseTo((2.3 / 10.2) * 100, 4);
+    // Started 210.2, now the week's 208.47 average, goal 200: 1.73 of 10.2 lb done.
+    expect(phase.goalRemaining).toBeCloseTo(WEEK_ONE_AVG - 200, 5);
+    expect(phase.goalPercent).toBeCloseTo(((210.2 - WEEK_ONE_AVG) / 10.2) * 100, 4);
   });
 
   test('reports goal progress for a bulk, where the target is above the start', () => {
@@ -308,8 +338,9 @@ describe('buildPhases', () => {
       { start: '2026-07-20', type: 'bulk', goalWeight: 210 },
     ]);
 
-    expect(phase.goalRemaining).toBeCloseTo(8, 5);
-    expect(phase.goalPercent).toBeCloseTo(20, 4);
+    // Now is the week's average of 200 and 202.
+    expect(phase.goalRemaining).toBeCloseTo(9, 5);
+    expect(phase.goalPercent).toBeCloseTo(10, 4);
   });
 
   test('clamps progress at 100 when the goal is passed', () => {
@@ -755,11 +786,11 @@ describe('phase weight change per week', () => {
   const phase: HealthPhase[] = [{ start: '2026-07-20', type: 'cut' }];
 
   test('divides the change by the weighed span in weeks', () => {
-    // 210.2 on Jul 20 to 207.9 on Jul 26 is -2.3 lb across 7 days spanned.
+    // 210.2 on Jul 20 to the week's 208.47 average across 7 days spanned.
     const [summary] = buildPhases(WEEK_ONE, phase);
 
-    expect(summary.weightChange).toBeCloseTo(-2.3, 5);
-    expect(summary.weightChangePerWeek).toBeCloseTo(-2.3, 5);
+    expect(summary.weightChange).toBeCloseTo(WEEK_ONE_AVG - 210.2, 5);
+    expect(summary.weightChangePerWeek).toBeCloseTo(WEEK_ONE_AVG - 210.2, 5);
   });
 
   test('halves the rate when the same change takes two weeks', () => {
@@ -840,10 +871,12 @@ describe('recent pace', () => {
 
 describe('projected goal date', () => {
   test('extrapolates the weighed rate to the goal', () => {
-    // 210.2 -> 207.9 over week one is -2.3 lb/week; 205.6 is exactly one more
-    // week away from the last weigh-in on Jul 26.
+    // 210.2 to the week's average over week one is the block's rate; a goal
+    // that far again below the average is exactly one more week away from the
+    // last weigh-in on Jul 26.
+    const rate = WEEK_ONE_AVG - 210.2;
     const [phase] = buildPhases(WEEK_ONE, [
-      { start: '2026-07-20', type: 'cut', goalWeight: 205.6 },
+      { start: '2026-07-20', type: 'cut', goalWeight: WEEK_ONE_AVG + rate },
     ]);
 
     expect(phase.projectedGoalDate).toBe('2026-08-02');

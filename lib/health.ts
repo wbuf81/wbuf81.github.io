@@ -414,7 +414,16 @@ export function buildPhases(days: HealthDay[], phases?: HealthPhase[]): PhaseSum
     const weighed = inRange.filter((day) => day.weight !== null);
 
     const startWeight = weighed.length ? weighed[0].weight : null;
-    const currentWeight = weighed.length ? weighed[weighed.length - 1].weight : null;
+    // "Now" is the newest week's average, not the last reading. One weigh-in
+    // moves a pound or two on water — Sep 27 2026 read 201.5 after a week that
+    // averaged 199.5 — and the block strip, the ladder and the projection all
+    // hang off this figure. The week is the unit of progress, as the lead card
+    // already insists. The start stays the first reading: a block begins on a
+    // day. A newest week with no weigh-in falls back to the last week that has
+    // one, so a run of missed readings blanks nothing.
+    const currentWeight =
+      [...groupIntoWeeks(inRange)].reverse().find((week) => week.avgWeight !== null)?.avgWeight ??
+      null;
     const goalWeight = phase.goalWeight ?? null;
 
     // Rate across the span that was actually weighed, counted inclusively so the
