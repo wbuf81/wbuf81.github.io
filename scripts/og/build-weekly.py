@@ -188,11 +188,14 @@ def status_card(d):
     # Name the last weigh-in by the day it was taken. It is usually the Sunday,
     # but a missed Sunday makes it Saturday's reading, and calling that the
     # Sunday weigh-in would print a number the day never had.
+    # `now` above is the newest week's average, the same figure the page's
+    # block strip uses; the footer names the one actual reading instead.
     series = d.get('series') or []
     last_day = (
         datetime.date.fromisoformat(series[-1]['date']).strftime('%A')
         if series else 'Latest'
     )
+    last_reading = series[-1]['weight'] if series else now
 
     span = start - goal
     lost = start - now
@@ -384,7 +387,7 @@ def status_card(d):
   </div>
 
   <div class="foot">
-    <p>{last_day} weigh-in {n(now, 1)} lb · goal {n(goal)} lb</p>
+    <p>{last_day} weigh-in {n(last_reading, 1)} lb · goal {n(goal)} lb</p>
     <p>One block, one pound</p>
   </div>
 </div>
