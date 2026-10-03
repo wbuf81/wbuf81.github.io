@@ -14,9 +14,9 @@ Smoke-test with `npm test` and `npm run health:add -- --dry-run < /dev/null`.
 ## Key files
 - **Design system:** `app/design-system.css` (LegCom's look, itself WBDB's: tokens light and dark, then the blocks), documented live on **/design** (`app/design/page.tsx`, its token list in `app/design/tokens.ts`). Spec and plan: `docs/superpowers/specs/2026-10-03-legcom-style-homepage-design.md`, `docs/superpowers/plans/2026-10-03-legcom-style-homepage.md`.
   - **Colours by name only** (`var(--accent)`, never a hex). A new colour goes in the stylesheet with a dark twin in **both** dark blocks (the computer's setting, and `:root[data-theme="dark"]` from the switch) and in `TOKENS`, or `__tests__/design-system.test.ts` fails.
-  - **Every block is scoped under `.wb`** (the test checks), so `/health`, `/lee`, `/moonballs`, `/playground` and `/articles` keep their own styles. A page in the system is `<main className="wb wb-page">` between the shared `Nav` and `Footer`.
-  - Type: Source Serif 4 (name, headings, tile names, figures), IBM Plex Sans (text), IBM Plex Mono (eyebrows, captions, tags, subtitles), loaded in `app/layout.tsx` as `--font-serif/-sans/-mono`. Playfair and Outfit stay loaded for the pages with their own look.
-  - Theme: `app/components/ThemeSwitch.tsx`, LegCom's three-way pill (Light · Match my computer · Dark), saved under `localStorage` `wb-theme`; `lib/theme.ts` › `THEME_BOOT_SCRIPT` applies it in `<head>` before first paint. **Dark applies only to pages built on the system** (the dark token blocks are conditioned on `:has(.wb-page)`), and only those pages render the switch (`<Nav theme />`); `/lee` and `/articles` get the plain `<Nav />`, always light, so the shared header never goes dark over a light page.
+  - **Every block is scoped under `.wb`** (the test checks), so `/health` and `/lee` keep their own styles. A page in the system is `<main className="wb wb-page">` between the shared `Nav` and `Footer`.
+  - Type: Source Serif 4 (name, headings, tile names, figures), IBM Plex Sans (text), IBM Plex Mono (eyebrows, captions, tags, subtitles), loaded in `app/layout.tsx` as `--font-serif/-sans/-mono`. Playfair and Outfit stay loaded (not preloaded) for `/health` and `/lee`.
+  - Theme: `app/components/ThemeSwitch.tsx`, LegCom's three-way pill (Light · Match my computer · Dark), saved under `localStorage` `wb-theme`; `lib/theme.ts` › `THEME_BOOT_SCRIPT` applies it in `<head>` before first paint. **Dark applies only to pages built on the system** (the dark token blocks are conditioned on `:has(.wb-page)`), and only those pages render the switch (`<Nav theme />`); `/lee` gets the plain `<Nav />`, always light, so the shared header never goes dark over a light page.
   - Must work at 390 px with no sideways scroll (LegCom is desktop-only; this site isn't).
 - **Homepage:** `app/page.tsx` lays out the sections; the pieces are in `app/components/home/`. Top to bottom: name + the Tetris print and headshot print (`TetrisPrint`), Then / Now / Still strip (`ThenNowStill`, its counts computed and spelled out), the featured build (`FeaturedBuild`), Work ("Autonomous AI agents" with the coworkers'-pets note, then "Domain intelligence"), Personal (groups in `GROUPS` order), the GitHub map (`GitHubMap`), Beyond work + Connect cards, footer.
 - The hero portrait is a taped print beside the Tetris print, captioned with the name alone, right-aligned (the Tetris print overlaps its left edge). It is **not a link**.
@@ -28,7 +28,8 @@ Smoke-test with `npm test` and `npm run health:add -- --dry-run < /dev/null`.
 - **The GitHub map** reads `data/github-contributions.json` (one 0–4 level per day, exactly as GitHub's public profile shows it). `npm run github:contributions` refreshes it from `github.com/users/wbuf81/contributions`; the deploy workflow runs it before the tests and **daily at 10:23 UTC** on a schedule. It never fails the deploy: on any problem it warns and the committed file is used, so the map is never blank.
 - The homepage is deliberately **not a résumé**: name, Tetris and the headshot, then the building. The About/Experience/Expertise/Certifications sections were cut in Aug 2026 on outside feedback ("don't dupe LinkedIn — make it about the building"); the career history lives on LinkedIn, linked from Connect. Don't reintroduce résumé sections, and keep hero copy terse — Wes rejects anything that reads as a tagline.
 - Agent mascot images: `public/agents/*.jpg` (800 px wide). LUCY's came from LegCom's `landing/images/lucy-header.jpg`; WBDB's picture is LegCom's drawing of its lab bench (`public/projects/wbdb-lab.jpg`); OmaFinance's is a made-up illustration with no real data (`public/projects/omafinance.svg`).
-- `/uses` was removed on 3 Oct 2026 (with its admin, `lib/github.ts` and `lib/metadata-fetcher.ts`); the URL 404s.
+- Retired on 3 Oct 2026, all now 404: `/uses` (with its admin, `lib/github.ts`, `lib/metadata-fetcher.ts`), `/articles` (only ever held the MDX template's "Hello World"; the MDX setup went with it), `/playground` (the January homepage with the space/gaming/sports channels) and `/moonballs` (the golf-ball designer; three.js went with it). The site's pages are now `/`, `/design`, `/health` (unlinked) and `/lee` (unlinked).
+- **Phones can pinch-zoom:** the viewport sets no maximum scale and no zoom lock (WCAG 1.4.4); `__tests__/viewport.test.ts` keeps it that way.
 
 ## /health — weekly tracker update
 Unlinked page (no nav link, `noindex`, `Disallow: /health` in robots.txt, absent from sitemap). Deployed publicly, so it IS reachable by URL — that tradeoff was accepted deliberately; don't "fix" it by adding auth.
@@ -149,7 +150,9 @@ python3 scripts/og/build-og.py health    # after importing a week
 - The homepage card is a fixed design; the health card is **derived from `data/health.json`**.
 - The health card is redrawn automatically on every deploy — see the "Redraw the /health link preview" step in `.github/workflows/deploy.yml`. Importing a week is a push, so the live card is never stale. Run the generator locally too if you want the committed PNG to match, but the deploy does not depend on it.
 - If that CI step ever fails the whole deploy fails, which is deliberate: a silently stale card showing last month's weight is worse than a visible red build.
-- Cards use the site's own Playfair Display and Outfit, committed as `scripts/og/*.woff2` so a render never silently falls back to a system face.
+- The homepage card (`main_card`) is the homepage in miniature, in the design system: eyebrow, name and the Then / Now / Still strip on the left, the taped Tetris print and headshot print on the right. Its fonts are the system's (Source Serif 4 SemiBold, IBM Plex Sans 400/500, IBM Plex Mono 500) and its colours repeat the light tokens; keep them in step if the tokens change. No tagline and no figures on it: the Tetris HUD shows dashes, as the idle page does.
+- The health card keeps /health's own Playfair Display and Outfit. All card fonts are committed as `scripts/og/*.woff2` so a render never silently falls back to a system face.
+- Social sites cache previews: after changing the card, LinkedIn's Post Inspector re-fetches it.
 
 ## Weekly share cards
 Three 1080x1350 PNGs for posting to X, drawn by `scripts/og/build-weekly.py` from the newest **complete** week:
@@ -177,8 +180,6 @@ Rules that are deliberate:
 `app/icon.svg` is the **W from Source Serif 4 SemiBold**, the face of "Wesley Bard" in the header (redrawn 3 Oct 2026; it was Playfair's W). It's an outline, never `<text>` (a favicon has no webfont), pulled from `scripts/og/source-serif-4-semibold.woff2` by `scripts/og/build-favicon.py` (`pip3 install fonttools brotli`), which writes all three icons, `app/icon.svg`, `public/icon-192.svg` and `public/icon-512.svg`, so they can't drift (`__tests__/favicon.test.ts` checks they share one glyph). Don't redraw letterforms by hand: an earlier hand-drawn W read as the Wario logo. `app/health/icon.svg` is a falling trend line, so the tracker tab is not mistaken for the main site. All are an ink `#14130f` rounded square.
 
 Favicon strokes are deliberately heavy: a hairline disappears at 16px. Check any change by rendering it at 16px, not just at 512.
-
-The link-preview cards (`scripts/og`) still use Playfair and Outfit; redrawing them in the new faces is a follow-up.
 
 ## Image processing
 Mascot sources are in `~/Downloads/{name}-header.jpg` (LegCom keeps colour copies in `landing/images/`). Shown in full colour; no CSS filters.

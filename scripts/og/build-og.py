@@ -13,8 +13,9 @@ WhatsApp all ignore SVG previews. That was the original bug.
 
 Cards are laid out in HTML and rendered by headless Chrome at 2x, then
 downsampled, which is what keeps the serif crisp at thumbnail size. Fonts are
-the site's own Playfair Display and Outfit, inlined so the cards match the live
-pages exactly.
+inlined so the cards match the live pages exactly: the homepage card uses the
+design system's Source Serif 4, IBM Plex Sans and IBM Plex Mono (app/design-system.css);
+the health card keeps /health's own Playfair Display and Outfit.
 
 Requires: Google Chrome, and Pillow (`pip install pillow`).
 """
@@ -109,36 +110,104 @@ body {{
 """
 
 
-def main_card():
-    """Ruled masthead. The two rules carry the structure; the name needs no
-    other support, so there is no title, tagline, or portrait on it.
+SERIF = b64(HERE / 'source-serif-4-semibold.woff2')
+SANS_400 = b64(HERE / 'plex-sans-400.woff2')
+SANS_500 = b64(HERE / 'plex-sans-500.woff2')
+MONO = b64(HERE / 'plex-mono-500.woff2')
+HEADSHOT = b64(PUBLIC / 'headshot-thumb.jpg')
 
-    The weight contrast between the rules — 4px ink above, 1px blue below — is
-    the one deliberate detail. Keep it if you restyle this.
-    """
+# The design system's light tokens (app/design-system.css). Repeated here because the card is rendered
+# outside the site; keep them in step if the tokens change.
+SITE = f"""
+@font-face {{ font-family: 'Source Serif 4'; src: url(data:font/woff2;base64,{SERIF}) format('woff2'); font-weight: 600; }}
+@font-face {{ font-family: 'IBM Plex Sans'; src: url(data:font/woff2;base64,{SANS_400}) format('woff2'); font-weight: 400; }}
+@font-face {{ font-family: 'IBM Plex Sans'; src: url(data:font/woff2;base64,{SANS_500}) format('woff2'); font-weight: 500; }}
+@font-face {{ font-family: 'IBM Plex Mono'; src: url(data:font/woff2;base64,{MONO}) format('woff2'); font-weight: 500; }}
+:root {{
+  --bg: #f4f6f8; --paper: #ffffff; --ink: #1b2430; --ink-2: #566371; --ink-3: #64707c; --rule: #cfd6dd;
+  --accent: #0f4c5c; --on-accent: #ffffff; --tape: rgba(255, 226, 150, .72); --screen: #121a22;
+  --serif: 'Source Serif 4', Georgia, serif; --sans: 'IBM Plex Sans', Arial, sans-serif; --mono: 'IBM Plex Mono', Menlo, monospace;
+}}
+* {{ margin: 0; padding: 0; box-sizing: border-box; }}
+html, body {{ width: {W}px; height: {H}px; overflow: hidden; }}
+body {{ font-family: var(--sans); -webkit-font-smoothing: antialiased; background: var(--bg); color: var(--ink); }}
+.card {{ position: relative; width: {W}px; height: {H}px; overflow: hidden; }}
+"""
+
+# A Tetris stack mid-game, in the board's playing colours (app/components/home/TetrisBoard.tsx).
+VIVID = ['#06b6d4', '#eab308', '#a855f7', '#22c55e', '#ef4444', '#3b82f6', '#f97316']  # I O T S Z J L
+STACK = ['..........'] * 6 + [
+    '..........', '....T.....', '...TTT....', '..........', '..........', '..........', '..........',
+    '........I.', 'OO......I.', 'OOJ..T..IZ', 'LJJJTTTS.Z', 'LSS.OOZZSI', 'SS.IOOJZZI', 'LLLJ.ZZSSI',
+]
+
+
+def board_cells():
+    cells = []
+    for row in STACK:
+        for ch in row:
+            colour = 'rgba(255,255,255,.05)' if ch == '.' else VIVID['IOTSZJL'.index(ch)]
+            cells.append(f'<i style="background:{colour}"></i>')
+    return ''.join(cells)
+
+
+def main_card():
+    """The homepage in miniature: the eyebrow, the name and the Then / Now / Still strip on the left;
+    the taped Tetris print and the headshot print on the right, as in the hero. No tagline (Wes rejects
+    anything that reads as one); every word here is on the live page."""
     return f"""
 <style>
-{BASE}
-.card {{
-  display: flex; flex-direction: column; justify-content: center;
-  padding: 26px 96px 0; text-align: center;
-}}
-.top-rule {{ height: 4px; background: var(--ink); }}
-.bot-rule {{ height: 1px; background: var(--blue); }}
-.name {{
-  font-family: 'Playfair Display', serif; font-size: 148px; font-weight: 700;
-  line-height: 1; letter-spacing: -0.04em; margin: 46px 0 42px;
-}}
-.foot {{
-  margin-top: 22px; font-size: 20px; letter-spacing: 0.14em;
-  text-transform: uppercase; color: var(--muted); font-weight: 600;
-}}
+{SITE}
+.left {{ position: absolute; left: 72px; top: 150px; width: 640px; }}
+.eyebrow {{ font: 500 16px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); }}
+.name {{ font: 600 98px/1 var(--serif); letter-spacing: -.02em; white-space: nowrap; margin: 20px 0 40px; }}
+.stats {{ display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1px; background: var(--rule); border: 1px solid var(--rule); }}
+.stats > div {{ background: var(--paper); padding: 15px 14px 16px; }}
+.k {{ font: 500 12px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 8px; }}
+.n {{ font: 600 22px/1.1 var(--serif); color: var(--accent); white-space: nowrap; }}
+.l {{ font: 400 14px/1.3 var(--sans); color: var(--ink-2); margin-top: 6px; }}
+.url {{ position: absolute; left: 72px; bottom: 54px; font: 500 15px var(--mono); letter-spacing: .06em; color: var(--ink-3); }}
+.print {{ position: absolute; background: var(--paper); border: 1px solid var(--rule); box-shadow: 0 18px 32px -20px rgba(0,0,0,.38); }}
+.tape {{ position: absolute; height: 20px; background: var(--tape); }}
+.cap {{ position: absolute; left: 12px; right: 11px; bottom: 9px; display: flex; justify-content: space-between; align-items: center;
+  font: 500 12px var(--mono); letter-spacing: .02em; color: var(--ink-2); }}
+.arcade {{ left: 742px; top: 84px; padding: 10px 10px 48px; transform: rotate(-2.2deg); z-index: 2; }}
+.screen {{ background: var(--screen); padding: 14px; display: flex; gap: 14px; }}
+.board {{ display: grid; grid-template-columns: repeat(10, 14px); grid-auto-rows: 14px; gap: 1px; }}
+.board i {{ display: block; border-radius: 2px; }}
+.hud {{ width: 56px; font: 500 10px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: #8d9aa7; }}
+.hud b {{ display: block; margin: 4px 0 14px; font: 600 22px/1 var(--serif); letter-spacing: 0; color: #e6ebf0; }}
+.play {{ display: inline-flex; align-items: center; gap: 7px; height: 30px; padding: 0 12px; border-radius: 4px; background: var(--accent);
+  color: var(--on-accent); font: 500 13px var(--sans); }}
+.play::before {{ content: ''; border-left: 8px solid currentColor; border-top: 5px solid transparent; border-bottom: 5px solid transparent; }}
+.hs {{ left: 962px; top: 228px; width: 212px; padding: 9px 9px 34px; transform: rotate(2.8deg); z-index: 1; }}
+.hs img {{ display: block; width: 100%; aspect-ratio: 1 / 1; object-fit: cover; object-position: 50% 30%; }}
+.hs .cap {{ justify-content: flex-end; }}
 </style>
 <div class="card">
-  <div class="top-rule"></div>
-  <p class="name">Wesley Bard</p>
-  <div class="bot-rule"></div>
-  <p class="foot">wesleybard.com</p>
+  <div class="left">
+    <p class="eyebrow">Governance, Risk &amp; Compliance · Newfold Digital</p>
+    <p class="name">Wesley Bard</p>
+    <div class="stats">
+      <div><p class="k">Then</p><p class="n">Lockheed Martin</p><p class="l">Engineer</p></div>
+      <div><p class="k">Now</p><p class="n">Newfold Digital</p><p class="l">Governance, Risk &amp; Compliance</p></div>
+      <div><p class="k">Still</p><p class="n">Building stuff</p></div>
+    </div>
+  </div>
+  <p class="url">wesleybard.com</p>
+  <div class="print arcade">
+    <span class="tape" style="left: 36%; top: -10px; width: 88px; transform: rotate(-5deg)"></span>
+    <div class="screen">
+      <div class="board">{board_cells()}</div>
+      <div class="hud">Score<b>—</b>Lines<b>—</b></div>
+    </div>
+    <div class="cap"><span>Tetris</span><span class="play">Play</span></div>
+  </div>
+  <div class="print hs">
+    <span class="tape" style="left: calc(100% - 42px); top: -7px; width: 58px; transform: rotate(38deg)"></span>
+    <img src="data:image/jpeg;base64,{HEADSHOT}" alt="">
+    <div class="cap"><span>Wesley Bard</span></div>
+  </div>
 </div>
 """
 
