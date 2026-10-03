@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useId, useState } from 'react';
 import { applyMode, readMode, type ThemeMode } from '@/lib/theme';
 
 const MODES: { mode: ThemeMode; label: string; icon: React.ReactNode }[] = [
@@ -39,6 +39,7 @@ const MODES: { mode: ThemeMode; label: string; icon: React.ReactNode }[] = [
 // in the layout has already applied a saved choice before this hydrates.
 export default function ThemeSwitch() {
   const [mode, setMode] = useState<ThemeMode>('auto');
+  const tipId = useId();
 
   useEffect(() => {
     setMode(readMode());
@@ -47,7 +48,7 @@ export default function ThemeSwitch() {
   const now = MODES.find((m) => m.mode === mode)!.label;
 
   return (
-    <div className="theme" role="group" aria-label="Colour theme">
+    <div className="theme" role="group" aria-label="Colour theme" aria-describedby={tipId}>
       {MODES.map((m) => (
         <button
           key={m.mode}
@@ -62,7 +63,7 @@ export default function ThemeSwitch() {
           {m.icon}
         </button>
       ))}
-      <span className="tip" role="tooltip">
+      <span className="tip" role="tooltip" id={tipId}>
         <span className="t">Theme</span>
         <span className="h">Light, dark, or match your computer.</span>
         <span className="p">

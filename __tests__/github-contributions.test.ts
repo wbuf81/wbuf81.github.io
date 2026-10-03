@@ -45,7 +45,8 @@ test('the refresh script never fails the deploy and keeps the committed file whe
     timeout: 30000,
   });
   expect(run.status).toBe(0);
-  expect(run.stderr).toMatch(/warning: GitHub contributions not refreshed/);
+  // A GitHub Actions annotation, so a stale map shows on the run's summary, not only in the log.
+  expect(run.stderr).toMatch(/^::warning title=GitHub map::GitHub contributions not refreshed/m);
   expect(fs.readFileSync(file, 'utf8')).toBe(before);
 }, 40000);
 

@@ -20,11 +20,11 @@ const USER = 'wbuf81';
 // Overridable so the tests can prove an unreachable GitHub never fails the deploy.
 const SOURCE = process.env.GITHUB_CONTRIBUTIONS_URL || `https://github.com/users/${USER}/contributions`;
 
-// The same parser the tests cover, compiled on the fly (as add-health-week.mjs does).
-require('ts-node/register');
-const { parseContributionsHtml } = require(path.join(repoRoot, 'lib/githubContributions.ts'));
-
 try {
+  // The same parser the tests cover, compiled on the fly (as add-health-week.mjs does). Inside the try,
+  // so even a broken TypeScript loader can't fail the deploy.
+  require('ts-node/register');
+  const { parseContributionsHtml } = require(path.join(repoRoot, 'lib/githubContributions.ts'));
   const res = await fetch(SOURCE, {
     headers: { 'User-Agent': 'wesleybard.com build' },
     signal: AbortSignal.timeout(20000),
@@ -35,5 +35,6 @@ try {
   fs.writeFileSync(out, JSON.stringify({ user: USER, ...parsed }, null, 2) + '\n');
   console.log(`GitHub map refreshed: ${parsed.from} to ${parsed.to}`);
 } catch (err) {
-  console.warn(`warning: GitHub contributions not refreshed (${err.message}); using the committed file`);
+  // A GitHub Actions annotation: a stale map shows on the run's summary page, not only in the log.
+  console.warn(`::warning title=GitHub map::GitHub contributions not refreshed (${err.message}); using the committed file`);
 }

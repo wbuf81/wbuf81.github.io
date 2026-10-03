@@ -117,3 +117,12 @@ test('while playing, space is held on keyup too, so a focused Play/Stop button n
   expect(during.defaultPrevented).toBe(true);
 });
 
+test('a month that starts in the last week never spans past the grid', () => {
+  // 4 Jan 2026 is a Sunday: four January weeks, then February starts the fifth and last column.
+  const { container } = render(
+    <GitHubMap data={{ user: 'x', from: '2026-01-04', to: '2026-02-01', levels: '0'.repeat(29) }} />,
+  );
+  const feb = Array.from(container.querySelectorAll<HTMLElement>('.heat-m span')).find((s) => s.textContent === 'Feb')!;
+  expect(feb.style.gridColumn).toBe('5 / span 1');
+});
+

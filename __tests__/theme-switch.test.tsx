@@ -41,3 +41,12 @@ test('the boot script ignores anything that is not light or dark', () => {
   new Function(THEME_BOOT_SCRIPT)();
   expect(document.documentElement.hasAttribute('data-theme')).toBe(false);
 });
+
+test('the hover card describes the switch to screen readers', () => {
+  render(<ThemeSwitch />);
+  const group = screen.getByRole('group', { name: 'Colour theme' });
+  const id = group.getAttribute('aria-describedby');
+  expect(id).toBeTruthy();
+  expect(document.getElementById(id!)).toHaveTextContent('Light, dark, or match your computer.');
+});
+

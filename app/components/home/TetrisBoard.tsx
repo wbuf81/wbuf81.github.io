@@ -237,7 +237,7 @@ const TetrisBoard = forwardRef<TetrisHandle, TetrisProps>(function TetrisBoard({
 
         // "GAME OVER" text
         const goFontSize = cs * 1.8;
-        ctx.font = `800 ${goFontSize}px ${fonts.serif}`;
+        ctx.font = `600 ${goFontSize}px ${fonts.serif}`;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
 
@@ -300,7 +300,7 @@ const TetrisBoard = forwardRef<TetrisHandle, TetrisProps>(function TetrisBoard({
             const fontSize = (isTetris ? cs * 2.2 : cs * 1.6) * scale;
             ctx.save();
             ctx.globalAlpha = alpha * 0.85;
-            ctx.font = `800 ${fontSize}px ${fonts.serif}`;
+            ctx.font = `600 ${fontSize}px ${fonts.serif}`;
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
 

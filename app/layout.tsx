@@ -96,11 +96,10 @@ const jsonLd = {
   knowsAbout: ['Risk Management', 'Compliance', 'AI', 'Engineering'],
 };
 
+// No maximum scale or zoom lock: visitors must be able to pinch-zoom (WCAG 1.4.4).
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
 };
 
 export default function RootLayout({

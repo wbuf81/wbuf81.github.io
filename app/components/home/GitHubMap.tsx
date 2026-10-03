@@ -19,7 +19,7 @@ export default function GitHubMap({ data }: { data: Contributions }) {
       <div className="heat-box" style={{ '--weeks': weeks } as CSSProperties}>
         <div className="heat-m" aria-hidden="true">
           {months.map((m) => (
-            <span key={m.col} style={{ gridColumn: `${m.col} / span 3` }}>
+            <span key={m.col} style={{ gridColumn: `${m.col} / span ${Math.min(3, weeks - m.col + 1)}` }}>
               {m.label}
             </span>
           ))}
