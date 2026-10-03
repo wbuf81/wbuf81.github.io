@@ -26,8 +26,9 @@ export interface Project {
   href?: string;
   hardware?: Hardware;
   group?: (typeof GROUPS)[number];
-  /** Shown when the project is the featured build. */
+  /** Shown when the project is the featured build, under `chipsLabel`. */
   chips?: string[];
+  chipsLabel?: string;
 }
 
 export interface Tape {
@@ -136,6 +137,7 @@ export const PERSONAL: Project[] = [
       image: '/boards/waveshare-knob-touch-1.8.jpg',
     },
     chips: ['Music, seven visualisers', 'Teams mic and camera'],
+    chipsLabel: 'Two jobs',
   },
   {
     key: 'aac', name: 'Personal AAC Device', group: 'Microcontrollers', kind: 'M5Stack', fit: 'board', badge: 'Private repo',
@@ -156,6 +158,7 @@ export const PERSONAL: Project[] = [
       image: '/boards/elgato-stream-deck-neo.jpg',
     },
     chips: ['Claude Code sessions', 'Codex tasks', 'Spotify', 'Stocks', 'Weather', 'Football', 'Machine vitals'],
+    chipsLabel: 'Seven live pages',
   },
   {
     key: 'daisy', name: 'Daisy Status Bar', group: 'Everything else', kind: 'Swift · macOS', fit: 'shot', badge: 'Open source',
