@@ -13,7 +13,8 @@
     "pretest": "npm run build",
     "health:add": "node scripts/add-health-week.mjs",
     "weekly:stats": "node scripts/weekly-stats.mjs",
-    "weekly:cards": "python3 scripts/og/build-weekly.py"
+    "weekly:cards": "python3 scripts/og/build-weekly.py",
+    "github:contributions": "node scripts/github-contributions.mjs"
   },
   "keywords": [],
   "author": "",

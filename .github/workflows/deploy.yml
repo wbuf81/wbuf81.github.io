@@ -4,6 +4,9 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+  # Daily, so the GitHub map on the homepage stays current between pushes.
+  schedule:
+    - cron: "23 10 * * *"
 
 permissions:
   contents: read
@@ -32,6 +35,12 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      # The homepage's GitHub map, from GitHub's public contributions calendar. Never fails the
+      # deploy: on any problem it warns and the committed data/github-contributions.json is used.
+      # Runs before the tests so they check the fresh file too.
+      - name: Refresh the GitHub map
+        run: node scripts/github-contributions.mjs
 
       # Includes the add-health-week loader smoke test, so a refactor that
       # breaks the weekly import script fails the deploy instead of surfacing
