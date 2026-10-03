@@ -62,10 +62,11 @@ export default function TetrisPrint() {
         alt="Wesley Bard"
         tilt={2.8}
         tapes={[{ left: 'calc(100% - 40px)', top: '-6px', width: '56px', angle: '38deg' }]}
+        // Name on the right only: the arcade print overlaps this print's left edge.
         caption={
           <>
+            <span />
             <span>Wesley Bard</span>
-            <span>Newfold Digital</span>
           </>
         }
         eager

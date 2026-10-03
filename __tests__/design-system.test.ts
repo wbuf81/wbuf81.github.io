@@ -69,3 +69,20 @@ test('blocks are scoped under .wb so other pages are untouched', () => {
 test('no grayscale filters', () => {
   expect(css).not.toMatch(/grayscale/);
 });
+
+// /design describes every colour token and shows its light · dark values straight from the stylesheet.
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const { TOKENS, tokenValues } = require('@/app/design/tokens');
+
+test('every colour token is described on /design', () => {
+  const light = names(block(':root {')).filter((n) => !FONT_ONLY.includes(n));
+  expect(TOKENS.map((t: { name: string }) => t.name).sort()).toEqual([...light].sort());
+  for (const t of TOKENS) expect(t.job.length).toBeGreaterThan(3);
+});
+
+test("/design reads each token's light and dark value from the stylesheet", () => {
+  const v = tokenValues(css);
+  expect(v['--accent']).toEqual({ light: '#0f4c5c', dark: '#7ec4d4' });
+  expect(v['--tape']).toEqual({ light: 'rgba(255, 226, 150, .72)', dark: 'rgba(224, 176, 90, .40)' });
+  for (const t of TOKENS) expect(v[t.name]).toBeDefined();
+});
