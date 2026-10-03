@@ -4,16 +4,19 @@ import './globals.css';
 import './design-system.css';
 import { THEME_BOOT_SCRIPT } from '@/lib/theme';
 
+// Playfair and Outfit are only for the pages that keep their own look, so they aren't preloaded everywhere.
 const playfair = Playfair_Display({
   subsets: ['latin'],
   variable: '--font-playfair',
   display: 'swap',
+  preload: false,
 });
 
 const outfit = Outfit({
   subsets: ['latin'],
   variable: '--font-outfit',
   display: 'swap',
+  preload: false,
 });
 
 // The design system's three faces (app/design-system.css reads them as --serif, --sans, --mono).
@@ -21,7 +24,6 @@ const outfit = Outfit({
 const serif = Source_Serif_4({
   subsets: ['latin'],
   weight: ['500', '600'],
-  style: ['normal', 'italic'],
   variable: '--font-serif',
   display: 'swap',
 });

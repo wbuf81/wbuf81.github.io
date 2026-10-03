@@ -229,8 +229,9 @@
   .wb .fpanel { padding: 40px 18px 18px; grid-template-columns: 1fr; }
 }
 @media (max-width: 600px) {
-  .wb .duo { flex-wrap: wrap; }
-  .wb .print.hs { margin: -18px 0 0 40px; width: 200px; }
+  /* the two prints stack: Tetris first, the headshot tucked under its bottom-right corner */
+  .wb .duo { flex: 1 1 100%; flex-wrap: wrap; padding: 14px 4px 0; }
+  .wb .print.hs { width: 170px; margin: -36px 0 0 auto; }
   .wb .type > div { grid-template-columns: 1fr; gap: 4px; }
 }
 @media (prefers-reduced-motion: reduce) {
