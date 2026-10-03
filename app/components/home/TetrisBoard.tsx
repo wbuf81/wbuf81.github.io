@@ -4,7 +4,7 @@ import { useEffect, useRef, useCallback, forwardRef, useImperativeHandle } from 
 import {
   COLS, ROWS, IDLE_TIMEOUT, AI_STEP_MS, GRAVITY_MS, LOCK_DELAY_MS, LINE_FLASH_MS, GAME_OVER_ROW_MS, CELEBRATION_MS, POINTS,
   WALL_KICKS, I_WALL_KICKS, type TetrisState,
-  createEmptyGrid, getShape, collides, lockPiece, findFullRows, clearRows, ghostY, fillBag, spawnPiece, computeAiTarget, isGameKey,
+  createEmptyGrid, getShape, collides, lockPiece, findFullRows, clearRows, ghostY, fillBag, spawnPiece, computeAiTarget, isGameKey, handleKey,
 } from '@/lib/tetris';
 
 /*
@@ -518,86 +518,24 @@ const TetrisBoard = forwardRef<TetrisHandle, TetrisProps>(function TetrisBoard({
     // Keyboard
     function handleKeyDown(e: KeyboardEvent) {
       const state = stateRef.current;
-      if (!state || !state.active || state.gameOver || state.lineClear) return;
-      if (state.mode !== 'player') return;
+      if (state && handleKey(state, e.key, performance.now())) e.preventDefault();
+    }
 
-      if (!isGameKey(e.key)) return;
-      e.preventDefault();
-
-      state.lastInput = performance.now();
-      const piece = state.active;
-      const shape = getShape(piece.type, piece.rotation);
-
-      switch (e.key) {
-        case 'ArrowLeft':
-          if (!collides(state.grid, shape, piece.x - 1, piece.y)) {
-            piece.x--;
-            if (state.lockTimer !== null) state.lockTimer = performance.now();
-          }
-          break;
-        case 'ArrowRight':
-          if (!collides(state.grid, shape, piece.x + 1, piece.y)) {
-            piece.x++;
-            if (state.lockTimer !== null) state.lockTimer = performance.now();
-          }
-          break;
-        case 'ArrowDown':
-          if (!collides(state.grid, shape, piece.x, piece.y + 1)) {
-            piece.y++;
-            state.lastGravity = performance.now();
-          }
-          break;
-        case 'ArrowUp': {
-          // Rotate CW
-          const newRot = (piece.rotation + 1) % 4;
-          const newShape = getShape(piece.type, newRot);
-          const kicks = piece.type === 0
-            ? I_WALL_KICKS[`${piece.rotation}>${newRot}`]
-            : WALL_KICKS[`${piece.rotation}>${newRot}`];
-
-          if (kicks) {
-            for (const [kx, ky] of kicks) {
-              if (!collides(state.grid, newShape, piece.x + kx, piece.y - ky)) {
-                piece.rotation = newRot;
-                piece.x += kx;
-                piece.y -= ky;
-                if (state.lockTimer !== null) state.lockTimer = performance.now();
-                break;
-              }
-            }
-          }
-          break;
-        }
-        case ' ': {
-          // Hard drop
-          const gy = ghostY(state.grid, piece);
-          piece.y = gy;
-          lockPiece(state.grid, piece);
-
-          const fullRows = findFullRows(state.grid);
-          if (fullRows.length > 0) {
-            state.lineClear = { rows: fullRows, startTime: performance.now() };
-            state.active = null;
-          } else {
-            state.active = spawnPiece(state);
-            if (!state.active) {
-              state.gameOver = { phase: 'fill', row: 0, lastRowTime: performance.now(), finalScore: state.score, finalLines: state.lines };
-              return;
-            }
-            state.lastGravity = performance.now();
-          }
-          break;
-        }
-      }
+    // Some browsers press a focused button with Space on keyup; while playing, Space is the game's.
+    function handleKeyUp(e: KeyboardEvent) {
+      const state = stateRef.current;
+      if (state && state.mode === 'player' && isGameKey(e.key)) e.preventDefault();
     }
 
     window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keyup', handleKeyUp);
 
     return () => {
       cancelAnimationFrame(rafRef.current);
       window.removeEventListener('resize', resize);
       ro?.disconnect();
       window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('keyup', handleKeyUp);
     };
   }, [initState]);
 

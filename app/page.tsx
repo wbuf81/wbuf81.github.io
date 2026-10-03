@@ -27,7 +27,7 @@ const BEYOND = [
 export default function HomePage() {
   return (
     <>
-      <Nav />
+      <Nav theme />
       <main className="wb wb-page">
         <div className="wrap">
           <section className="hero" aria-label="Wesley Bard">

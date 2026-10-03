@@ -1,6 +1,7 @@
 /* wesleybard.com's design system: LegCom's look (itself WBDB's design system), shown on /design.
    Colours by name only: every colour is a token below, light first, with a dark twin in BOTH dark blocks
-   (the computer's setting, and data-theme on <html> from the theme switch). A new token also gets an entry in
+   (the computer's setting, and data-theme on <html> from the theme switch). Dark applies only to pages built on
+   the system (:has(.wb-page)), so the shared header stays light over the pages that keep their own look. A new token also gets an entry in
    app/design/tokens.ts, or __tests__/design-system.test.ts fails. Every block is scoped under .wb, so pages
    that keep their own styles (/health, /lee, /moonballs, /playground, /articles) are untouched. */
 
@@ -18,7 +19,7 @@
   --mono: var(--font-mono), Menlo, Consolas, monospace;
 }
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
+  :root:not([data-theme="light"]):has(.wb-page) {
     color-scheme: dark;
     --bg: #10161c; --paper: #171f27; --ink: #e6ebf0; --ink-2: #9aa7b3; --ink-3: #7f8d9a; --rule: #34414d; --rule-soft: #26313b;
     --accent: #7ec4d4; --accent-soft: #1b3038; --accent-deep: #a5dbe7; --on-accent: #0b1e24;
@@ -28,7 +29,7 @@
     --h0: #26313b; --h1: #1d4550; --h2: #2b6a79; --h3: #4f9aac; --h4: #8fd0de;
   }
 }
-:root[data-theme="dark"] {
+:root[data-theme="dark"]:has(.wb-page) {
     color-scheme: dark;
     --bg: #10161c; --paper: #171f27; --ink: #e6ebf0; --ink-2: #9aa7b3; --ink-3: #7f8d9a; --rule: #34414d; --rule-soft: #26313b;
     --accent: #7ec4d4; --accent-soft: #1b3038; --accent-deep: #a5dbe7; --on-accent: #0b1e24;

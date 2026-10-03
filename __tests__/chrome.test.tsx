@@ -5,11 +5,17 @@ import Footer from '@/app/components/Footer';
 jest.mock('next/navigation', () => ({ usePathname: () => '/' }));
 
 test('header has the wordmark, the two links and the theme switch', () => {
-  render(<Nav />);
+  render(<Nav theme />);
   expect(screen.getByRole('link', { name: 'Wesley Bard' })).toHaveAttribute('href', '/');
   expect(screen.getByRole('link', { name: 'Projects' })).toHaveAttribute('href', '/#projects');
   expect(screen.getByRole('link', { name: 'Connect' })).toHaveAttribute('href', '/#connect');
   expect(screen.getByRole('group', { name: 'Colour theme' })).toBeInTheDocument();
+});
+
+test('pages outside the design system get the header without the theme switch', () => {
+  render(<Nav />);
+  expect(screen.getByRole('link', { name: 'Wesley Bard' })).toBeInTheDocument();
+  expect(screen.queryByRole('group', { name: 'Colour theme' })).toBeNull();
 });
 
 test('header and footer carry the design system scope', () => {

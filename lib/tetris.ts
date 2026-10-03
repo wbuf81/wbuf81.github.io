@@ -325,3 +325,80 @@ const GAME_KEYS = new Set(['ArrowLeft', 'ArrowRight', 'ArrowDown', 'ArrowUp', ' 
 export function isGameKey(key: string): boolean {
   return GAME_KEYS.has(key);
 }
+
+/**
+ * What a key does to the game. Returns true when the key is the game's, so the page must not act on it
+ * (scroll, or press a focused button). While someone plays, the game keys stay the game's even mid-animation
+ * (a line clear, game over), so holding Down never scrolls the page out from under the board.
+ */
+export function handleKey(state: TetrisState, key: string, now: number): boolean {
+  if (state.mode !== 'player' || !isGameKey(key)) return false;
+  if (!state.active || state.gameOver || state.lineClear) return true;
+
+  state.lastInput = now;
+  const piece = state.active;
+  const shape = getShape(piece.type, piece.rotation);
+
+  switch (key) {
+    case 'ArrowLeft':
+      if (!collides(state.grid, shape, piece.x - 1, piece.y)) {
+        piece.x--;
+        if (state.lockTimer !== null) state.lockTimer = now;
+      }
+      break;
+    case 'ArrowRight':
+      if (!collides(state.grid, shape, piece.x + 1, piece.y)) {
+        piece.x++;
+        if (state.lockTimer !== null) state.lockTimer = now;
+      }
+      break;
+    case 'ArrowDown':
+      if (!collides(state.grid, shape, piece.x, piece.y + 1)) {
+        piece.y++;
+        state.lastGravity = now;
+      }
+      break;
+    case 'ArrowUp': {
+      // Rotate CW
+      const newRot = (piece.rotation + 1) % 4;
+      const newShape = getShape(piece.type, newRot);
+      const kicks = piece.type === 0
+        ? I_WALL_KICKS[`${piece.rotation}>${newRot}`]
+        : WALL_KICKS[`${piece.rotation}>${newRot}`];
+
+      if (kicks) {
+        for (const [kx, ky] of kicks) {
+          if (!collides(state.grid, newShape, piece.x + kx, piece.y - ky)) {
+            piece.rotation = newRot;
+            piece.x += kx;
+            piece.y -= ky;
+            if (state.lockTimer !== null) state.lockTimer = now;
+            break;
+          }
+        }
+      }
+      break;
+    }
+    case ' ': {
+      // Hard drop
+      const gy = ghostY(state.grid, piece);
+      piece.y = gy;
+      lockPiece(state.grid, piece);
+
+      const fullRows = findFullRows(state.grid);
+      if (fullRows.length > 0) {
+        state.lineClear = { rows: fullRows, startTime: now };
+        state.active = null;
+      } else {
+        state.active = spawnPiece(state);
+        if (!state.active) {
+          state.gameOver = { phase: 'fill', row: 0, lastRowTime: now, finalScore: state.score, finalLines: state.lines };
+          return true;
+        }
+        state.lastGravity = now;
+      }
+      break;
+    }
+  }
+  return true;
+}

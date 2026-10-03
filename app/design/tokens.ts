@@ -40,6 +40,6 @@ function declarations(css: string, selector: string): Record<string, string> {
 /** Each token's light and dark value, as written in the stylesheet. */
 export function tokenValues(css: string): Record<string, { light: string; dark: string }> {
   const light = declarations(css, ':root {');
-  const dark = declarations(css, ':root[data-theme="dark"] {');
+  const dark = declarations(css, ':root[data-theme="dark"]:has(.wb-page) {');
   return Object.fromEntries(Object.keys(light).map((k) => [k, { light: light[k], dark: dark[k] ?? light[k] }]));
 }

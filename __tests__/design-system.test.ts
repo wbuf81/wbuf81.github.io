@@ -20,8 +20,8 @@ const FONT_ONLY = ['--serif', '--sans', '--mono'];
 
 test('every colour token has a dark twin in both dark blocks', () => {
   const light = names(block(':root {')).filter((n) => !FONT_ONLY.includes(n));
-  const media = names(block(':root:not([data-theme="light"]) {'));
-  const forced = names(block(':root[data-theme="dark"] {'));
+  const media = names(block(':root:not([data-theme="light"]):has(.wb-page) {'));
+  const forced = names(block(':root[data-theme="dark"]:has(.wb-page) {'));
   expect(light.length).toBeGreaterThan(15);
   for (const n of light) {
     expect(media).toContain(n);
@@ -30,9 +30,14 @@ test('every colour token has a dark twin in both dark blocks', () => {
 });
 
 test('the two dark blocks agree', () => {
-  expect(block(':root:not([data-theme="light"]) {').replace(/\s+/g, '')).toBe(
-    block(':root[data-theme="dark"] {').replace(/\s+/g, ''),
+  expect(block(':root:not([data-theme="light"]):has(.wb-page) {').replace(/\s+/g, '')).toBe(
+    block(':root[data-theme="dark"]:has(.wb-page) {').replace(/\s+/g, ''),
   );
+});
+
+test('dark applies only to pages built on the system, so the shared header never goes dark over a light page', () => {
+  const darkSelectors = Array.from(css.matchAll(/(:root[^{,]*)\{/g), (m) => m[1].trim()).filter((s) => s !== ':root');
+  for (const s of darkSelectors.filter((x) => /data-theme|not\(/.test(x))) expect(s).toMatch(/:has\(\.wb-page\)/);
 });
 
 test('blocks are scoped under .wb so other pages are untouched', () => {

@@ -101,3 +101,19 @@ test('the GitHub map draws one cell per day and keeps the note', () => {
   expect(container.querySelectorAll('.heat i.l4').length).toBe((data.levels.match(/4/g) || []).length);
   expect(screen.getByText('Most projects are in private repositories.')).toBeInTheDocument();
 });
+
+test('while playing, space is held on keyup too, so a focused Play/Stop button never toggles the game', () => {
+  render(<TetrisPrint />);
+  const idle = new KeyboardEvent('keyup', { key: ' ', cancelable: true });
+  act(() => {
+    window.dispatchEvent(idle);
+  });
+  expect(idle.defaultPrevented).toBe(false);
+  fireEvent.click(screen.getByRole('button', { name: /Play/ }));
+  const during = new KeyboardEvent('keyup', { key: ' ', cancelable: true });
+  act(() => {
+    window.dispatchEvent(during);
+  });
+  expect(during.defaultPrevented).toBe(true);
+});
+

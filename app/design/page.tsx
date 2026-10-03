@@ -39,7 +39,7 @@ export default function DesignPage() {
 
   return (
     <>
-      <Nav />
+      <Nav theme />
       <main className="wb wb-page">
         <div className="wrap ds">
           <header className="ds-top">

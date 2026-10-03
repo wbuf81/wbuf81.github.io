@@ -11,7 +11,9 @@ const NAV_LINKS = [
 
 // The site header, in the design system (app/design-system.css › the header). On a phone the bar wraps
 // rather than collapsing into a menu: two links and the theme switch fit on two short lines.
-export function Nav() {
+// `theme` shows the light/dark switch: only pages built on the system have a dark look (/, /design), so the
+// pages that keep their own styles (/lee, /articles) get the header without it, always light.
+export function Nav({ theme = false }: { theme?: boolean }) {
   const pathname = usePathname();
   const isHome = pathname === '/';
 
@@ -39,9 +41,11 @@ export function Nav() {
             </a>
           ))}
         </nav>
-        <div className="tools">
-          <ThemeSwitch />
-        </div>
+        {theme && (
+          <div className="tools">
+            <ThemeSwitch />
+          </div>
+        )}
       </div>
     </header>
   );
