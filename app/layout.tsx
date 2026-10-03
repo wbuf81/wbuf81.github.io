@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from 'next';
-import { Playfair_Display, Outfit } from 'next/font/google';
+import { Playfair_Display, Outfit, Source_Serif_4, IBM_Plex_Sans, IBM_Plex_Mono } from 'next/font/google';
 import './globals.css';
+import './design-system.css';
+import { THEME_BOOT_SCRIPT } from '@/lib/theme';
 
 const playfair = Playfair_Display({
   subsets: ['latin'],
@@ -11,6 +13,30 @@ const playfair = Playfair_Display({
 const outfit = Outfit({
   subsets: ['latin'],
   variable: '--font-outfit',
+  display: 'swap',
+});
+
+// The design system's three faces (app/design-system.css reads them as --serif, --sans, --mono).
+// Playfair and Outfit stay for the pages that keep their own look (/health, /lee, /articles).
+const serif = Source_Serif_4({
+  subsets: ['latin'],
+  weight: ['500', '600'],
+  style: ['normal', 'italic'],
+  variable: '--font-serif',
+  display: 'swap',
+});
+
+const sans = IBM_Plex_Sans({
+  subsets: ['latin'],
+  weight: ['400', '500', '600'],
+  variable: '--font-sans',
+  display: 'swap',
+});
+
+const mono = IBM_Plex_Mono({
+  subsets: ['latin'],
+  weight: ['400', '500'],
+  variable: '--font-mono',
   display: 'swap',
 });
 
@@ -81,8 +107,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${playfair.variable} ${outfit.variable}`}>
+    <html
+      lang="en"
+      className={`${playfair.variable} ${outfit.variable} ${serif.variable} ${sans.variable} ${mono.variable}`}
+      suppressHydrationWarning
+    >
       <head>
+        {/* Applies a saved light/dark choice before first paint, so it never flashes. */}
+        <script dangerouslySetInnerHTML={{ __html: THEME_BOOT_SCRIPT }} />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

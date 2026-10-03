@@ -1,0 +1,228 @@
+/* wesleybard.com's design system: LegCom's look (itself WBDB's design system), shown on /design.
+   Colours by name only: every colour is a token below, light first, with a dark twin in BOTH dark blocks
+   (the computer's setting, and data-theme on <html> from the theme switch). A new token also gets an entry in
+   app/design/tokens.ts, or __tests__/design-system.test.ts fails. Every block is scoped under .wb, so pages
+   that keep their own styles (/health, /lee, /moonballs, /playground, /articles) are untouched. */
+
+/* ── tokens ─────────────────────────────────────────────────── */
+:root {
+  color-scheme: light;
+  --bg: #f4f6f8; --paper: #ffffff; --ink: #1b2430; --ink-2: #566371; --ink-3: #64707c; --rule: #cfd6dd; --rule-soft: #e4e9ee;
+  --accent: #0f4c5c; --accent-soft: #e2eef1; --accent-deep: #0a3540; --on-accent: #ffffff;
+  --core: #1f6f3f;
+  --tape: rgba(255, 226, 150, .72);
+  --screen: #121a22; --screen-ink: #e6ebf0; --screen-ink-2: #8d9aa7;
+  --h0: #e4e9ee; --h1: #b6d6de; --h2: #78afbd; --h3: #3a8095; --h4: #0f4c5c;
+  --serif: var(--font-serif), Georgia, serif;
+  --sans: var(--font-sans), "Helvetica Neue", Arial, sans-serif;
+  --mono: var(--font-mono), Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #10161c; --paper: #171f27; --ink: #e6ebf0; --ink-2: #9aa7b3; --ink-3: #7f8d9a; --rule: #34414d; --rule-soft: #26313b;
+    --accent: #7ec4d4; --accent-soft: #1b3038; --accent-deep: #a5dbe7; --on-accent: #0b1e24;
+    --core: #7fcf9a;
+    --tape: rgba(224, 176, 90, .40);
+    --screen: #121a22; --screen-ink: #e6ebf0; --screen-ink-2: #8d9aa7;
+    --h0: #26313b; --h1: #1d4550; --h2: #2b6a79; --h3: #4f9aac; --h4: #8fd0de;
+  }
+}
+:root[data-theme="dark"] {
+    color-scheme: dark;
+    --bg: #10161c; --paper: #171f27; --ink: #e6ebf0; --ink-2: #9aa7b3; --ink-3: #7f8d9a; --rule: #34414d; --rule-soft: #26313b;
+    --accent: #7ec4d4; --accent-soft: #1b3038; --accent-deep: #a5dbe7; --on-accent: #0b1e24;
+    --core: #7fcf9a;
+    --tape: rgba(224, 176, 90, .40);
+    --screen: #121a22; --screen-ink: #e6ebf0; --screen-ink-2: #8d9aa7;
+    --h0: #26313b; --h1: #1d4550; --h2: #2b6a79; --h3: #4f9aac; --h4: #8fd0de;
+}
+/* Pages built on the system paint the whole window, overscroll included. */
+:root:has(.wb-page), :root:has(.wb-page) body { background: var(--bg); }
+
+/* ── base ───────────────────────────────────────────────────── */
+.wb { background: var(--bg); color: var(--ink); font: 15px/1.55 var(--sans); }
+.wb *, .wb *::before, .wb *::after { box-sizing: border-box; }
+.wb a { color: var(--accent); text-decoration: none; }
+.wb a:hover { color: var(--accent-deep); text-decoration: none; }
+.wb img { display: block; max-width: 100%; }
+.wb :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.wb:is(main) { max-width: none; min-height: 0; margin: 0; padding: 0; }
+.wb nav { max-width: none; margin: 0; padding: 0; border: 0; }
+.wb article { padding: 0; }
+.wb .vh { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* ── the header ─────────────────────────────────────────────── */
+.wb-head { position: relative; z-index: 20; background: var(--paper); border-bottom: 1px solid var(--rule); }
+.wb-head .in { max-width: 1380px; margin: 0 auto; min-height: 56px; padding: 0 clamp(16px, 3vw, 40px); display: flex; flex-wrap: wrap; align-items: center; gap: 0 28px; }
+.wb-head .brand { display: inline-flex; align-items: baseline; text-decoration: none; padding: 10px 0; }
+.wb-head .wm { font: 600 22px/1 var(--serif); letter-spacing: -.01em; color: var(--ink); }
+.wb-head .wm i, .wb-foot .wmk i { font-style: normal; color: var(--accent); }
+.wb-head .nav { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; }
+.wb-head .nav a { font: 500 14px var(--sans); color: var(--ink-2); padding: 8px 10px; border-radius: 4px; white-space: nowrap; }
+.wb-head .nav a:hover { color: var(--accent); background: var(--accent-soft); }
+.wb-head .tools { margin-left: auto; display: flex; align-items: center; gap: 12px; padding: 10px 0; }
+
+/* the theme switch: LegCom's pill, with its hover card */
+.wb .theme { position: relative; display: inline-flex; align-items: center; gap: 1px; height: 28px; padding: 1px; border: 1px solid var(--rule); border-radius: 14px; background: var(--paper); }
+.wb .theme button { display: grid; place-items: center; width: 30px; height: 24px; border: 0; border-radius: 12px; background: none; color: var(--ink-3); cursor: pointer; padding: 0; }
+.wb .theme button:hover { color: var(--ink); }
+.wb .theme button[aria-pressed="true"] { background: var(--accent-soft); color: var(--accent); }
+.wb .theme button:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.wb .theme svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.wb .theme svg .f { fill: currentColor; stroke: none; }
+.wb .theme .tip { position: absolute; top: calc(100% + 10px); right: -8px; z-index: 90; width: 280px; padding: 12px 14px; background: var(--paper); color: var(--ink); border: 1px solid var(--rule); border-radius: 6px;
+  box-shadow: 0 18px 40px -18px rgba(0, 0, 0, .35); font: 13px/1.45 var(--sans); text-align: left; white-space: normal; opacity: 0; transform: translateY(-4px); pointer-events: none; transition: opacity .15s, transform .15s; }
+.wb .theme .tip::before { content: ""; position: absolute; top: -6px; right: 22px; width: 10px; height: 10px; background: var(--paper); border-left: 1px solid var(--rule); border-top: 1px solid var(--rule); transform: rotate(45deg); }
+.wb .theme:is(:hover, :focus-within) .tip { opacity: 1; transform: none; }
+.wb .theme .tip > span { display: block; }
+.wb .theme .tip .t { font: 500 10.5px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); margin-bottom: 5px; }
+.wb .theme .tip .h { font: 600 16px/1.25 var(--serif); color: var(--ink); margin-bottom: 6px; }
+.wb .theme .tip .p { margin: 0 0 6px; color: var(--ink-2); }
+.wb .theme .tip .lv { font: 500 11.5px var(--mono); color: var(--accent); }
+
+/* ── page blocks ────────────────────────────────────────────── */
+.wb .wrap { max-width: 1380px; margin: 0 auto; padding: 0 clamp(16px, 3vw, 40px) 48px; }
+.wb .eyebrow { font: 500 11px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); }
+.wb h1.name { font: 600 clamp(40px, 5vw, 58px)/1.02 var(--serif); letter-spacing: -.02em; margin: 10px 0 0; color: var(--ink); }
+.wb .lede { color: var(--ink-2); max-width: 78ch; margin: 12px 0 0; font-size: 16px; line-height: 1.55; }
+.wb .fine { font-size: 12.5px; color: var(--ink-3); }
+.wb .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr)); gap: 1px; background: var(--rule); border: 1px solid var(--rule); margin: 22px 0 28px; }
+.wb .stats > div { background: var(--paper); padding: 13px 16px; min-width: 0; }
+.wb .stats .k { font: 500 10px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 7px; }
+.wb .stats .n { font: 600 24px/1.1 var(--serif); color: var(--accent); }
+.wb .stats .l { font-size: 12.5px; color: var(--ink-2); margin-top: 6px; line-height: 1.35; }
+.wb .tag { font: 500 10px var(--mono); letter-spacing: .06em; text-transform: uppercase; border: 1px solid color-mix(in srgb, var(--ink-3) 45%, transparent); color: var(--ink-2); border-radius: 3px; padding: 0 5px; white-space: nowrap; }
+.wb .tag.acc { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 40%, transparent); }
+.wb .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 36px; padding: 0 14px; border: 1px solid var(--accent); border-radius: 4px; background: var(--accent);
+  color: var(--on-accent); font: 600 13.5px var(--sans); text-decoration: none; white-space: nowrap; cursor: pointer; }
+.wb a.btn, .wb a.btn:hover { color: var(--on-accent); }
+.wb .btn:hover { background: var(--accent-deep); border-color: var(--accent-deep); }
+.wb .btn.ghost, .wb a.btn.ghost { background: transparent; color: var(--accent); }
+.wb .btn.ghost:hover { background: var(--accent-soft); }
+.wb .btn.sm { height: 30px; padding: 0 11px; font-size: 12.5px; font-weight: 500; }
+.wb .btn svg { width: 10px; height: 10px; fill: currentColor; }
+.wb .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.wb .chip { font: 500 11.5px var(--mono); padding: 1px 7px; border-radius: 3px; background: var(--rule-soft); color: var(--ink-2); white-space: nowrap; }
+.wb .act-h { font: 500 10px var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 6px; }
+.wb .sec-h { display: flex; align-items: baseline; justify-content: space-between; gap: 6px 16px; flex-wrap: wrap; margin: 0 0 14px; }
+.wb .sec-h h2 { font: 600 26px/1.15 var(--serif); margin: 0; letter-spacing: -.01em; color: var(--ink); }
+.wb .grp { margin: 30px 0 0; }
+.wb .grp > .eyebrow { margin: 0 0 4px; color: var(--ink-3); }
+.wb .gnote { margin: 2px 0 8px; color: var(--ink-2); font-size: 14px; max-width: 84ch; }
+
+/* ── prints: a taped photo, tilted by hand ──────────────────── */
+.wb .print { position: relative; z-index: 2; display: block; padding: 9px 9px 32px; background: var(--paper); border: 1px solid var(--rule); box-shadow: 0 18px 32px -20px rgba(0, 0, 0, .38); text-decoration: none; }
+.wb .print .ph { display: block; width: 100%; aspect-ratio: 2 / 1; object-fit: cover; object-position: 50% 0%; }
+.wb .print .ph.shot { object-position: 50% 50%; }
+.wb .print .ph.board { object-fit: contain; background: #fff; }
+.wb .tape { position: absolute; z-index: 3; height: 18px; background: var(--tape); }
+.wb .cap { position: absolute; left: 11px; right: 11px; bottom: 8px; display: flex; justify-content: space-between; align-items: center; gap: 10px; font: 400 11px var(--mono); letter-spacing: .02em; color: var(--ink-3); white-space: nowrap; overflow: hidden; }
+.wb .cap span:last-child { overflow: hidden; text-overflow: ellipsis; }
+
+/* the hero: Tetris on an arcade print, with the headshot print beside it */
+.wb .hero { display: flex; flex-wrap: wrap; align-items: center; gap: 28px 44px; padding: 26px 0 8px; }
+.wb .hero > .hero-text { flex: 999 1 420px; min-width: 0; }
+.wb .duo { flex: none; display: flex; align-items: flex-start; padding: 14px 8px 0; }
+.wb .print.arcade { padding: 10px 10px 46px; z-index: 3; }
+.wb .print.hs { width: 230px; margin: 46px 0 0 -16px; z-index: 2; }
+.wb .print.hs .ph { aspect-ratio: 1 / 1; object-position: 50% 30%; }
+.wb .screen { background: var(--screen); padding: 14px; display: flex; gap: 14px; align-items: flex-start; }
+.wb .screen .board { width: 129px; height: 259px; }
+.wb .hud { width: 54px; display: flex; flex-direction: column; gap: 14px; font: 500 9.5px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--screen-ink-2); }
+.wb .hud b { display: block; margin-top: 4px; font: 600 20px/1 var(--serif); letter-spacing: 0; color: var(--screen-ink); font-variant-numeric: tabular-nums; }
+.wb .print.arcade .cap { bottom: 8px; left: 12px; right: 10px; color: var(--ink-2); }
+
+/* ── tiles: a print standing over the top of its card ───────── */
+.wb .tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(280px, 100%), 1fr)); gap: 40px 22px; }
+.wb .tile { display: flex; flex-direction: column; min-width: 0; }
+.wb .tile .print { margin: 12px 12px -26px; }
+.wb .tb { background: var(--paper); border: 1px solid var(--rule); padding: 40px 18px 16px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
+.wb .th { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+.wb .th .tag { margin-top: 3px; }
+.wb .tb h3 { font: 600 20px/1.15 var(--serif); margin: 0; color: var(--ink); }
+.wb .fn { font: 400 11.5px var(--mono); color: var(--ink-3); letter-spacing: .02em; }
+.wb .tb p { margin: 2px 0 4px; font-size: 13.5px; color: var(--ink-2); line-height: 1.5; }
+.wb .tf { margin-top: auto; display: flex; align-items: center; justify-content: space-between; gap: 10px; padding-top: 8px; border-top: 1px solid var(--rule-soft); }
+.wb .tf > a { font: 500 13px var(--sans); white-space: nowrap; }
+.wb .hw { display: inline-flex; align-items: center; gap: 8px; min-width: 0; color: var(--ink-2); font-size: 12.5px; }
+.wb .hw img { width: 28px; height: 28px; object-fit: contain; background: #fff; border: 1px solid var(--rule-soft); border-radius: 3px; flex: none; }
+.wb .hw span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* ── the featured build: a big print over the left edge of its panel ── */
+.wb .feat { display: grid; grid-template-columns: minmax(0, 42%) minmax(0, 1fr); align-items: center; margin: 0 0 40px; }
+.wb .feat > .print { margin: 14px -46px 14px 6px; padding: 10px 10px 34px; box-shadow: 0 22px 38px -22px rgba(0, 0, 0, .42); }
+.wb .fpanel { background: var(--paper); border: 1px solid var(--rule); padding: 22px 28px 22px 78px; display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 14px 28px; min-width: 0; }
+.wb .fhead { grid-column: 1 / -1; display: flex; flex-direction: column; gap: 6px; }
+.wb .kick { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.wb .fpanel h2 { font: 600 34px/1.05 var(--serif); margin: 0; letter-spacing: -.015em; color: var(--ink); }
+.wb .fcopy { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.wb .fcopy p { margin: 0; font-size: 14px; line-height: 1.6; color: var(--ink-2); }
+.wb .fcopy .btn { align-self: flex-start; }
+.wb .fdata { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+
+/* ── section card and the GitHub map ────────────────────────── */
+.wb .ch { background: var(--paper); border: 1px solid var(--rule); padding: 18px 22px; margin-top: 52px; min-width: 0; }
+.wb .ch-h { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 6px 16px; margin-bottom: 14px; }
+.wb .ch-h h2 { font: 600 21px/1.2 var(--serif); margin: 4px 0 0; color: var(--ink); }
+.wb .ch-h a { font: 500 13px var(--sans); }
+.wb .heat-box { overflow-x: auto; padding-bottom: 4px; }
+.wb .heat-m { display: grid; grid-template-columns: repeat(var(--weeks, 53), minmax(0, 1fr)); column-gap: 4px; height: 18px; margin-left: 38px; min-width: 720px; font: 400 10.5px var(--mono); color: var(--ink-3); }
+.wb .heat-m span { grid-row: 1; white-space: nowrap; }
+.wb .heat-row { display: flex; gap: 10px; min-width: 720px; }
+.wb .heat-d { display: grid; grid-template-rows: repeat(7, minmax(0, 1fr)); row-gap: 4px; align-items: center; width: 28px; flex: none; font: 400 10.5px var(--mono); color: var(--ink-3); }
+.wb .heat { flex: 1; min-width: 0; display: grid; grid-auto-flow: column; grid-template-columns: repeat(var(--weeks, 53), minmax(0, 1fr)); grid-template-rows: repeat(7, auto); gap: 4px; }
+.wb .heat i { display: block; aspect-ratio: 1 / 1; border-radius: 3px; }
+.wb .heat i.pad { visibility: hidden; }
+.wb .l0 { background: var(--h0); } .wb .l1 { background: var(--h1); } .wb .l2 { background: var(--h2); } .wb .l3 { background: var(--h3); } .wb .l4 { background: var(--h4); }
+.wb .heat-f { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px 16px; margin-top: 12px; }
+.wb .legend { display: inline-flex; align-items: center; gap: 4px; font: 400 10.5px var(--mono); color: var(--ink-3); }
+.wb .legend i { display: inline-block; width: 12px; height: 12px; border-radius: 2px; }
+
+/* ── link cards ─────────────────────────────────────────────── */
+.wb .links { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr)); gap: 18px; margin-top: 28px; }
+.wb .card { display: block; background: var(--paper); border: 1px solid var(--rule); padding: 16px 20px; color: inherit; }
+.wb a.card { color: inherit; }
+.wb a.card:hover { border-color: var(--accent); color: inherit; }
+.wb .card .eyebrow { color: var(--ink-3); }
+.wb .card h3 { font: 600 18px/1.25 var(--serif); margin: 6px 0 4px; color: var(--ink); }
+.wb .card p { margin: 0; font-size: 13.5px; color: var(--ink-2); }
+.wb .card .go { display: inline-block; margin-top: 10px; font: 500 13px var(--sans); color: var(--accent); }
+
+/* ── the footer ─────────────────────────────────────────────── */
+.wb-foot { border-top: 1px solid var(--rule); background: var(--paper); }
+.wb-foot .in { max-width: 1380px; margin: 0 auto; padding: 16px clamp(16px, 3vw, 40px); display: flex; flex-wrap: wrap; gap: 8px 20px; justify-content: space-between; align-items: center; font-size: 13px; color: var(--ink-2); }
+.wb-foot nav { display: flex; flex-wrap: wrap; gap: 6px 16px; }
+.wb-foot .wmk { font: 600 15px var(--serif); color: var(--ink); }
+
+/* ── /design's specimens ────────────────────────────────────── */
+.wb .ds h2 { font: 600 21px/1.2 var(--serif); margin: 0 0 6px; color: var(--ink); }
+.wb .ds h3 { font: 600 16px/1.3 var(--serif); margin: 18px 0 8px; color: var(--ink); }
+.wb .ds p, .wb .ds li { max-width: 84ch; font-size: 14.5px; color: var(--ink-2); }
+.wb .ds p { margin: 0 0 10px; }
+.wb .ds ul { margin: 0; padding-left: 20px; }
+.wb .ds code { font: 500 12px var(--mono); padding: 1px 6px; border-radius: 3px; background: var(--rule-soft); color: var(--ink); }
+.wb .sws { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(190px, 100%), 1fr)); gap: 12px; }
+.wb .sw { display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 2px 10px; align-items: center; font-size: 12.5px; color: var(--ink-2); }
+.wb .sw i { grid-row: span 3; width: 40px; height: 40px; border-radius: 4px; border: 1px solid var(--rule); }
+.wb .sw code { justify-self: start; }
+.wb .sw small { font: 400 11px var(--mono); color: var(--ink-3); }
+.wb .type { display: grid; gap: 12px; }
+.wb .type > div { display: grid; grid-template-columns: 170px minmax(0, 1fr); gap: 16px; align-items: baseline; padding-bottom: 12px; border-bottom: 1px solid var(--rule-soft); }
+.wb .type small { font: 400 11px var(--mono); color: var(--ink-3); }
+.wb .spec-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+
+/* ── layout ─────────────────────────────────────────────────── */
+@media (max-width: 860px) {
+  .wb .feat { grid-template-columns: 1fr; }
+  .wb .feat > .print { margin: 12px 12px -26px; }
+  .wb .fpanel { padding: 40px 18px 18px; grid-template-columns: 1fr; }
+}
+@media (max-width: 600px) {
+  .wb .duo { flex-wrap: wrap; }
+  .wb .print.hs { margin: -18px 0 0 40px; width: 200px; }
+  .wb .type > div { grid-template-columns: 1fr; gap: 4px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .wb .theme .tip { transition: none; }
+}
