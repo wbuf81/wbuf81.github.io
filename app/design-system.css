@@ -129,6 +129,7 @@
 /* the hero: Tetris on an arcade print, with the headshot print beside it */
 .wb .hero { display: flex; flex-wrap: wrap; align-items: center; gap: 28px 44px; padding: 26px 0 8px; }
 .wb .hero > .hero-text { flex: 999 1 420px; min-width: 0; }
+.wb .hero .lede { max-width: 50ch; margin-top: 18px; }
 .wb .duo { flex: none; display: flex; align-items: flex-start; padding: 14px 8px 0; }
 .wb .print.arcade { padding: 10px 10px 46px; z-index: 3; }
 .wb .print.hs { width: 230px; margin: 46px 0 0 -16px; z-index: 2; }

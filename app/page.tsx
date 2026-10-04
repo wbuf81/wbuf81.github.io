@@ -13,6 +13,10 @@ import contributions from '@/data/github-contributions.json';
  * name, Tetris and the headshot, then the building. Project copy lives in lib/projects.ts.
  */
 
+// Wes's own words for the space under his name (4 Oct 2026): casual, first person, not a tagline.
+const INTRO =
+  "Hey, I'm Wes. I work in compliance, and before that I spent 12 years as an engineer. These days I'm all in on building with AI agents, using loops and graphs to build AI tools and agents at scale. Here's some of what I've made at work, and what I'm tinkering with at home.";
+
 const BEYOND = [
   {
     title: 'STEM Mentoring',
@@ -34,6 +38,7 @@ export default function HomePage() {
             <div className="hero-text">
               <div className="eyebrow">Governance, Risk &amp; Compliance · Newfold Digital</div>
               <h1 className="name">Wesley Bard</h1>
+              <p className="lede">{INTRO}</p>
             </div>
             <TetrisPrint />
           </section>

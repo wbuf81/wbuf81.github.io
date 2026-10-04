@@ -126,3 +126,14 @@ test('a month that starts in the last week never spans past the grid', () => {
   expect(feb.style.gridColumn).toBe('5 / span 1');
 });
 
+
+test("the hero introduces Wes in his own words, right under his name", () => {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const HomePage = require('@/app/page').default;
+  render(<HomePage />);
+  const name = screen.getByRole('heading', { level: 1, name: 'Wesley Bard' });
+  const intro = name.nextElementSibling as HTMLElement;
+  expect(intro).toHaveTextContent(
+    "Hey, I'm Wes. I work in compliance, and before that I spent 12 years as an engineer. These days I'm all in on building with AI agents, using loops and graphs to build AI tools and agents at scale. Here's some of what I've made at work, and what I'm tinkering with at home.",
+  );
+});
