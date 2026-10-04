@@ -42,16 +42,21 @@ const mono = IBM_Plex_Mono({
   display: 'swap',
 });
 
+// What link previews (LinkedIn, Slack, iMessage) show under the title: the homepage intro's first two
+// sentences, in Wes's voice (4 Oct 2026). LinkedIn caches it; re-fetch with its Post Inspector after a change.
+const DESCRIPTION =
+  "I work in compliance, and before that I spent 12 years as an engineer. These days I'm all in on building with AI agents.";
+
 export const metadata: Metadata = {
   title: 'Wesley Bard',
-  description: 'Before: engineer at Lockheed Martin. Now: governance, risk & compliance at Newfold Digital. Still building stuff.',
+  description: DESCRIPTION,
   // The canonical host. Relative URLs in OpenGraph/Twitter cards resolve
   // against this, so it has to be the custom domain, not the github.io origin.
   metadataBase: new URL('https://wesleybard.com'),
   manifest: '/manifest.json',
   openGraph: {
     title: 'Wesley Bard',
-    description: 'Before: engineer at Lockheed Martin. Now: governance, risk & compliance at Newfold Digital. Still building stuff.',
+    description: DESCRIPTION,
     url: 'https://wesleybard.com',
     siteName: 'Wesley Bard',
     locale: 'en_US',
@@ -71,7 +76,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'Wesley Bard',
-    description: 'Before: engineer at Lockheed Martin. Now: governance, risk & compliance at Newfold Digital. Still building stuff.',
+    description: DESCRIPTION,
     images: ['/og-image.png'],
   },
   other: {
@@ -85,7 +90,7 @@ const jsonLd = {
   '@type': 'Person',
   name: 'Wesley Bard',
   alternateName: 'Wes',
-  description: 'Before: engineer at Lockheed Martin. Now: governance, risk & compliance at Newfold Digital. Still building stuff.',
+  description: DESCRIPTION,
   url: 'https://wesleybard.com',
   sameAs: [
     'https://www.linkedin.com/in/wesleybard/',
