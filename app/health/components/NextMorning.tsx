@@ -86,6 +86,7 @@ export default function NextMorning({ days, calorieTargets, weightUnit }: Props)
         )}
       </div>
 
+      {(hasTarget || facts.big.n > 0 || after.atHorizon.n > 0) && (
       <div className="h-facts">
         {hasTarget && <Fact label="After a day over target" value={facts.over} weightUnit={weightUnit} />}
         {hasTarget && <Fact label="After a day at or under" value={facts.atOrUnder} weightUnit={weightUnit} />}
@@ -102,6 +103,7 @@ export default function NextMorning({ days, calorieTargets, weightUnit }: Props)
           </div>
         )}
       </div>
+      )}
     </section>
   );
 }
@@ -205,7 +207,8 @@ function AfterBigDay({ v, after, weightUnit }: { v: Variant; after: AfterBigDays
   const minGap = v === 'wide' ? 18 : 26;
   const ends = after.traces.map((t) => {
     const last = t.changes.length - 1;
-    const sofar = last < K ? ` · ${last === 0 ? 'no mornings' : last === 1 ? 'one morning' : `${last} mornings`} so far` : '';
+    // "So far" only when the data ran out; a trace cut by a missed weigh-in is simply short.
+    const sofar = t.open ? ` · ${last === 0 ? 'no mornings' : last === 1 ? 'one morning' : `${last} mornings`} so far` : '';
     return { x: x(last), y: y(t.changes[last]), label: `${shortDate(t.date)}${sofar}` };
   });
   const lastTypical = after.typical[K];

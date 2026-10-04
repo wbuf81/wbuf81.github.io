@@ -1,7 +1,7 @@
 import { HealthDatedTargets, HealthDay, StepStreak, StepStreaks } from '@/types/health';
 import { targetsFor } from '@/lib/targets';
 import { formatNumber, plural, shortDate } from './format';
-import { Frame, VARIANTS, Variant, bands, barPath, cleanTop, hline, pct, stepPath, ticks, yScale } from './svg';
+import { Frame, VARIANTS, Variant, bands, barPath, cleanTop, hline, labelStride, pct, stepPath, sundayLabels, ticks, yScale } from './svg';
 
 interface Props {
   days: HealthDay[];
@@ -14,6 +14,8 @@ export const HALF: Record<Variant, Frame> = {
   wide: { w: 1000, h: 360, l: 56, r: 28, t: 10, b: 32 },
   compact: { w: 1000, h: 760, l: 120, r: 24, t: 24, b: 80 },
 };
+/** The narrowest each half-width frame is drawn at (two-up on a 981px desktop; a 360px phone). */
+export const HALF_RENDER_PX: Record<Variant, number> = { wide: 403, compact: 300 };
 
 const k = (v: number) => (v === 0 ? '0' : `${formatNumber(v / 1000, v % 1000 === 0 ? 0 : 1)}k`);
 
@@ -46,7 +48,6 @@ export default function StepsCard({ days, targets, streaks }: Props) {
   const floors = inForce.map((t) => t?.stepsMinimum ?? null);
   const goals = inForce.map((t) => t?.stepsGoal ?? null);
   const top = cleanTop(Math.max(...days.map((d) => d.steps ?? 0), ...floors.map((v) => v ?? 0), ...goals.map((v) => v ?? 0)), 5000);
-  const sundays = days.map((d, i) => ({ d, i })).filter(({ d }) => d.day === 'Sun');
 
   const plot = (v: Variant) => {
     const f = HALF[v];
@@ -66,13 +67,11 @@ export default function StepsCard({ days, targets, streaks }: Props) {
             {k(t)}
           </span>
         ))}
-        {sundays
-          .filter((_, n) => n % 2 === 1)
-          .map(({ d, i }) => (
-            <span key={d.date} className="h-ax is-x" style={{ left: pct(x(i), f.w) }}>
-              {shortDate(d.date)}
-            </span>
-          ))}
+        {sundayLabels(days, labelStride(band, f.w, HALF_RENDER_PX[v])).map(({ day, i }) => (
+          <span key={day.date} className="h-ax is-x" style={{ left: pct(x(i), f.w) }}>
+            {shortDate(day.date)}
+          </span>
+        ))}
       </div>
     );
   };

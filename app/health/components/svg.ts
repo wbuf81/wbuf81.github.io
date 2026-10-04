@@ -134,3 +134,24 @@ export function niceStep(range: number, most = 6): number {
  */
 export const VARIANTS = ['wide', 'compact'] as const;
 export type Variant = (typeof VARIANTS)[number];
+
+/**
+ * How many weeks apart a chart's Sunday labels go so they never touch: the fewest that leave `labelPx`
+ * (a "Sun 27"-sized label and its gap) between them when the chart is drawn `renderPx` wide, the narrowest
+ * that frame is shown at. As the log grows the bands narrow and the labels thin out.
+ */
+export function labelStride(band: number, frameWidth: number, renderPx: number, labelPx = 44): number {
+  return Math.max(1, Math.ceil((labelPx * frameWidth) / (renderPx * 7 * band)));
+}
+
+/**
+ * The Sundays to label, every `stride` weeks counting back from the newest so the latest week is always
+ * named. `thin` marks every other one, which the wide frame hides on screens too narrow to fit them all.
+ */
+export function sundayLabels<T extends { day: string }>(days: T[], stride: number): { i: number; day: T; thin: boolean }[] {
+  const sundays = days.map((day, i) => ({ day, i })).filter(({ day }) => day.day === 'Sun');
+  const last = sundays.length - 1;
+  return sundays
+    .filter((_, j) => (last - j) % stride === 0)
+    .map((s, _k, all) => ({ ...s, thin: (all.length - 1 - _k) % 2 === 1 }));
+}

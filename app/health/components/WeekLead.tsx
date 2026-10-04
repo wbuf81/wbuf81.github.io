@@ -59,7 +59,9 @@ export default function WeekLead({ rows, phase, weightUnit }: Props) {
           <div className={`h-l ${downIsGood(week.weightChange)}`}>
             {week.weightChange !== null
               ? `${formatDelta(week.weightChange)} ${weightUnit} vs the week before`
-              : 'no earlier week to compare'}
+              : rows.length === 1
+                ? 'no earlier week to compare'
+                : 'no weigh-ins to compare'}
           </div>
         </div>
         <div className="stats h-lead-stats">

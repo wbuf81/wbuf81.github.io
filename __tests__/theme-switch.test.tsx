@@ -36,6 +36,18 @@ test('the boot script applies a saved theme before React runs', () => {
   expect(document.documentElement.getAttribute('data-theme')).toBe('dark');
 });
 
+test('on a phone, where the switch is hidden, the boot script follows the phone instead of a saved choice', () => {
+  const original = window.matchMedia;
+  window.matchMedia = ((q: string) => ({ matches: q.includes('max-width'), media: q })) as unknown as typeof window.matchMedia;
+  try {
+    localStorage.setItem(THEME_KEY, 'dark');
+    new Function(THEME_BOOT_SCRIPT)();
+    expect(document.documentElement.hasAttribute('data-theme')).toBe(false);
+  } finally {
+    window.matchMedia = original;
+  }
+});
+
 test('the boot script ignores anything that is not light or dark', () => {
   localStorage.setItem(THEME_KEY, 'purple');
   new Function(THEME_BOOT_SCRIPT)();

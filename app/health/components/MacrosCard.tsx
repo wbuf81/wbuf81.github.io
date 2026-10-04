@@ -1,8 +1,8 @@
 import { HealthDatedTargets, HealthDay } from '@/types/health';
 import { targetsFor } from '@/lib/targets';
 import { formatNumber, shortDate } from './format';
-import { HALF } from './StepsCard';
-import { VARIANTS, Variant, bands, barPath, cleanTop, hline, pct, stepPath, ticks, yScale } from './svg';
+import { HALF, HALF_RENDER_PX } from './StepsCard';
+import { VARIANTS, Variant, bands, barPath, cleanTop, hline, labelStride, pct, stepPath, sundayLabels, ticks, yScale } from './svg';
 
 interface Props {
   days: HealthDay[];
@@ -20,7 +20,6 @@ export default function MacrosCard({ days, targets }: Props) {
   const proteinGoal = goals[goals.length - 1] ?? null;
   const totals = days.map((d) => (d.protein ?? 0) + (d.carbs ?? 0) + (d.fat ?? 0));
   const top = cleanTop(Math.max(...totals, ...goals.map((g) => g ?? 0)), 200);
-  const sundays = days.map((d, i) => ({ d, i })).filter(({ d }) => d.day === 'Sun');
 
   // Each day against the goal in force that day, so raising the goal never rescores the days before it.
   const scored = days
@@ -60,13 +59,11 @@ export default function MacrosCard({ days, targets }: Props) {
             {formatNumber(t)}
           </span>
         ))}
-        {sundays
-          .filter((_, n) => n % 2 === 1)
-          .map(({ d, i }) => (
-            <span key={d.date} className="h-ax is-x" style={{ left: pct(x(i), f.w) }}>
-              {shortDate(d.date)}
-            </span>
-          ))}
+        {sundayLabels(days, labelStride(band, f.w, HALF_RENDER_PX[v])).map(({ day, i }) => (
+          <span key={day.date} className="h-ax is-x" style={{ left: pct(x(i), f.w) }}>
+            {shortDate(day.date)}
+          </span>
+        ))}
       </div>
     );
   };

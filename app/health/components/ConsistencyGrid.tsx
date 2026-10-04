@@ -97,7 +97,7 @@ export default function ConsistencyGrid({ weeks, markers = [], noteMarks = [] }:
               if (!day) return <span key={date} className="h-cell is-empty" title={`${date}: no data`} />;
               const m = dayMarks(day, markerByDate.get(date), noteMarks);
               return (
-                <span key={date} className="h-cell" title={m.title}>
+                <span key={date} className="h-cell" title={m.title} role="img" aria-label={m.title}>
                   <Marks m={m} />
                 </span>
               );

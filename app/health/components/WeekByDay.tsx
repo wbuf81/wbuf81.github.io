@@ -170,7 +170,13 @@ export default function WeekByDay({ days, calorieTargets, targets, weightUnit }:
             {profile.rows.map((r, i) => (
               <span key={r.day} className="h-wkd-day" style={{ left: pct(c.x(i), c.TOP.w) }}>
                 <b>{r.day}</b>
-                <i>{c.v === 'wide' ? `over on ${r.overTarget} of ${r.targeted}` : `${r.overTarget}/${r.targeted}`}</i>
+                {/* A phone has room for the day alone; the counts are in its tooltip and the facts below. */}
+                {c.v === 'wide' && (
+                  <i>
+                    <span className="h-wkd-over">over on </span>
+                    {r.overTarget} of {r.targeted}
+                  </i>
+                )}
               </span>
             ))}
           </div>
@@ -261,8 +267,10 @@ export default function WeekByDay({ days, calorieTargets, targets, weightUnit }:
               {formatDelta(sunMonVsFriSat)} {weightUnit}
             </div>
             <div className="h-l">
-              {sunMonVsFriSat >= 0 ? 'heavier' : 'lighter'} than Friday and Saturday mornings, once the trend is
-              taken out
+              {Number(sunMonVsFriSat.toFixed(1)) === 0
+                ? 'the same as Friday and Saturday mornings'
+                : `${sunMonVsFriSat > 0 ? 'heavier' : 'lighter'} than Friday and Saturday mornings`}
+              , once the trend is taken out
             </div>
           </div>
         )}

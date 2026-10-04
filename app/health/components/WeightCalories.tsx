@@ -6,7 +6,7 @@ import { HealthCalorieTarget, HealthDay, WeightPoint } from '@/types/health';
 import { calorieTargetFor } from '@/lib/calorieTarget';
 import { dayTickLabel } from '@/lib/dayLabel';
 import { dayDate, downIsGood, formatDelta, formatNumber } from './format';
-import { Frame, VARIANTS, Variant, bands, barPath, cleanTop, dotPath, hline, linePath, niceStep, pct, stepPath, ticks, yScale } from './svg';
+import { Frame, VARIANTS, Variant, bands, barPath, cleanTop, dotPath, hline, labelStride, linePath, niceStep, pct, stepPath, sundayLabels, ticks, yScale } from './svg';
 
 interface Props {
   days: HealthDay[];
@@ -24,6 +24,8 @@ const FRAMES: Record<Variant, Frame> = {
   wide: { w: 1000, h: 400, l: 52, r: 62, t: 22, b: 28 },
   compact: { w: 1000, h: 940, l: 110, r: 110, t: 80, b: 80 },
 };
+/** The narrowest each frame is drawn at (a 981px desktop; a 360px phone), which sets how far apart the date labels go. */
+const RENDER_PX: Record<Variant, number> = { wide: 873, compact: 300 };
 const TIP_WIDTH = 230;
 
 /**
@@ -63,10 +65,14 @@ export default function WeightCalories({ days, series, calorieTargets, goalWeigh
       const bw = Math.max(2, band * 0.62);
       let under = '';
       let over = '';
+      // A day before the first target was scored against nothing, so it is neither blue nor orange.
+      let plain = '';
       days.forEach((d, i) => {
         if (d.cals === null) return;
         const path = barPath(x(i), bw, cy(0), cy(d.cals));
-        if (targets[i] !== null && d.cals > (targets[i] as number)) over += path;
+        const t = targets[i];
+        if (hasTarget && t === null) plain += path;
+        else if (t !== null && d.cals > t) over += path;
         else under += path;
       });
       const points = days.map((d, i) => (d.weight === null ? null : { x: x(i), y: wy(d.weight) }));
@@ -80,6 +86,7 @@ export default function WeightCalories({ days, series, calorieTargets, goalWeigh
         grid: ticks(scales.wLo, scales.wHi, scales.step).map((t) => hline(F, wy(t))).join(''),
         under,
         over,
+        plain,
         target: hasTarget ? stepPath(F, targets, cy) : '',
         goal: goalWeight !== null ? hline(F, wy(goalWeight)) : '',
         goalTop: goalWeight !== null ? pct(wy(goalWeight), F.h) : '0',
@@ -88,10 +95,12 @@ export default function WeightCalories({ days, series, calorieTargets, goalWeigh
         trend: showTrend ? linePath(trend) : '',
         left: ticks(scales.wLo, scales.wHi, scales.step).map((t) => ({ t, top: pct(wy(t), F.h) })),
         right: ticks(0, scales.cHi, 1000).map((t) => ({ t, top: pct(cy(t), F.h) })),
-        sundays: days
-          .map((d, i) => ({ d, i }))
-          .filter(({ d }) => d.day === 'Sun')
-          .map(({ d, i }, k) => ({ key: d.date, left: pct(x(i), F.w), label: dayTickLabel(d), alt: k % 2 === 1 })),
+        sundays: sundayLabels(days, labelStride(band, F.w, RENDER_PX[v])).map(({ day, i, thin }) => ({
+          key: day.date,
+          left: pct(x(i), F.w),
+          label: dayTickLabel(day),
+          thin: v === 'wide' && thin,
+        })),
       };
     };
     return VARIANTS.map(build);
@@ -149,6 +158,12 @@ export default function WeightCalories({ days, series, calorieTargets, goalWeigh
               Over target · right
             </span>
           )}
+          {hasTarget && targets.some((t, i) => t === null && days[i].cals !== null) && (
+            <span>
+              <i className="h-sw is-plain" />
+              No target · right
+            </span>
+          )}
         </div>
       </div>
       <p className="h-note">
@@ -167,6 +182,7 @@ export default function WeightCalories({ days, series, calorieTargets, goalWeigh
             <path className="g-grid" d={c.grid} />
             <path className="g-under" d={c.under} />
             <path className="g-over" d={c.over} />
+            <path className="g-plain" d={c.plain} />
             <path className="g-target" d={c.target} />
             <path className="g-goal" d={c.goal} />
             <path className="g-daily" d={c.daily} />
@@ -181,7 +197,7 @@ export default function WeightCalories({ days, series, calorieTargets, goalWeigh
           </span>
           {c.left.map(({ t, top }) => (
             <span key={`l${t}`} className="h-ax is-left" style={{ top, width: pct(c.F.l, c.F.w) }}>
-              {formatNumber(t)}
+              {formatNumber(t, scales.step < 1 ? 1 : 0)}
             </span>
           ))}
           {c.right.map(({ t, top }) => (
@@ -189,13 +205,11 @@ export default function WeightCalories({ days, series, calorieTargets, goalWeigh
               {c.v === 'wide' ? formatNumber(t) : t === 0 ? '0' : `${t / 1000}k`}
             </span>
           ))}
-          {c.sundays
-            .filter((s) => c.v === 'wide' || !s.alt)
-            .map((s) => (
-              <span key={s.key} className="h-ax is-x" style={{ left: s.left }}>
-                {s.label}
-              </span>
-            ))}
+          {c.sundays.map((s) => (
+            <span key={s.key} className={`h-ax is-x${s.thin ? ' is-thin' : ''}`} style={{ left: s.left }}>
+              {s.label}
+            </span>
+          ))}
           {goalWeight !== null && (
             <span className="h-ax is-note" style={{ left: pct(c.F.l + 12, c.F.w), top: c.goalTop, transform: 'translateY(-130%)' }}>
               goal {formatNumber(goalWeight, 1)}
@@ -203,7 +217,7 @@ export default function WeightCalories({ days, series, calorieTargets, goalWeigh
           )}
           {hover && h && (
             <>
-              <span className="h-crosshair" style={{ left: hover.x }} />
+              <span className="h-crosshair" style={{ left: hover.x, top: pct(c.F.t, c.F.h), bottom: pct(c.F.b, c.F.h) }} />
               <div className="h-tip" style={{ left: hover.left, width: TIP_WIDTH }}>
                 <div className="h-k">{dayDate(h.date)}</div>
                 <div className="h-row">

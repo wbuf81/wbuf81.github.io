@@ -55,6 +55,8 @@ export interface NextMorningPair {
   change: number;
   /** Over the calorie target in force that day. False with no target. */
   over: boolean;
+  /** The calorie target in force that day, or null before the first one. */
+  target: number | null;
 }
 
 export function nextMorningPairs(days: HealthDay[], calorieTargets?: HealthCalorieTarget[]): NextMorningPair[] {
@@ -64,7 +66,7 @@ export function nextMorningPairs(days: HealthDay[], calorieTargets?: HealthCalor
     const next = byDate.get(addDays(day.date, 1));
     if (!next || day.cals === null || day.weight === null || next.weight === null) continue;
     const target = calorieTargetFor(day.date, calorieTargets);
-    pairs.push({ date: day.date, cals: day.cals, change: tenth(next.weight - day.weight), over: target !== null && day.cals > target });
+    pairs.push({ date: day.date, cals: day.cals, change: tenth(next.weight - day.weight), over: target !== null && day.cals > target, target });
   }
   return pairs;
 }
@@ -90,7 +92,8 @@ export function nextMorningFacts(pairs: NextMorningPair[], bigDay = BIG_DAY): Ne
   }
   return {
     over: meanCount(pairs.filter((p) => p.over).map((p) => p.change)),
-    atOrUnder: meanCount(pairs.filter((p) => !p.over).map((p) => p.change)),
+    // A day with no target in force was neither over nor at-or-under: it was scored against nothing.
+    atOrUnder: meanCount(pairs.filter((p) => !p.over && p.target !== null).map((p) => p.change)),
     big: meanCount(pairs.filter((p) => p.cals >= bigDay).map((p) => p.change)),
     fit,
   };
@@ -101,6 +104,8 @@ export interface BigDayTrace {
   cals: number;
   /** Weight against that day's morning: [0, next morning, …], stopping at the first missing reading. */
   changes: number[];
+  /** Short only because the data ends: more mornings may come with the next import. */
+  open: boolean;
 }
 
 export interface AfterBigDays {
@@ -116,6 +121,7 @@ export function afterBigDays(days: HealthDay[], bigDay = BIG_DAY, horizon = 3): 
   const byDate = new Map(days.map((d) => [d.date, d]));
   const weightOn = (iso: string) => byDate.get(iso)?.weight ?? null;
 
+  const lastDate = days.reduce((max, d) => (d.date > max ? d.date : max), '');
   const traces: BigDayTrace[] = [];
   for (const day of days) {
     if (day.cals === null || day.cals < bigDay || day.weight === null) continue;
@@ -125,7 +131,8 @@ export function afterBigDays(days: HealthDay[], bigDay = BIG_DAY, horizon = 3): 
       if (w === null) break;
       changes.push(tenth(w - day.weight));
     }
-    traces.push({ date: day.date, cals: day.cals, changes });
+    const open = changes.length <= horizon && addDays(day.date, changes.length) > lastDate;
+    traces.push({ date: day.date, cals: day.cals, changes, open });
   }
 
   const typical: (number | null)[] = [0];

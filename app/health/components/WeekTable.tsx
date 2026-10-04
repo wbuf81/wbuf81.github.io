@@ -1,5 +1,5 @@
 import { HealthMarker, WeeklyTrendRow } from '@/types/health';
-import { formatDelta, formatNumber } from './format';
+import { downIsGood, formatDelta, formatNumber } from './format';
 
 interface Props {
   rows: WeeklyTrendRow[];
@@ -12,10 +12,9 @@ function num(value: number | null, digits = 0): string {
   return value === null ? '—' : formatNumber(value, digits);
 }
 
-/** Losing weight is the goal, so a fall is the good direction. */
-function changeClass(change: number | null): string {
-  if (change === null || change === 0) return 'is-num';
-  return change < 0 ? 'is-num is-good' : 'is-num is-over';
+/** Losing weight is the goal, so a fall is the good direction; a change that rounds to nothing has none. */
+function changeClass(change: number | null, digits = 1): string {
+  return `is-num ${downIsGood(change, digits)}`.trim();
 }
 
 export default function WeekTable({ rows, markers = [], weightUnit }: Props) {
@@ -60,7 +59,7 @@ export default function WeekTable({ rows, markers = [], weightUnit }: Props) {
               </td>
               <td className="is-num">{num(row.avgCals)}</td>
               {/* Under the calorie goal is the good direction, like losing weight. */}
-              <td className={changeClass(row.calsVsGoal)}>
+              <td className={changeClass(row.calsVsGoal, 0)}>
                 {row.calsVsGoal === null ? '—' : formatDelta(row.calsVsGoal, 0)}
               </td>
               <td className="is-num">{row.avgProtein === null ? '—' : `${num(row.avgProtein)} g`}</td>

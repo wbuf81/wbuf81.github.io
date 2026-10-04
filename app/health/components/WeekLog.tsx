@@ -43,6 +43,8 @@ export default function WeekLog({ weeks, trend, weeklyGoals, markers, noteMarks,
       </div>
       {newest.map((week) => {
         const row = trendBy.get(week.weekStart);
+        const isNewest = week === weeks[weeks.length - 1];
+        const isOldest = week === weeks[0];
         const goals = goalsBy.get(week.weekStart);
         const byDate = new Map(week.days.map((d) => [d.date, d]));
         const notes = markers.filter((m) => m.date >= week.weekStart && m.date <= week.weekEnd);
@@ -54,7 +56,7 @@ export default function WeekLog({ weeks, trend, weeklyGoals, markers, noteMarks,
                 <h3>{week.label}</h3>
                 <div className="h-l">
                   {week.days.length === 1 ? '1 day' : `${week.days.length} days`} recorded
-                  {row?.isPartial && ' so far'}
+                  {isNewest && row?.isPartial && ' so far'}
                 </div>
               </div>
               <div>
@@ -63,7 +65,7 @@ export default function WeekLog({ weeks, trend, weeklyGoals, markers, noteMarks,
                   {row?.avgWeight != null ? `${formatNumber(row.avgWeight, 1)} ${weightUnit}` : '—'}
                 </div>
                 <div className={`h-l ${downIsGood(row?.weightChange ?? null)}`}>
-                  {row?.weightChange != null ? `${formatDelta(row.weightChange)} ${weightUnit}` : 'first week'}
+                  {row?.weightChange != null ? `${formatDelta(row.weightChange)} ${weightUnit}` : isOldest ? 'first week' : '—'}
                 </div>
               </div>
               {row && (

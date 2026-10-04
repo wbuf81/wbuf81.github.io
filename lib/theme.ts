@@ -22,5 +22,6 @@ export function applyMode(mode: ThemeMode): void {
   }
 }
 
-// Runs in <head> before first paint, so a saved theme never flashes.
-export const THEME_BOOT_SCRIPT = `try{var t=localStorage.getItem('${THEME_KEY}');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}`;
+// Runs in <head> before first paint, so a saved theme never flashes. Not on a phone (600px and under):
+// the switch is hidden there, so a choice saved earlier would have no way back; a phone follows its own setting.
+export const THEME_BOOT_SCRIPT = `try{if(!(window.matchMedia&&matchMedia('(max-width: 600px)').matches)){var t=localStorage.getItem('${THEME_KEY}');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}}catch(e){}`;

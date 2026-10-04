@@ -41,8 +41,8 @@ describe('nextMorningPairs', () => {
   test('pairs each day with the change in weight by the next morning', () => {
     const days = run('2026-07-20', [{ weight: 200, cals: 2600 }, { weight: 201, cals: 2300 }, { weight: 200.5 }]);
     expect(nextMorningPairs(days, TARGET)).toEqual([
-      { date: '2026-07-20', cals: 2600, change: 1, over: true },
-      { date: '2026-07-21', cals: 2300, change: -0.5, over: false },
+      { date: '2026-07-20', cals: 2600, change: 1, over: true, target: 2400 },
+      { date: '2026-07-21', cals: 2300, change: -0.5, over: false, target: 2400 },
     ]);
   });
 
@@ -67,7 +67,7 @@ describe('nextMorningPairs', () => {
 
   test('with no target nothing is over', () => {
     const days = run('2026-07-20', [{ cals: 4000 }, {}]);
-    expect(nextMorningPairs(days)[0].over).toBe(false);
+    expect(nextMorningPairs(days)[0]).toMatchObject({ over: false, target: null });
   });
 
   test('rounds away floating-point noise in the change', () => {
@@ -78,11 +78,16 @@ describe('nextMorningPairs', () => {
 
 describe('nextMorningFacts', () => {
   const pairs = [
-    { date: 'a', cals: 2000, change: -1, over: false },
-    { date: 'b', cals: 2500, change: 0, over: true },
-    { date: 'c', cals: 3000, change: 1, over: true },
-    { date: 'd', cals: 3500, change: 2, over: true },
+    { date: 'a', cals: 2000, change: -1, over: false, target: 2400 },
+    { date: 'b', cals: 2500, change: 0, over: true, target: 2400 },
+    { date: 'c', cals: 3000, change: 1, over: true, target: 2400 },
+    { date: 'd', cals: 3500, change: 2, over: true, target: 2400 },
   ];
+
+  test('a day with no target in force is neither over nor at-or-under', () => {
+    const facts = nextMorningFacts([...pairs, { date: 'e', cals: 2000, change: -3, over: false, target: null }], 2900);
+    expect(facts.atOrUnder).toEqual({ avg: -1, n: 1 });
+  });
 
   test('averages the next morning after over, at-or-under and big days', () => {
     const facts = nextMorningFacts(pairs, 2900);
@@ -120,7 +125,7 @@ describe('afterBigDays', () => {
       { weight: 199 },
     ]);
     const result = afterBigDays(days, 2900, 3);
-    expect(result.traces).toEqual([{ date: '2026-07-20', cals: 3000, changes: [0, 1.2, 0.8, -0.5] }]);
+    expect(result.traces).toEqual([{ date: '2026-07-20', cals: 3000, changes: [0, 1.2, 0.8, -0.5], open: false }]);
     expect(result.atHorizon).toEqual({ avg: -0.5, n: 1, below: 1 });
   });
 
@@ -130,7 +135,12 @@ describe('afterBigDays', () => {
       day('2026-07-21', { weight: 201 }),
       day('2026-07-23', { weight: 199 }),
     ];
-    expect(afterBigDays(days, 2900, 3).traces[0].changes).toEqual([0, 1]);
+    expect(afterBigDays(days, 2900, 3).traces[0]).toMatchObject({ changes: [0, 1], open: false });
+  });
+
+  test('a trace cut short by the end of the data is still open', () => {
+    const days = run('2026-07-20', [{ cals: 3000 }, { weight: 201 }]);
+    expect(afterBigDays(days, 2900, 3).traces[0]).toMatchObject({ changes: [0, 1], open: true });
   });
 
   test('only traces that reach the horizon count toward the summary', () => {
