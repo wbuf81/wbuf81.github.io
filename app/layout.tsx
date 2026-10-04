@@ -44,6 +44,10 @@ const mono = IBM_Plex_Mono({
 
 // What link previews (LinkedIn, Slack, iMessage) show under the title: the homepage intro's first two
 // sentences, in Wes's voice (4 Oct 2026). LinkedIn caches it; re-fetch with its Post Inspector after a change.
+// The homepage card's address. LinkedIn keeps an image by its address, so bump ?v= whenever
+// public/og-image.png is redrawn, or it goes on showing the old one (or a blank box).
+const OG_IMAGE = '/og-image.png?v=2';
+
 const DESCRIPTION =
   "I work in compliance, and before that I spent 12 years as an engineer. These days I'm all in on building with AI agents.";
 
@@ -66,7 +70,7 @@ export const metadata: Metadata = {
     // `python3 scripts/og/build-og.py main`.
     images: [
       {
-        url: '/og-image.png',
+        url: OG_IMAGE,
         width: 1200,
         height: 630,
         alt: 'Wesley Bard',
@@ -77,7 +81,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Wesley Bard',
     description: DESCRIPTION,
-    images: ['/og-image.png'],
+    images: [OG_IMAGE],
   },
   other: {
     'theme-color': '#14130f',

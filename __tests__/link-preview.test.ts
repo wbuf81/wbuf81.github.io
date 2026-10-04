@@ -10,3 +10,11 @@ test('the link preview describes Wes in the intro’s words, the same in every c
   expect(metadata.openGraph?.description).toBe(DESCRIPTION);
   expect(metadata.twitter?.description).toBe(DESCRIPTION);
 });
+
+// LinkedIn keeps an image by its address, so a redrawn card needs a new one: bump ?v= whenever
+// public/og-image.png changes. Both cards point at the same version.
+test('the homepage card image carries a version, the same in every card', () => {
+  const og = (metadata.openGraph?.images as { url: string }[])[0].url;
+  expect(og).toMatch(/^\/og-image\.png\?v=\d+$/);
+  expect(metadata.twitter?.images).toEqual([og]);
+});
