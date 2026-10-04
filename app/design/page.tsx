@@ -20,7 +20,7 @@ export const metadata: Metadata = {
 
 // Read at build time, so the values shown are always the stylesheet's own.
 const VALUES = tokenValues(fs.readFileSync(path.join(process.cwd(), 'app/design-system.css'), 'utf8'));
-const GROUPS: TokenGroup[] = ['Surfaces', 'Ink', 'Accent', 'Meaning', 'Prints', 'Arcade', 'GitHub map'];
+const GROUPS: TokenGroup[] = ['Surfaces', 'Ink', 'Accent', 'Meaning', 'Prints', 'Arcade', 'GitHub map', 'Charts'];
 
 const TYPE = [
   { label: 'Name · serif 58', sample: 'Wesley Bard', style: { font: '600 58px/1.02 var(--serif)', letterSpacing: '-.02em' } },

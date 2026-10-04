@@ -4,7 +4,7 @@
  * so the page can never disagree with the CSS.
  */
 
-export type TokenGroup = 'Surfaces' | 'Ink' | 'Accent' | 'Meaning' | 'Prints' | 'Arcade' | 'GitHub map';
+export type TokenGroup = 'Surfaces' | 'Ink' | 'Accent' | 'Meaning' | 'Prints' | 'Arcade' | 'GitHub map' | 'Charts';
 
 export const TOKENS: { name: string; job: string; group: TokenGroup }[] = [
   { name: '--bg', job: 'The page', group: 'Surfaces' },
@@ -19,6 +19,7 @@ export const TOKENS: { name: string; job: string; group: TokenGroup }[] = [
   { name: '--accent-deep', job: 'Button hover', group: 'Accent' },
   { name: '--on-accent', job: 'Text on an accent fill', group: 'Accent' },
   { name: '--core', job: 'Up, on, playing', group: 'Meaning' },
+  { name: '--over', job: 'The worse direction: over a target, a gain on a cut', group: 'Meaning' },
   { name: '--tape', job: 'Tape on a print', group: 'Prints' },
   { name: '--screen', job: "Tetris's screen, dark in both themes", group: 'Arcade' },
   { name: '--screen-ink', job: 'Figures on the screen', group: 'Arcade' },
@@ -28,6 +29,10 @@ export const TOKENS: { name: string; job: string; group: TokenGroup }[] = [
   { name: '--h2', job: 'Some', group: 'GitHub map' },
   { name: '--h3', job: 'Many', group: 'GitHub map' },
   { name: '--h4', job: 'The most', group: 'GitHub map' },
+  { name: '--mark', job: 'Raw readings behind a trend line', group: 'Charts' },
+  { name: '--series-1', job: 'First series: protein, lifts, calories at or under target', group: 'Charts' },
+  { name: '--series-2', job: 'Second series: carbs, cardio, calories over target, a big day', group: 'Charts' },
+  { name: '--series-3', job: 'Third series: fat', group: 'Charts' },
 ];
 
 function declarations(css: string, selector: string): Record<string, string> {

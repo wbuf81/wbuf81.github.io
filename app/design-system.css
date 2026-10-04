@@ -3,17 +3,18 @@
    (the computer's setting, and data-theme on <html> from the theme switch). Dark applies only to pages built on
    the system (:has(.wb-page)), so the shared header stays light over the pages that keep their own look. A new token also gets an entry in
    app/design/tokens.ts, or __tests__/design-system.test.ts fails. Every block is scoped under .wb, so pages
-   that keep their own styles (/health, /lee, /moonballs, /playground, /articles) are untouched. */
+   that keep their own styles (/lee) are untouched. */
 
 /* ── tokens ─────────────────────────────────────────────────── */
 :root {
   color-scheme: light;
   --bg: #f4f6f8; --paper: #ffffff; --ink: #1b2430; --ink-2: #566371; --ink-3: #64707c; --rule: #cfd6dd; --rule-soft: #e4e9ee;
   --accent: #0f4c5c; --accent-soft: #e2eef1; --accent-deep: #0a3540; --on-accent: #ffffff;
-  --core: #1f6f3f;
+  --core: #1f6f3f; --over: #8b1d14;
   --tape: rgba(255, 226, 150, .72);
   --screen: #121a22; --screen-ink: #e6ebf0; --screen-ink-2: #8d9aa7;
   --h0: #e4e9ee; --h1: #b6d6de; --h2: #78afbd; --h3: #3a8095; --h4: #0f4c5c;
+  --mark: #b3bcc6; --series-1: #2a78d6; --series-2: #eb6834; --series-3: #1baf7a;
   --serif: var(--font-serif), Georgia, serif;
   --sans: var(--font-sans), "Helvetica Neue", Arial, sans-serif;
   --mono: var(--font-mono), Menlo, Consolas, monospace;
@@ -23,20 +24,22 @@
     color-scheme: dark;
     --bg: #10161c; --paper: #171f27; --ink: #e6ebf0; --ink-2: #9aa7b3; --ink-3: #7f8d9a; --rule: #34414d; --rule-soft: #26313b;
     --accent: #7ec4d4; --accent-soft: #1b3038; --accent-deep: #a5dbe7; --on-accent: #0b1e24;
-    --core: #7fcf9a;
+    --core: #7fcf9a; --over: #f08a80;
     --tape: rgba(224, 176, 90, .40);
     --screen: #121a22; --screen-ink: #e6ebf0; --screen-ink-2: #8d9aa7;
     --h0: #26313b; --h1: #1d4550; --h2: #2b6a79; --h3: #4f9aac; --h4: #8fd0de;
+    --mark: #4d5a67; --series-1: #3987e5; --series-2: #d95926; --series-3: #199e70;
   }
 }
 :root[data-theme="dark"]:has(.wb-page) {
     color-scheme: dark;
     --bg: #10161c; --paper: #171f27; --ink: #e6ebf0; --ink-2: #9aa7b3; --ink-3: #7f8d9a; --rule: #34414d; --rule-soft: #26313b;
     --accent: #7ec4d4; --accent-soft: #1b3038; --accent-deep: #a5dbe7; --on-accent: #0b1e24;
-    --core: #7fcf9a;
+    --core: #7fcf9a; --over: #f08a80;
     --tape: rgba(224, 176, 90, .40);
     --screen: #121a22; --screen-ink: #e6ebf0; --screen-ink-2: #8d9aa7;
     --h0: #26313b; --h1: #1d4550; --h2: #2b6a79; --h3: #4f9aac; --h4: #8fd0de;
+    --mark: #4d5a67; --series-1: #3987e5; --series-2: #d95926; --series-3: #199e70;
 }
 /* Pages built on the system paint the whole window, overscroll included. */
 :root:has(.wb-page), :root:has(.wb-page) body { background: var(--bg); }
