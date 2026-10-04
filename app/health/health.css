@@ -1,825 +1,196 @@
-.health-main {
-  max-width: 960px;
-  margin: 0 auto;
-  padding: 3rem 2rem 5rem;
-}
-
-.health-head {
-  margin-bottom: 2.5rem;
-}
-
-.health-head h1 {
-  font-family: var(--font-playfair);
-  font-size: 3rem;
-  line-height: 1.1;
-  letter-spacing: -0.02em;
-}
-
-.health-head p {
-  color: #52514e;
-  margin-top: 0.5rem;
-}
-
-/* ---------- Week lead ---------- */
-
-/*
-  The one card up top: the newest week's averages leading, the block below.
-  A single weigh-in swings on water, so the page must not open on one — see
-  WeekLead.
-*/
-.week-lead {
-  background: #fff;
-  border: 1px solid #e8e8e6;
-  border-top: 3px solid #1a1a1a;
-  border-radius: 8px;
-  padding: 1.25rem 1.5rem 1.35rem;
-  margin-bottom: 1.75rem;
-}
-
-.week-lead-head {
-  display: flex;
-  align-items: baseline;
-  flex-wrap: wrap;
-  gap: 0.6rem;
-  margin-bottom: 1.1rem;
-}
-
-.week-lead-chip {
-  font-size: 0.72rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.09em;
-  color: #1a1a1a;
-}
-
-.week-lead-range {
-  font-size: 0.82rem;
-  color: #8a8985;
-}
-
-.week-lead-figures {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1.5rem 2rem;
-  align-items: flex-start;
-}
-
-/* The weight average is the headline; intake and activity support it. */
-.week-lead-figure.is-lead {
-  flex: 0 0 auto;
-  min-width: 12rem;
-}
-
-.week-lead-rest {
-  flex: 1 1 22rem;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(7.5rem, 1fr));
-  gap: 1.25rem 1.5rem;
-  align-items: start;
-}
-
-.week-lead-value {
-  font-family: var(--font-playfair);
-  font-size: 1.6rem;
-  line-height: 1.2;
-  margin-top: 0.35rem;
-  color: #1a1a1a;
-  font-variant-numeric: tabular-nums;
-}
-
-.week-lead-figure.is-lead .week-lead-value {
-  font-size: 2.6rem;
-  letter-spacing: -0.02em;
-}
-
-.week-lead-value.is-good {
-  color: #146c4f;
-}
-
-.week-lead-value.is-up {
-  color: #a8382c;
-}
-
-.stat-detail.is-good {
-  color: #146c4f;
-}
-
-.stat-detail.is-up {
-  color: #a8382c;
-}
-
-.week-lead-phase {
-  margin-top: 1.35rem;
-  padding-top: 1.15rem;
-  border-top: 1px solid #e8e8e6;
-}
-
-.week-lead-phase-head {
-  font-size: 0.72rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.09em;
-  color: #8a8985;
-  margin-bottom: 0.9rem;
-}
-
-.week-lead-note {
-  font-size: 0.8rem;
-  color: #8a8985;
-  margin-top: 1.15rem;
-  line-height: 1.5;
-  max-width: 96ch;
-  text-wrap: balance;
-}
-
-/* ---------- Phase chip and figures (inside the week lead and phase table) ---------- */
-
-.phase-chip {
-  display: inline-block;
-  padding: 0.15rem 0.55rem;
-  border-radius: 4px;
-  font-size: 0.72rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: #1a1a1a;
-  background: #f0efec;
-  white-space: nowrap;
-}
-
-/* A tint of the same hue the chart band uses, so the two read as one thing. */
-.phase-chip.is-cut {
-  background: rgba(42, 120, 214, 0.13);
-}
-
-.phase-chip.is-bulk {
-  background: rgba(235, 104, 52, 0.15);
-}
-
-.phase-chip.is-maintain {
-  background: rgba(27, 175, 122, 0.15);
-}
-
-.phase-figures {
-  display: flex;
-  align-items: flex-start;
-  flex-wrap: wrap;
-  gap: 1.75rem;
-}
-
-.phase-figure {
-  min-width: 6rem;
-}
-
-.phase-figure.is-goal {
-  min-width: 11rem;
-}
-
-.phase-value {
-  font-family: var(--font-playfair);
-  font-size: 1.75rem;
-  line-height: 1.15;
-  margin-top: 0.3rem;
-  color: #1a1a1a;
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
-}
-
-.phase-value.is-good {
-  color: #146c4f;
-}
-
-.phase-value.is-up {
-  color: #a8382c;
-}
-
-.phase-arrow {
-  font-size: 1.25rem;
-  color: #c2c1bd;
-  align-self: center;
-  margin: 0 -0.75rem;
-}
-
-.phase-progress {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-top: 0.6rem;
-}
-
-.phase-progress::before {
-  content: '';
-  position: absolute;
-  inset: 0 2.5rem 0 0;
-  height: 6px;
-  top: 50%;
-  transform: translateY(-50%);
-  background: #f0efec;
-  border-radius: 3px;
-}
-
-.phase-progress-fill {
-  position: relative;
-  height: 6px;
-  border-radius: 3px;
-  background: #2a78d6;
-  max-width: calc(100% - 2.5rem);
-  min-width: 2px;
-}
-
-.phase-progress-text {
-  position: absolute;
-  right: 0;
-  font-size: 0.78rem;
-  color: #52514e;
-  font-variant-numeric: tabular-nums;
-}
-
-.phase-note {
-  margin-top: 1rem;
-  font-size: 0.85rem;
-  color: #52514e;
-  max-width: 60ch;
-}
-
-@media (max-width: 640px) {
-  .phase-figures {
-    gap: 1.1rem;
-  }
-
-  .phase-arrow {
-    display: none;
-  }
-
-  .phase-value {
-    font-size: 1.4rem;
-  }
-}
-
-/* ---------- Stat tiles ---------- */
-
-.stat-tiles {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 1px;
-  background: #e8e8e6;
-  border: 1px solid #e8e8e6;
-  border-radius: 8px;
-  overflow: hidden;
-  margin-bottom: 3rem;
-}
-
-.stat-tile {
-  background: #fff;
-  padding: 1.1rem 1.25rem 1.25rem;
-}
-
-.stat-label {
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 0.07em;
-  color: #8a8985;
-}
-
-.stat-value {
-  font-family: var(--font-playfair);
-  font-size: 1.6rem;
-  line-height: 1.2;
-  margin-top: 0.35rem;
-  color: #1a1a1a;
-  font-variant-numeric: tabular-nums;
-}
-
-.stat-value.is-good {
-  color: #146c4f;
-}
-
-.stat-value.is-up {
-  color: #a8382c;
-}
-
-.stat-detail {
-  font-size: 0.8rem;
-  color: #8a8985;
-  margin-top: 0.3rem;
-  line-height: 1.45;
-}
-
-/* ---------- Sections ---------- */
-
-.health-section {
-  background: #fff;
-  border: 1px solid #e8e8e6;
-  border-radius: 8px;
-  padding: 1.5rem 1.5rem 1.25rem;
-  margin-bottom: 1.75rem;
-}
-
-.health-section-head {
-  margin-bottom: 1.25rem;
-}
-
-.health-section-head h2 {
-  font-family: var(--font-playfair);
-  font-size: 1.5rem;
-  letter-spacing: -0.01em;
-}
-
-/*
- * A 60ch measure wrapped these one-line notes well short of the card edge and
- * left orphans like "to zero." on a line of their own. The wider measure lets
- * most notes sit on one line, and `balance` splits the rest evenly instead of
- * dropping a couple of words onto the last line.
- */
-.health-note {
-  font-size: 0.85rem;
-  color: #8a8985;
-  margin-top: 0.3rem;
-  max-width: 96ch;
-  text-wrap: balance;
-}
-
-.health-updated {
-  font-size: 0.8rem;
-  color: #8a8985;
-  text-align: right;
-}
-
-.health-empty {
-  color: #52514e;
-}
-
-/* ---------- Tooltip ---------- */
-
-.health-tooltip {
-  background: #fff;
-  border: 1px solid #e8e8e6;
-  border-radius: 6px;
-  padding: 0.6rem 0.75rem;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.07);
-  font-size: 0.82rem;
-}
-
-.health-tooltip-label {
-  color: #1a1a1a;
-  font-weight: 600;
-  margin-bottom: 0.35rem;
-}
-
-.health-tooltip-row {
-  display: flex;
-  align-items: center;
-  gap: 0.45rem;
-  line-height: 1.6;
-}
-
-.health-tooltip-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  flex: none;
-}
-
-.health-tooltip-name {
-  color: #52514e;
-}
-
-.health-tooltip-value {
-  color: #1a1a1a;
-  margin-left: auto;
-  font-variant-numeric: tabular-nums;
-  padding-left: 0.75rem;
-}
-
-/* ---------- Chart legend ---------- */
-
-.chart-legend {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1.1rem;
-  margin-bottom: 0.75rem;
-  font-size: 0.8rem;
-  color: #52514e;
-}
-
-.chart-legend-key {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-}
-
-.chart-legend-dot {
-  width: 9px;
-  height: 9px;
-  border-radius: 50%;
-  flex: none;
-}
-
-.chart-legend-line {
-  width: 14px;
-  height: 2px;
-  border-radius: 1px;
-  flex: none;
-}
-
-/* ---------- Weekly goals ---------- */
-
-.goals {
-  margin-bottom: 1.4rem;
-  padding-bottom: 1.2rem;
-  border-bottom: 1px solid #f0efec;
-}
-
-.goals-head {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 0.4rem 1rem;
-  margin-bottom: 0.85rem;
-}
-
-.goals-week {
-  margin: 0;
-  font-size: 0.72rem;
-  font-weight: 600;
-  color: #8a8985;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-}
-
-.goals-partial {
-  margin-left: 0.45rem;
-  padding: 0.05rem 0.35rem;
-  border-radius: 3px;
-  background: #f0efec;
-  color: #8a8985;
-  font-size: 0.65rem;
-  font-weight: 500;
-  letter-spacing: 0.05em;
-}
-
-.goals-streak {
-  margin: 0;
-  font-size: 0.82rem;
-  color: #52514e;
-}
-
-.goals-streak strong {
-  color: #1a1a1a;
-  font-weight: 600;
-}
-
-.goals-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 1rem;
-}
-
-.goal-top {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 0.5rem;
-  margin-bottom: 0.4rem;
-}
-
-.goal-label {
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: #1a1a1a;
-}
-
-.goal-count {
-  font-size: 0.95rem;
-  color: #1a1a1a;
-  font-variant-numeric: tabular-nums;
-}
-
-.goal-of {
-  color: #8a8985;
-  font-size: 0.8rem;
-}
-
-/* The meter is a magnitude against a known ceiling, so it reads as a bar. */
-.goal-meter {
-  height: 6px;
-  border-radius: 3px;
-  background: #f0efec;
-  overflow: hidden;
-}
-
-.goal-meter-fill {
-  display: block;
-  height: 100%;
-  border-radius: 3px;
-  background: #c2c1bd;
-}
-
-/* Met state is carried by the check and the words too, never by color alone. */
-.goal.is-met .goal-meter-fill {
-  background: #1baf7a;
-}
-
-.goal-status {
-  margin: 0.4rem 0 0;
-  font-size: 0.75rem;
-  color: #8a8985;
-}
-
-.goal.is-met .goal-status {
-  color: #146c4f;
-}
-
-@media (max-width: 640px) {
-  .goals-list {
-    grid-template-columns: 1fr;
-    gap: 0.85rem;
-  }
-}
-
-/* ---------- Consistency grid ---------- */
-
-.consistency {
-  margin-bottom: 0.5rem;
-}
-
-.consistency-head,
-.consistency-row {
-  display: grid;
-  grid-template-columns: 4.5rem repeat(7, minmax(0, 1fr));
-  gap: 4px;
-  align-items: center;
-}
-
-.consistency-row {
-  margin-bottom: 4px;
-}
-
-.consistency-day-name,
-.consistency-week-label {
-  font-size: 0.72rem;
-  color: #8a8985;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-}
-
-.consistency-day-name {
-  text-align: center;
-}
-
-.consistency-cell {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 3px;
-  height: 34px;
-  border-radius: 6px;
-  background: #f6f6f4;
-}
-
-.consistency-cell.is-empty {
-  background: transparent;
-  border: 1px dashed #e8e8e6;
-}
-
-.consistency-dot {
-  width: 9px;
-  height: 9px;
-  border-radius: 50%;
-  flex: none;
-}
-
-.consistency-rest {
-  width: 9px;
-  height: 2px;
-  border-radius: 1px;
-  background: #c2c1bd;
-  display: inline-block;
-  flex: none;
-}
-
-.consistency-legend {
-  display: flex;
-  gap: 1.1rem;
-  margin-top: 0.9rem;
-  font-size: 0.8rem;
-  color: #52514e;
-}
-
-.consistency-key {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-}
-
-/* A marker glyph sits in the day cell in place of the rest dash. */
-.consistency-icon {
-  font-size: 13px;
-  line-height: 1;
-  flex: none;
-}
-
-/* Extenuating notes, below the consistency charts: why an off day was off. */
-.consistency-notes {
-  margin-top: 1.2rem;
-  padding-top: 0.8rem;
-  border-top: 1px solid #e8e8e6;
-}
-
-.consistency-notes-title {
-  margin: 0 0 0.4rem;
-  font-size: 0.72rem;
-  font-weight: 600;
-  color: #8a8985;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-}
-
-.consistency-notes-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-}
-
-.consistency-note {
-  display: flex;
-  align-items: baseline;
-  gap: 0.45rem;
-  font-size: 0.8rem;
-  color: #52514e;
-}
-
-.consistency-note-date {
-  min-width: 3.6rem;
-  color: #8a8985;
-  font-variant-numeric: tabular-nums;
-  flex: none;
-}
-
-.consistency-note-icon {
-  font-size: 0.9rem;
-  line-height: 1;
-  flex: none;
-}
-
-.consistency-note-detail {
-  color: #8a8985;
-}
-
-/* ---------- Step streaks ---------- */
-
-/*
-  Sits under the steps chart, above the section's own edge: the chart shows the
-  daily shape, these two say how long each threshold has held.
-*/
-.step-streaks {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 2.5rem;
-  margin-top: 1.25rem;
-  padding-top: 1.1rem;
-  border-top: 1px solid #f0efec;
-  list-style: none;
-}
-
-.streak-value {
-  font-family: var(--font-playfair);
-  font-size: 1.35rem;
-  line-height: 1.2;
-  margin-top: 0.3rem;
-  color: #1a1a1a;
-  font-variant-numeric: tabular-nums;
-}
-
-/* ---------- Table ---------- */
-
-.table-scroll {
-  overflow-x: auto;
-}
-
-.health-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.85rem;
-  min-width: 720px;
-}
-
-.health-table-caption {
-  caption-side: top;
-  text-align: left;
-  font-size: 0.85rem;
-  color: #8a8985;
-  padding-bottom: 0.75rem;
-}
-
-/*
-  Horizontal padding is tight on purpose: the By week table carries eleven
-  columns and has to fit the card without scrolling. Widening this is what
-  pushed it into a scrollbar before.
-*/
-.health-table th,
-.health-table td {
-  text-align: left;
-  padding: 0.5rem 0.4rem;
-  border-bottom: 1px solid #f0efec;
-  white-space: nowrap;
-}
-
-.health-table th {
-  font-size: 0.72rem;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: #8a8985;
-  font-weight: 600;
-  border-bottom: 1px solid #e8e8e6;
-}
-
-/* First row of a new week. The heavier rule groups the seven-day blocks. */
-.health-table tbody tr.is-week-start td {
-  border-top: 2px solid #d4d3cf;
-}
-
-.health-table .is-num {
-  text-align: right;
-  font-variant-numeric: tabular-nums;
-}
-
-.health-table .is-was {
-  color: #8a8985;
-}
-
-.health-table .is-rest {
-  color: #8a8985;
-}
-
-.health-table .is-week {
-  font-weight: 600;
-  color: #1a1a1a;
-  font-size: 0.85rem;
-  letter-spacing: normal;
-  text-transform: none;
-}
-
-.health-table .is-good {
-  color: #146c4f;
-}
-
-.health-table .is-up {
-  color: #a8382c;
-}
-
-.is-partial {
-  display: inline-block;
-  margin-left: 0.4rem;
-  padding: 0.05rem 0.35rem;
-  border-radius: 3px;
-  background: #f0efec;
-  color: #8a8985;
-  font-size: 0.65rem;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  vertical-align: 1px;
-}
-
-/*
-  The change log's Why column follows a right-aligned number, so without this the
-  reason butts straight up against the value it explains.
-*/
-.health-table.is-changes .is-notes,
-.health-table.is-changes thead th:last-child {
-  padding-left: 1rem;
-}
-
-.health-table .is-notes {
-  color: #52514e;
-  white-space: normal;
-  min-width: 12ch;
-}
-
-@media (max-width: 640px) {
-  .health-main {
-    padding: 2rem 1rem 4rem;
-  }
-
-  .health-head h1 {
-    font-size: 2.25rem;
-  }
-
-  .health-section {
-    padding: 1.25rem 1rem 1rem;
-  }
-
-  .consistency-head,
-  .consistency-row {
-    grid-template-columns: 3.25rem repeat(7, minmax(0, 1fr));
-  }
+/* /health on the design system (spec: docs/superpowers/specs/2026-10-04-health-redesign-design.md).
+   Colours by token only, never a hex: the tokens carry the dark theme. Every selector starts with .wb, and the
+   health blocks are named h-… (chart marks g-…) so nothing here can reach another page once this sheet is loaded.
+   __tests__/health-css.test.ts holds both rules. */
+
+/* ── page ───────────────────────────────────────────────────── */
+.wb .h-wrap { max-width: 1240px; margin: 0 auto; padding: 0 clamp(16px, 3vw, 40px) 56px; }
+.wb .h-top { padding: 30px 0 4px; }
+.wb h1.h-title { font: 600 clamp(40px, 5vw, 56px)/1.02 var(--serif); letter-spacing: -.02em; margin: 10px 0 8px; color: var(--ink); }
+.wb .h-top .lede { margin: 0; }
+.wb .h-updated { margin: 20px 0 0; font-size: 12.5px; color: var(--ink-3); }
+.wb .h-wrap .is-good, .wb .h-wrap .stats .l.is-good { color: var(--core); }
+.wb .h-wrap .is-over, .wb .h-wrap .stats .l.is-over { color: var(--over); }
+
+/* ── cards and their text ───────────────────────────────────── */
+.wb .h-card { background: var(--paper); border: 1px solid var(--rule); padding: 20px 24px; margin-top: 20px; min-width: 0; }
+.wb .h-card.is-lead { border-top: 3px solid var(--accent); }
+.wb .h-card-h { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 4px 12px; }
+.wb .h-card-h.is-center { align-items: center; }
+.wb .h-card h2 { font: 600 22px/1.2 var(--serif); margin: 0; color: var(--ink); }
+.wb .h-note { margin: 4px 0 12px; color: var(--ink-2); font-size: 14px; max-width: 96ch; text-wrap: pretty; }
+.wb .h-note.is-sm { font-size: 13px; margin: 4px 0 0; }
+.wb .h-note.is-after { margin: 12px 0 0; }
+.wb .h-aside { font-size: 13px; color: var(--ink-2); }
+.wb .h-sub { font: 500 10.5px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); margin: 14px 0 0; }
+.wb .h-k { font: 500 10.5px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); }
+.wb .h-n { font: 600 24px/1.1 var(--serif); color: var(--ink); font-variant-numeric: tabular-nums; }
+.wb .h-n.is-accent { color: var(--accent); }
+.wb .h-l { font-size: 12.5px; color: var(--ink-2); margin-top: 5px; line-height: 1.35; }
+.wb .h-facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(150px, 100%), 1fr)); gap: 1px; background: var(--rule-soft); border: 1px solid var(--rule-soft); margin-top: 14px; }
+.wb .h-facts > div { background: var(--paper); padding: 11px 14px; min-width: 0; }
+.wb .h-facts .h-n { font-size: 21px; margin-top: 5px; }
+
+/* ── the lead card ──────────────────────────────────────────── */
+.wb .h-lead-head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
+.wb .h-lead-head .eyebrow.is-strong { color: var(--ink); }
+.wb .h-lead-figs { display: flex; flex-wrap: wrap; gap: 20px 40px; align-items: flex-end; margin-top: 16px; }
+.wb .h-big { font: 600 52px/1 var(--serif); color: var(--accent); letter-spacing: -.01em; font-variant-numeric: tabular-nums; margin-top: 8px; }
+.wb .h-lead-figs .h-l { font-size: 13.5px; }
+.wb .stats.h-lead-stats { flex: 1 1 520px; margin: 0; grid-template-columns: repeat(auto-fit, minmax(min(140px, 100%), 1fr)); }
+.wb .stats.h-lead-stats .n { color: var(--ink); }
+.wb .h-block { border-top: 1px solid var(--rule-soft); margin-top: 22px; padding-top: 16px; }
+.wb .h-block-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 6px 20px; }
+.wb .h-lead-note { margin: 12px 0 0; max-width: 92ch; }
+.wb .h-track { position: relative; height: 14px; border-radius: 7px; background: var(--rule-soft); margin: 40px 0 34px; }
+.wb .h-track .h-fill { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 7px; background: var(--accent); }
+.wb .h-track .h-notch { position: absolute; top: -5px; width: 2px; height: 24px; background: var(--paper); transform: translateX(-1px); }
+.wb .h-track .h-pin { position: absolute; bottom: 22px; font: 500 11px var(--mono); letter-spacing: .04em; color: var(--accent); white-space: nowrap; }
+.wb .h-track .h-end { position: absolute; top: 22px; left: 0; font: 500 11px var(--mono); color: var(--ink-3); white-space: nowrap; }
+.wb .h-track .h-end.is-goal { left: auto; right: 0; }
+.wb .stats.h-tiles { margin: 20px 0 0; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
+/* ── legends ────────────────────────────────────────────────── */
+.wb .h-legend { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; font-size: 12.5px; color: var(--ink-2); }
+.wb .h-legend > span { display: inline-flex; align-items: center; gap: 6px; }
+.wb .h-legend .is-quiet { color: var(--ink-3); }
+.wb .h-legend.is-below { margin-top: 10px; }
+.wb .h-sw { display: inline-block; flex: none; width: 10px; height: 10px; border-radius: 2px; }
+.wb .h-sw.is-line { width: 14px; height: 3px; border-radius: 1px; }
+.wb .h-sw.is-dot { border-radius: 50%; }
+.wb .h-sw.is-accent { background: var(--accent); }
+.wb .h-sw.is-ink { background: var(--ink-2); }
+.wb .h-sw.is-big { background: var(--series-2); }
+.wb .h-sw.is-hollow { width: 9px; height: 9px; border-radius: 50%; background: var(--paper); border: 1.5px solid var(--ink-3); }
+.wb .h-sw.is-under { background: color-mix(in srgb, var(--series-1) 38%, transparent); }
+.wb .h-sw.is-over { background: color-mix(in srgb, var(--series-2) 55%, transparent); }
+.wb .h-sw.is-dashed { width: 14px; height: 0; border-radius: 0; border-top: 2px dashed currentColor; }
+.wb .h-sw.is-s1 { background: var(--series-1); }
+.wb .h-sw.is-s2 { background: var(--series-2); }
+.wb .h-sw.is-s3 { background: var(--series-3); }
+
+/* ── chart panels: an SVG with HTML labels laid over it ─────── */
+.wb .h-panel { position: relative; margin-top: 8px; }
+.wb .h-panel svg { display: block; width: 100%; height: auto; overflow: visible; }
+.wb .h-panel svg path { vector-effect: non-scaling-stroke; }
+.wb .h-panel.is-hover, .wb .h-wkd { cursor: crosshair; touch-action: pan-y; }
+.wb .h-ax { position: absolute; font: 400 11px var(--mono); color: var(--ink-3); white-space: nowrap; font-variant-numeric: tabular-nums; pointer-events: none; }
+.wb .h-ax.is-left { left: 0; width: 5%; padding-right: 6px; text-align: right; transform: translateY(-50%); }
+.wb .h-ax.is-right { right: 0; width: 6%; padding-left: 6px; transform: translateY(-50%); }
+.wb .h-ax.is-x { bottom: 0; transform: translateX(-50%); }
+.wb .h-ax.is-unit { top: 0; color: var(--ink-2); font-weight: 500; }
+.wb .h-ax.is-note { color: var(--ink-2); font-size: 11.5px; }
+.wb .h-ax.is-value { transform: translate(-50%, -50%); color: var(--ink-2); font-size: 11.5px; }
+.wb .h-ax.is-end { transform: translateY(-50%); color: var(--ink-2); }
+.wb .h-crosshair { position: absolute; top: 5.5%; bottom: 7%; width: 0; border-left: 1px solid var(--ink-2); pointer-events: none; }
+.wb .h-tip { position: absolute; top: 36px; max-width: 100%; padding: 10px 12px; background: var(--paper); border: 1px solid var(--rule); border-radius: 6px; box-shadow: 0 14px 30px -16px rgba(0, 0, 0, .35); font-size: 13px; pointer-events: none; z-index: 2; }
+.wb .h-tip .h-row { display: flex; justify-content: space-between; gap: 10px; margin-top: 4px; font-variant-numeric: tabular-nums; }
+.wb .h-tip .h-row > span { color: var(--ink-2); }
+.wb .h-two { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); gap: 28px; align-items: end; margin-top: 4px; }
+.wb .h-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; margin-top: 20px; }
+.wb .h-pair > .h-card { margin-top: 0; }
+/* each chart is drawn in a wide and a compact frame (svg.ts › VARIANTS); one shows */
+.wb .h-v.is-compact { display: none; }
+
+/* the marks */
+.wb .g-grid { stroke: var(--rule-soft); stroke-width: 1; fill: none; }
+.wb .g-zero { stroke: var(--ink-3); stroke-width: 1; fill: none; }
+.wb .g-under { fill: color-mix(in srgb, var(--series-1) 38%, transparent); }
+.wb .g-over { fill: color-mix(in srgb, var(--series-2) 55%, transparent); }
+.wb .g-target, .wb .g-floor { stroke: var(--ink-3); stroke-width: 1.5; stroke-dasharray: 5 4; fill: none; }
+.wb .g-goal { stroke: var(--ink-2); stroke-width: 1.5; stroke-dasharray: 5 4; fill: none; }
+.wb .g-line { stroke: var(--ink); stroke-width: 1.5; stroke-dasharray: 5 4; fill: none; }
+.wb .g-daily { stroke: var(--mark); stroke-width: 1; fill: none; }
+.wb .g-avg { stroke: var(--accent); stroke-width: 2.5; fill: none; stroke-linejoin: round; stroke-linecap: round; }
+.wb .g-hollow { fill: var(--paper); stroke: var(--ink-3); stroke-width: 1.5; }
+.wb .g-bars, .wb .g-wt { fill: var(--accent); }
+.wb .g-hl { fill: var(--accent-soft); }
+.wb .g-p { fill: var(--series-1); }
+.wb .g-c { fill: var(--series-2); }
+.wb .g-f { fill: var(--series-3); }
+.wb .g-pts { fill: var(--accent); stroke: var(--paper); stroke-width: 2; }
+.wb .g-big { fill: var(--series-2); stroke: var(--paper); stroke-width: 2; }
+.wb .g-fit { stroke: var(--ink-2); stroke-width: 2; fill: none; stroke-linecap: round; }
+.wb .g-trace { stroke: var(--series-2); stroke-width: 2; fill: none; stroke-linejoin: round; stroke-linecap: round; }
+.wb .g-typ { stroke: var(--ink-2); stroke-width: 2; stroke-dasharray: 5 4; fill: none; }
+
+/* ── the week, by day ───────────────────────────────────────── */
+.wb .h-wkd { position: relative; }
+.wb .h-wkd-row { position: relative; height: 44px; border-top: 1px solid var(--rule-soft); border-bottom: 1px solid var(--rule-soft); margin: 6px 0 0; }
+.wb .h-wkd-day { position: absolute; top: 5px; transform: translateX(-50%); text-align: center; white-space: nowrap; }
+.wb .h-wkd-day b { display: block; font: 600 14px/1.2 var(--serif); color: var(--ink); }
+.wb .h-wkd-day i { display: block; font: normal 400 11px var(--mono); color: var(--ink-3); }
+
+/* ── consistency ────────────────────────────────────────────── */
+.wb .h-goals-wrap { margin: 10px 0 14px; }
+.wb .h-goals { list-style: none; margin: 8px 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px 16px; }
+.wb .h-goal-top { display: flex; justify-content: space-between; font-size: 13px; }
+.wb .h-meter { height: 8px; margin-top: 5px; border-radius: 4px; background: var(--rule-soft); overflow: hidden; }
+.wb .h-meter i { display: block; height: 100%; border-radius: 4px; background: var(--accent); }
+.wb .h-goals .is-met .h-meter i { background: var(--core); }
+.wb .h-grid7 { display: grid; grid-template-columns: 52px repeat(7, minmax(0, 1fr)); gap: 4px; }
+.wb .h-dh { font: 500 10px var(--mono); color: var(--ink-3); text-align: center; }
+.wb .h-wl { font: 500 10px var(--mono); letter-spacing: .04em; text-transform: uppercase; color: var(--ink-3); align-self: center; white-space: nowrap; }
+.wb .h-cell { height: 24px; border-radius: 4px; background: var(--bg); border: 1px solid var(--rule-soft); display: flex; align-items: center; justify-content: center; gap: 3px; font-size: 12px; }
+.wb .h-cell.is-empty, .wb .h-day.is-empty { background: transparent; border-style: dashed; }
+.wb .h-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; }
+.wb .h-dot.is-lift { background: var(--series-1); }
+.wb .h-dot.is-cardio { background: var(--series-2); }
+.wb .h-rest { display: inline-block; width: 8px; height: 2px; border-radius: 1px; background: var(--mark); }
+
+/* ── the log ────────────────────────────────────────────────── */
+.wb .sec-h.h-sec { margin: 44px 0 0; }
+.wb .sec-h.h-sec p { margin: 0; color: var(--ink-2); font-size: 14px; }
+.wb .h-week { padding: 20px 24px 22px; }
+.wb .h-wk-head { display: grid; grid-template-columns: minmax(0, 170px) minmax(0, 150px) minmax(0, 1fr) auto; gap: 14px 26px; align-items: start; }
+.wb .h-wk-head h3 { font: 600 26px/1.05 var(--serif); margin: 4px 0 0; color: var(--ink); }
+.wb .h-chips { padding-top: 4px; }
+.wb .h-ticks { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 3px; font-size: 12.5px; color: var(--ink-2); white-space: nowrap; }
+.wb .h-days7 { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; margin-top: 16px; }
+.wb .h-day { border: 1px solid var(--rule-soft); background: var(--bg); border-radius: 5px; padding: 7px 8px 8px; min-width: 0; }
+.wb .h-dn { display: flex; justify-content: space-between; font: 500 10.5px var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); }
+.wb .h-dw { font: 600 16px/1.2 var(--serif); margin-top: 4px; color: var(--ink); font-variant-numeric: tabular-nums; }
+.wb .h-dd { display: flex; align-items: center; gap: 4px; margin-top: 4px; min-height: 14px; font-size: 12px; }
+.wb .h-paper { position: relative; margin: 18px 0 0 6px; max-width: 560px; padding: 12px 16px; background: var(--paper); border: 1px solid var(--rule); box-shadow: 0 14px 26px -18px rgba(0, 0, 0, .35); transform: rotate(-1.2deg); font-size: 13.5px; }
+.wb .h-paper + .h-paper { transform: rotate(.8deg); }
+.wb .h-paper .h-k { margin-right: 8px; }
+.wb .h-paper b { font-weight: 600; }
+.wb .h-paper-note { color: var(--ink-2); }
+.wb .h-tape { position: absolute; top: -9px; left: 38%; width: 70px; height: 16px; background: var(--tape); transform: rotate(-4deg); }
+
+/* ── records ────────────────────────────────────────────────── */
+.wb .h-seg { display: inline-flex; flex-wrap: wrap; gap: 2px; padding: 2px; border: 1px solid var(--rule); border-radius: 6px; background: var(--paper); }
+.wb .h-seg button { font: 500 12.5px var(--sans); color: var(--ink-2); background: none; border: 0; border-radius: 4px; padding: 8px 12px; cursor: pointer; }
+.wb .h-seg button:hover { color: var(--ink); }
+.wb .h-seg button[aria-pressed="true"] { background: var(--accent-soft); color: var(--accent); }
+.wb .h-scroll { overflow-x: auto; }
+.wb .h-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+.wb .h-table th { text-align: left; font: 500 10.5px var(--mono); letter-spacing: .07em; text-transform: uppercase; color: var(--ink-3); padding: 8px; border-bottom: 1px solid var(--rule); white-space: nowrap; }
+.wb .h-table td, .wb .h-table tbody th { padding: 9px 8px; border-bottom: 1px solid var(--rule-soft); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.wb .h-table tbody th.is-week { font: 600 13.5px var(--sans); letter-spacing: 0; text-transform: none; color: var(--ink); }
+.wb .h-table .is-num { text-align: right; }
+.wb .h-table .is-partial { margin-left: 6px; font: 500 10px var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); }
+.wb .h-table .is-notes { color: var(--ink-2); white-space: normal; min-width: 18ch; }
+.wb .h-table .is-rest, .wb .h-table .is-was { color: var(--ink-3); }
+.wb .h-table tr.is-week-start > * { border-top: 1px solid var(--rule); }
+
+/* ── narrower screens ───────────────────────────────────────── */
+@media (max-width: 980px) {
+  .wb .h-pair, .wb .h-two { grid-template-columns: minmax(0, 1fr); }
+  .wb .h-wk-head { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+}
+@media (max-width: 760px) {
+  .wb .stats.h-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .wb .h-big { font-size: 42px; }
+  .wb .h-days7 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .wb .h-goals { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 600px) {
+  .wb .h-card, .wb .h-week { padding: 16px; }
+  .wb .h-grid7 { grid-template-columns: 44px repeat(7, minmax(0, 1fr)); }
+  .wb .h-v.is-wide { display: none; }
+  .wb .h-v.is-compact { display: block; }
+  /* two facts a row, an odd last one across both, so no empty cell shows the rule colour */
+  .wb .h-facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .wb .h-facts > div:last-child:nth-child(odd) { grid-column: 1 / -1; }
 }

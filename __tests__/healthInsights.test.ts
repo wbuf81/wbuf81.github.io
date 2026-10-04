@@ -182,6 +182,12 @@ describe('weekdayProfile', () => {
     expect(weekdayProfile(withLow, TARGET, null).rows[0].atProteinGoal).toBeNull();
   });
 
+  test('scores protein against the goal in force each day, so raising it does not rescore the past', () => {
+    // 200 g until Aug 2, 250 g after: Mon Aug 3 at 200 g misses, the two earlier Mondays meet theirs.
+    const goalOn = (date: string) => (date < '2026-08-03' ? 200 : 250);
+    expect(weekdayProfile(days, TARGET, goalOn).rows[0]).toMatchObject({ atProteinGoal: 2, proteinScored: 3 });
+  });
+
   test('weigh-in against the 7-day average centred on it, where all seven were weighed', () => {
     // Flat 200 except Sunday Jul 26 at 203.5: that Sunday reads +3 against its centred week, and each
     // day whose window holds it reads -0.5. Fri Jul 24 (-0.5) and Fri Jul 31 (0) average -0.25; Sun Aug 2

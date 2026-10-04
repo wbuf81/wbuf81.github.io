@@ -237,6 +237,8 @@
   .wb .duo { flex: 1 1 100%; flex-wrap: wrap; padding: 14px 4px 0; }
   .wb .print.hs { width: 170px; margin: -36px 0 0 auto; }
   .wb .type > div { grid-template-columns: 1fr; gap: 4px; }
+  /* no theme switch on a phone (Wes, 4 Oct 2026): it wrapped onto a second header row, and a phone follows its own setting */
+  .wb-head .tools { display: none; }
 }
 @media (prefers-reduced-motion: reduce) {
   .wb .theme .tip { transition: none; }

@@ -70,13 +70,13 @@ describe('WeekLead', () => {
   it('reads a falling average as the good direction', () => {
     render(<WeekLead rows={WEEKS} phase={PHASE} weightUnit="lb" />);
 
-    expect(screen.getByText('203.5 lb').className).toContain('is-good');
+    expect(screen.getByText(/vs the week before/).className).toContain('is-good');
   });
 
   it('reads a rising average as the wrong direction on a cut', () => {
     render(<WeekLead rows={[row({ weekStart: '2026-08-17', weightChange: 0.6 })]} phase={PHASE} weightUnit="lb" />);
 
-    expect(screen.getByText('203.5 lb').className).toContain('is-up');
+    expect(screen.getByText(/vs the week before/).className).toContain('is-over');
   });
 
   it('says so when there is no earlier week to compare against', () => {
@@ -110,9 +110,31 @@ describe('WeekLead', () => {
     expect(screen.getByText(/the cut so far/i)).toBeInTheDocument();
     expect(screen.getByText('210.2 lb')).toBeInTheDocument();
     expect(screen.getByText('14.6 lb to go')).toBeInTheDocument();
-    expect(screen.getByText('on pace for Nov 22 at the recent pace')).toBeInTheDocument();
+    expect(screen.getByText('Nov 22')).toBeInTheDocument();
+    expect(screen.getByText('at the recent pace')).toBeInTheDocument();
     expect(screen.getByText('−0.5 lb')).toBeInTheDocument();
     expect(screen.getByText('last 3 weeks')).toBeInTheDocument();
+  });
+
+  it('draws the block as a track from the start to the goal, a notch per week', () => {
+    render(<WeekLead rows={WEEKS} phase={PHASE} weightUnit="lb" />);
+
+    const track = screen.getByRole('img', { name: /28 percent of the way/ });
+    expect(track.querySelectorAll('.h-notch')).toHaveLength(2);
+    expect(track.querySelector('.h-fill')).toHaveStyle({ width: '28%' });
+  });
+
+  it('has no track and nothing to go without a goal', () => {
+    render(
+      <WeekLead
+        rows={WEEKS}
+        phase={{ ...PHASE, goalWeight: null, goalRemaining: null, goalPercent: null, projectedGoalDate: null, projectedGoalLabel: null }}
+        weightUnit="lb"
+      />
+    );
+
+    expect(screen.queryByRole('img', { name: /percent of the way/ })).not.toBeInTheDocument();
+    expect(screen.queryByText(/to go/)).not.toBeInTheDocument();
   });
 
   it('stands on its own with no phase running', () => {

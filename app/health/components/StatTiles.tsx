@@ -1,5 +1,5 @@
 import { HealthSummary } from '@/types/health';
-import { formatDelta, formatNumber } from './chartTheme';
+import { downIsGood, formatDelta, formatNumber } from './format';
 
 interface Props {
   summary: HealthSummary;
@@ -16,8 +16,8 @@ interface Tile {
 }
 
 function tone(delta: number | null | undefined, kind: Tile['tone']): string {
-  if (delta === null || delta === undefined || delta === 0 || kind !== 'down-good') return '';
-  return delta < 0 ? ' is-good' : ' is-up';
+  if (delta === null || delta === undefined || kind !== 'down-good') return '';
+  return downIsGood(delta);
 }
 
 export default function StatTiles({ summary, weightUnit }: Props) {
@@ -88,12 +88,12 @@ export default function StatTiles({ summary, weightUnit }: Props) {
   ];
 
   return (
-    <div className="stat-tiles">
+    <div className="stats h-tiles">
       {tiles.map((tile) => (
-        <div className="stat-tile" key={tile.label}>
-          <p className="stat-label">{tile.label}</p>
-          <p className={`stat-value${tone(tile.delta, tile.tone)}`}>{tile.value}</p>
-          {tile.detail && <p className="stat-detail">{tile.detail}</p>}
+        <div key={tile.label}>
+          <div className="k">{tile.label}</div>
+          <div className="n">{tile.value}</div>
+          {tile.detail && <div className={`l ${tone(tile.delta, tile.tone)}`}>{tile.detail}</div>}
         </div>
       ))}
     </div>

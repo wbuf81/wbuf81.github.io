@@ -1,5 +1,5 @@
 import { PhaseSummary } from '@/types/health';
-import { formatDelta, formatNumber } from './chartTheme';
+import { formatDelta, formatNumber } from './format';
 
 interface Props {
   phases: PhaseSummary[];
@@ -16,15 +16,15 @@ function changeClass(phase: PhaseSummary): string {
   if (weightChange === null || weightChange === 0 || type === 'maintain') return 'is-num';
 
   const desired = type === 'cut' ? -1 : 1;
-  return Math.sign(weightChange) === desired ? 'is-num is-good' : 'is-num is-up';
+  return Math.sign(weightChange) === desired ? 'is-num is-good' : 'is-num is-over';
 }
 
 export default function PhaseTable({ phases, weightUnit }: Props) {
   const newestFirst = [...phases].reverse();
 
   return (
-    <div className="table-scroll">
-      <table className="health-table">
+    <div className="h-scroll">
+      <table className="h-table">
         <thead>
           <tr>
             <th scope="col">Phase</th>
@@ -43,7 +43,7 @@ export default function PhaseTable({ phases, weightUnit }: Props) {
           {newestFirst.map((phase) => (
             <tr key={phase.start}>
               <th scope="row" className="is-week">
-                <span className={`phase-chip is-${phase.type}`}>{phase.label}</span>
+                <span className="tag acc">{phase.label}</span>
                 {phase.isOngoing && <span className="is-partial">ongoing</span>}
               </th>
               <td>

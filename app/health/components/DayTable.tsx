@@ -1,5 +1,5 @@
 import { HealthDay } from '@/types/health';
-import { formatNumber } from './chartTheme';
+import { formatNumber } from './format';
 import { noteTextFor } from '@/lib/noteMarks';
 
 interface Props {
@@ -21,8 +21,8 @@ function weekKey(iso: string): string {
 }
 
 /**
- * Every plotted value in text form. This is also the relief for the aqua series
- * colour, which sits below 3:1 contrast against the page surface.
+ * Every plotted value in text form. This is also the relief for the fat series
+ * colour, which sits below 3:1 contrast against the light card.
  *
  * Rows are newest-first, so a week boundary is where a row's Monday differs from
  * the row above it. Those rows get a heavier rule, which keeps the seven-day
@@ -32,9 +32,9 @@ export default function DayTable({ days }: Props) {
   const newestFirst = [...days].reverse();
 
   return (
-    <div className="table-scroll">
-      <table className="health-table">
-        <caption className="health-table-caption">All recorded days, newest first</caption>
+    <div className="h-scroll">
+      <table className="h-table">
+        <caption className="vh">All recorded days, newest first</caption>
         <thead>
           <tr>
             <th scope="col">Date</th>

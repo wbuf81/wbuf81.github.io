@@ -1,8 +1,10 @@
-import { WeeklyTrendRow } from '@/types/health';
-import { formatDelta, formatNumber } from './chartTheme';
+import { HealthMarker, WeeklyTrendRow } from '@/types/health';
+import { formatDelta, formatNumber } from './format';
 
 interface Props {
   rows: WeeklyTrendRow[];
+  /** Dated events, listed against the week they fell in. */
+  markers?: HealthMarker[];
   weightUnit: string;
 }
 
@@ -13,20 +15,16 @@ function num(value: number | null, digits = 0): string {
 /** Losing weight is the goal, so a fall is the good direction. */
 function changeClass(change: number | null): string {
   if (change === null || change === 0) return 'is-num';
-  return change < 0 ? 'is-num is-good' : 'is-num is-up';
+  return change < 0 ? 'is-num is-good' : 'is-num is-over';
 }
 
-export default function WeekTable({ rows, weightUnit }: Props) {
+export default function WeekTable({ rows, markers = [], weightUnit }: Props) {
   const newestFirst = [...rows].reverse();
 
   return (
-    <div className="table-scroll">
-      {/*
-        No visible caption: the section heading and its note above already say
-        what this table is, and two grey lines saying it twice read as a mistake.
-        The label keeps the table named for screen readers.
-      */}
-      <table className="health-table" aria-label="Weekly averages, newest first">
+    <div className="h-scroll">
+      {/* No visible caption: the tab and its note already say what this is; the label names it for screen readers. */}
+      <table className="h-table" aria-label="Weekly averages, newest first">
 
         <thead>
           <tr>
@@ -41,6 +39,7 @@ export default function WeekTable({ rows, weightUnit }: Props) {
             <th scope="col" className="is-num">Lifts</th>
             <th scope="col" className="is-num">Cardio</th>
             <th scope="col" className="is-num">Cardio min</th>
+            <th scope="col">Notes</th>
           </tr>
         </thead>
         <tbody>
@@ -69,6 +68,12 @@ export default function WeekTable({ rows, weightUnit }: Props) {
               <td className="is-num">{row.workouts}</td>
               <td className="is-num">{row.cardioSessions}</td>
               <td className="is-num">{formatNumber(row.cardioMinutes)}</td>
+              <td className="is-notes">
+                {markers
+                  .filter((m) => m.date >= row.weekStart && m.date <= row.weekEnd)
+                  .map((m) => `${m.icon ? `${m.icon} ` : ''}${m.label}`)
+                  .join(' · ') || '—'}
+              </td>
             </tr>
           ))}
         </tbody>

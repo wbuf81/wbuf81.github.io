@@ -14,8 +14,8 @@ interface Props {
  */
 export default function ChangeLog({ entries }: Props) {
   return (
-    <div className="table-scroll">
-      <table className="health-table is-changes" aria-label="Changes to goals and blocks, oldest first">
+    <div className="h-scroll">
+      <table className="h-table" aria-label="Changes to goals and blocks, oldest first">
         <thead>
           <tr>
             <th scope="col">Date</th>

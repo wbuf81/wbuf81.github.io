@@ -158,8 +158,10 @@ export interface WeekdayRow {
   /** Days with both calories and a target, the denominator for `overTarget`. */
   targeted: number;
   avgProtein: number | null;
-  /** Days at or over the protein goal. Null with no goal. */
+  /** Days at or over the protein goal in force that day. Null when no day had a goal. */
   atProteinGoal: number | null;
+  /** Days with both a protein reading and a goal, the denominator for `atProteinGoal`. */
+  proteinScored: number;
   /** The morning's weight against the 7-day average centred on it, averaged. Null without a full window. */
   weighInVsTrend: number | null;
 }
@@ -181,9 +183,11 @@ const WEEKEND: Weekday[] = ['Fri', 'Sat', 'Sun'];
 export function weekdayProfile(
   days: HealthDay[],
   calorieTargets: HealthCalorieTarget[] | undefined,
-  proteinGoal: number | null,
+  /** The protein goal, or the goal in force on a date: a raised goal must not rescore the days before it. */
+  proteinGoal: number | null | ((date: string) => number | null),
 ): WeekdayProfile {
   const byDate = new Map(days.map((d) => [d.date, d]));
+  const goalOn = typeof proteinGoal === 'function' ? proteinGoal : () => proteinGoal;
 
   // Against a centred average, so a block's steady drift does not tilt the weekdays.
   const trendGap = (day: HealthDay): number | null => {
@@ -204,6 +208,9 @@ export function weekdayProfile(
       .map((d) => ({ d, target: calorieTargetFor(d.date, calorieTargets) }))
       .filter((x): x is { d: HealthDay; target: number } => x.target !== null);
     const protein = these.map((d) => d.protein).filter((p): p is number => p !== null);
+    const goaled = these
+      .map((d) => ({ protein: d.protein, goal: goalOn(d.date) }))
+      .filter((x): x is { protein: number; goal: number } => x.protein !== null && x.goal !== null);
     const gaps = these.map(trendGap).filter((g): g is number => g !== null);
     return {
       day: name,
@@ -213,7 +220,8 @@ export function weekdayProfile(
       overTarget: scored.filter(({ d, target }) => (d.cals as number) > target).length,
       targeted: scored.length,
       avgProtein: whole(mean(protein)),
-      atProteinGoal: proteinGoal === null ? null : protein.filter((p) => p >= proteinGoal).length,
+      atProteinGoal: goaled.length === 0 ? null : goaled.filter((x) => x.protein >= x.goal).length,
+      proteinScored: goaled.length,
       weighInVsTrend: hundredth(mean(gaps)),
     };
   });

@@ -1,4 +1,6 @@
 import type { Metadata } from 'next';
+import { Nav } from '../components/Nav';
+import Footer from '../components/Footer';
 import {
   buildPhases,
   buildWeeklyGoals,
@@ -23,9 +25,8 @@ export const metadata: Metadata = {
   // Unlinked from the site and kept out of the sitemap; this asks crawlers to
   // skip it too.
   robots: { index: false, follow: false },
-  // Without these the page inherits the site-wide card from layout.tsx, so
-  // sharing the link showed "VP, Risk & Compliance". noindex does not affect
-  // link unfurling — messaging apps read these tags regardless.
+  // Without these the page inherits the site-wide card from layout.tsx. noindex
+  // does not affect link unfurling — messaging apps read these tags regardless.
   openGraph: {
     title: TITLE,
     description: DESCRIPTION,
@@ -55,45 +56,46 @@ export const metadata: Metadata = {
   },
 };
 
+/** /health on the design system: the site's header and theme switch, then the tracker. */
 export default function HealthPage() {
   const data = getHealthData();
   const weeks = groupIntoWeeks(data.days);
   const summary = summarize(data.days, data.targets);
-  const weightSeries = buildWeightSeries(data.days);
-  const weeklyTrend = buildWeeklyTrend(data.days, data.calorieTargets);
   const phases = buildPhases(data.days, data.phases);
   const markers = [...(data.markers ?? [])].sort((a, b) => a.date.localeCompare(b.date));
-  const weeklyGoals = buildWeeklyGoals(data.days, data.targets);
-  const changeLog = buildChangeLog(data);
-  const stepStreaks = buildStepStreaks(data.days, data.targets);
 
   return (
-    <main className="health-main">
-      <header className="health-head">
-        <h1>Health</h1>
-        <p>
-          Daily tracker — weight, intake, steps and training. Updated weekly.
-        </p>
-      </header>
+    <>
+      <Nav theme />
+      <main className="wb wb-page">
+        <div className="h-wrap">
+          <header className="h-top">
+            <div className="eyebrow">Health · updated weekly</div>
+            <h1 className="h-title">Health</h1>
+            <p className="lede">Daily tracker — weight, intake, steps and training. Updated weekly.</p>
+          </header>
 
-      <HealthDashboard
-        days={data.days}
-        weeks={weeks}
-        summary={summary}
-        weightSeries={weightSeries}
-        weeklyTrend={weeklyTrend}
-        phases={phases}
-        activePhase={currentPhase(phases)}
-        markers={markers}
-        noteMarks={data.noteMarks ?? []}
-        calorieTargets={data.calorieTargets ?? []}
-        targets={data.targets ?? []}
-        weeklyGoals={weeklyGoals}
-        changeLog={changeLog}
-        stepStreaks={stepStreaks}
-        lastUpdated={data.lastUpdated}
-        weightUnit={data.units.weight}
-      />
-    </main>
+          <HealthDashboard
+            days={data.days}
+            weeks={weeks}
+            summary={summary}
+            weightSeries={buildWeightSeries(data.days)}
+            weeklyTrend={buildWeeklyTrend(data.days, data.calorieTargets)}
+            phases={phases}
+            activePhase={currentPhase(phases)}
+            markers={markers}
+            noteMarks={data.noteMarks ?? []}
+            calorieTargets={data.calorieTargets ?? []}
+            targets={data.targets ?? []}
+            weeklyGoals={buildWeeklyGoals(data.days, data.targets)}
+            changeLog={buildChangeLog(data)}
+            stepStreaks={buildStepStreaks(data.days, data.targets)}
+            lastUpdated={data.lastUpdated}
+            weightUnit={data.units.weight}
+          />
+        </div>
+      </main>
+      <Footer />
+    </>
   );
 }
