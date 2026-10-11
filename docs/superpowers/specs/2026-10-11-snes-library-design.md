@@ -20,7 +20,8 @@ Someone opens `/snes`, sees every US SNES game laid out month by month, and can 
   - The `/snes` page: hero, filter bar, year tabs, and five views (Timeline, Heatmap, Cover wall, Game shelf, Score scatter).
   - `/snes/[slug]` game pages.
   - `/snes/company/[slug]` company pages.
-  - Two dataset additions: manual links and 96 px thumbnails.
+  - Dataset additions: manual links and 96 px thumbnails.
+  - Gameplay clips with sound, logos and 3D boxes from Wes's media set (see that section).
   - New design-system tokens.
 - **Out (later pieces):**
   - Wes's played/rating/tier data (piece 3). The game page keeps a reserved slot for it.
@@ -185,6 +186,67 @@ lib/snes/
   - `fetch-boxart.mjs` also writes `public/snes/thumb/<slug>.jpg` at 96 px wide, quality 75, from the same source image.
   - `snes-data.test.ts` checks that every game with `boxArt` has a thumbnail.
 
+## Gameplay video, logos and 3D boxes (Wes's media)
+
+Wes supplied a scraped media set, now kept at **`/Users/wes/Vibecoding/snes-media/`**. It sits outside the repo and is never committed raw. It was first dropped in `out/snes/`, which every `npm run build` wipes, so it was moved.
+
+The set is named like the No-Intro box art, e.g. `7th Saga, The (USA)-video.mp4`:
+
+| File | What it is | Count |
+|---|---|---|
+| `images/<name>-marquee.png` | The title logo on a transparent background | 762 |
+| `images/<name>-image.png` | A 3D box render | 762 |
+| `images/<name>-thumb.png` | Flat front box (duplicates our covers, some in Japanese art) | 762, **not used** |
+| `videos/<name>-video.mp4` | 30 s of gameplay, 640×480, H.264 + MP3 audio, about 2 MB each | 762 |
+
+**Matching:** the same matcher as the box art (`parseLibretroName` plus `normalizeTitle`).
+- **707 of 717** games match automatically.
+- **8 more** match through a new `aliases.json` `media` key, which maps slug to file base name:
+  - DinoCity ↔ "Dino City", Super Ghouls 'n Ghosts ↔ "Super Ghouls'n Ghosts"
+  - Super Baseball 2020 ↔ "2020 Super Baseball"
+  - Michael Andretti's Indy Car Challenge ↔ "…IndyCar…"
+  - Doom Troopers ↔ "Doom Troopers - Mutant Chronicles"
+  - Uncharted Waters: New Horizons ↔ "New Horizons"
+  - Nobunaga's Ambition: Lord of Darkness ↔ "Lord of Darkness"
+  - Final Fantasy IV/VI ↔ "Final Fantasy II/III"
+- That gives **716 of 717** games with media. Soccer Kid has none.
+- Files tagged `(Japan, USA)` (Super Metroid, Mario Paint, X-Zone) show **Japanese box art**. Their 3D box is not used; their video and logo are.
+
+**Pipeline:** a new script, `scripts/snes/import-media.mjs`, run by hand (`npm run snes:media`), reads the media folder and writes:
+
+- `public/snes/video/<slug>.mp4`:
+  - one **12-second clip with sound** per game
+  - cut from `clipStart`, which defaults to 4 s and can be overridden per game in `overrides.json` to pick the best moment
+  - ffmpeg settings: 360 px wide, H.264 CRF 30 capped at 260 kbit/s, AAC 56 kbit/s mono, `+faststart`
+  - typical clip 350 KB, worst case about 510 KB (F-Zero, measured)
+- `public/snes/logo/<slug>.png`: the logo, resized to 480 px wide.
+- `public/snes/box3d/<slug>.png`: the 3D box, resized to 420 px tall. Skipped for Japan-tagged files.
+- `Game` gains `media: { video: boolean; logo: boolean; box3d: boolean }` and an optional `clipStart`.
+- `public/snes/SOURCES.md` credits the media set.
+- **Budget:** all video at most 350 MB, each clip at most 600 KB, and all of `public/snes` at most 600 MB. `snes-data.test.ts` enforces these, keeping the site well under GitHub Pages' 1 GB limit.
+- The raw folder's path comes from `SNES_MEDIA_DIR` in `.env.local`, defaulting to `../snes-media`.
+
+**Behaviour:**
+
+- **Tile hover:**
+  - After you hover for about 300 ms, the cover gives way to the game's clip, playing and looping inside the tile under the S3 CRT scanlines.
+  - Moving away stops it and goes back to the cover. Only one clip plays at a time.
+  - The clip downloads only on hover (`preload="none"`).
+  - Touch devices and `prefers-reduced-motion` get no hover playback.
+- **Sound:**
+  - Browsers block audio until the visitor has interacted with the page, so clips start **muted**.
+  - A 🔊 toggle in the filter bar turns sound on. That click is the permission, and from then on hover clips play with sound.
+  - The choice is remembered in `localStorage`. After a reload, sound resumes after the visitor's first click or keypress, and the toggle shows that it's waiting.
+- **Game page:**
+  - The booklet's left column shows the CRT cover with a ▶ button that plays the clip in place, with sound, plus pause and mute controls.
+  - A small switch, `Cover · 3D box · Gameplay`, flips between the three.
+  - The booklet's title shows the **logo** image. The text heading remains for screen readers and search engines.
+- **Not used:** in the cover wall, shelf or scatter (no video there).
+
+**Dataset fixes found through the media:**
+- *Final Fantasy IV* and *VI* shipped in the US as **Final Fantasy II** and **Final Fantasy III**. They take US titles and slugs through `overrides.json` and `aliases.json` `slugs`. The old slugs go in `retiredSlugs`, which is safe because nothing is deployed and no `wes.json` exists yet.
+- The media set contains US games our list may lack: *Chavez*, *Chavez II* and *The Adventures of Kid Kleets*. This is a research item, not part of this piece.
+
 ## Design-system tokens
 
 New tokens are added to `app/design-system.css`. Each one appears in both dark blocks and in `app/design/tokens.ts`, as `__tests__/design-system.test.ts` requires:
@@ -212,6 +274,7 @@ New tokens are added to `app/design-system.css`. Each one appears in both dark b
   - `scatterPoints` per score
   - `neighbours` at the first and last games
   - `parseQuery` / `toQuery` round-tripping, dropping invalid values
+- **`__tests__/snes-media.test.ts`** checks the media matcher (file name to kind and base name, region filter, aliases, Japan-tag detection) and the per-game `media` flags on fixtures. `snes-data.test.ts` adds the size budgets and checks that every `media` flag points at an existing file.
 - **`__tests__/snes-display.test.ts`** checks magazine names, score formatting and date labels ("April 18, 1994", "April 1994", "1994").
 - **`__tests__/snes-pages.test.tsx`** renders, from a small fixture:
   - the `/snes` Timeline
@@ -238,5 +301,7 @@ New tokens are added to `app/design-system.css`. Each one appears in both dark b
 
   Budget: `/snes` HTML at most 600 KB uncompressed. If it's over, the Timeline pre-renders only the first year and the client renders the rest.
 - **Build time.** About 1,000 static pages. Acceptable for Next; the deploy time is measured on the first push.
+- **Repository size.** About 300 MB of clips is committed once and lives in git history for good. The budgets cap growth. Re-encoding the clips later (to change `clipStart`, say) adds to the history, so clip changes should be batched rather than made one at a time.
+- **Media rights.** The gameplay clips, logos and box renders belong to the games' publishers. They're shown small, credited and non-commercially in a history of the console, the same footing as the box art.
 - **Missing data.** Genre, players, summary and aggregate are empty until IGDB lands. Scores and manuals are partial. Every component renders the absent state deliberately: hidden controls, "No summary yet", no empty chips.
 - **Hover-only details.** Every detail shown on hover (shelf tooltip, scatter labels) is also reachable by focus and on the game page.
