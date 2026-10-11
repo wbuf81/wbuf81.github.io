@@ -20,7 +20,7 @@ beforeEach(() => {
   reduced = false;
   localStorage.clear();
   jest.useFakeTimers();
-  window.matchMedia = ((q: string) => ({ matches: q.includes('hover') ? hover && !reduced : false, media: q, addEventListener() {}, removeEventListener() {} })) as never;
+  window.matchMedia = ((q: string) => ({ matches: q.includes('hover: hover') ? hover && !reduced : false, media: q, addEventListener() {}, removeEventListener() {} })) as never;
   window.HTMLMediaElement.prototype.play = jest.fn(() => Promise.resolve());
   window.HTMLMediaElement.prototype.pause = jest.fn();
 });

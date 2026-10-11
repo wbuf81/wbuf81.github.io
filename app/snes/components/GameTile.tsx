@@ -6,6 +6,7 @@ import type { IndexGame } from '@/lib/snes/library';
 import { gamePath } from '@/lib/snes/routes';
 import { formatRelease } from '@/lib/snes/display';
 import { useSound } from './sound';
+import { muteShared, playShared, stopShared, useCenterPlay } from './useCenterPlay';
 
 // One clip at a time across the whole page: starting a tile stops whichever tile was playing.
 let stopPlaying: (() => void) | null = null;
@@ -23,16 +24,21 @@ export function GameTile({ game, publisherName, genre }: { game: IndexGame; publ
   const [playing, setPlaying] = useState(false);
   const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const video = useRef<HTMLVideoElement>(null);
+  const link = useRef<HTMLAnchorElement>(null);
+  const art = useRef<HTMLSpanElement>(null);
   const sound = useSound();
 
+  const begin = () => {
+    stopPlaying?.();
+    stopPlaying = () => setPlaying(false);
+    setPlaying(true);
+  };
   const start = () => {
     if (!game.video || !canPreview()) return;
-    timer.current = setTimeout(() => {
-      stopPlaying?.();
-      stopPlaying = () => setPlaying(false);
-      setPlaying(true);
-    }, 300);
+    timer.current = setTimeout(begin, 300);
   };
+  // On phones the tile nearest the middle of the screen plays instead, in the page's one shared <video>.
+  const centred = useCenterPlay(link, !!game.video, (on) => (on ? begin() : setPlaying(false)));
   const stop = () => {
     clearTimeout(timer.current);
     setPlaying(false);
@@ -49,17 +55,25 @@ export function GameTile({ game, publisherName, genre }: { game: IndexGame; publ
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [playing]);
   useEffect(() => {
+    const host = art.current;
+    if (!playing || !centred || !host || !game.video) return;
+    playShared(host, game.video, sound.on);
+    return () => stopShared(host);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [playing, centred]);
+  useEffect(() => {
     if (video.current) video.current.muted = !sound.on;
+    if (art.current) muteShared(art.current, !sound.on);
   }, [sound.on]);
   useEffect(() => () => clearTimeout(timer.current), []);
 
   const when = formatRelease(game.releasedUS, game.datePrecision);
   const label = [game.title, when, game.egmAvg !== null ? `EGM ${game.egmAvg.toFixed(1)}` : ''].filter(Boolean).join(', ');
   return (
-    <Link href={gamePath(game.slug)} prefetch={false} className={`s-tile${playing ? ' is-playing' : ''}`} aria-label={label} onMouseEnter={start} onMouseLeave={stop}>
-      <span className="s-art">
+    <Link ref={link} href={gamePath(game.slug)} prefetch={false} className={`s-tile${playing ? ' is-playing' : ''}`} aria-label={label} onMouseEnter={start} onMouseLeave={stop}>
+      <span className="s-art" ref={art}>
         {game.boxArt ? <img src={game.boxArt} alt="" width={300} height={209} loading="lazy" decoding="async" /> : <span className="s-noart">{game.title}</span>}
-        {playing && game.video ? <video ref={video} src={game.video} loop playsInline autoPlay muted={!sound.on} /> : null}
+        {playing && game.video && !centred ? <video ref={video} src={game.video} loop playsInline autoPlay muted={!sound.on} /> : null}
       </span>
       <span className="s-tb">
         <span className="s-tt">{game.title}</span>
