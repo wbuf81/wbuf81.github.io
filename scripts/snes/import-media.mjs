@@ -2,8 +2,8 @@
 /**
  * Turns Wes's scraped media set into what the site serves:
  *   public/snes/video/<slug>.mp4   12s clip with sound (360px, H.264 CRF30 ≤260k, AAC 56k mono, faststart)
- *   public/snes/logo/<slug>.png    title logo, 480px wide
- *   public/snes/box3d/<slug>.png   3D box render, 420px tall (skipped for "(Japan" files: Japanese art)
+ *   public/snes/logo/<slug>.webp   title logo, native size
+ *   public/snes/box3d/<slug>.webp  3D box render, native size (skipped for "(Japan" files: Japanese art)
  * The raw set lives outside the repo at SNES_MEDIA_DIR (.env.local), default ../snes-media. Never in out/:
  * every build wipes out/. Re-runs only redo what changed (a new clipStart, a new alias). Then run snes:build.
  *
@@ -35,6 +35,7 @@ const run = (cmd, args) => {
   const r = spawnSync(cmd, args, { encoding: 'utf8' });
   if (r.status !== 0) throw new Error(`${cmd} failed: ${r.stderr.trim().split('\n').pop()}`);
 };
+const WEBP = path.join(repoRoot, 'scripts/snes/webp.py');
 const missing = [];
 let clips = 0;
 
@@ -54,13 +55,13 @@ for (const game of games) {
       '-pix_fmt', 'yuv420p', '-movflags', '+faststart', '-c:a', 'aac', '-b:a', '56k', '-ac', '1', video]);
     clips++;
   }
-  const logo = path.join(DIRS.logo, `${game.slug}.png`);
+  const logo = path.join(DIRS.logo, `${game.slug}.webp`);
   if (entry.kinds.includes('marquee') && (changed || !fs.existsSync(logo))) {
-    run('sips', ['--resampleWidth', '480', path.join(MEDIA, 'images', `${entry.base}-marquee.png`), '--out', logo]);
+    run('python3', [WEBP, path.join(MEDIA, 'images', `${entry.base}-marquee.png`), logo, '82']);
   }
-  const box3d = path.join(DIRS.box3d, `${game.slug}.png`);
+  const box3d = path.join(DIRS.box3d, `${game.slug}.webp`);
   if (entry.kinds.includes('image') && !entry.japan && (changed || !fs.existsSync(box3d))) {
-    run('sips', ['--resampleHeight', '420', path.join(MEDIA, 'images', `${entry.base}-image.png`), '--out', box3d]);
+    run('python3', [WEBP, path.join(MEDIA, 'images', `${entry.base}-image.png`), box3d, '82']);
   }
   sources[game.slug] = { base: entry.base, clipStart };
   if (clips && clips % 50 === 0) {
@@ -73,7 +74,8 @@ for (const game of games) {
 const slugs = new Set(games.map((g) => g.slug));
 for (const slug of Object.keys(sources)) if (!slugs.has(slug)) delete sources[slug];
 for (const [kind, dir] of Object.entries(DIRS)) {
-  for (const f of fs.readdirSync(dir)) if (!slugs.has(f.replace(/\.(mp4|png)$/, ''))) fs.rmSync(path.join(dir, f));
+  const ext = kind === 'video' ? 'mp4' : 'webp';
+  for (const f of fs.readdirSync(dir)) if (!f.endsWith(`.${ext}`) || !slugs.has(f.slice(0, -ext.length - 1))) fs.rmSync(path.join(dir, f));
 }
 writeJson(sourcesFile, sources);
 fs.writeFileSync(path.join(PUB, 'SOURCES.md'),

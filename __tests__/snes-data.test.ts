@@ -97,7 +97,7 @@ describe('media', () => {
   const size = (dir: string) => fs.readdirSync(pub(dir)).reduce((n, f) => n + fs.statSync(pub(`${dir}/${f}`)).size, 0);
 
   test('every media flag points at a real file, and every file belongs to a flagged game', () => {
-    for (const [kind, ext] of [['video', 'mp4'], ['logo', 'png'], ['box3d', 'png']] as const) {
+    for (const [kind, ext] of [['video', 'mp4'], ['logo', 'webp'], ['box3d', 'webp']] as const) {
       const files = fs.readdirSync(pub(kind)).sort();
       expect(files).toEqual(games.filter((g) => g.media[kind]).map((g) => `${g.slug}.${ext}`).sort());
     }

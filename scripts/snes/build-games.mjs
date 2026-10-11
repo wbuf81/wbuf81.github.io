@@ -32,7 +32,7 @@ const { games, companies, report, errors } = buildDataset({
   previous: readJson(path.join(DATA_DIR, 'games.json'), []),
   hasBoxArt: (slug) => fs.existsSync(path.join(BOX_DIR, `${slug}.jpg`)),
   hasMedia: (slug, kind) =>
-    fs.existsSync(path.join(BOX_DIR, '..', kind, `${slug}.${kind === 'video' ? 'mp4' : 'png'}`)),
+    fs.existsSync(path.join(BOX_DIR, '..', kind, `${slug}.${kind === 'video' ? 'mp4' : 'webp'}`)),
 });
 
 if (errors.length) {
