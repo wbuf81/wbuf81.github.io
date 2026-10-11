@@ -1,16 +1,27 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type MouseEvent } from 'react';
+import { flushSync } from 'react-dom';
 import type { IndexGame } from '@/lib/snes/library';
 import { gamePath } from '@/lib/snes/routes';
 import { formatRelease } from '@/lib/snes/display';
 import { useSound } from './sound';
-import { muteShared, playShared, stopShared, useCenterPlay } from './useCenterPlay';
 
 // One clip at a time across the whole page: starting a tile stops whichever tile was playing.
 let stopPlaying: (() => void) | null = null;
 const canPreview = () => typeof window !== 'undefined' && window.matchMedia('(hover: hover) and (prefers-reduced-motion: no-preference)').matches;
+// Phones have no hover: there the first tap on a tile plays its clip and a second tap opens the game.
+const isTouch = () => typeof window !== 'undefined' && window.matchMedia('(hover: none)').matches;
+
+// Plays with sound if allowed; a browser that refuses unmuted playback gets the clip muted instead.
+const playClip = (v: HTMLVideoElement, sound: boolean) => {
+  v.muted = !sound;
+  v.play().catch(() => {
+    v.muted = true;
+    v.play().catch(() => {});
+  });
+};
 
 // A clip must not keep playing behind another tab or window: stop it when the page is hidden or loses focus.
 if (typeof window !== 'undefined') {
@@ -22,23 +33,30 @@ if (typeof window !== 'undefined') {
 
 export function GameTile({ game, publisherName, genre }: { game: IndexGame; publisherName: string; genre?: string }) {
   const [playing, setPlaying] = useState(false);
+  const [tapped, setTapped] = useState(false);
   const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const video = useRef<HTMLVideoElement>(null);
-  const link = useRef<HTMLAnchorElement>(null);
-  const art = useRef<HTMLSpanElement>(null);
   const sound = useSound();
 
-  const begin = () => {
+  const begin = (byTap: boolean) => {
     stopPlaying?.();
     stopPlaying = () => setPlaying(false);
+    setTapped(byTap);
     setPlaying(true);
   };
   const start = () => {
     if (!game.video || !canPreview()) return;
-    timer.current = setTimeout(begin, 300);
+    timer.current = setTimeout(() => begin(false), 300);
   };
-  // On phones the tile nearest the middle of the screen plays instead, in the page's one shared <video>.
-  const centred = useCenterPlay(link, !!game.video, (on) => (on ? begin() : setPlaying(false)));
+  // iOS plays with sound only when play() runs inside the tap itself, so render the <video> synchronously and start it
+  // here. Keyboard activation (detail 0) and a tap on the tile already playing navigate as usual.
+  const tap = (e: MouseEvent) => {
+    if (e.detail === 0 || playing || !game.video || !isTouch()) return;
+    e.preventDefault();
+    flushSync(() => begin(true));
+    // The tap's own pointerdown unlocks sound, which may not have re-rendered yet: "waiting" counts as on.
+    if (video.current) playClip(video.current, sound.on || sound.waiting);
+  };
   const stop = () => {
     clearTimeout(timer.current);
     setPlaying(false);
@@ -46,34 +64,23 @@ export function GameTile({ game, publisherName, genre }: { game: IndexGame; publ
 
   useEffect(() => {
     const v = video.current;
-    if (!playing || !v) return;
-    v.muted = !sound.on;
-    v.play().catch(() => {
-      v.muted = true;
-      v.play().catch(() => {});
-    });
+    if (!playing || !v || tapped) return; // a tapped clip was already started inside the tap
+    playClip(v, sound.on);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [playing]);
   useEffect(() => {
-    const host = art.current;
-    if (!playing || !centred || !host || !game.video) return;
-    playShared(host, game.video, sound.on);
-    return () => stopShared(host);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [playing, centred]);
-  useEffect(() => {
     if (video.current) video.current.muted = !sound.on;
-    if (art.current) muteShared(art.current, !sound.on);
   }, [sound.on]);
   useEffect(() => () => clearTimeout(timer.current), []);
 
   const when = formatRelease(game.releasedUS, game.datePrecision);
   const label = [game.title, when, game.egmAvg !== null ? `EGM ${game.egmAvg.toFixed(1)}` : ''].filter(Boolean).join(', ');
   return (
-    <Link ref={link} href={gamePath(game.slug)} prefetch={false} className={`s-tile${playing ? ' is-playing' : ''}`} aria-label={label} onMouseEnter={start} onMouseLeave={stop}>
-      <span className="s-art" ref={art}>
+    <Link href={gamePath(game.slug)} prefetch={false} className={`s-tile${playing ? ' is-playing' : ''}`} aria-label={label} onMouseEnter={start} onMouseLeave={stop} onClick={tap}>
+      <span className="s-art">
         {game.boxArt ? <img src={game.boxArt} alt="" width={300} height={209} loading="lazy" decoding="async" /> : <span className="s-noart">{game.title}</span>}
-        {playing && game.video && !centred ? <video ref={video} src={game.video} loop playsInline autoPlay muted={!sound.on} /> : null}
+        {playing && game.video ? <video ref={video} src={game.video} loop playsInline autoPlay muted={!sound.on} /> : null}
+        {playing && tapped ? <span className="s-tap">Tap again to open</span> : null}
       </span>
       <span className="s-tb">
         <span className="s-tt">{game.title}</span>

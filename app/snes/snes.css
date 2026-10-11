@@ -50,6 +50,7 @@
   background: repeating-linear-gradient(0deg, rgba(0, 0, 0, .28) 0 1px, transparent 1px 3px), radial-gradient(ellipse at center, transparent 60%, rgba(0, 0, 0, .28)); }
 .wb .s-tile:hover .s-art::after, .wb .s-tile:focus-visible .s-art::after, .wb .s-art.is-on::after { opacity: 1; }
 .wb .s-tile:hover .s-art img, .wb .s-tile:hover .s-art video, .wb .s-tile:focus-visible .s-art img { filter: saturate(1.12) contrast(1.05); }
+.wb .s-tap { position: absolute; left: 6px; bottom: 6px; z-index: 3; padding: 2px 6px; border-radius: 3px; background: color-mix(in srgb, var(--screen) 78%, transparent); color: var(--screen-ink); font: 500 9.5px var(--mono); pointer-events: none; }
 .wb .s-noart { position: absolute; inset: 0; display: grid; place-items: center; padding: 8px; text-align: center; font: 600 13px/1.2 var(--serif); color: var(--screen-ink-2); }
 .wb .s-tb { display: block; padding: 7px 8px 9px; }
 .wb .s-tt { display: block; font: 600 13px/1.2 var(--serif); color: var(--screen-ink); }
