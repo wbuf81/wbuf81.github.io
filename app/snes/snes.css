@@ -7,8 +7,13 @@
 .wb .s-hero h1 { font: 600 clamp(32px, 4.4vw, 52px)/1.05 var(--serif); letter-spacing: -.01em; margin: 6px 0 8px; color: var(--ink); }
 .wb .s-hero p { margin: 0; max-width: 62ch; font-size: 16px; color: var(--ink-2); }
 
-/* filter bar */
-.wb .s-bar { position: sticky; top: 0; z-index: 15; display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 20px 0 10px; padding: 8px; background: var(--paper); border: 1px solid var(--rule); border-radius: 6px; }
+/* filter bar: one compact row, the rest in a panel; sticky on desktop only */
+.wb .s-bar { margin: 20px 0 10px; padding: 8px; background: var(--paper); border: 1px solid var(--rule); border-radius: 6px; }
+.wb .s-bar-row { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.wb .s-panel { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--rule-soft); }
+.wb .s-panel .s-select { max-width: 100%; min-width: 0; }
+.wb .s-panel .s-dd { max-width: 100%; }
+.wb .s-panel .s-pop { position: static; margin-top: 6px; box-shadow: none; }
 .wb .s-search { flex: 1 1 200px; min-width: 0; height: 32px; padding: 0 10px; border: 1px solid var(--rule); border-radius: 4px; background: var(--paper); color: var(--ink); font: 14px var(--sans); }
 .wb .s-dd { position: relative; }
 .wb .s-dd > summary, .wb .s-select, .wb .s-toggle, .wb .s-sound { display: inline-flex; align-items: center; gap: 6px; height: 32px; padding: 0 10px; border: 1px solid var(--rule); border-radius: 4px; background: var(--paper); color: var(--ink-2); font: 500 11.5px var(--mono); white-space: nowrap; cursor: pointer; list-style: none; }
@@ -34,7 +39,7 @@
 .wb .s-n { margin-top: 6px; font: 500 10.5px var(--mono); color: var(--ink-2); }
 .wb .s-lbl { margin: 0 0 12px; font: 500 10.5px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); }
 .wb .s-row { display: flex; flex-wrap: wrap; gap: 16px; }
-.wb .s-anchor { display: block; scroll-margin-top: 70px; }
+.wb .s-anchor { display: block; grid-column: 1 / -1; height: 0; scroll-margin-top: 70px; }
 
 /* game tile: a card in the screen colour; hover glows and eases the TV scanlines in */
 .wb .s-tile { position: relative; display: block; width: 136px; overflow: hidden; background: var(--screen-2); border: 1px solid var(--screen-rule); border-radius: 5px; color: var(--screen-ink); text-decoration: none; transition: box-shadow .25s; }
@@ -153,6 +158,11 @@
 .wb .s-company h1 { margin: 6px 0 6px; font: 600 clamp(30px, 3.6vw, 44px)/1.05 var(--serif); color: var(--ink); }
 .wb .s-company p { margin: 0; color: var(--ink-2); }
 
+@media (min-width: 761px) {
+  .wb .s-bar { position: sticky; top: 0; z-index: 15; }
+  .wb .s-panel { max-height: calc(100vh - 110px); overflow-y: auto; }
+  .wb .s-anchor, .wb .s-month, .wb .s-wall-year, .wb .s-shelf-year { scroll-margin-top: 80px; }
+}
 @media (max-width: 760px) {
   .wb .s-game { grid-template-columns: 1fr; }
   .wb .s-month { grid-template-columns: 58px 1fr; gap: 0 10px; }

@@ -3,6 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import '@testing-library/jest-dom';
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { renderToStaticMarkup } from 'react-dom/server';
 import Library from '@/app/snes/components/Library';
 import { buildIndex, facets } from '@/lib/snes/library';
 import type { Game } from '@/lib/snes/types';
@@ -27,6 +28,8 @@ const setup = (search = '') => {
   window.history.replaceState(null, '', `/videogames/snes-history${search}`);
   return render(<Library games={INDEX} names={NAMES} facets={facets(INDEX, NAMES)} />);
 };
+
+const openFilters = () => fireEvent.click(screen.getByRole('button', { name: /^Filters/ }));
 
 beforeEach(() => {
   window.matchMedia = (() => ({ matches: false, addEventListener() {}, removeEventListener() {} })) as never;
@@ -77,6 +80,62 @@ test('switching views updates the URL and the tab', async () => {
   await act(async () => {});
 });
 
+test('the Cover Wall with no matches shows the empty message above the dimmed wall', async () => {
+  setup('?q=zzzz&view=wall');
+  expect(await screen.findByText('No carts match those filters')).toBeInTheDocument();
+  expect(screen.getAllByRole('link')).toHaveLength(3);
+  fireEvent.click(screen.getAllByRole('button', { name: 'Clear filters' })[0]);
+  expect(screen.queryByText('No carts match those filters')).toBeNull();
+  expect(window.location.search).toBe('?view=wall');
+});
+
+test('the filter bar is in the server HTML, before any effect runs', () => {
+  const html = renderToStaticMarkup(<Library games={INDEX} names={NAMES} facets={facets(INDEX, NAMES)} />);
+  expect(html).toContain('aria-label="Search games"');
+  expect(html).toContain('>Filters<');
+  expect(html).not.toContain('aria-label="Publisher"');
+});
+
+test('one row: search, Filters button, sound and views; everything else waits in the panel', () => {
+  setup();
+  const button = screen.getByRole('button', { name: 'Filters' });
+  expect(button).toHaveAttribute('aria-expanded', 'false');
+  expect(screen.queryByRole('combobox', { name: 'Publisher' })).toBeNull();
+  fireEvent.click(button);
+  expect(button).toHaveAttribute('aria-expanded', 'true');
+  expect(document.getElementById(button.getAttribute('aria-controls')!)).toContainElement(screen.getByRole('combobox', { name: 'Publisher' }));
+  for (const name of ['Publisher', 'Developer', 'Chip']) expect(screen.getByRole('combobox', { name })).toBeInTheDocument();
+  expect(screen.getByRole('button', { name: 'Launch day' })).toBeInTheDocument();
+  expect(screen.getByText(/^Year/)).toBeInTheDocument();
+  expect(screen.getByText(/^Scores/)).toBeInTheDocument();
+  expect(screen.getByRole('button', { name: 'Clear filters' })).toBeInTheDocument();
+});
+
+test('the Filters button counts the active filters, not search, view or sort', () => {
+  setup('?publisher=konami&launch=1&q=g&view=wall&sort=title');
+  expect(screen.getByRole('button', { name: 'Filters (2)' })).toBeInTheDocument();
+  openFilters();
+  fireEvent.click(screen.getAllByRole('button', { name: 'Clear filters' })[0]);
+  expect(screen.getByRole('button', { name: 'Filters' })).toBeInTheDocument();
+});
+
+test('the panel stays open while choosing, and closes on Escape or a click outside the bar', () => {
+  setup();
+  openFilters();
+  fireEvent.change(screen.getByRole('combobox', { name: 'Publisher' }), { target: { value: 'konami' } });
+  const button = screen.getByRole('button', { name: 'Filters (1)' });
+  expect(button).toHaveAttribute('aria-expanded', 'true');
+  fireEvent.pointerDown(screen.getByRole('combobox', { name: 'Publisher' }));
+  expect(button).toHaveAttribute('aria-expanded', 'true');
+  fireEvent.keyDown(document, { key: 'Escape' });
+  expect(button).toHaveAttribute('aria-expanded', 'false');
+  expect(screen.queryByRole('combobox', { name: 'Publisher' })).toBeNull();
+  fireEvent.click(button);
+  expect(button).toHaveAttribute('aria-expanded', 'true');
+  fireEvent.pointerDown(document.body);
+  expect(button).toHaveAttribute('aria-expanded', 'false');
+});
+
 test('the sort control appears only on the wall and shelf', async () => {
   setup();
   expect(screen.queryByRole('combobox', { name: 'Sort' })).toBeNull();
@@ -100,6 +159,7 @@ test('a year tab clicked before the lazy view loads still scrolls once it mounts
 
 test('genre, players and the IGDB-backed controls stay hidden until the data has them', () => {
   setup();
+  openFilters();
   for (const name of ['Genre', 'Players', 'Series', 'Theme', 'Camera', 'Multiplayer']) {
     expect(screen.queryByRole('combobox', { name })).toBeNull();
   }
@@ -112,12 +172,15 @@ test('series, theme, camera and multiplayer controls appear when the data has th
   ]);
   window.history.replaceState(null, '', '/videogames/snes-history');
   render(<Library games={rich} names={NAMES} facets={facets(rich, NAMES)} />);
+  openFilters();
   for (const name of ['Series', 'Theme', 'Camera', 'Multiplayer']) {
     expect(screen.getByRole('combobox', { name })).toBeInTheDocument();
   }
   fireEvent.change(screen.getByRole('combobox', { name: 'Multiplayer' }), { target: { value: 'versus' } });
   expect(screen.getAllByRole('link').map((a) => a.getAttribute('href'))).toEqual(['/videogames/snes-history/b']);
   expect(window.location.search).toBe('?mp=versus');
+  expect(screen.getByRole('option', { name: '2+ players' })).toHaveValue('versus');
+  expect(screen.queryByRole('option', { name: 'Versus' })).toBeNull();
   fireEvent.click(screen.getByRole('tab', { name: 'Wall' }));
   expect(screen.getByRole('option', { name: 'Player score' })).toBeInTheDocument();
   await act(async () => {});

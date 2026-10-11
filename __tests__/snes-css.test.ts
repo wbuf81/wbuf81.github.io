@@ -21,3 +21,14 @@ test('the hover scanlines are the light ones Wes chose, easing in', () => {
   expect(css).toContain('repeating-linear-gradient(0deg, rgba(0, 0, 0, .28) 0 1px, transparent 1px 3px)');
   expect(css).toMatch(/\.s-art::after[^}]*transition: opacity \.4s/);
 });
+
+test('the year-jump anchor spans the month grid instead of taking the rail column', () => {
+  expect(css).toMatch(/\.wb \.s-anchor\s*\{[^}]*grid-column: 1 \/ -1/);
+});
+
+test('the filter bar is sticky on desktop only, and panel selects never overflow', () => {
+  const outsideMedia = css.replace(/@media[^{]*\{[\s\S]*?\n\}/g, '');
+  expect(outsideMedia).not.toMatch(/\.wb \.s-bar\s*\{[^}]*sticky/);
+  expect(css).toMatch(/@media \(min-width: 761px\)\s*\{[^}]*\.wb \.s-bar\s*\{[^}]*position: sticky/);
+  expect(css).toMatch(/\.wb \.s-select\s*\{[^}]*max-width: 100%|\.wb \.s-panel \.s-select[^{]*\{[^}]*max-width: 100%/);
+});

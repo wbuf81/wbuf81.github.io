@@ -73,7 +73,7 @@ export default function Library({ games, names, facets }: { games: IndexGame[]; 
 
   return (
     <SoundProvider>
-      {ready ? <FilterBar filters={filters} facets={facets} onChange={update} hasMultiplayer={hasMultiplayer} /> : null}
+      <FilterBar filters={filters} facets={facets} onChange={update} onClear={clear} hasMultiplayer={hasMultiplayer} />
       {ready && isFiltered(filters) ? (
         <p className="s-count">
           Showing {matched.length} of {games.length}
@@ -93,7 +93,12 @@ export default function Library({ games, names, facets }: { games: IndexGame[]; 
           {view === 'heatmap' ? (
             <Heatmap games={matched} onPick={(key) => { update({ view: 'timeline' }); setScrollTo(`m-${key}`); }} />
           ) : null}
-          {view === 'wall' ? <CoverWall games={sortGames(games, filters.sort)} matched={matchedSet} /> : null}
+          {view === 'wall' ? (
+            <>
+              {matched.length ? null : <Empty onClear={clear} />}
+              <CoverWall games={sortGames(games, filters.sort)} matched={matchedSet} />
+            </>
+          ) : null}
           {view === 'shelf' ? (matched.length ? <Shelf games={sortGames(matched, filters.sort)} byYear={filters.sort === 'date'} /> : <Empty onClear={clear} />) : null}
           {view === 'scatter' ? <Scatter games={matched} axis={filters.y} onAxis={(y) => update({ y })} /> : null}
         </Suspense>
