@@ -56,6 +56,26 @@ test('scores stay inside their scales', () => {
   }
 });
 
+test('critic and player scores stay inside 0–100 or are null', () => {
+  for (const { scores } of games) {
+    for (const v of [scores.critic, scores.users]) if (v !== null) expect(v >= 0 && v <= 100).toBe(true);
+  }
+});
+
+test('similar games are real slugs and never the game itself', () => {
+  for (const g of games) {
+    expect(g.similar.length).toBeLessThanOrEqual(6);
+    for (const s of g.similar) {
+      expect(slugs.has(s)).toBe(true);
+      expect(s).not.toBe(g.slug);
+    }
+  }
+});
+
+test('IGDB filled in genres for at least 650 games', () => {
+  expect(games.filter((g) => g.genres.length > 0).length).toBeGreaterThanOrEqual(650);
+});
+
 test('no ESRB rating before the ESRB existed', () => {
   for (const g of games.filter((x) => x.releasedUS < ESRB_START)) expect(g.esrb).toBeNull();
 });

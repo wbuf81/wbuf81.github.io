@@ -1,6 +1,7 @@
 /*
  * Maps an IGDB game record to the facts games.json takes from IGDB: genres, max players on the SNES,
- * ESRB rating, a trimmed summary and the aggregate (total_rating: critics and users, 0–100).
+ * ESRB rating, a trimmed summary, the aggregate (total_rating: critics and users, 0–100), the separate critic
+ * and player scores, series, similar games, themes, perspectives and co-op/versus flags.
  */
 import type { Esrb, IgdbFacts, IgdbRaw } from './types.ts';
 
@@ -30,14 +31,25 @@ function esrbOf(raw: IgdbRaw): Esrb | null {
 }
 
 function playersOf(raw: IgdbRaw): number | null {
-  const modes = (raw.multiplayer_modes ?? []).filter((m) => m.platform === undefined || m.platform === SNES_PLATFORM_ID);
+  const modes = snesModes(raw);
   const max = Math.max(0, ...modes.map((m) => Math.max(m.offlinemax ?? 0, m.offlinecoopmax ?? 0)));
   if (max >= 2) return max;
   return (raw.game_modes ?? []).some((g) => /single/i.test(g.name)) ? 1 : null;
 }
 
+function snesModes(raw: IgdbRaw) {
+  return (raw.multiplayer_modes ?? []).filter((m) => m.platform === undefined || m.platform === SNES_PLATFORM_ID);
+}
+
+function score(value: number | undefined, count: number): number | null {
+  return count >= MIN_RATINGS && value !== undefined ? Math.round(value) : null;
+}
+
 export function mapIgdbGame(raw: IgdbRaw): IgdbFacts {
   const count = raw.total_rating_count ?? 0;
+  const criticCount = raw.aggregated_rating_count ?? 0;
+  const userCount = raw.rating_count ?? 0;
+  const modes = snesModes(raw);
   return {
     id: raw.id,
     genres: (raw.genres ?? []).map((g) => g.name),
@@ -46,5 +58,15 @@ export function mapIgdbGame(raw: IgdbRaw): IgdbFacts {
     summary: raw.summary ? trimSummary(raw.summary) : null,
     aggregate: count >= MIN_RATINGS && raw.total_rating !== undefined ? Math.round(raw.total_rating) : null,
     aggregateCount: count,
+    series: raw.franchises?.[0]?.name ?? raw.collections?.[0]?.name ?? null,
+    similarIds: raw.similar_games ?? [],
+    themes: (raw.themes ?? []).map((t) => t.name),
+    perspectives: (raw.player_perspectives ?? []).map((t) => t.name),
+    coop: modes.some((m) => m.offlinecoop === true || (m.offlinecoopmax ?? 0) >= 2),
+    versus: modes.some((m) => (m.offlinemax ?? 0) >= 2),
+    critic: score(raw.aggregated_rating, criticCount),
+    criticCount,
+    userScore: score(raw.rating, userCount),
+    userCount,
   };
 }

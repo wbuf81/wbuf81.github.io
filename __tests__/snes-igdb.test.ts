@@ -37,3 +37,31 @@ test('trimSummary cuts at a sentence boundary under the limit', () => {
   expect(trimSummary('Short.', 400)).toBe('Short.');
   expect(trimSummary('x'.repeat(50) + ' ' + 'y'.repeat(80), 100)).toBe('x'.repeat(50) + '…');
 });
+
+test('series is the first franchise, else the first collection, else null', () => {
+  expect(mapIgdbGame({ ...base, franchises: [{ name: 'Metroid' }], collections: [{ name: 'Metroid series' }] }).series).toBe('Metroid');
+  expect(mapIgdbGame({ ...base, collections: [{ name: 'Metroid series' }, { name: 'Other' }] }).series).toBe('Metroid series');
+  expect(mapIgdbGame(base).series).toBeNull();
+});
+
+test('similar ids, themes and perspectives are plain lists', () => {
+  const f = mapIgdbGame({ ...base, similar_games: [5, 9], themes: [{ name: 'Sci-fi' }], player_perspectives: [{ name: 'Side view' }] });
+  expect(f).toMatchObject({ similarIds: [5, 9], themes: ['Sci-fi'], perspectives: ['Side view'] });
+  expect(mapIgdbGame(base)).toMatchObject({ similarIds: [], themes: [], perspectives: [] });
+});
+
+test('coop and versus come from SNES-or-unspecified multiplayer modes only', () => {
+  expect(mapIgdbGame({ ...base, multiplayer_modes: [{ platform: 19, offlinecoop: true }] })).toMatchObject({ coop: true, versus: false });
+  expect(mapIgdbGame({ ...base, multiplayer_modes: [{ offlinecoopmax: 2 }] })).toMatchObject({ coop: true, versus: false });
+  expect(mapIgdbGame({ ...base, multiplayer_modes: [{ platform: 19, offlinemax: 2 }] })).toMatchObject({ coop: false, versus: true });
+  expect(mapIgdbGame({ ...base, multiplayer_modes: [{ platform: 6, offlinecoop: true, offlinemax: 4 }] })).toMatchObject({ coop: false, versus: false });
+  expect(mapIgdbGame(base)).toMatchObject({ coop: false, versus: false });
+});
+
+test('critic and user scores round and follow the 3-rating floor', () => {
+  expect(mapIgdbGame({ ...base, aggregated_rating: 88.5, aggregated_rating_count: 7, rating: 91.2, rating_count: 120 }))
+    .toMatchObject({ critic: 89, criticCount: 7, userScore: 91, userCount: 120 });
+  expect(mapIgdbGame({ ...base, aggregated_rating: 88, aggregated_rating_count: 2, rating: 90, rating_count: 1 }))
+    .toMatchObject({ critic: null, criticCount: 2, userScore: null, userCount: 1 });
+  expect(mapIgdbGame(base)).toMatchObject({ critic: null, criticCount: 0, userScore: null, userCount: 0 });
+});

@@ -7,18 +7,19 @@ import type { Game } from '@/lib/snes/types';
 const game = (slug: string, over: Partial<Game> = {}): Game => ({
   slug, title: slug, releasedUS: '1994-04', datePrecision: 'month', developers: ['nintendo-ead'], publisher: 'nintendo',
   genres: [], players: null, chip: null, launchTitle: false, esrb: null, summary: null,
-  scores: { aggregate: null, aggregateCount: 0, egm: null, nintendoPower: null, other: {} },
+  series: null, similar: [], themes: [], perspectives: [], multiplayer: { coop: false, versus: false },
+  scores: { aggregate: null, aggregateCount: 0, critic: null, criticCount: 0, users: null, usersCount: 0, egm: null, nintendoPower: null, other: {} },
   boxArt: `/snes/box/${slug}.jpg`, media: { video: false, logo: false, box3d: false },
   sources: { wikipedia: null, igdb: null }, ...over,
 });
 
 const GAMES: Game[] = [
-  game('super-metroid', { title: 'Super Metroid', releasedUS: '1994-04-18', datePrecision: 'day', scores: { aggregate: 95, aggregateCount: 40, egm: [9, 9, 9, 9], nintendoPower: null, other: {} }, media: { video: true, logo: true, box3d: true } }),
+  game('super-metroid', { title: 'Super Metroid', releasedUS: '1994-04-18', datePrecision: 'day', scores: { aggregate: 95, aggregateCount: 40, critic: null, criticCount: 0, users: null, usersCount: 0, egm: [9, 9, 9, 9], nintendoPower: null, other: {} }, media: { video: true, logo: true, box3d: true } }),
   game('f-zero', { title: 'F-Zero', releasedUS: '1991-08-23', datePrecision: 'day', launchTitle: true }),
-  game('pilotwings', { title: 'Pilotwings', releasedUS: '1991-08-23', datePrecision: 'day', launchTitle: true, chip: 'DSP-1', scores: { aggregate: null, aggregateCount: 0, egm: [7.75], nintendoPower: { score: 3.8, scale: 5 }, other: {} } }),
+  game('pilotwings', { title: 'Pilotwings', releasedUS: '1991-08-23', datePrecision: 'day', launchTitle: true, chip: 'DSP-1', scores: { aggregate: null, aggregateCount: 0, critic: null, criticCount: 0, users: null, usersCount: 0, egm: [7.75], nintendoPower: { score: 3.8, scale: 5 }, other: {} } }),
   game('pokemon-ish', { title: 'Pokémon Puzzle', releasedUS: '1994-04', publisher: 'konami', developers: ['konami'], genres: ['Puzzle'], players: 2 }),
   game('mystery', { title: 'Mystery Year', releasedUS: '1994', datePrecision: 'year', boxArt: null }),
-  game('dkc', { title: 'Donkey Kong Country', releasedUS: '1994-11-21', datePrecision: 'day', developers: ['rare'], scores: { aggregate: null, aggregateCount: 0, egm: [10, 9, 9, 9], nintendoPower: null, other: {} } }),
+  game('dkc', { title: 'Donkey Kong Country', releasedUS: '1994-11-21', datePrecision: 'day', developers: ['rare'], scores: { aggregate: null, aggregateCount: 0, critic: null, criticCount: 0, users: null, usersCount: 0, egm: [10, 9, 9, 9], nintendoPower: null, other: {} } }),
 ];
 const INDEX = buildIndex(GAMES);
 const NAMES = { nintendo: 'Nintendo', konami: 'Konami', 'nintendo-ead': 'Nintendo EAD', rare: 'Rare' };

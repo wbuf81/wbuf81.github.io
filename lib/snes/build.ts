@@ -33,9 +33,9 @@ export interface BuildInputs {
 
 const OVERRIDE_FIELDS = new Set([
   'title', 'releasedUS', 'datePrecision', 'developers', 'publisher', 'genres', 'players', 'chip', 'launchTitle',
-  'esrb', 'summary', 'boxArt', 'scores', 'note', 'clipStart',
+  'esrb', 'summary', 'boxArt', 'scores', 'note', 'clipStart', 'series', 'themes', 'perspectives', 'multiplayer',
 ]);
-const SCORE_FIELDS = new Set(['aggregate', 'aggregateCount', 'egm', 'nintendoPower', 'other']);
+const SCORE_FIELDS = new Set(['aggregate', 'aggregateCount', 'critic', 'criticCount', 'users', 'usersCount', 'egm', 'nintendoPower', 'other']);
 
 const SUFFIX = /\b(inc|corp|corporation|co|ltd|limited|company|software|entertainment|games|interactive|of america|usa)\b/g;
 
@@ -87,6 +87,7 @@ export function buildDataset(input: BuildInputs) {
   const titleOf = new Map<string, string>();
   const unmatchedIgdb: string[] = [];
   const noArticle: string[] = [];
+  const similarIdsOf = new Map<string, number[]>();
 
   for (const row of input.list) {
     const slug = aliases.slugs[row.title] ?? prevSlugFor(row.article, row.title) ?? slugify(row.title);
@@ -116,7 +117,17 @@ export function buildDataset(input: BuildInputs) {
       launchTitle: row.releasedUS === LAUNCH_DAY,
       esrb: facts?.esrb ?? null,
       summary: facts?.summary ?? null,
-      scores: { aggregate: facts?.aggregate ?? null, aggregateCount: facts?.aggregateCount ?? 0, ...reviewScores(box ? reviewFields(box) : {}) },
+      series: facts?.series ?? null,
+      similar: [],
+      themes: facts?.themes ?? [],
+      perspectives: facts?.perspectives ?? [],
+      multiplayer: { coop: facts?.coop ?? false, versus: facts?.versus ?? false },
+      scores: {
+        aggregate: facts?.aggregate ?? null, aggregateCount: facts?.aggregateCount ?? 0,
+        critic: facts?.critic ?? null, criticCount: facts?.criticCount ?? 0,
+        users: facts?.userScore ?? null, usersCount: facts?.userCount ?? 0,
+        ...reviewScores(box ? reviewFields(box) : {}),
+      },
       boxArt: input.hasBoxArt(slug) ? `/snes/box/${slug}.jpg` : null,
       media: {
         video: input.hasMedia?.(slug, 'video') ?? false,
@@ -125,9 +136,19 @@ export function buildDataset(input: BuildInputs) {
       },
       sources: { wikipedia: row.article, igdb: igdbRaw?.id ?? null },
     });
+    if (facts) similarIdsOf.set(slug, facts.similarIds);
   }
 
   const bySlug = new Map(games.map((g) => [g.slug, g]));
+  // Second pass: similar games point at our own slugs, so every game must exist first.
+  const slugByIgdb = new Map<number, string>();
+  for (const g of games) if (g.sources.igdb !== null && !slugByIgdb.has(g.sources.igdb)) slugByIgdb.set(g.sources.igdb, g.slug);
+  for (const g of games) {
+    g.similar = (similarIdsOf.get(g.slug) ?? [])
+      .map((id) => slugByIgdb.get(id))
+      .filter((s): s is string => s !== undefined && s !== g.slug)
+      .slice(0, 6);
+  }
   for (const [slug, override] of Object.entries(input.overrides)) {
     const game = bySlug.get(slug);
     if (!game) {

@@ -36,7 +36,7 @@ test('merges every source into a game record', () => {
     chip: 'SA-1', launchTitle: false, boxArt: '/snes/box/super-metroid.jpg',
     sources: { wikipedia: 'Super Metroid', igdb: 2 },
   });
-  expect(sm.scores).toEqual({ aggregate: 93, aggregateCount: 50, egm: [9, 9, 9, 9], nintendoPower: null, other: { GI: '9.5/10' } });
+  expect(sm.scores).toEqual({ aggregate: 93, aggregateCount: 50, critic: null, criticCount: 0, users: null, usersCount: 0, egm: [9, 9, 9, 9], nintendoPower: null, other: { GI: '9.5/10' } });
 });
 
 test('sorts by release date and marks launch-day games', () => {
@@ -170,4 +170,55 @@ test('media flags come from the files on disk, and clipStart is an allowed overr
   expect(fz.clipStart).toBe(9);
   expect(games.find((g) => g.slug === 'super-metroid')!.media).toEqual({ video: false, logo: false, box3d: false });
   expect(buildDataset(inputs({ aliases: { igdb: {}, boxart: {}, companies: {}, slugs: {}, media: { ghost: 'X (USA)' } } })).errors[0]).toMatch(/"media".*ghost/);
+});
+
+describe('IGDB extras', () => {
+  const ig = (id: number, name: string, over: Partial<IgdbRaw> = {}) => ({ id, name, ...over }) as IgdbRaw;
+  const many = (over: Partial<BuildInputs> = {}) => inputs({
+    igdb: [
+      ig(1, 'F-Zero', { similar_games: [99, 3, 1, 2], franchises: [{ name: 'F-Zero' }], themes: [{ name: 'Sci-fi' }], player_perspectives: [{ name: 'Bird view' }],
+        multiplayer_modes: [{ platform: 19, offlinecoop: true, offlinemax: 2 }], aggregated_rating: 70.2, aggregated_rating_count: 5, rating: 82, rating_count: 9 }),
+      ig(2, 'Metroid 3', { alternative_names: [{ name: 'Super Metroid' }] }),
+      ig(3, 'Donkey Kong Country'),
+    ],
+    ...over,
+  });
+
+  test('similar resolves IGDB ids to our slugs, in order, skipping unknown ids and the game itself', () => {
+    const { games } = buildDataset(many());
+    expect(games.find((g) => g.slug === 'f-zero')!.similar).toEqual(['donkey-kong-country', 'super-metroid']);
+  });
+
+  test('similar is capped at 6', () => {
+    const list = Array.from({ length: 9 }, (_, i) => row(`Game ${i}`));
+    const igdb = list.map((r, i) => ig(100 + i, r.title, i === 0 ? { similar_games: list.map((_, j) => 100 + j) } : {}));
+    const { games } = buildDataset(inputs({ list, igdb, chips: [], reviewBoxes: {} }));
+    const g = games.find((x) => x.slug === 'game-0')!;
+    expect(g.similar).toHaveLength(6);
+    expect(g.similar).not.toContain('game-0');
+  });
+
+  test('maps series, themes, perspectives, multiplayer and the split scores', () => {
+    const fz = buildDataset(many()).games.find((g) => g.slug === 'f-zero')!;
+    expect(fz).toMatchObject({ series: 'F-Zero', themes: ['Sci-fi'], perspectives: ['Bird view'], multiplayer: { coop: true, versus: true } });
+    expect(fz.scores).toMatchObject({ critic: 70, criticCount: 5, users: 82, usersCount: 9 });
+  });
+
+  test('new fields default when there is no IGDB record', () => {
+    const { games } = buildDataset(inputs({ igdb: null }));
+    for (const g of games) {
+      expect(g).toMatchObject({ series: null, similar: [], themes: [], perspectives: [], multiplayer: { coop: false, versus: false } });
+      expect(g.scores).toMatchObject({ critic: null, criticCount: 0, users: null, usersCount: 0 });
+    }
+  });
+
+  test('the new override and score fields are accepted; unknown ones are still refused', () => {
+    const ok = buildDataset(many({ overrides: { 'f-zero': { series: 'Racing', themes: [], perspectives: ['Top'], multiplayer: { coop: false, versus: true }, scores: { critic: 60, criticCount: 4, users: 70, usersCount: 6 } } } }));
+    expect(ok.errors).toEqual([]);
+    const fz = ok.games.find((g) => g.slug === 'f-zero')!;
+    expect(fz).toMatchObject({ series: 'Racing', perspectives: ['Top'], multiplayer: { coop: false, versus: true } });
+    expect(fz.scores).toMatchObject({ critic: 60, users: 70 });
+    expect(buildDataset(many({ overrides: { 'f-zero': { similarr: [] } as never } })).errors[0]).toMatch(/similarr/);
+    expect(buildDataset(many({ overrides: { 'f-zero': { scores: { criticc: 1 } } as never } })).errors[0]).toMatch(/criticc/);
+  });
 });

@@ -20,6 +20,12 @@ export interface Scores {
   /** IGDB total_rating, 0–100, rounded; null under 3 ratings. */
   aggregate: number | null;
   aggregateCount: number;
+  /** IGDB critic score (aggregated_rating), 0–100, rounded; null under 3 ratings. */
+  critic: number | null;
+  criticCount: number;
+  /** IGDB player score (rating), 0–100, rounded; null under 3 ratings. */
+  users: number | null;
+  usersCount: number;
   /** Each EGM reviewer's score out of 10, as printed. */
   egm: number[] | null;
   nintendoPower: NintendoPowerScore | null;
@@ -40,6 +46,13 @@ export interface Game {
   launchTitle: boolean;
   esrb: Esrb | null;
   summary: string | null;
+  /** First IGDB franchise, else first collection. */
+  series: string | null;
+  /** Slugs of our games IGDB lists as similar, in IGDB's order, at most 6. */
+  similar: string[];
+  themes: string[];
+  perspectives: string[];
+  multiplayer: { coop: boolean; versus: boolean };
   scores: Scores;
   boxArt: string | null;
   /** Which of Wes's media exist for this game: public/snes/video|logo|box3d/<slug>.* */
@@ -81,9 +94,18 @@ export interface IgdbRaw {
   alternative_names?: { name: string }[];
   genres?: { name: string }[];
   game_modes?: { name: string }[];
-  multiplayer_modes?: { platform?: number; offlinemax?: number; offlinecoopmax?: number }[];
+  multiplayer_modes?: { platform?: number; offlinemax?: number; offlinecoopmax?: number; offlinecoop?: boolean }[];
+  franchises?: { name: string }[];
+  collections?: { name: string }[];
+  similar_games?: number[];
+  themes?: { name: string }[];
+  player_perspectives?: { name: string }[];
   total_rating?: number;
   total_rating_count?: number;
+  aggregated_rating?: number;
+  aggregated_rating_count?: number;
+  rating?: number;
+  rating_count?: number;
   summary?: string;
   age_ratings?: { organization?: { name?: string } | number; rating_category?: { rating?: string } | number }[];
 }
@@ -96,6 +118,16 @@ export interface IgdbFacts {
   summary: string | null;
   aggregate: number | null;
   aggregateCount: number;
+  series: string | null;
+  similarIds: number[];
+  themes: string[];
+  perspectives: string[];
+  coop: boolean;
+  versus: boolean;
+  critic: number | null;
+  criticCount: number;
+  userScore: number | null;
+  userCount: number;
 }
 
 export interface Aliases {

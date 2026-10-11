@@ -33,6 +33,8 @@ const { access_token: token } = await (await fetchWithRetry(tokenUrl, { method: 
 const FIELDS = [
   'name', 'alternative_names.name', 'genres.name', 'game_modes.name',
   'multiplayer_modes.platform', 'multiplayer_modes.offlinemax', 'multiplayer_modes.offlinecoopmax',
+  'multiplayer_modes.offlinecoop', 'franchises.name', 'collections.name', 'similar_games', 'themes.name', 'player_perspectives.name',
+  'aggregated_rating', 'aggregated_rating_count', 'rating', 'rating_count',
   'total_rating', 'total_rating_count', 'summary',
   'age_ratings.organization.name', 'age_ratings.rating_category.rating',
 ].join(',');
