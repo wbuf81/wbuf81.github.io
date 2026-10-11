@@ -43,7 +43,8 @@ Someone opens `/snes`, sees every US SNES game laid out month by month, and can 
 
 **Tile hover and keyboard focus:**
 - A purple outline glow.
-- The **"S3 arcade CRT" scanlines** ease in over about 0.4 s: heavy 2 px lines, a faint RGB phosphor grid and a vignette over the cover, with a slight saturation and contrast boost.
+- **Light CRT scanlines** ease in over about 0.4 s: thin 1 px lines at about 28% black every 3 px, a soft vignette, and a slight saturation and contrast lift.
+- This replaced the heavier "S3 arcade" look after the full-page preview, where Wes found it too much.
 - No blink or flicker. Wes rejected a power-on flicker.
 - `prefers-reduced-motion`: the scanlines appear without transition.
 - On touch devices there is no hover. The tile simply opens.
@@ -82,7 +83,7 @@ Someone opens `/snes`, sees every US SNES game laid out month by month, and can 
 
 **Game page (booklet "G3"):**
 - **Top:** a breadcrumb (`SNES / 1994 / April`), plus `◀ previous · next ▶` in release order.
-- **Left column:** the cover in the S3 CRT treatment (always on), and below it the reserved **"Wes's take — coming in piece 3"** slot (a dashed purple box).
+- **Left column:** the cover under the light CRT scanlines (always on, except on the 3D box), and below it the reserved **"Wes's take — coming in piece 3"** slot (a dashed purple box).
 - **Right column:** a warm-paper "Instruction booklet":
   - The title, with genre and players chips underneath.
   - **The story:** the summary, or "No summary yet" while IGDB is pending.
@@ -233,10 +234,12 @@ The set is named like the No-Intro box art, e.g. `7th Saga, The (USA)-video.mp4`
   - Moving away stops it and goes back to the cover. Only one clip plays at a time.
   - The clip downloads only on hover (`preload="none"`).
   - Touch devices and `prefers-reduced-motion` get no hover playback.
-- **Sound:**
-  - Browsers block audio until the visitor has interacted with the page, so clips start **muted**.
-  - A 🔊 toggle in the filter bar turns sound on. That click is the permission, and from then on hover clips play with sound.
-  - The choice is remembered in `localStorage`. After a reload, sound resumes after the visitor's first click or keypress, and the toggle shows that it's waiting.
+- **Sound is on by default.**
+  - Browsers allow audio only after the visitor has clicked, tapped or pressed a key on the page.
+  - Until that first interaction, hover clips play muted and the 🔊 button reads "Click anywhere for sound".
+  - After it, any click anywhere, every hover clip plays with sound. `navigator.userActivation.hasBeenActive` is checked first, falling back to a one-time `pointerdown`/`keydown`/`touchstart` listener.
+  - The button then mutes and unmutes ("🔊 Sound on" / "🔇 Muted"). A mute is remembered in `localStorage`.
+  - Verified in the preview: after one click, the F-Zero hover clip played unmuted.
 - **Game page:**
   - The booklet's left column shows the CRT cover with a ▶ button that plays the clip in place, with sound, plus pause and mute controls.
   - A small switch, `Cover · 3D box · Gameplay`, flips between the three.
