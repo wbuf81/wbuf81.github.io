@@ -17,7 +17,7 @@ export function parseDts(cell: string): { date: string; precision: DatePrecision
 }
 
 export function parseTitleCell(cell: string): { title: string; article: string | null } {
-  const first = stripCellAttrs(cell).split(/<br\s*\/?>/i)[0];
+  const first = stripCellAttrs(cell).split(/<br\s*\/?>|\n/i)[0];
   const link = first.match(/\[\[([^\]|]+)(?:\|([^\]]+))?\]\]/);
   const title = linkText(first).replace(/^•/, '').trim();
   const article = link && !link[1].includes('#') ? link[1].trim() : null;

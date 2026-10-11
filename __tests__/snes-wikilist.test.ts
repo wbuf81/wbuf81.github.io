@@ -114,6 +114,11 @@ describe('parseSoftwareList', () => {
 });
 
 describe('parseTitleCell', () => {
+  test('an alternate title on its own line is not part of the title', () => {
+    expect(parseTitleCell("''[[Sensible Soccer|International Sensible Soccer: World Champions]]''\n•''Championship Soccer '94''")).toEqual({
+      title: 'International Sensible Soccer: World Champions', article: 'Sensible Soccer',
+    });
+  });
   test('a section link is not the game article', () => {
     expect(parseTitleCell("''[[3×3 Eyes#Video games|3×3 Eyes Jūma Hōkan]]''")).toEqual({
       title: '3×3 Eyes Jūma Hōkan', article: null,

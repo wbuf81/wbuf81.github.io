@@ -47,8 +47,13 @@ for (const game of games) {
     missing.push(game.title);
     continue;
   }
-  const res = await fetchWithRetry(LIBRETRO_RAW + encodeURIComponent(file));
-  fs.writeFileSync(tmp, Buffer.from(await res.arrayBuffer()));
+  let bytes = Buffer.from(await (await fetchWithRetry(LIBRETRO_RAW + encodeURIComponent(file))).arrayBuffer());
+  // Some libretro files are git symlinks: the raw URL serves the target's file name, not a PNG.
+  if (!bytes.subarray(0, 4).equals(Buffer.from([0x89, 0x50, 0x4e, 0x47]))) {
+    const target = path.posix.basename(bytes.toString('utf8').trim());
+    bytes = Buffer.from(await (await fetchWithRetry(LIBRETRO_RAW + encodeURIComponent(target))).arrayBuffer());
+  }
+  fs.writeFileSync(tmp, bytes);
   const sips = spawnSync('sips', ['--resampleWidth', '300', '-s', 'format', 'jpeg', '-s', 'formatOptions', '82', tmp, '--out', out], { encoding: 'utf8' });
   if (sips.status !== 0) {
     console.warn(`  could not convert ${file}: ${sips.stderr.trim()}`);
@@ -61,6 +66,12 @@ for (const game of games) {
     console.log(`  ${downloaded} downloaded`);
   }
   await sleep(100);
+}
+// A slug that left games.json (a rename settled in aliases.json) takes its image and credit with it.
+const slugs = new Set(games.map((g) => g.slug));
+for (const slug of Object.keys(sources)) if (!slugs.has(slug)) delete sources[slug];
+for (const file of fs.readdirSync(BOX_DIR)) {
+  if (file.endsWith('.jpg') && !slugs.has(file.slice(0, -4))) fs.rmSync(path.join(BOX_DIR, file));
 }
 writeJson(sourcesFile, sources);
 

@@ -31,3 +31,18 @@ test('indexes the best US file per title', () => {
   expect(index.get(normalizeTitle('Tetris & Dr. Mario'))).toBe('Tetris _ Dr. Mario (USA).png');
   expect(index.has(normalizeTitle('Street Fighter II'))).toBe(false);
 });
+
+test('arcade-cabinet, promo and symbolic-link variants never beat the retail box', () => {
+  const index = indexBoxart([
+    'Named_Boxarts/ActRaiser (USA) (Arcade).png',
+    'Named_Boxarts/ActRaiser (USA).png',
+    "Named_Boxarts/George Foreman's KO Boxing (USA) (Doritos Promo).png",
+    'Named_Boxarts/Relief Pitcher (USA) - SymbolicLink.png',
+    'Named_Boxarts/Relief Pitcher (USA).png',
+  ]);
+  expect(index.get(normalizeTitle('ActRaiser'))).toBe('ActRaiser (USA).png');
+  expect(index.get(normalizeTitle('Relief Pitcher'))).toBe('Relief Pitcher (USA).png');
+  // A promo printing is still that game's box: kept, but only when there is nothing better.
+  expect(index.get(normalizeTitle("George Foreman's KO Boxing"))).toBe("George Foreman's KO Boxing (USA) (Doritos Promo).png");
+  expect(indexBoxart(['Named_Boxarts/X (USA) (Promo).png', 'Named_Boxarts/X (USA).png']).get('x')).toBe('X (USA).png');
+});
