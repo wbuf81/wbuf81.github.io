@@ -20,7 +20,7 @@ Someone opens `/snes`, sees every US SNES game laid out month by month, and can 
   - The `/snes` page: hero, filter bar, year tabs, and five views (Timeline, Heatmap, Cover wall, Game shelf, Score scatter).
   - `/snes/[slug]` game pages.
   - `/snes/company/[slug]` company pages.
-  - Dataset additions: manual links and 96 px thumbnails.
+  - Dataset addition: 96 px thumbnails.
   - Gameplay clips with sound, logos and 3D boxes from Wes's media set (see that section).
   - New design-system tokens.
 - **Out (later pieces):**
@@ -28,6 +28,10 @@ Someone opens `/snes`, sees every US SNES game laid out month by month, and can 
   - Stats beyond the five views (piece 4).
   - The story and era chapters (piece 5).
   - Interactive toys (controller support, blow-on-the-cart random pick, sounds, Mode 7). These were deferred by Wes; "work on that later".
+  - **Instruction manuals, paused by Wes (11 Oct 2026) for a later phase of their own.** He wants to collect every US manual and show them on the game pages.
+    - Known sources: Nintendo's official PDFs for the 21 SNES Classic games (e.g. `https://www.nintendo.co.jp/clvs/manuals/common/pdf/CLV-P-SAABE.pdf`), and the Internet Archive's `manuals_snes` collection (420 US scans, with an embeddable page-turning viewer at `archive.org/embed/<id>`).
+    - Both can be embedded; checked 11 Oct 2026.
+    - Hosting copies versus embedding is that phase's decision.
 - **Visibility:** `/snes` is deployed but **unlinked and `noindex`**, the same arrangement as `/health`, until piece 3 ships:
   - no nav link
   - `robots: { index: false, follow: false }` on every `/snes` route
@@ -92,7 +96,6 @@ Someone opens `/snes`, sees every US SNES game laid out month by month, and can 
     - EGM as four reviewer bars.
     - Nintendo Power with its scale.
     - Every other review-box score as a list, with abbreviations expanded (GI → Game Informer, Fam → Famitsu).
-  - **"Read the original manual →"**, when a link exists.
 - **Below:** "Also out in <Month Year>": up to 8 tiles, plus "N more", which links to the timeline at that month.
 
 **Company page:**
@@ -175,14 +178,6 @@ lib/snes/
 
 ## Dataset additions (piece 1 pipeline)
 
-- **Manual links.**
-  - Add `manual: { url: string; source: 'nintendo' | 'archive' } | null` to `Game`.
-  - A new fetcher, `scripts/snes/fetch-manuals.mjs`, queries the Internet Archive search API for the `manuals_snes` collection. That collection held 420 US items on 11 Oct 2026, titled like "Battletoads & Double Dragon ( USA)".
-  - It keeps only items whose title carries `USA`, and caches them in `.snes-cache/manuals.json`.
-  - `build-games` matches them to games with `normalizeTitle`, linking to `https://archive.org/details/<identifier>`.
-  - Nintendo's official PDFs for the SNES Classic Edition's 21 games (`https://www.nintendo.co.jp/clvs/manuals/`) take precedence. They go in `aliases.json` under a new `manuals` key, mapping slug to URL, after confirming each link returns 200.
-  - The coverage report gains a "manual" line. Gaps are filled over time with `aliases.json` `manuals` entries.
-  - **Link only:** manuals are never downloaded or hosted.
 - **Thumbnails.**
   - `fetch-boxart.mjs` also writes `public/snes/thumb/<slug>.jpg` at 96 px wide, quality 75, from the same source image.
   - `snes-data.test.ts` checks that every game with `boxArt` has a thumbnail.
@@ -281,7 +276,7 @@ New tokens are added to `app/design-system.css`. Each one appears in both dark b
 - **`__tests__/snes-display.test.ts`** checks magazine names, score formatting and date labels ("April 18, 1994", "April 1994", "1994").
 - **`__tests__/snes-pages.test.tsx`** renders, from a small fixture:
   - the `/snes` Timeline
-  - a game page with every section, and one with the bare minimum (no scores, no summary, no art, no manual)
+  - a game page with every section, and one with the bare minimum (no scores, no summary, no art, no media)
   - a company page
   - each view
   - once over the real `games.json`: no `undefined`, `NaN` or empty titles, and every image path exists
@@ -306,5 +301,5 @@ New tokens are added to `app/design-system.css`. Each one appears in both dark b
 - **Build time.** About 1,000 static pages. Acceptable for Next; the deploy time is measured on the first push.
 - **Repository size.** About 300 MB of clips is committed once and lives in git history for good. The budgets cap growth. Re-encoding the clips later (to change `clipStart`, say) adds to the history, so clip changes should be batched rather than made one at a time.
 - **Media rights.** The gameplay clips, logos and box renders belong to the games' publishers. They're shown small, credited and non-commercially in a history of the console, the same footing as the box art.
-- **Missing data.** Genre, players, summary and aggregate are empty until IGDB lands. Scores and manuals are partial. Every component renders the absent state deliberately: hidden controls, "No summary yet", no empty chips.
+- **Missing data.** Genre, players, summary and aggregate are empty until IGDB lands. Scores are partial. Every component renders the absent state deliberately: hidden controls, "No summary yet", no empty chips.
 - **Hover-only details.** Every detail shown on hover (shelf tooltip, scatter labels) is also reachable by focus and on the game page.
