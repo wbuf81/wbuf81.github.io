@@ -22,6 +22,7 @@ export default function CoverWall({ games, matched }: { games: IndexGame[]; matc
           <Link
             key={g.slug}
             href={gamePath(g.slug)}
+            prefetch={false}
             className={`s-wall-item${matched.has(g.slug) ? '' : ' is-dim'}`}
             aria-label={`${g.title}, ${formatRelease(g.releasedUS, g.datePrecision)}`}
             title={g.title}

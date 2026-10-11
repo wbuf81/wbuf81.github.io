@@ -6,6 +6,7 @@ import { SNES_BASE, gamePath } from '@/lib/snes/routes';
 import Booklet from './Booklet';
 import MediaFrame from './MediaFrame';
 import { GameTile } from './GameTile';
+import { SoundProvider } from './sound';
 
 const STRIP = 8;
 
@@ -29,7 +30,7 @@ export default function GameView({ game, names, prev, next, sameMonth, seriesGam
   );
 
   return (
-    <>
+    <SoundProvider>
       <nav className="s-crumb" aria-label="Breadcrumb">
         <span>
           <Link href={SNES_BASE}>SNES</Link> / <Link href={`${SNES_BASE}#y-${year}`}>{year}</Link>
@@ -61,6 +62,6 @@ export default function GameView({ game, names, prev, next, sameMonth, seriesGam
         </section>
       ) : null}
       <div className="s-steps">{step(prev, 'prev')}{step(next, 'next')}</div>
-    </>
+    </SoundProvider>
   );
 }

@@ -110,3 +110,27 @@ test('the button mutes after sound is on, and a stored mute survives a reload', 
   render(<SoundProvider><SoundButton /></SoundProvider>);
   expect(screen.getByRole('button', { name: /Muted/ })).toBeInTheDocument();
 });
+
+test('a clip stops when the window loses focus', () => {
+  render(<GameTile game={base} publisherName="Nintendo" />);
+  const link = screen.getByRole('link');
+  enter(link);
+  expect(link.querySelector('video')).not.toBeNull();
+  act(() => { window.dispatchEvent(new Event('blur')); });
+  expect(link.querySelector('video')).toBeNull();
+  expect(link).not.toHaveClass('is-playing');
+});
+
+test('a clip stops when the page is hidden, but not when it becomes visible', () => {
+  render(<GameTile game={base} publisherName="Nintendo" />);
+  const link = screen.getByRole('link');
+  const state = jest.spyOn(document, 'visibilityState', 'get');
+  state.mockReturnValue('visible');
+  enter(link);
+  act(() => { document.dispatchEvent(new Event('visibilitychange')); });
+  expect(link.querySelector('video')).not.toBeNull();
+  state.mockReturnValue('hidden');
+  act(() => { document.dispatchEvent(new Event('visibilitychange')); });
+  expect(link.querySelector('video')).toBeNull();
+  state.mockRestore();
+});

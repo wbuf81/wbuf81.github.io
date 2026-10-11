@@ -2,6 +2,7 @@ import React from 'react';
 import '@testing-library/jest-dom';
 import { fireEvent, render, screen, within } from '@testing-library/react';
 import GameView from '@/app/snes/components/GameView';
+import { act } from '@testing-library/react';
 import { buildIndex } from '@/lib/snes/library';
 import type { Game } from '@/lib/snes/types';
 
@@ -47,7 +48,7 @@ test('a full game page: logo title, chips, story, specifications, magazines, nei
   expect(screen.getByText(/Also out in August 1991/)).toBeInTheDocument();
   expect(screen.getByText(/Wes's take/)).toBeInTheDocument();
   expect(within(mags).getByText('Players')).toBeInTheDocument();
-  expect(within(mags).getByText('79 (192 ratings)')).toBeInTheDocument();
+  expect(within(mags).getByText('79/100 (192 ratings)')).toBeInTheDocument();
   expect(within(mags).queryByText('Critics')).toBeNull();
   expect(within(spec).getByText('Series')).toBeInTheDocument();
   expect(within(spec).getByText('Science fiction')).toBeInTheDocument();
@@ -83,4 +84,46 @@ test('a bare game page renders every absent state without gaps', () => {
   expect(screen.queryByRole('region', { name: /If you like/ })).toBeNull();
   expect(screen.queryByRole('region', { name: /More in the/ })).toBeNull();
   expect(container.textContent).not.toMatch(/undefined|NaN|null/);
+});
+test('strip tiles play with sound after the visitor has clicked somewhere', () => {
+  jest.useFakeTimers();
+  localStorage.clear();
+  window.matchMedia = ((q: string) => ({ matches: q.includes('hover'), media: q, addEventListener() {}, removeEventListener() {} })) as never;
+  const [clip] = buildIndex([{ ...full, slug: 'gradius-iii', title: 'Gradius III', media: { video: true, logo: false, box3d: false } }]);
+  const { container } = render(<GameView game={bare} names={NAMES} prev={null} next={null} sameMonth={[clip]} seriesGames={[]} similarGames={[]} />);
+  const tile = container.querySelector('.s-also a.s-tile')!;
+  fireEvent.mouseEnter(tile);
+  act(() => { jest.advanceTimersByTime(300); });
+  expect((tile.querySelector('video') as HTMLVideoElement).muted).toBe(true);
+  fireEvent.mouseLeave(tile);
+  act(() => { fireEvent.pointerDown(window); });
+  fireEvent.mouseEnter(tile);
+  act(() => { jest.advanceTimersByTime(300); });
+  expect((tile.querySelector('video') as HTMLVideoElement).muted).toBe(false);
+  jest.useRealTimers();
+});
+
+test('a booklet labels the player and critic scores out of 100', () => {
+  render(<GameView game={{ ...full, scores: { ...full.scores, critic: 81, criticCount: 1 } }} names={NAMES} prev={null} next={null} sameMonth={[]} seriesGames={[]} similarGames={[]} />);
+  const mags = screen.getByRole('region', { name: 'What the magazines said' });
+  expect(within(mags).getByText('81/100 (1 review)')).toBeInTheDocument();
+});
+
+test('multiplayer reads Co-op and 2+ players', () => {
+  const mp = (coop: boolean, versus: boolean) => render(<GameView game={{ ...full, multiplayer: { coop, versus } }} names={NAMES} prev={null} next={null} sameMonth={[]} seriesGames={[]} similarGames={[]} />);
+  let r = mp(true, false);
+  expect(screen.getByText('Co-op')).toBeInTheDocument();
+  r.unmount();
+  r = mp(false, true);
+  expect(screen.getByText('2+ players')).toBeInTheDocument();
+  r.unmount();
+  mp(true, true);
+  expect(screen.getByText('Co-op · 2+ players')).toBeInTheDocument();
+});
+
+test('a game page is kept out of search engines', async () => {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const { generateMetadata } = require('@/app/videogames/snes-history/[slug]/page');
+  const meta = await generateMetadata({ params: Promise.resolve({ slug: 'f-zero' }) });
+  expect(meta.robots).toEqual({ index: false, follow: false });
 });

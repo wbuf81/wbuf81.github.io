@@ -11,6 +11,14 @@ import { useSound } from './sound';
 let stopPlaying: (() => void) | null = null;
 const canPreview = () => typeof window !== 'undefined' && window.matchMedia('(hover: hover) and (prefers-reduced-motion: no-preference)').matches;
 
+// A clip must not keep playing behind another tab or window: stop it when the page is hidden or loses focus.
+if (typeof window !== 'undefined') {
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'hidden') stopPlaying?.();
+  });
+  window.addEventListener('blur', () => stopPlaying?.());
+}
+
 export function GameTile({ game, publisherName, genre }: { game: IndexGame; publisherName: string; genre?: string }) {
   const [playing, setPlaying] = useState(false);
   const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
@@ -48,7 +56,7 @@ export function GameTile({ game, publisherName, genre }: { game: IndexGame; publ
   const when = formatRelease(game.releasedUS, game.datePrecision);
   const label = [game.title, when, game.egmAvg !== null ? `EGM ${game.egmAvg.toFixed(1)}` : ''].filter(Boolean).join(', ');
   return (
-    <Link href={gamePath(game.slug)} className={`s-tile${playing ? ' is-playing' : ''}`} aria-label={label} onMouseEnter={start} onMouseLeave={stop}>
+    <Link href={gamePath(game.slug)} prefetch={false} className={`s-tile${playing ? ' is-playing' : ''}`} aria-label={label} onMouseEnter={start} onMouseLeave={stop}>
       <span className="s-art">
         {game.boxArt ? <img src={game.boxArt} alt="" width={300} height={209} loading="lazy" decoding="async" /> : <span className="s-noart">{game.title}</span>}
         {playing && game.video ? <video ref={video} src={game.video} loop playsInline autoPlay muted={!sound.on} /> : null}

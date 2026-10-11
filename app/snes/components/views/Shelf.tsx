@@ -22,6 +22,7 @@ export default function Shelf({ games, byYear }: { games: IndexGame[]; byYear: b
               <Link
                 key={g.slug}
                 href={gamePath(g.slug)}
+                prefetch={false}
                 className="s-spine"
                 aria-label={`${g.title}, ${formatRelease(g.releasedUS, g.datePrecision)}`}
                 style={g.thumb ? ({ '--art': `url(${g.thumb})` } as CSSProperties) : undefined}

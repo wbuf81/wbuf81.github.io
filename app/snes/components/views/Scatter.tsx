@@ -32,6 +32,7 @@ export default function Scatter({ games, axis, onAxis }: { games: IndexGame[]; a
               <Link
                 key={p.slug}
                 href={gamePath(p.slug)}
+                prefetch={false}
                 className={`s-dot${labelled.has(p.slug) ? ' is-star' : ''}`}
                 style={{ left: `${p.x}%`, bottom: `${p.y * 10}%` }}
                 title={`${p.title} — ${p.y}`}
