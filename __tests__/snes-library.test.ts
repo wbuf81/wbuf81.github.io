@@ -14,12 +14,12 @@ const game = (slug: string, over: Partial<Game> = {}): Game => ({
 });
 
 const GAMES: Game[] = [
-  game('super-metroid', { title: 'Super Metroid', releasedUS: '1994-04-18', datePrecision: 'day', scores: { aggregate: 95, aggregateCount: 40, critic: null, criticCount: 0, users: null, usersCount: 0, egm: [9, 9, 9, 9], nintendoPower: null, other: {} }, media: { video: true, logo: true, box3d: true } }),
-  game('f-zero', { title: 'F-Zero', releasedUS: '1991-08-23', datePrecision: 'day', launchTitle: true }),
-  game('pilotwings', { title: 'Pilotwings', releasedUS: '1991-08-23', datePrecision: 'day', launchTitle: true, chip: 'DSP-1', scores: { aggregate: null, aggregateCount: 0, critic: null, criticCount: 0, users: null, usersCount: 0, egm: [7.75], nintendoPower: { score: 3.8, scale: 5 }, other: {} } }),
+  game('super-metroid', { title: 'Super Metroid', releasedUS: '1994-04-18', datePrecision: 'day', scores: { aggregate: 95, aggregateCount: 40, critic: null, criticCount: 0, users: null, usersCount: 0, egm: [9, 9, 9, 9], nintendoPower: null, other: {} }, media: { video: true, logo: true, box3d: true }, themes: ['Science fiction'], perspectives: ['Side view'], multiplayer: { coop: false, versus: false } }),
+  game('f-zero', { title: 'F-Zero', releasedUS: '1991-08-23', datePrecision: 'day', launchTitle: true, series: 'Mode 7 Racers', perspectives: ['Bird view'], multiplayer: { coop: false, versus: true } }),
+  game('pilotwings', { title: 'Pilotwings', releasedUS: '1991-08-23', datePrecision: 'day', launchTitle: true, chip: 'DSP-1', series: 'Mode 7 Racers', themes: ['Action'], multiplayer: { coop: true, versus: false }, scores: { aggregate: null, aggregateCount: 0, critic: null, criticCount: 0, users: null, usersCount: 0, egm: [7.75], nintendoPower: { score: 3.8, scale: 5 }, other: {} } }),
   game('pokemon-ish', { title: 'Pokémon Puzzle', releasedUS: '1994-04', publisher: 'konami', developers: ['konami'], genres: ['Puzzle'], players: 2 }),
   game('mystery', { title: 'Mystery Year', releasedUS: '1994', datePrecision: 'year', boxArt: null }),
-  game('dkc', { title: 'Donkey Kong Country', releasedUS: '1994-11-21', datePrecision: 'day', developers: ['rare'], scores: { aggregate: null, aggregateCount: 0, critic: null, criticCount: 0, users: null, usersCount: 0, egm: [10, 9, 9, 9], nintendoPower: null, other: {} } }),
+  game('dkc', { title: 'Donkey Kong Country', releasedUS: '1994-11-21', datePrecision: 'day', developers: ['rare'], series: 'Donkey Kong', themes: ['Action'], scores: { aggregate: null, aggregateCount: 0, critic: null, criticCount: 0, users: 87.46, usersCount: 0, egm: [10, 9, 9, 9], nintendoPower: null, other: {} } }),
 ];
 const INDEX = buildIndex(GAMES);
 const NAMES = { nintendo: 'Nintendo', konami: 'Konami', 'nintendo-ead': 'Nintendo EAD', rare: 'Rare' };
@@ -57,9 +57,18 @@ describe('filters', () => {
     expect(slugs(filterGames(INDEX, f({ years: [1994], scores: ['egm'] })))).toEqual(['super-metroid', 'dkc']);
     expect(matches(INDEX[0], f())).toBe(true);
   });
+  test('series, theme, camera and multiplayer filters', () => {
+    expect(slugs(filterGames(INDEX, f({ series: 'mode-7-racers' })))).toEqual(['f-zero', 'pilotwings']);
+    expect(slugs(filterGames(INDEX, f({ theme: 'Action' })))).toEqual(['pilotwings', 'dkc']);
+    expect(slugs(filterGames(INDEX, f({ camera: 'Side view' })))).toEqual(['super-metroid']);
+    expect(slugs(filterGames(INDEX, f({ mp: 'coop' })))).toEqual(['pilotwings']);
+    expect(slugs(filterGames(INDEX, f({ mp: 'versus' })))).toEqual(['f-zero']);
+    expect(slugs(filterGames(INDEX, f({ theme: 'Action', mp: 'coop' })))).toEqual(['pilotwings']);
+  });
   test('isFiltered ignores view, sort and axis', () => {
     expect(isFiltered(f({ view: 'wall', sort: 'egm', y: 'np' }))).toBe(false);
     expect(isFiltered(f({ launch: true }))).toBe(true);
+    for (const over of [{ series: 'x' }, { theme: 'x' }, { camera: 'x' }, { mp: 'coop' as const }]) expect(isFiltered(f(over))).toBe(true);
   });
 });
 
@@ -67,6 +76,25 @@ test('sortGames puts missing scores last, in release order', () => {
   expect(slugs(sortGames(INDEX, 'egm'))).toEqual(['dkc', 'super-metroid', 'pilotwings', 'f-zero', 'pokemon-ish', 'mystery']);
   expect(slugs(sortGames(INDEX, 'title'))[0]).toBe('dkc');
   expect(slugs(sortGames(INDEX, 'date'))).toEqual(slugs(INDEX));
+});
+
+test('buildIndex carries series, themes, perspectives, multiplayer and the player score', () => {
+  expect(INDEX.find((g) => g.slug === 'pilotwings')).toMatchObject({ series: 'Mode 7 Racers', themes: ['Action'], coop: true, versus: false, users: null });
+  expect(INDEX.find((g) => g.slug === 'f-zero')).toMatchObject({ perspectives: ['Bird view'], coop: false, versus: true });
+  expect(INDEX.find((g) => g.slug === 'dkc')!.users).toBe(87.46);
+  expect(INDEX[0]).not.toHaveProperty('critic');
+});
+
+test('sortGames and scatterPoints support the player score', () => {
+  expect(slugs(sortGames(INDEX, 'users'))[0]).toBe('dkc');
+  expect(scatterPoints(INDEX, 'users').map((p) => [p.slug, p.y])).toEqual([['dkc', 8.7]]);
+});
+
+test('facets list series with two or more games, themes and perspectives', () => {
+  const fx = facets(INDEX, NAMES);
+  expect(fx.series).toEqual([{ slug: 'mode-7-racers', name: 'Mode 7 Racers', count: 2 }]);
+  expect(fx.themes).toEqual(['Action', 'Science fiction']);
+  expect(fx.perspectives).toEqual(['Bird view', 'Side view']);
 });
 
 test('facets list companies with counts, the chips present, genres and player counts', () => {
@@ -80,6 +108,11 @@ test('facets list companies with counts, the chips present, genres and player co
 
 describe('URL state', () => {
   const ctx = queryContext(facets(INDEX, NAMES));
+  test('round-trips series, theme, camera and mp, and drops invalid values', () => {
+    const state = f({ series: 'mode-7-racers', theme: 'Action', camera: 'Side view', mp: 'versus' });
+    expect(parseQuery(toQuery(state), ctx)).toEqual(state);
+    expect(parseQuery('?series=donkey-kong&theme=Nope&camera=Nope&mp=both', ctx)).toEqual(f());
+  });
   test('round-trips through the query string', () => {
     const state = f({ q: 'metroid', years: [1993, 1994], publisher: 'nintendo', scores: ['egm', 'np'], launch: true, sort: 'egm', view: 'wall', y: 'np' });
     expect(parseQuery(toQuery(state), ctx)).toEqual(state);

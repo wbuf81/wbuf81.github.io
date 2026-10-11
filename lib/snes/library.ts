@@ -6,12 +6,12 @@ import type { DatePrecision, Game } from './types.ts';
 import { normalizeTitle, slugify } from './titles.ts';
 
 export type ScoreFlag = 'egm' | 'np' | 'egm8';
-export type SortKey = 'date' | 'title' | 'egm' | 'np' | 'aggregate';
+export type SortKey = 'date' | 'title' | 'egm' | 'np' | 'aggregate' | 'users';
 export type ViewKey = 'timeline' | 'heatmap' | 'wall' | 'shelf' | 'scatter';
-export type ScoreAxis = 'egm' | 'np' | 'aggregate';
+export type ScoreAxis = 'egm' | 'np' | 'aggregate' | 'users';
 export const VIEWS: ViewKey[] = ['timeline', 'heatmap', 'wall', 'shelf', 'scatter'];
-export const SORTS: SortKey[] = ['date', 'title', 'egm', 'np', 'aggregate'];
-export const AXES: ScoreAxis[] = ['egm', 'np', 'aggregate'];
+export const SORTS: SortKey[] = ['date', 'title', 'egm', 'np', 'aggregate', 'users'];
+export const AXES: ScoreAxis[] = ['egm', 'np', 'aggregate', 'users'];
 export const SCORE_FLAGS: ScoreFlag[] = ['egm', 'np', 'egm8'];
 export const FIRST_YEAR = 1991;
 export const LAST_YEAR = 1998;
@@ -34,6 +34,13 @@ export interface IndexGame {
   /** Nintendo Power on a 0–10 scale. */
   np10: number | null;
   aggregate: number | null;
+  /** IGDB player score, 0–100. */
+  users: number | null;
+  series: string | null;
+  themes: string[];
+  perspectives: string[];
+  coop: boolean;
+  versus: boolean;
   boxArt: string | null;
   thumb: string | null;
   video: string | null;
@@ -80,6 +87,12 @@ export function buildIndex(games: Game[]): IndexGame[] {
         egmAvg: egm && egm.length ? round1(egm.reduce((s, n) => s + n, 0) / egm.length) : null,
         np10: np ? round1((np.score / np.scale) * 10) : null,
         aggregate: g.scores.aggregate,
+        users: g.scores.users,
+        series: g.series,
+        themes: g.themes,
+        perspectives: g.perspectives,
+        coop: g.multiplayer.coop,
+        versus: g.multiplayer.versus,
         boxArt: g.boxArt,
         thumb: g.boxArt ? `/snes/thumb/${g.slug}.jpg` : null,
         video: g.media?.video ? `/snes/video/${g.slug}.mp4` : null,
@@ -98,6 +111,10 @@ export interface Filters {
   launch: boolean;
   genre: string | null;
   players: number | null;
+  series: string | null;
+  theme: string | null;
+  camera: string | null;
+  mp: 'coop' | 'versus' | null;
   sort: SortKey;
   view: ViewKey;
   y: ScoreAxis;
@@ -105,7 +122,7 @@ export interface Filters {
 
 export const DEFAULT_FILTERS: Filters = {
   q: '', years: [], publisher: null, developer: null, chip: null, scores: [], launch: false,
-  genre: null, players: null, sort: 'date', view: 'timeline', y: 'egm',
+  genre: null, players: null, series: null, theme: null, camera: null, mp: null, sort: 'date', view: 'timeline', y: 'egm',
 };
 
 export function matches(g: IndexGame, f: Filters): boolean {
@@ -123,16 +140,22 @@ export function matches(g: IndexGame, f: Filters): boolean {
   if (f.launch && !g.launchTitle) return false;
   if (f.genre && !g.genres.includes(f.genre)) return false;
   if (f.players && (g.players ?? 0) < f.players) return false;
+  if (f.series && (!g.series || slugify(g.series) !== f.series)) return false;
+  if (f.theme && !g.themes.includes(f.theme)) return false;
+  if (f.camera && !g.perspectives.includes(f.camera)) return false;
+  if (f.mp === 'coop' && !g.coop) return false;
+  if (f.mp === 'versus' && !g.versus) return false;
   return true;
 }
 
 export const filterGames = (games: IndexGame[], f: Filters) => games.filter((g) => matches(g, f));
 
 export function isFiltered(f: Filters): boolean {
-  return Boolean(f.q || f.years.length || f.publisher || f.developer || f.chip || f.scores.length || f.launch || f.genre || f.players);
+  return Boolean(f.q || f.years.length || f.publisher || f.developer || f.chip || f.scores.length || f.launch || f.genre || f.players || f.series || f.theme || f.camera || f.mp);
 }
 
-const scoreOf = (g: IndexGame, key: 'egm' | 'np' | 'aggregate') => (key === 'egm' ? g.egmAvg : key === 'np' ? g.np10 : g.aggregate);
+const scoreOf = (g: IndexGame, key: 'egm' | 'np' | 'aggregate' | 'users') =>
+  key === 'egm' ? g.egmAvg : key === 'np' ? g.np10 : key === 'users' ? g.users : g.aggregate;
 
 export function sortGames(games: IndexGame[], key: SortKey): IndexGame[] {
   const out = [...games];
@@ -159,6 +182,10 @@ export interface Facets {
   chips: Facet[];
   genres: string[];
   players: number[];
+  /** Only series with two or more games. */
+  series: Facet[];
+  themes: string[];
+  perspectives: string[];
 }
 
 const tally = (entries: [string, string][]): Facet[] => {
@@ -173,6 +200,9 @@ const tally = (entries: [string, string][]): Facet[] => {
 
 export function facets(games: IndexGame[], names: Record<string, string>): Facets {
   return {
+    series: tally(games.filter((g) => g.series).map((g): [string, string] => [slugify(g.series!), g.series!])).filter((s) => s.count >= 2),
+    themes: [...new Set(games.flatMap((g) => g.themes))].sort(),
+    perspectives: [...new Set(games.flatMap((g) => g.perspectives))].sort(),
     publishers: tally(games.map((g) => [g.publisher, names[g.publisher] ?? g.publisher])),
     developers: tally(games.flatMap((g) => g.developers.map((d): [string, string] => [d, names[d] ?? d]))),
     chips: tally(games.filter((g) => g.chip).map((g) => [g.chipSlug!, g.chip!])),
@@ -186,6 +216,9 @@ export interface QueryContext {
   developers: Set<string>;
   chips: Set<string>;
   genres: Set<string>;
+  series: Set<string>;
+  themes: Set<string>;
+  perspectives: Set<string>;
 }
 
 export function queryContext(f: Facets): QueryContext {
@@ -194,6 +227,9 @@ export function queryContext(f: Facets): QueryContext {
     developers: new Set(f.developers.map((d) => d.slug)),
     chips: new Set(f.chips.map((c) => c.slug)),
     genres: new Set(f.genres),
+    series: new Set(f.series.map((s) => s.slug)),
+    themes: new Set(f.themes),
+    perspectives: new Set(f.perspectives),
   };
 }
 
@@ -219,6 +255,10 @@ export function parseQuery(search: string, ctx: QueryContext): Filters {
     launch: p.get('launch') === '1',
     genre: inSet('genre', ctx.genres),
     players: Number.isInteger(players) && players >= 2 && players <= 8 ? players : null,
+    series: inSet('series', ctx.series),
+    theme: inSet('theme', ctx.themes),
+    camera: inSet('camera', ctx.perspectives),
+    mp: pick<'coop' | 'versus' | ''>('mp', ['coop', 'versus'], '') || null,
     sort: pick('sort', SORTS, 'date'),
     view: pick('view', VIEWS, 'timeline'),
     y: pick('y', AXES, 'egm'),
@@ -236,6 +276,10 @@ export function toQuery(f: Filters): string {
   if (f.launch) p.set('launch', '1');
   if (f.genre) p.set('genre', f.genre);
   if (f.players) p.set('players', String(f.players));
+  if (f.series) p.set('series', f.series);
+  if (f.theme) p.set('theme', f.theme);
+  if (f.camera) p.set('camera', f.camera);
+  if (f.mp) p.set('mp', f.mp);
   if (f.sort !== 'date') p.set('sort', f.sort);
   if (f.view !== 'timeline') p.set('view', f.view);
   if (f.y !== 'egm') p.set('y', f.y);
@@ -307,7 +351,7 @@ export function scatterPoints(games: IndexGame[], axis: ScoreAxis): ScatterPoint
   return games
     .map((g) => {
       const v = scoreOf(g, axis);
-      return v === null ? null : { slug: g.slug, title: g.title, x: xForDate(g.releasedUS), y: axis === 'aggregate' ? round1(v / 10) : v };
+      return v === null ? null : { slug: g.slug, title: g.title, x: xForDate(g.releasedUS), y: axis === 'aggregate' || axis === 'users' ? round1(v / 10) : v };
     })
     .filter((p): p is ScatterPoint => p !== null);
 }
