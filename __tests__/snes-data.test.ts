@@ -85,3 +85,9 @@ test('Final Fantasy IV and VI carry their US names, II and III', () => {
   expect(ff['final-fantasy-iv']).toBeUndefined();
   expect(ff['final-fantasy-vi']).toBeUndefined();
 });
+
+test('every cover has a 96px thumbnail, and no thumbnail is orphaned', () => {
+  const dir = path.join(process.cwd(), 'public/snes/thumb');
+  const thumbs = fs.existsSync(dir) ? fs.readdirSync(dir).filter((f) => f.endsWith('.jpg')) : [];
+  expect(thumbs.sort()).toEqual(games.filter((g) => g.boxArt).map((g) => `${g.slug}.jpg`).sort());
+});

@@ -33,6 +33,11 @@ if (!tree) {
 const index = indexBoxart(tree);
 
 fs.mkdirSync(BOX_DIR, { recursive: true });
+const THUMB_DIR = path.join(BOX_DIR, '..', 'thumb');
+fs.mkdirSync(THUMB_DIR, { recursive: true });
+// The cover wall and shelf show 717 covers at once; a 96px copy keeps that to a few MB.
+const makeThumb = (from, slug) =>
+  spawnSync('sips', ['--resampleWidth', '96', '-s', 'format', 'jpeg', '-s', 'formatOptions', '75', from, '--out', path.join(THUMB_DIR, `${slug}.jpg`)], { encoding: 'utf8' });
 const sourcesFile = path.join(BOX_DIR, 'sources.json');
 const sources = readJson(sourcesFile, {});
 const tmp = cachePath('box-download.png');
@@ -66,17 +71,26 @@ for (const game of games) {
     continue;
   }
   sources[game.slug] = file;
+  makeThumb(out, game.slug);
   // Credited the moment the image exists, so an interrupted run never leaves an uncredited image behind.
   writeJson(sourcesFile, sources);
   downloaded++;
   if (downloaded % 50 === 0) console.log(`  ${downloaded} downloaded`);
   await sleep(100);
 }
+// Covers made before thumbnails existed get one from the local image, with no download.
+for (const game of games) {
+  const out = path.join(BOX_DIR, `${game.slug}.jpg`);
+  if (fs.existsSync(out) && !fs.existsSync(path.join(THUMB_DIR, `${game.slug}.jpg`))) makeThumb(out, game.slug);
+}
 // A slug that left games.json (a rename settled in aliases.json) takes its image and credit with it.
 const slugs = new Set(games.map((g) => g.slug));
 for (const slug of Object.keys(sources)) if (!slugs.has(slug)) delete sources[slug];
 for (const file of fs.readdirSync(BOX_DIR)) {
   if (file.endsWith('.jpg') && !slugs.has(file.slice(0, -4))) fs.rmSync(path.join(BOX_DIR, file));
+}
+for (const file of fs.readdirSync(THUMB_DIR)) {
+  if (file.endsWith('.jpg') && !slugs.has(file.slice(0, -4))) fs.rmSync(path.join(THUMB_DIR, file));
 }
 writeJson(sourcesFile, sources);
 
