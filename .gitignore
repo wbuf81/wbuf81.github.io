@@ -41,3 +41,6 @@ FEATURE_PLAN_*.md
 
 # SNES dataset: raw source responses, rebuilt by npm run snes:fetch
 .snes-cache/
+
+# Superpowers scratch (plan ledgers, brainstorm mockups)
+.superpowers/
