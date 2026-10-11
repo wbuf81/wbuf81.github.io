@@ -20,8 +20,10 @@ const { parseSoftwareList, parseChipList } = loadTs('lib/snes/wikiList.ts');
 const { buildDataset, formatReport } = loadTs('lib/snes/build.ts');
 
 const chipsFile = cachePath('wiki-chips.wiki');
+const parsed = parseSoftwareList(fs.readFileSync(listFile, 'utf8'));
 const { games, companies, report, errors } = buildDataset({
-  list: parseSoftwareList(fs.readFileSync(listFile, 'utf8')).rows,
+  list: parsed.rows,
+  unreadableRows: parsed.skipped,
   chips: fs.existsSync(chipsFile) ? parseChipList(fs.readFileSync(chipsFile, 'utf8')) : [],
   reviewBoxes: readJson(cachePath('reviews.json'), {}),
   igdb: readJson(cachePath('igdb.json'), null),

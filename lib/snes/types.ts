@@ -103,6 +103,8 @@ export interface Aliases {
   companies: Record<string, string>;
   /** Wikipedia title → slug, to settle a collision or keep a slug through a rename. */
   slugs: Record<string, string>;
+  /** Slugs deliberately dropped from games.json. Any other slug that disappears fails the build. */
+  retiredSlugs?: string[];
 }
 
 export type Override = {

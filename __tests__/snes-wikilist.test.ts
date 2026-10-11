@@ -161,3 +161,47 @@ text
     ]);
   });
 });
+
+describe('rows the parser cannot read are counted, never silently dropped', () => {
+  const table = (rows: string) => `{|class="wikitable" id="softwarelist"
+|-
+!Title
+!Developer(s)
+!Publisher(s)
+!Japan
+!North America
+!PAL region
+|-
+${rows}
+|}`;
+  test('an NA date that is neither {{dts}} nor a known non-release counts as skipped', () => {
+    const { rows, skipped } = parseSoftwareList(table(`|''[[A]]''
+|X
+|Y
+|{{unreleased}}||October 1992||{{unreleased}}
+|-
+|''[[B]]''
+|X
+|Y
+|{{unreleased}}||{{dts|1992|October|10}}||{{unreleased}}
+|-
+|''[[C]]''
+|X
+|Y
+|{{dts|1993|1|1}}||{{n/a|Cancelled}}||{{unreleased}}
+|-
+|''[[D]]''
+|X
+|Y
+|{{dts|1993|1|1}}||{{unreleased}}||—`));
+    expect(rows).toEqual([]);
+    expect(skipped).toBe(2);
+  });
+  test('a row whose title is a row header (! scope="row") is still a row', () => {
+    const { rows } = parseSoftwareList(table(`! scope="row" | ''[[Super Metroid]]''
+|[[Nintendo R&D1]]
+|[[Nintendo]]
+|{{dts|1994|3|19}}||{{dts|1994|4|18}}||{{dts|1994|7|28}}`));
+    expect(rows.map((r) => r.title)).toEqual(['Super Metroid']);
+  });
+});

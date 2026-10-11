@@ -48,6 +48,9 @@ function naPublisher(cell: string): string | null {
   return null;
 }
 
+/** An NA cell that means "no North American release": {{unreleased}}, {{n/a…}}, a dash, or nothing. */
+const NOT_RELEASED = /^\s*(?:\{\{\s*(?:unreleased|n\/a|na)\b[^}]*\}\}|[—–-]|N\/A)?\s*$/i;
+
 export function parseSoftwareList(wikitext: string): { rows: WikiListRow[]; skipped: number } {
   const start = wikitext.indexOf('id="softwarelist"');
   if (start < 0) throw new Error('softwarelist table not found — has the Wikipedia page changed shape?');
@@ -61,7 +64,12 @@ export function parseSoftwareList(wikitext: string): { rows: WikiListRow[]; skip
       continue;
     }
     const na = parseDts(cells[4]);
-    if (!na) continue;
+    if (!na) {
+      // Not released in North America — unless the cell says something we can't read, which is counted
+      // rather than guessed, so a reworded date never silently drops a US game.
+      if (!NOT_RELEASED.test(cells[4])) skipped++;
+      continue;
+    }
     const { title, article } = parseTitleCell(cells[0]);
     rows.push({
       title,

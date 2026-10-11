@@ -80,6 +80,38 @@ test('games sharing one Wikipedia article keep their own previous slugs', () => 
   ]);
 });
 
+test('a slug that would disappear fails the build unless retired or re-pointed', () => {
+  const previous = [
+    { slug: 'f-zero', title: 'F-Zero', sources: { wikipedia: 'F-Zero', igdb: 1 } },
+    { slug: 'jeopardy-deluxe-edition', title: 'Jeopardy! Deluxe Edition', sources: { wikipedia: null, igdb: null } },
+  ] as Game[];
+  const list = [row('F-Zero'), row('Jeopardy! Deluxe', { article: null })];
+  const base = { igdb: {}, boxart: {}, companies: {}, slugs: {} };
+  expect(buildDataset(inputs({ list, previous })).errors).toEqual([
+    expect.stringMatching(/"jeopardy-deluxe-edition".*disappear/),
+  ]);
+  expect(buildDataset(inputs({ list, previous, aliases: { ...base, retiredSlugs: ['jeopardy-deluxe-edition'] } })).errors).toEqual([]);
+  const repointed = buildDataset(inputs({ list, previous, aliases: { ...base, slugs: { 'Jeopardy! Deluxe': 'jeopardy-deluxe-edition' } } }));
+  expect(repointed.errors).toEqual([]);
+  expect(repointed.games.map((g) => g.slug)).toContain('jeopardy-deluxe-edition');
+});
+
+test('rows of the Wikipedia list the parser could not read fail the build', () => {
+  expect(buildDataset(inputs({ unreadableRows: 2 })).errors).toEqual([expect.stringMatching(/2 rows.*could not be read/)]);
+  expect(buildDataset(inputs({ unreadableRows: 0 })).errors).toEqual([]);
+});
+
+test('stale or mistyped aliases and override fields fail the build', () => {
+  const base = { igdb: {}, boxart: {}, companies: {}, slugs: {} };
+  const errorsFor = (over: Partial<BuildInputs>) => buildDataset(inputs(over)).errors;
+  expect(errorsFor({ aliases: { ...base, slugs: { 'No Such Title': 'x' } } })).toEqual([expect.stringMatching(/"slugs".*No Such Title/)]);
+  expect(errorsFor({ aliases: { ...base, companies: { 'Nobody Inc.': 'Nobody' } } })).toEqual([expect.stringMatching(/"companies".*Nobody Inc\./)]);
+  expect(errorsFor({ aliases: { ...base, igdb: { 'f-zero': 999 } } })).toEqual([expect.stringMatching(/999/)]);
+  expect(errorsFor({ igdb: null, aliases: { ...base, igdb: { 'f-zero': 999 } } })).toEqual([]);
+  expect(errorsFor({ overrides: { 'f-zero': { relasedUS: '1991-08' } as never } })).toEqual([expect.stringMatching(/relasedUS/)]);
+  expect(errorsFor({ overrides: { 'f-zero': { scores: { npower: 3 } } as never } })).toEqual([expect.stringMatching(/npower/)]);
+});
+
 test('applies overrides last, and refuses unknown slugs and slug changes', () => {
   const ok = buildDataset(inputs({ overrides: { 'f-zero': { players: 1, scores: { nintendoPower: { score: 4, scale: 5 } }, note: 'NP Sept 1991' } } }));
   const fz = ok.games.find((g) => g.slug === 'f-zero')!;

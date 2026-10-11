@@ -26,4 +26,4 @@ for (const [file, page] of Object.entries(PAGES)) {
 const { parseSoftwareList, parseChipList } = loadTs('lib/snes/wikiList.ts');
 const { rows, skipped } = parseSoftwareList(fs.readFileSync(cachePath('wiki-list.wiki'), 'utf8'));
 const chips = parseChipList(fs.readFileSync(cachePath('wiki-chips.wiki'), 'utf8'));
-console.log(`${rows.length} North American releases (${skipped} malformed rows skipped), ${chips.length} chip games`);
+console.log(`${rows.length} North American releases (${skipped} unreadable rows — the build refuses until the parser reads them), ${chips.length} chip games`);

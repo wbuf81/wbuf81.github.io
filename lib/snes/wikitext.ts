@@ -104,11 +104,13 @@ export function tableRows(table: string): string[][] {
     const cells: string[] = [];
     let header = false;
     for (const line of raw.split('\n')) {
-      if (line.startsWith('!')) {
+      // `! scope="row" | Title` is a data row's first cell marked up as a row header, not a header row.
+      if (line.startsWith('!') && !/^!\s*scope\s*=\s*"?row/i.test(line)) {
         header = true;
         break;
       }
-      if (line.startsWith('|')) cells.push(...splitTopLevel(line.slice(1), '||'));
+      if (line.startsWith('!')) cells.push(...splitTopLevel(line.slice(1), '!!'));
+      else if (line.startsWith('|')) cells.push(...splitTopLevel(line.slice(1), '||'));
       else if (cells.length && line.trim()) cells[cells.length - 1] += '\n' + line;
     }
     if (!header && cells.length) out.push(cells);

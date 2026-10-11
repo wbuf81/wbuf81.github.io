@@ -25,7 +25,15 @@ export interface BuildInputs {
   previous: Game[];
   hasBoxArt: (slug: string) => boolean;
   countRange?: [number, number];
+  /** Rows of the Wikipedia list parseSoftwareList skipped as unreadable (its `skipped`). */
+  unreadableRows?: number;
 }
+
+const OVERRIDE_FIELDS = new Set([
+  'title', 'releasedUS', 'datePrecision', 'developers', 'publisher', 'genres', 'players', 'chip', 'launchTitle',
+  'esrb', 'summary', 'boxArt', 'scores', 'note',
+]);
+const SCORE_FIELDS = new Set(['aggregate', 'aggregateCount', 'egm', 'nintendoPower', 'other']);
 
 const SUFFIX = /\b(inc|corp|corporation|co|ltd|limited|company|software|entertainment|games|interactive|of america|usa)\b/g;
 
@@ -123,18 +131,50 @@ export function buildDataset(input: BuildInputs) {
       errors.push(`overrides.json "${slug}" tries to change the slug — slugs are permanent; use aliases.json "slugs" for a collision`);
       continue;
     }
+    const unknown = [
+      ...Object.keys(override).filter((k) => !OVERRIDE_FIELDS.has(k)),
+      ...Object.keys(override.scores ?? {}).filter((k) => !SCORE_FIELDS.has(k)).map((k) => `scores.${k}`),
+    ];
+    if (unknown.length) {
+      errors.push(`overrides.json "${slug}" has unknown fields: ${unknown.join(', ')}`);
+      continue;
+    }
     const { note: _note, scores, ...fields } = override as Override;
     Object.assign(game, fields);
     if (scores) game.scores = { ...game.scores, ...scores };
+  }
+  const titles = new Set(input.list.map((r) => r.title));
+  for (const title of Object.keys(aliases.slugs)) {
+    if (!titles.has(title)) errors.push(`aliases.json "slugs" names "${title}", which is no longer a Wikipedia title — it no longer protects a slug`);
+  }
+  const rawNames = new Set(input.list.flatMap((r) => [...r.developers, r.publisher]));
+  for (const raw of Object.keys(aliases.companies)) {
+    if (!rawNames.has(raw)) errors.push(`aliases.json "companies" names "${raw}", which no game uses`);
+  }
+  if (input.igdb) {
+    for (const [slug, id] of Object.entries(aliases.igdb)) {
+      if (!igdbById.has(id)) errors.push(`aliases.json "igdb" pins "${slug}" to IGDB id ${id}, which isn't in the IGDB data`);
+    }
   }
   for (const kind of ['igdb', 'boxart'] as const) {
     for (const slug of Object.keys(aliases[kind])) {
       if (!bySlug.has(slug)) errors.push(`aliases.json "${kind}" names "${slug}", which is not a game`);
     }
   }
+  // Slugs are permanent (wes.json is keyed by them), so one vanishing is never silent: an upstream retitle of
+  // an unlinked game, an article move plus retitle, or a dropped row all land here.
+  const retired = new Set(aliases.retiredSlugs ?? []);
+  for (const prev of input.previous) {
+    if (!bySlug.has(prev.slug) && !retired.has(prev.slug)) {
+      errors.push(`slug "${prev.slug}" (${prev.title}) would disappear — map its new Wikipedia title to it in aliases.json "slugs", or list it in "retiredSlugs"`);
+    }
+  }
   for (const game of games) {
     if (game.releasedUS < ESRB_START) game.esrb = null;
     if (!game.publisher) errors.push(`"${game.title}" has no North American publisher`);
+  }
+  if (input.unreadableRows) {
+    errors.push(`${input.unreadableRows} rows of the Wikipedia list could not be read (an unfamiliar date or table shape) — fix the parser before building`);
   }
   if (games.length < lo || games.length > hi) {
     errors.push(`${games.length} games is outside ${lo}–${hi} — the Wikipedia list probably changed shape`);

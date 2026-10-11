@@ -36,22 +36,28 @@ fs.mkdirSync(BOX_DIR, { recursive: true });
 const sourcesFile = path.join(BOX_DIR, 'sources.json');
 const sources = readJson(sourcesFile, {});
 const tmp = cachePath('box-download.png');
+const PNG = Buffer.from([0x89, 0x50, 0x4e, 0x47]);
 const missing = [];
 let downloaded = 0;
 
 for (const game of games) {
   const out = path.join(BOX_DIR, `${game.slug}.jpg`);
-  if (fs.existsSync(out) && !refresh) continue;
   const file = aliases.boxart[game.slug] ?? index.get(normalizeTitle(game.title));
+  // Skip an image already made from the same file; a changed alias (a different file) downloads again.
+  if (fs.existsSync(out) && !refresh && sources[game.slug] === file) continue;
   if (!file) {
     missing.push(game.title);
     continue;
   }
   let bytes = Buffer.from(await (await fetchWithRetry(LIBRETRO_RAW + encodeURIComponent(file))).arrayBuffer());
   // Some libretro files are git symlinks: the raw URL serves the target's file name, not a PNG.
-  if (!bytes.subarray(0, 4).equals(Buffer.from([0x89, 0x50, 0x4e, 0x47]))) {
+  if (!bytes.subarray(0, 4).equals(PNG)) {
     const target = path.posix.basename(bytes.toString('utf8').trim());
     bytes = Buffer.from(await (await fetchWithRetry(LIBRETRO_RAW + encodeURIComponent(target))).arrayBuffer());
+    if (!bytes.subarray(0, 4).equals(PNG)) {
+      console.warn(`  ${file} is neither a PNG nor a link to one; skipped`);
+      continue;
+    }
   }
   fs.writeFileSync(tmp, bytes);
   const sips = spawnSync('sips', ['--resampleWidth', '300', '-s', 'format', 'jpeg', '-s', 'formatOptions', '82', tmp, '--out', out], { encoding: 'utf8' });
@@ -60,11 +66,10 @@ for (const game of games) {
     continue;
   }
   sources[game.slug] = file;
+  // Credited the moment the image exists, so an interrupted run never leaves an uncredited image behind.
+  writeJson(sourcesFile, sources);
   downloaded++;
-  if (downloaded % 50 === 0) {
-    writeJson(sourcesFile, sources);
-    console.log(`  ${downloaded} downloaded`);
-  }
+  if (downloaded % 50 === 0) console.log(`  ${downloaded} downloaded`);
   await sleep(100);
 }
 // A slug that left games.json (a rename settled in aliases.json) takes its image and credit with it.
