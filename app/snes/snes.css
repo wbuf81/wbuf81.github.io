@@ -1,0 +1,166 @@
+/* /snes — the SNES library, timeline and game pages (docs/superpowers/specs/2026-10-11-snes-library-design.md).
+   Colours by token only; the one raw colour is translucent black, for the CRT scanlines and spine shading.
+   Every selector under .wb, blocks prefixed s-. */
+
+.wb .s-wrap { max-width: 1380px; margin: 0 auto; padding: 0 clamp(16px, 3vw, 40px) 60px; }
+.wb .s-hero { padding: 30px 0 6px; }
+.wb .s-hero h1 { font: 600 clamp(32px, 4.4vw, 52px)/1.05 var(--serif); letter-spacing: -.01em; margin: 6px 0 8px; color: var(--ink); }
+.wb .s-hero p { margin: 0; max-width: 62ch; font-size: 16px; color: var(--ink-2); }
+
+/* filter bar */
+.wb .s-bar { position: sticky; top: 0; z-index: 15; display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 20px 0 10px; padding: 8px; background: var(--paper); border: 1px solid var(--rule); border-radius: 6px; }
+.wb .s-search { flex: 1 1 200px; min-width: 0; height: 32px; padding: 0 10px; border: 1px solid var(--rule); border-radius: 4px; background: var(--paper); color: var(--ink); font: 14px var(--sans); }
+.wb .s-dd { position: relative; }
+.wb .s-dd > summary, .wb .s-select, .wb .s-toggle, .wb .s-sound { display: inline-flex; align-items: center; gap: 6px; height: 32px; padding: 0 10px; border: 1px solid var(--rule); border-radius: 4px; background: var(--paper); color: var(--ink-2); font: 500 11.5px var(--mono); white-space: nowrap; cursor: pointer; list-style: none; }
+.wb .s-dd > summary::-webkit-details-marker { display: none; }
+.wb .s-dd[open] > summary, .wb .s-dd.is-on > summary, .wb .s-select.is-on, .wb .s-toggle[aria-pressed="true"], .wb .s-sound.is-on { border-color: var(--snes); color: var(--snes); background: var(--snes-soft); }
+.wb .s-sound.is-wait { border-style: dashed; color: var(--snes); }
+.wb .s-pop { position: absolute; top: calc(100% + 6px); left: 0; z-index: 20; display: grid; gap: 6px; min-width: 200px; padding: 10px; background: var(--paper); border: 1px solid var(--rule); border-radius: 6px; box-shadow: 0 12px 24px -16px color-mix(in srgb, var(--ink) 60%, transparent); }
+.wb .s-pop label { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--ink-2); cursor: pointer; }
+.wb .s-views { display: inline-flex; margin-left: auto; border: 1px solid var(--rule); border-radius: 16px; overflow: hidden; }
+.wb .s-views button { padding: 6px 11px; border: 0; background: none; color: var(--ink-2); font: 500 11.5px var(--mono); cursor: pointer; }
+.wb .s-views button[aria-selected="true"] { background: var(--accent); color: var(--on-accent); }
+.wb .s-count { display: flex; align-items: center; gap: 10px; margin: 0 0 12px; font: 500 11.5px var(--mono); color: var(--ink-3); }
+.wb .s-clear { padding: 0; border: 0; background: none; color: var(--accent); font: inherit; cursor: pointer; }
+.wb .s-years { display: flex; flex-wrap: wrap; gap: 4px; margin: 0 0 22px; }
+.wb .s-years button { padding: 4px 10px; border: 0; border-radius: 3px; background: var(--rule-soft); color: var(--ink-2); font: 500 11px var(--mono); cursor: pointer; }
+.wb .s-years button:disabled { opacity: .4; cursor: default; }
+
+/* timeline */
+.wb .s-month { display: grid; grid-template-columns: 86px 1fr; gap: 0 18px; padding-bottom: 30px; scroll-margin-top: 70px; }
+.wb .s-when { padding-right: 14px; border-right: 2px solid var(--rule); text-align: right; }
+.wb .s-m { font: 600 24px/1.1 var(--serif); color: var(--ink); }
+.wb .s-y { font: 500 11px var(--mono); letter-spacing: .08em; color: var(--ink-3); }
+.wb .s-n { margin-top: 6px; font: 500 10.5px var(--mono); color: var(--ink-2); }
+.wb .s-lbl { margin: 0 0 12px; font: 500 10.5px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); }
+.wb .s-row { display: flex; flex-wrap: wrap; gap: 16px; }
+.wb .s-anchor { display: block; scroll-margin-top: 70px; }
+
+/* game tile: a card in the screen colour; hover glows and eases the TV scanlines in */
+.wb .s-tile { position: relative; display: block; width: 136px; overflow: hidden; background: var(--screen-2); border: 1px solid var(--screen-rule); border-radius: 5px; color: var(--screen-ink); text-decoration: none; transition: box-shadow .25s; }
+.wb .s-tile:hover, .wb .s-tile:focus-visible { outline: none; box-shadow: 0 0 0 2px var(--snes-glow), 0 0 20px color-mix(in srgb, var(--snes-glow) 50%, transparent); }
+.wb .s-art { position: relative; display: block; aspect-ratio: 300 / 209; overflow: hidden; background: var(--screen); }
+.wb .s-art img, .wb .s-art video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.wb .s-art::after { content: ''; position: absolute; inset: 0; z-index: 2; pointer-events: none; opacity: 0; transition: opacity .4s ease;
+  background: repeating-linear-gradient(0deg, rgba(0, 0, 0, .28) 0 1px, transparent 1px 3px), radial-gradient(ellipse at center, transparent 60%, rgba(0, 0, 0, .28)); }
+.wb .s-tile:hover .s-art::after, .wb .s-tile:focus-visible .s-art::after, .wb .s-art.is-on::after { opacity: 1; }
+.wb .s-tile:hover .s-art img, .wb .s-tile:hover .s-art video, .wb .s-tile:focus-visible .s-art img { filter: saturate(1.12) contrast(1.05); }
+.wb .s-noart { position: absolute; inset: 0; display: grid; place-items: center; padding: 8px; text-align: center; font: 600 13px/1.2 var(--serif); color: var(--screen-ink-2); }
+.wb .s-tb { display: block; padding: 7px 8px 9px; }
+.wb .s-tt { display: block; font: 600 13px/1.2 var(--serif); color: var(--screen-ink); }
+.wb .s-tp { display: block; margin-top: 2px; font: 400 10px var(--mono); color: var(--screen-ink-2); }
+.wb .s-chips { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 5px; }
+.wb .s-chips span { padding: 1px 5px; border-radius: 3px; background: var(--screen-rule); color: var(--screen-ink-2); font: 500 9.5px var(--mono); }
+.wb .s-chips b { font-weight: 500; color: var(--screen-ink); }
+.wb .s-chips .s-day { background: color-mix(in srgb, var(--snes-glow) 40%, var(--screen-2)); color: var(--screen-ink); text-transform: uppercase; letter-spacing: .06em; }
+.wb .s-empty { padding: 40px 0; text-align: center; color: var(--ink-2); }
+.wb .s-empty p { margin: 0 0 10px; font: 600 20px var(--serif); color: var(--ink); }
+
+/* release heatmap */
+.wb .s-heat { display: grid; gap: 4px; max-width: 900px; }
+.wb .s-heat-row { display: grid; grid-template-columns: 44px repeat(12, 1fr); align-items: center; gap: 4px; }
+.wb .s-heat-row > span { font: 500 11px var(--mono); color: var(--ink-2); }
+.wb .s-heat-row > em { font: 500 10px var(--mono); font-style: normal; text-align: center; color: var(--ink-3); }
+.wb .s-heat-cell { display: grid; place-items: center; aspect-ratio: 1.6; border: 0; border-radius: 4px; background: var(--rule-soft); color: var(--ink-3); font: 500 10px var(--mono); cursor: pointer; }
+.wb .s-heat-cell.l1 { background: var(--snes-h1); color: var(--ink); }
+.wb .s-heat-cell.l2 { background: var(--snes-h2); color: var(--ink); }
+.wb .s-heat-cell.l3 { background: var(--snes-h3); color: var(--paper); }
+.wb .s-heat-cell.l4 { background: var(--snes-h4); color: var(--paper); }
+.wb .s-heat-cell.is-pre { background: none; border: 1px dashed var(--rule); }
+.wb .s-heat-cell:disabled { cursor: default; }
+.wb .s-heat-cell:not(:disabled):hover, .wb .s-heat-cell:focus-visible { outline: 2px solid var(--snes-glow); outline-offset: 1px; }
+
+/* cover wall */
+.wb .s-wall { display: grid; grid-template-columns: repeat(auto-fill, minmax(56px, 1fr)); gap: 3px; padding: 8px; background: var(--screen); border-radius: 6px; }
+.wb .s-wall-item { position: relative; display: block; aspect-ratio: 96 / 67; overflow: hidden; border-radius: 2px; background: var(--screen-2); transition: opacity .2s, transform .2s; }
+.wb .s-wall-item img { width: 100%; height: 100%; object-fit: cover; }
+.wb .s-wall-item.is-dim { opacity: .18; filter: saturate(.2); }
+.wb .s-wall-item:hover, .wb .s-wall-item:focus-visible { z-index: 3; transform: scale(1.6); opacity: 1; filter: none; outline: none; box-shadow: 0 6px 18px rgba(0, 0, 0, .6); }
+.wb .s-wall-item .s-noart { font-size: 8px; }
+.wb .s-wall-year { grid-column: 1 / -1; padding: 6px 2px 2px; font: 500 11px var(--mono); letter-spacing: .08em; color: var(--screen-ink-2); scroll-margin-top: 70px; }
+
+/* game shelf: drawn spines, each a slice of its own cover */
+.wb .s-shelf-year { margin: 16px 0 26px; scroll-margin-top: 70px; }
+.wb .s-shelf-year h3 { margin: 0 0 8px; font: 600 20px var(--serif); color: var(--ink); }
+.wb .s-shelf { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 14px 2px; padding: 0 12px 14px; border-radius: 6px; background: repeating-linear-gradient(to bottom, var(--shelf) 0 210px, var(--plank) 210px 224px); }
+.wb .s-spine { position: relative; flex: none; display: flex; flex-direction: column; align-items: center; width: 32px; height: 210px; border-radius: 2px 2px 0 0; color: var(--screen-ink); text-decoration: none;
+  background-color: var(--screen-2); background-image: var(--art, none); background-position: center; background-size: auto 100%; background-repeat: no-repeat; box-shadow: inset -3px 0 0 rgba(0, 0, 0, .22); transition: transform .2s; }
+.wb .s-spine::after { content: ''; position: absolute; inset: 56px 0 0; background: linear-gradient(90deg, rgba(0, 0, 0, .55), rgba(0, 0, 0, .25) 50%, rgba(0, 0, 0, .55)); }
+.wb .s-spine:hover, .wb .s-spine:focus-visible { z-index: 4; transform: translateY(-16px); outline: none; }
+.wb .s-band { display: flex; align-items: center; justify-content: center; flex: none; width: 100%; height: 56px; background: var(--screen); border-bottom: 2px solid var(--screen-ink-2); }
+.wb .s-band b { writing-mode: vertical-rl; transform: rotate(180deg); font: 700 6px/1 var(--sans); letter-spacing: .06em; color: var(--screen-ink); }
+.wb .s-spine-t { position: relative; z-index: 1; margin: auto 0; max-height: 118px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; writing-mode: vertical-rl; transform: rotate(180deg); font: 600 12.5px/1 var(--serif); text-shadow: 0 1px 2px rgba(0, 0, 0, .8); }
+.wb .s-seal { position: relative; z-index: 1; flex: none; width: 14px; height: 14px; margin-bottom: 7px; border: 2px solid currentColor; border-radius: 50%; opacity: .7; }
+.wb .s-spine-tip { position: absolute; bottom: calc(100% + 8px); left: 50%; z-index: 5; width: 150px; margin-left: -75px; padding: 6px; background: var(--paper); border: 1px solid var(--rule); border-radius: 6px; font: 600 12px/1.2 var(--serif); color: var(--ink); opacity: 0; pointer-events: none; transition: opacity .15s; }
+.wb .s-spine:hover .s-spine-tip, .wb .s-spine:focus-visible .s-spine-tip { opacity: 1; }
+.wb .s-spine-tip img { width: 100%; margin-bottom: 5px; border-radius: 3px; }
+
+/* score scatter */
+.wb .s-scatter-wrap { max-width: 1000px; }
+.wb .s-axis-pick { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 14px; }
+.wb .s-scatter { position: relative; height: 320px; margin: 18px 0 34px 30px; border-left: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
+.wb .s-dot { position: absolute; width: 8px; height: 8px; margin: 0 0 -4px -4px; border-radius: 50%; background: var(--snes-glow); opacity: .6; }
+.wb .s-dot:hover, .wb .s-dot:focus-visible { z-index: 3; transform: scale(1.8); background: var(--snes); opacity: 1; outline: none; }
+.wb .s-dot.is-star { width: 10px; height: 10px; margin: 0 0 -5px -5px; background: var(--snes); opacity: 1; }
+.wb .s-dot-label { position: absolute; left: 12px; top: -7px; white-space: nowrap; pointer-events: none; font: 500 10.5px var(--mono); color: var(--ink); }
+.wb .s-tick-x { position: absolute; bottom: -22px; transform: translateX(-50%); font: 500 10px var(--mono); color: var(--ink-3); }
+.wb .s-tick-y { position: absolute; left: -28px; transform: translateY(50%); font: 500 10px var(--mono); color: var(--ink-3); }
+
+/* game page: cover/3D box/clip on the left, the instruction booklet on the right */
+.wb .s-crumb { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; padding: 20px 0 16px; font: 500 11px var(--mono); letter-spacing: .03em; color: var(--ink-3); }
+.wb .s-game { display: grid; grid-template-columns: minmax(260px, 340px) 1fr; align-items: start; gap: 34px; }
+.wb .s-frame { position: relative; aspect-ratio: 300 / 209; overflow: hidden; background: var(--screen-2); border: 1px solid var(--screen-rule); border-radius: 6px; box-shadow: 0 0 0 2px var(--snes-glow), 0 0 26px color-mix(in srgb, var(--snes-glow) 45%, transparent); }
+.wb .s-frame > img, .wb .s-frame > video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.wb .s-frame.is-crt > img, .wb .s-frame.is-crt > video { filter: saturate(1.1) contrast(1.04); }
+.wb .s-frame.is-crt::after { content: ''; position: absolute; inset: 0; z-index: 2; pointer-events: none;
+  background: repeating-linear-gradient(0deg, rgba(0, 0, 0, .28) 0 1px, transparent 1px 3px), radial-gradient(ellipse at center, transparent 60%, rgba(0, 0, 0, .28)); }
+.wb .s-frame > .s-box3d { object-fit: contain; padding: 10px; background: radial-gradient(circle at 50% 40%, var(--screen-rule), var(--screen)); }
+.wb .s-play { position: absolute; inset: 0; z-index: 3; display: grid; place-items: center; border: 0; background: none; cursor: pointer; }
+.wb .s-play span { display: grid; place-items: center; width: 58px; height: 58px; padding-left: 4px; border: 2px solid var(--snes-glow); border-radius: 50%; background: color-mix(in srgb, var(--screen) 75%, transparent); color: var(--screen-ink); font-size: 22px; }
+.wb .s-seg { display: flex; width: max-content; margin-top: 10px; border: 1px solid var(--rule); border-radius: 16px; overflow: hidden; }
+.wb .s-seg button { padding: 6px 12px; border: 0; background: var(--paper); color: var(--ink-2); font: 500 11.5px var(--mono); cursor: pointer; }
+.wb .s-seg button[aria-pressed="true"] { background: var(--accent); color: var(--on-accent); }
+.wb .s-wes { margin-top: 16px; padding: 12px 14px; border: 1px dashed var(--snes-glow); border-radius: 6px; background: var(--snes-soft); color: var(--snes); font-size: 13px; }
+.wb .s-wes b { display: block; font: 600 15px var(--serif); }
+.wb .s-booklet { position: relative; padding: 24px 26px 26px; background: var(--booklet); border: 1px solid var(--rule); border-radius: 6px; }
+.wb .s-booklet::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 6px; opacity: .6; background: repeating-linear-gradient(180deg, var(--rule) 0 2px, transparent 2px 9px); }
+.wb .s-logo { width: 100%; max-width: 420px; margin: 6px 0 10px; }
+.wb .s-title { margin: 6px 0 10px; font: 600 clamp(30px, 3.6vw, 42px)/1.05 var(--serif); color: var(--ink); }
+.wb .s-bchips { display: flex; flex-wrap: wrap; gap: 6px; }
+.wb .s-bchip { padding: 2px 8px; border-radius: 3px; background: var(--rule-soft); color: var(--ink-2); font: 500 11px var(--mono); }
+.wb .s-bchip.is-day { background: var(--snes-soft); color: var(--snes); text-transform: uppercase; letter-spacing: .05em; }
+.wb .s-sect { margin-top: 20px; padding-top: 9px; border-top: 2px solid var(--ink); }
+.wb .s-sect h2 { margin: 0 0 8px; font: 600 11.5px var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--ink); }
+.wb .s-sect p { margin: 0; max-width: 64ch; color: var(--ink-2); }
+.wb .s-spec { display: grid; grid-template-columns: 120px 1fr; gap: 5px 14px; margin: 0; font-size: 14px; }
+.wb .s-spec dt { padding-top: 3px; font: 500 10.5px var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); }
+.wb .s-spec dd { margin: 0; color: var(--ink); }
+.wb .s-none { margin: 4px 0 10px; font: 500 11.5px var(--mono); color: var(--ink-3); }
+.wb .s-bars { display: flex; align-items: flex-end; gap: 7px; height: 100px; margin: 22px 0 14px; }
+.wb .s-bar4 { position: relative; width: 26px; border-radius: 3px 3px 0 0; background: var(--snes); }
+.wb .s-bar4 i { position: absolute; top: -19px; left: -6px; right: -6px; text-align: center; font: 600 13px var(--serif); font-style: normal; color: var(--ink); }
+.wb .s-bars-label { align-self: center; margin-left: 8px; font: 500 10.5px var(--mono); color: var(--ink-3); }
+.wb .s-crs { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 2px 22px; margin: 0; }
+.wb .s-cr { display: flex; justify-content: space-between; gap: 10px; padding: 5px 0; border-bottom: 1px solid var(--rule-soft); font-size: 13.5px; color: var(--ink-2); }
+.wb .s-cr dd { margin: 0; white-space: nowrap; font: 500 12.5px var(--mono); color: var(--ink); }
+.wb .s-also { margin-top: 34px; }
+.wb .s-also .s-row { margin-top: 12px; }
+.wb .s-steps { display: flex; justify-content: space-between; gap: 12px; margin-top: 26px; font: 500 12.5px var(--mono); }
+.wb .s-steps span { color: var(--ink-3); }
+
+/* company page */
+.wb .s-company { padding: 26px 0 18px; }
+.wb .s-company h1 { margin: 6px 0 6px; font: 600 clamp(30px, 3.6vw, 44px)/1.05 var(--serif); color: var(--ink); }
+.wb .s-company p { margin: 0; color: var(--ink-2); }
+
+@media (max-width: 760px) {
+  .wb .s-game { grid-template-columns: 1fr; }
+  .wb .s-month { grid-template-columns: 58px 1fr; gap: 0 10px; }
+  .wb .s-row { gap: 10px; }
+  .wb .s-tile { width: calc(50% - 5px); }
+  .wb .s-views { margin-left: 0; }
+  .wb .s-spec { grid-template-columns: 96px 1fr; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .wb .s-art::after, .wb .s-tile, .wb .s-wall-item, .wb .s-spine, .wb .s-spine-tip { transition: none; }
+}

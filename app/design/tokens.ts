@@ -4,7 +4,7 @@
  * so the page can never disagree with the CSS.
  */
 
-export type TokenGroup = 'Surfaces' | 'Ink' | 'Accent' | 'Meaning' | 'Prints' | 'Arcade' | 'GitHub map' | 'Charts';
+export type TokenGroup = 'Surfaces' | 'Ink' | 'Accent' | 'Meaning' | 'Prints' | 'Arcade' | 'GitHub map' | 'Charts' | 'SNES';
 
 export const TOKENS: { name: string; job: string; group: TokenGroup }[] = [
   { name: '--bg', job: 'The page', group: 'Surfaces' },
@@ -24,6 +24,8 @@ export const TOKENS: { name: string; job: string; group: TokenGroup }[] = [
   { name: '--screen', job: "Tetris's screen, dark in both themes", group: 'Arcade' },
   { name: '--screen-ink', job: 'Figures on the screen', group: 'Arcade' },
   { name: '--screen-ink-2', job: 'Labels on the screen', group: 'Arcade' },
+  { name: '--screen-2', job: 'Game tiles on /snes: a card in the screen colour', group: 'Arcade' },
+  { name: '--screen-rule', job: 'Borders and chips on screen-coloured tiles', group: 'Arcade' },
   { name: '--h0', job: 'No contributions', group: 'GitHub map' },
   { name: '--h1', job: 'A few', group: 'GitHub map' },
   { name: '--h2', job: 'Some', group: 'GitHub map' },
@@ -33,6 +35,16 @@ export const TOKENS: { name: string; job: string; group: TokenGroup }[] = [
   { name: '--series-1', job: 'First series: protein, lifts, calories at or under target', group: 'Charts' },
   { name: '--series-2', job: 'Second series: carbs, cardio, calories over target, a big day', group: 'Charts' },
   { name: '--series-3', job: 'Third series: fat', group: 'Charts' },
+  { name: '--snes', job: 'The SNES purple: active filters, EGM bars, Day One', group: 'SNES' },
+  { name: '--snes-glow', job: 'Hover and focus glow on games', group: 'SNES' },
+  { name: '--snes-soft', job: 'Fills behind SNES-purple text', group: 'SNES' },
+  { name: '--snes-h1', job: 'Release heatmap: a few games', group: 'SNES' },
+  { name: '--snes-h2', job: 'Release heatmap: some', group: 'SNES' },
+  { name: '--snes-h3', job: 'Release heatmap: many', group: 'SNES' },
+  { name: '--snes-h4', job: 'Release heatmap: the busiest months', group: 'SNES' },
+  { name: '--booklet', job: 'The instruction-booklet paper on game pages', group: 'SNES' },
+  { name: '--shelf', job: 'Back of the game shelf', group: 'SNES' },
+  { name: '--plank', job: 'Shelf planks under the spines', group: 'SNES' },
 ];
 
 function declarations(css: string, selector: string): Record<string, string> {
