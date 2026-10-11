@@ -138,6 +138,28 @@ The **Changes** section is `buildChangeLog`, derived from `phases`, `calorieTarg
 - Markers are deliberately excluded — they are events, not target changes, and the log and Records › By week already list them.
 
 
+## /snes dataset
+Piece 1 of the `/snes` history (spec `docs/superpowers/specs/2026-10-11-snes-dataset-design.md`, plan `docs/superpowers/plans/2026-10-11-snes-dataset.md`). No UI yet; it builds the data pieces 2–5 read.
+
+```
+npm run snes                 # everything: fetch → build → box art → build
+npm run snes:fetch           # Wikipedia list + chips, review boxes, IGDB, into .snes-cache/ (gitignored)
+npm run snes:build           # offline: games.json + companies.json + coverage report (--json for machine-readable)
+npm run snes:fetch:boxart    # missing box art → public/snes/box/<slug>.jpg (macOS sips), then build again
+```
+- **Files:**
+  - `data/snes/games.json` holds facts only. Wes's opinions will live in `wes.json`, keyed by the same slug.
+  - `data/snes/companies.json`, `aliases.json` and `overrides.json` are the other data files.
+  - Parsers are in `lib/snes/`, scripts in `scripts/snes/`.
+  - `lib/snes/*.ts` must stay loadable by ts-node from `.mjs`: use `import type` and `.ts` relative imports.
+- **Slugs are permanent:** the build reuses the slug already recorded for a game's Wikipedia article. Never hand-edit a slug in `games.json`; settle collisions in `aliases.json` `slugs`.
+- **Never hand-edit `games.json`.** A correction goes in `overrides.json`, keyed by slug, with a `note` saying why. It is applied last, so a rebuild keeps it. An override or alias naming a missing slug fails the build.
+- **The coverage report is the research to-do list:** unmatched IGDB titles, missing box art, possible duplicate companies, and Nintendo Power / EGM coverage. Magazine scores found by hand go in `overrides.json` (`scores.nintendoPower: { score, scale }`, `scores.egm: [..]`).
+- **Titles are the US titles as printed.** Wikipedia sometimes lists a game under its European name (*Another World*); the US name (*Out of This World*) goes in `overrides.json` `title`, and its US slug in `aliases.json` `slugs`, keyed by the Wikipedia title.
+- **IGDB** needs `IGDB_CLIENT_ID` / `IGDB_CLIENT_SECRET` in `.env.local` (free Twitch dev app). Without them the build still runs with IGDB fields empty. The aggregate score is IGDB `total_rating`, null under 3 ratings.
+- **ESRB is null before Sept 1994** whatever IGDB says (re-releases got rated later). `launchTitle` = released 1991-08-23.
+- Box art is hosted locally, credited in `public/snes/box/SOURCES.md` (generated from `sources.json`). libretro's arcade-cabinet (`(Arcade)`), `SymbolicLink` and reissue files never count; some files are git symlinks and the fetcher follows them. `__tests__/snes-data.test.ts` fails if two games share a cover file — libretro lacks some sequels, and the near-miss is the first game's box.
+
 ## Content rules
 All copy must be external-safe. No internal vendor names (OneTrust, SharePoint), no named regulators or audit firms, no financial specifics. When in doubt, generalize: "company web properties", "brand portfolio", "privacy request data". No client or vendor names for the work tiles either (LUCY's is "a domain-name watch service"), no brokerage for OmaFinance, and **WBDB's copy carries no numbers at all** (Wes, 3 Oct 2026). `__tests__/projects.test.ts` bans the known names.
 

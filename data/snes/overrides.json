@@ -1,1 +1,38 @@
-{}
+{
+  "out-of-this-world": {
+    "title": "Out of This World",
+    "note": "Released in North America as Out of This World; Wikipedia lists it as Another World."
+  },
+  "firepower-2000": {
+    "title": "Firepower 2000",
+    "note": "Released in North America as Firepower 2000; Wikipedia lists it as Super SWIV."
+  },
+  "soldiers-of-fortune": {
+    "title": "Soldiers of Fortune",
+    "note": "Released in North America as Soldiers of Fortune; Wikipedia lists it as The Chaos Engine."
+  },
+  "world-soccer-94-road-to-glory": {
+    "title": "World Soccer '94: Road to Glory",
+    "note": "Released in North America as World Soccer '94: Road to Glory; Wikipedia lists it as Striker."
+  },
+  "elite-soccer": {
+    "title": "Elite Soccer",
+    "note": "Released in North America as Elite Soccer; Wikipedia lists it as World Cup Striker."
+  },
+  "head-on-soccer": {
+    "title": "Head-On Soccer",
+    "note": "Released in North America as Head-On Soccer; Wikipedia lists it as Fever Pitch Soccer."
+  },
+  "championship-soccer-94": {
+    "title": "Championship Soccer '94",
+    "note": "Released in North America as Championship Soccer '94; Wikipedia lists it as International Sensible Soccer: World Champions."
+  },
+  "the-irem-skins-game": {
+    "title": "The Irem Skins Game",
+    "note": "Released in North America as The Irem Skins Game; Wikipedia lists it as Major Title."
+  },
+  "ballz": {
+    "chip": "DSP-1",
+    "note": "Wikipedia's chip list files it under the article Ballz 3D."
+  }
+}
