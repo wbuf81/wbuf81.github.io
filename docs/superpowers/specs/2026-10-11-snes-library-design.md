@@ -230,7 +230,7 @@ The set is named like the No-Intro box art, e.g. `7th Saga, The (USA)-video.mp4`
 **Behaviour:**
 
 - **Tile hover:**
-  - After you hover for about 300 ms, the cover gives way to the game's clip, playing and looping inside the tile under the S3 CRT scanlines.
+  - After you hover for about 300 ms, the cover gives way to the game's clip, playing and looping inside the tile under the light CRT scanlines.
   - Moving away stops it and goes back to the cover. Only one clip plays at a time.
   - The clip downloads only on hover (`preload="none"`).
   - Touch devices and `prefers-reduced-motion` get no hover playback.
