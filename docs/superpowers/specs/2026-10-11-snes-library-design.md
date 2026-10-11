@@ -313,3 +313,11 @@ With IGDB keys in place, Wes chose these extras:
 - Not taken: the Japanese title and release date.
 
 The data is fetched into `.snes-cache/igdb.json` (local, gitignored) and copied into `data/snes/games.json` at build time. The site never calls IGDB. IGDB is credited on the sources page.
+
+## Addendum (11 Oct 2026): address
+
+The section lives at **`/videogames/snes-history`**, with game pages at `/videogames/snes-history/<slug>` and company pages at `/videogames/snes-history/company/<slug>`. Wherever this document says `/snes` as a page address, read `/videogames/snes-history`. Image and video files keep their `/snes/...` paths.
+- **Why:** Wes wants a video-games section he can expand later.
+- **The hub:** a simple **`/videogames`** page in the design system, with one card linking to the SNES history. It is ready for more consoles, and it is unlinked and `noindex` until piece 3, like the rest.
+- **One place to change it:** every page link comes from `lib/snes/routes.ts`.
+- **Robots:** `robots.txt` disallows `/videogames`.
