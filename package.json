@@ -18,7 +18,10 @@
     "snes:fetch:list": "node scripts/snes/fetch-wikipedia-list.mjs",
     "snes:fetch:reviews": "node scripts/snes/fetch-wiki-reviews.mjs",
     "snes:fetch:igdb": "node scripts/snes/fetch-igdb.mjs",
-    "snes:build": "node scripts/snes/build-games.mjs"
+    "snes:build": "node scripts/snes/build-games.mjs",
+    "snes:fetch:boxart": "node scripts/snes/fetch-boxart.mjs",
+    "snes:fetch": "npm run snes:fetch:list && npm run snes:fetch:reviews && npm run snes:fetch:igdb",
+    "snes": "npm run snes:fetch && npm run snes:build && npm run snes:fetch:boxart && npm run snes:build"
   },
   "keywords": [],
   "author": "",
