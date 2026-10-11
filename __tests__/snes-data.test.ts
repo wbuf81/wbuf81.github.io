@@ -77,3 +77,11 @@ test('every box art image is credited, and no two games share one source file', 
   const files = Object.values(sources);
   expect(new Set(files).size).toBe(files.length);
 });
+
+test('Final Fantasy IV and VI carry their US names, II and III', () => {
+  const ff = Object.fromEntries(games.filter((g) => g.slug.startsWith('final-fantasy')).map((g) => [g.slug, g.title]));
+  expect(ff['final-fantasy-ii']).toBe('Final Fantasy II');
+  expect(ff['final-fantasy-iii']).toBe('Final Fantasy III');
+  expect(ff['final-fantasy-iv']).toBeUndefined();
+  expect(ff['final-fantasy-vi']).toBeUndefined();
+});

@@ -34,5 +34,7 @@
   "ballz": {
     "chip": "DSP-1",
     "note": "Wikipedia's chip list files it under the article Ballz 3D."
-  }
+  },
+  "final-fantasy-ii": { "title": "Final Fantasy II", "note": "Released in North America as Final Fantasy II; Wikipedia lists it as Final Fantasy IV." },
+  "final-fantasy-iii": { "title": "Final Fantasy III", "note": "Released in North America as Final Fantasy III; Wikipedia lists it as Final Fantasy VI." }
 }

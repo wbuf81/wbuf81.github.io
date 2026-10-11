@@ -667,8 +667,8 @@
     }
   },
   {
-    "slug": "final-fantasy-iv",
-    "title": "Final Fantasy IV",
+    "slug": "final-fantasy-ii",
+    "title": "Final Fantasy II",
     "releasedUS": "1991-11",
     "datePrecision": "month",
     "developers": [
@@ -703,7 +703,7 @@
         "award2": "'91 Best Hit Game Awards"
       }
     },
-    "boxArt": "/snes/box/final-fantasy-iv.jpg",
+    "boxArt": "/snes/box/final-fantasy-ii.jpg",
     "sources": {
       "wikipedia": "Final Fantasy IV",
       "igdb": null
@@ -16037,8 +16037,8 @@
     }
   },
   {
-    "slug": "final-fantasy-vi",
-    "title": "Final Fantasy VI",
+    "slug": "final-fantasy-iii",
+    "title": "Final Fantasy III",
     "releasedUS": "1994-10",
     "datePrecision": "month",
     "developers": [
@@ -16068,7 +16068,7 @@
         "rev1": "90%"
       }
     },
-    "boxArt": "/snes/box/final-fantasy-vi.jpg",
+    "boxArt": "/snes/box/final-fantasy-iii.jpg",
     "sources": {
       "wikipedia": "Final Fantasy VI",
       "igdb": null

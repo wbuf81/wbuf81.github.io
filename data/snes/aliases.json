@@ -80,6 +80,9 @@
     "World Cup Striker": "elite-soccer",
     "Fever Pitch Soccer": "head-on-soccer",
     "International Sensible Soccer: World Champions": "championship-soccer-94",
-    "Major Title": "the-irem-skins-game"
-  }
+    "Major Title": "the-irem-skins-game",
+    "Final Fantasy IV": "final-fantasy-ii",
+    "Final Fantasy VI": "final-fantasy-iii"
+  },
+  "retiredSlugs": ["final-fantasy-iv", "final-fantasy-vi"]
 }

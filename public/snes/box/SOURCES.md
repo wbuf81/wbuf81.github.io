@@ -170,9 +170,9 @@ US box art from [libretro-thumbnails](https://github.com/libretro-thumbnails/Nin
 | fifa-international-soccer | FIFA International Soccer (USA).png |
 | fifa-soccer-96 | FIFA Soccer 96 (USA) (En,Fr,De,Es,It,Sv).png |
 | fighters-history | Fighter's History (USA) (Rev 1).png |
-| final-fantasy-iv | Final Fantasy IV (USA).png |
+| final-fantasy-ii | Final Fantasy II (USA).png |
+| final-fantasy-iii | Final Fantasy III (USA).png |
 | final-fantasy-mystic-quest | Final Fantasy - Mystic Quest (USA).png |
-| final-fantasy-vi | Final Fantasy VI (USA).png |
 | final-fight | Final Fight (USA).png |
 | final-fight-2 | Final Fight 2 (USA).png |
 | final-fight-3 | Final Fight 3 (USA).png |

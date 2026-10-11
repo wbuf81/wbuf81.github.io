@@ -13,7 +13,6 @@
   "the-chessmaster": "Chessmaster, The (USA).png",
   "u-n-squadron": "U.N. Squadron (USA).png",
   "darius-twin": "Darius Twin (USA).png",
-  "final-fantasy-iv": "Final Fantasy IV (USA).png",
   "final-fight": "Final Fight (USA).png",
   "john-madden-football": "John Madden Football (USA).png",
   "paperboy-2": "Paperboy 2 (USA).png",
@@ -400,7 +399,6 @@
   "bonkers": "Bonkers (USA).png",
   "brain-lord": "Brain Lord (USA).png",
   "earthworm-jim": "Earthworm Jim (USA).png",
-  "final-fantasy-vi": "Final Fantasy VI (USA).png",
   "firestriker": "FireStriker (USA).png",
   "indiana-jones-greatest-adventures": "Indiana Jones' Greatest Adventures (USA).png",
   "marios-early-years-fun-with-numbers": "Mario's Early Years - Fun with Numbers (USA).png",
@@ -712,5 +710,7 @@
   "the-adventures-of-mighty-max": "Mighty Max (USA).png",
   "head-on-soccer": "Head-On Soccer (USA).png",
   "simcity-2000": "SimCity 2000 - The Ultimate City Simulator (USA).png",
-  "fifa-97-gold-edition": "FIFA Soccer 97 (USA) (En,Fr,De,Es,It,Sv).png"
+  "fifa-97-gold-edition": "FIFA Soccer 97 (USA) (En,Fr,De,Es,It,Sv).png",
+  "final-fantasy-ii": "Final Fantasy II (USA).png",
+  "final-fantasy-iii": "Final Fantasy III (USA).png"
 }
