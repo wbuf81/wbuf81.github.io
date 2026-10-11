@@ -303,3 +303,13 @@ New tokens are added to `app/design-system.css`. Each one appears in both dark b
 - **Media rights.** The gameplay clips, logos and box renders belong to the games' publishers. They're shown small, credited and non-commercially in a history of the console, the same footing as the box art.
 - **Missing data.** Genre, players, summary and aggregate are empty until IGDB lands. Scores are partial. Every component renders the absent state deliberately: hidden controls, "No summary yet", no empty chips.
 - **Hover-only details.** Every detail shown on hover (shelf tooltip, scatter labels) is also reachable by focus and on the game page.
+
+## Addendum (11 Oct 2026): IGDB extras
+
+With IGDB keys in place, Wes chose these extras:
+- **Series and similar games.** Game pages gain "More in the <series> series" and "If you like this, try…", limited to SNES games. `/snes` gains a Series filter.
+- **Critic and player scores, shown separately.** These come from IGDB's `aggregated_rating` and `rating`, each null under 3 ratings. They appear alongside the blended aggregate, which answers the open question about blended scores.
+- **Themes, camera view and co-op/versus.** These become filters (Theme, Camera, Multiplayer) and Specifications rows.
+- Not taken: the Japanese title and release date.
+
+The data is fetched into `.snes-cache/igdb.json` (local, gitignored) and copied into `data/snes/games.json` at build time. The site never calls IGDB. IGDB is credited on the sources page.

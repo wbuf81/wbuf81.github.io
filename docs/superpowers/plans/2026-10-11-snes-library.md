@@ -3284,3 +3284,100 @@ git commit -m "test(snes): render every real game; docs for /snes pages"
 - [ ] **Step 7: Do not merge or push**
 
 `main` auto-deploys. Report the measured page size, the suite result and the screenshots to Wes. Integration is his call: he chose to ship pieces 1 and 2 together.
+
+---
+
+## Addendum (11 Oct 2026): IGDB extras
+
+Wes supplied IGDB keys mid-run and chose these extras:
+- series and similar games
+- critic and player scores, shown separately
+- themes, camera view, and co-op/versus
+
+The dry run against the cached IGDB data (1,994 SNES games) matched 688 of 717 games. This addendum adds Tasks 3b and 5b and extends Tasks 8 and 11. **The order is 3 → 3b → 4 → (5, 6 already done) → 5b → 7 → …**
+
+### Task 3b: IGDB data pass (fields, extras, aliases)
+
+**Files:**
+- Modify: `scripts/snes/fetch-igdb.mjs`, `lib/snes/types.ts`, `lib/snes/igdb.ts`, `lib/snes/build.ts`, `data/snes/aliases.json`
+- Test: `__tests__/snes-igdb.test.ts`, `__tests__/snes-build.test.ts`, `__tests__/snes-data.test.ts`
+- Regenerated: `data/snes/games.json`
+
+**Interfaces:**
+- **Produces, on `IgdbRaw`:**
+  - `franchises?: { name: string }[]`, `collections?: { name: string }[]`, `similar_games?: number[]`
+  - `themes?: { name: string }[]`, `player_perspectives?: { name: string }[]`
+  - `aggregated_rating?`, `aggregated_rating_count?`, `rating?`, `rating_count?`
+  - `multiplayer_modes[]` also gains `offlinecoop?: boolean`
+- **Produces, on `IgdbFacts`:**
+  - `series: string | null` (the first franchise's name, else the first collection's, else null)
+  - `similarIds: number[]`, `themes: string[]`, `perspectives: string[]`
+  - `coop: boolean` (any SNES-or-unspecified multiplayer mode with `offlinecoop` true, or `offlinecoopmax` ≥ 2)
+  - `versus: boolean` (any such mode with `offlinemax` ≥ 2)
+  - `critic: number | null`, `criticCount: number`. Rounded `aggregated_rating`, null under 3 ratings.
+  - `players: number | null`, `playersCount: number`. Rounded `rating`, null under 3. Named `userScore` / `userCount` in code to avoid clashing with the existing `players` (head count) field.
+- **Produces, on `Game`:**
+  - `series: string | null`
+  - `similar: string[]`: slugs of *our* games whose `sources.igdb` is in that game's `similarIds`, in the IGDB list's order, at most 6
+  - `themes: string[]`, `perspectives: string[]`, `multiplayer: { coop: boolean; versus: boolean }`
+  - `scores.critic: number | null`, `scores.criticCount: number`, `scores.users: number | null`, `scores.usersCount: number`
+  - These fields always exist on built games, with empty, false or null when IGDB has nothing.
+- `OVERRIDE_FIELDS` gains `series`, `themes`, `perspectives`, `multiplayer`. `SCORE_FIELDS` gains `critic`, `criticCount`, `users`, `usersCount`.
+
+**Steps (TDD):**
+1. **igdb tests.** Extend `__tests__/snes-igdb.test.ts` with failing tests:
+   - `series` takes the franchise over the collection, and is null when neither exists
+   - `coop`/`versus` from `multiplayer_modes`, ignoring other platforms' modes
+   - `critic`/`userScore` follow the 3-rating floor
+   - `themes`/`perspectives` are name lists
+2. **Implement** the mapper changes in `lib/snes/igdb.ts` and the type changes in `lib/snes/types.ts`.
+3. **Build tests.** Extend `__tests__/snes-build.test.ts` with failing tests:
+   - `similar` resolves IGDB ids to our slugs, skips ids we don't have, caps at 6, and never includes the game itself
+   - the new fields default when `igdb` is null
+   - the new override and score fields are accepted, and unknown ones are still refused
+4. **Implement** in `lib/snes/build.ts`. Resolve `similar` in a second pass, after all games exist, using a map from IGDB id to slug.
+5. **Fetch the new fields.** Add the new fields to `FIELDS` in `fetch-igdb.mjs`: `franchises.name`, `collections.name`, `similar_games`, `themes.name`, `player_perspectives.name`, `aggregated_rating`, `aggregated_rating_count`, `rating`, `rating_count`, `multiplayer_modes.offlinecoop`. Then run `NODE_NO_WARNINGS=1 npm run -s snes:fetch:igdb -- --refresh`.
+6. **Fix the unmatched titles.** Run `npm run -s snes:build` and read the "unmatched in IGDB" list (29 titles in the dry run). For each one, search `.snes-cache/igdb.json` by name and alternative names, and add `aliases.json` `"igdb": { "<slug>": <id> }`. Confirm each pick is the SNES release by checking its platforms or summary. List any title IGDB truly lacks in the report.
+7. **Data tests.** Extend `__tests__/snes-data.test.ts`:
+   - every `similar` slug exists and isn't the game itself
+   - `scores.critic` and `scores.users` are in 0–100 or null
+   - at least 650 games have genres
+8. **Commit, then report coverage.** Commit code, then data. The report gives coverage for each new field: series, similar, themes, perspectives, coop, versus, critic, users.
+
+### Task 5b: Library support for series, theme, camera and multiplayer
+
+**Files:** Modify `lib/snes/library.ts`. Test `__tests__/snes-library.test.ts`.
+
+**Interfaces:**
+- `IndexGame` gains `series: string | null`, `themes: string[]`, `perspectives: string[]`, `coop: boolean`, `versus: boolean`, `critic: number | null` and `users: number | null`.
+- `Filters` gains:
+  - `series: string | null`, keyed by `slugify(series)`
+  - `theme: string | null` (the theme name)
+  - `camera: string | null` (the perspective name)
+  - `mp: 'coop' | 'versus' | null`
+- `Facets` gains `series: Facet[]` (only series with 2 or more games), `themes: string[]` and `perspectives: string[]`. `QueryContext` gains matching sets.
+- URL keys: `series`, `theme`, `camera`, `mp`. Invalid values are dropped. `isFiltered` counts them.
+- `SortKey` and `ScoreAxis` gain `critic` and `users`. `sortGames` and `scatterPoints` support them, with `users` and `critic` on 0–100 divided by 10 for the scatter.
+
+**Steps (TDD):** add failing tests for each filter, for facets (series under 2 games omitted), and for the round-trip of the new URL keys and dropping of invalid ones. Then implement, run `npx jest __tests__/snes-library.test.ts`, and commit.
+
+### Additions to Task 8 (filter bar)
+
+- `FilterBar` renders four more selects, each only when its facet list is non-empty:
+  - **Series** (`aria-label="Series"`, options `Name (count)`)
+  - **Theme**
+  - **Camera** (perspective names)
+  - **Multiplayer** (options "Co-op", "Versus")
+- The Sort select gains "Critic score" and "Player score".
+- The test file adds a test that these controls appear when the index has the data and stay hidden otherwise.
+
+### Additions to Task 11 (game page)
+
+- **Booklet, What the magazines said:** when present, a first row reads "Critics" (`critic`, plus `(N reviews)`), then a row "Players" (`users`, plus `(N ratings)`). Both come before Nintendo Power.
+- **Booklet, Specifications:** gains rows for Series (when present), Themes (joined with " · "), View (perspectives joined with " · ") and Multiplayer ("Co-op", "Versus", or "Co-op · Versus"). Each row appears only when it has a value.
+- **GameView:**
+  - Gains a **"More in the <series> series"** strip: up to 8 other games with the same `series`, in release order, using `GameTile`.
+  - Gains an **"If you like <title>, try…"** strip built from `game.similar`, shown before "Also out in…".
+  - Each strip is omitted when empty.
+  - The page passes the extra lists: `seriesGames: IndexGame[]` and `similarGames: IndexGame[]`, both computed in `app/snes/[slug]/page.tsx` from the index.
+- **Tests:** the full-page fixture adds `series`, `similar`, `themes`, `perspectives`, `multiplayer` and the critic and user scores, and asserts the new rows and strips. The bare fixture asserts that none of them render.
