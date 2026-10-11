@@ -15,7 +15,7 @@ if (!fs.existsSync(listFile)) {
   process.exit(1);
 }
 const { parseSoftwareList } = loadTs('lib/snes/wikiList.ts');
-const { extractReviewBox } = loadTs('lib/snes/reviews.ts');
+const { contentForBatch, extractReviewBox } = loadTs('lib/snes/reviews.ts');
 
 const out = cachePath('reviews.json');
 const cache = refresh ? {} : readJson(out, {});
@@ -24,27 +24,27 @@ const articles = [...new Set(parseSoftwareList(fs.readFileSync(listFile, 'utf8')
   .filter((a) => !(a in cache));
 console.log(`${articles.length} articles to fetch (${Object.keys(cache).length} cached)`);
 
-for (let i = 0; i < articles.length; i += 50) {
-  const batch = articles.slice(i, i + 50);
+// A queue: when Wikipedia cuts a response short (it sets `continue`), unfilled articles go back on the end.
+const queue = [...articles];
+const requeued = new Map();
+let done = 0;
+while (queue.length) {
+  const batch = queue.splice(0, 50);
   const url =
     'https://en.wikipedia.org/w/api.php?action=query&prop=revisions&rvprop=content&rvslots=main' +
     '&format=json&formatversion=2&redirects=1&titles=' +
     encodeURIComponent(batch.join('|'));
   const body = await (await fetchWithRetry(url)).json();
-  // Map the API's normalized and redirected titles back to the article names we asked for.
-  const back = new Map(batch.map((a) => [a, a]));
-  for (const { from, to } of [...(body.query.normalized ?? []), ...(body.query.redirects ?? [])]) {
-    for (const [asked, current] of back) if (current === from) back.set(asked, to);
-  }
-  const content = new Map(
-    (body.query.pages ?? []).map((p) => [p.title, p.revisions?.[0]?.slots?.main?.content ?? null]),
-  );
-  for (const asked of batch) {
-    const text = content.get(back.get(asked));
-    cache[asked] = text ? extractReviewBox(text) : null;
+  if (!body.query) throw new Error(`Wikipedia returned no query result: ${JSON.stringify(body).slice(0, 200)}`);
+  for (const [asked, text] of Object.entries(contentForBatch(batch, body.query))) {
+    if (text === null && body.continue && (requeued.get(asked) ?? 0) < 3) {
+      requeued.set(asked, (requeued.get(asked) ?? 0) + 1); // truncated, not missing: ask again (3 tries)
+      queue.push(asked);
+    } else cache[asked] = text ? extractReviewBox(text) : null;
   }
   writeJson(out, cache);
-  console.log(`  ${Math.min(i + 50, articles.length)} / ${articles.length}`);
+  done = articles.length - queue.length;
+  console.log(`  ${done} / ${articles.length}`);
   await sleep(500);
 }
 
