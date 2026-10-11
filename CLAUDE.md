@@ -162,6 +162,36 @@ npm run snes:fetch:boxart    # missing box art → public/snes/box/<slug>.jpg (m
 - **ESRB is null before Sept 1994** whatever IGDB says (re-releases got rated later). `launchTitle` = released 1991-08-23.
 - Box art is hosted locally, credited in `public/snes/box/SOURCES.md` (generated from `sources.json`). libretro's arcade-cabinet (`(Arcade)`), `SymbolicLink` and reissue files never count; some files are git symlinks and the fetcher follows them. `__tests__/snes-data.test.ts` fails if two games share a cover file — libretro lacks some sequels, and the near-miss is the first game's box.
 
+## /snes pages
+Piece 2 (spec `docs/superpowers/specs/2026-10-11-snes-library-design.md`, plan `docs/superpowers/plans/2026-10-11-snes-library.md`).
+**Unlinked and noindex** (`Disallow: /videogames` in robots.txt, absent from the sitemap) until piece 3 ships; don't add a nav link before then.
+
+- **Routes** (all static: `generateStaticParams`, `dynamicParams = false`; built to `out/videogames/...`):
+  - `/videogames`: hub page (`out/videogames.html`).
+  - `/videogames/snes-history`: hero, sticky filter bar and five views (Timeline · Heatmap · Wall · Shelf · Scatter).
+  - `/videogames/snes-history/<slug>`: 717 instruction-booklet game pages.
+  - `/videogames/snes-history/company/<slug>`: company pages.
+  - Route paths come from `lib/snes/routes.ts` (`SNES_BASE`, `gamePath`, `companyPath`); never hard-code them. Static asset URLs under `/snes/` (public/snes) are separate.
+- **Code:**
+  - Logic lives in `lib/snes/library.ts`: index, filters, URL state, months, heatmap, scatter, neighbours. Labels live in `lib/snes/display.ts`. Both are tested.
+  - Pages read `lib/snes/data.ts`, which client components never import. The library page passes a slim index (`buildIndex`) to the client `Library`.
+  - `__tests__/snes-real-data.test.tsx` renders all 717 real games and checks every `/snes/...` image or clip they reference exists, plus the library's server-rendered size (under 450 KB).
+- **URL state:** filters live in the query string (`?q=&year=&publisher=&developer=&chip=&scores=&launch=1&genre=&players=&series=&theme=&camera=&mp=coop|versus&sort=&view=&y=`). Invalid values are dropped, never an error. Filters include Series, Theme, Camera and Multiplayer; sort and scatter include Player score.
+- **Tiles and hover:**
+  - Tiles are dark screen-colored cards.
+  - Hover gives a purple glow, with **light** scanlines easing in. Wes found the heavier "arcade" scanlines too much, and rejected a power-on flicker, so don't reintroduce either.
+  - After 300 ms of hover the game's 12-second clip plays in the tile. One plays at a time; there's none on touch or with reduced motion.
+- **Sound:** on by default, but browsers block audio until the first click, tap or keypress, so hover clips are muted until then. The sound button mutes, and a mute is stored as `localStorage` `snes-sound=off`.
+- **IGDB extras:** series, similar games, themes, camera views, co-op/versus and the player score. The critic score is shown only on the rare game that has one. Data is fetched to `.snes-cache/igdb.json` and copied into `games.json` at build; keys live in `.env.local`. Game pages show "If you like X, try…" and "More in the X series" strips.
+- **Media:** clips, logos and 3D boxes come from Wes's media set via `npm run snes:media`, from `SNES_MEDIA_DIR` (default `../snes-media`).
+  - Logos and 3D boxes are WebP at native size, made by `scripts/snes/webp.py` (needs Pillow).
+  - **Never keep the media in `out/`;** every build wipes it.
+  - Budgets: video at most 350 MB, each clip at most 600 KB, `public/snes` at most 600 MB (now about 276 MB). `snes-data.test.ts` enforces them, because GitHub Pages caps a site at 1 GB.
+  - To pick a better moment for a clip, set `clipStart` (seconds) in `overrides.json`, then run `snes:media` and `snes:build`. Batch these changes: every re-encode adds to git history.
+- **Not here yet:**
+  - Manuals are paused for their own phase.
+  - Toys (controller, blow-on-the-cart, Mode 7) are deferred.
+
 ## Content rules
 All copy must be external-safe. No internal vendor names (OneTrust, SharePoint), no named regulators or audit firms, no financial specifics. When in doubt, generalize: "company web properties", "brand portfolio", "privacy request data". No client or vendor names for the work tiles either (LUCY's is "a domain-name watch service"), no brokerage for OmaFinance, and **WBDB's copy carries no numbers at all** (Wes, 3 Oct 2026). `__tests__/projects.test.ts` bans the known names.
 
