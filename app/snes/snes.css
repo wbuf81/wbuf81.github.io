@@ -160,6 +160,9 @@
   .wb .s-tile { width: calc(50% - 5px); }
   .wb .s-views { margin-left: 0; }
   .wb .s-spec { grid-template-columns: 96px 1fr; }
+  .wb .s-heat-row { grid-template-columns: 30px repeat(12, 1fr); gap: 2px; }
+  .wb .s-heat-cell { font-size: 8px; border-radius: 3px; }
+  .wb .s-heat-row > span { font-size: 9.5px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .wb .s-art::after, .wb .s-tile, .wb .s-wall-item, .wb .s-spine, .wb .s-spine-tip { transition: none; }
