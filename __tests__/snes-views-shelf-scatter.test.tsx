@@ -55,4 +55,8 @@ describe('Scatter', () => {
     render(<Scatter games={[]} axis="egm" onAxis={jest.fn()} />);
     expect(screen.getByText('No games with EGM scores match those filters.')).toBeInTheDocument();
   });
+  test('the empty state says "player scores" for the users axis', () => {
+    render(<Scatter games={[]} axis="users" onAxis={jest.fn()} />);
+    expect(screen.getByText('No games with player scores match those filters.')).toBeInTheDocument();
+  });
 });

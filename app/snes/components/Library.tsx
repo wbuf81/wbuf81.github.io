@@ -24,7 +24,7 @@ export function Empty({ onClear }: { onClear: () => void }) {
   );
 }
 
-// The interactive layer of /snes. Rendered on the server with the default filters (the full timeline), then
+// The interactive layer of /videogames/snes-history. Rendered on the server with the default filters (the full timeline), then
 // it reads the URL, applies the filters and keeps the URL in step, so any view can be shared as a link.
 export default function Library({ games, names, facets }: { games: IndexGame[]; names: Record<string, string>; facets: Facets }) {
   const ctx = useMemo(() => queryContext(facets), [facets]);
@@ -37,12 +37,23 @@ export default function Library({ games, names, facets }: { games: IndexGame[]; 
     setReady(true);
   }, [ctx]);
   useEffect(() => {
-    if (ready) window.history.replaceState(null, '', `${window.location.pathname}${toQuery(filters)}`);
+    if (ready) window.history.replaceState(null, '', `${window.location.pathname}${toQuery(filters)}${window.location.hash}`);
   }, [filters, ready]);
   useEffect(() => {
     if (!scrollTo) return;
-    document.getElementById(scrollTo)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    setScrollTo(null);
+    // Lazy views may not be mounted yet: keep the request pending and retry for ~30 frames.
+    let frames = 0;
+    let raf = 0;
+    const tryScroll = () => {
+      const el = document.getElementById(scrollTo);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        setScrollTo(null);
+      } else if (++frames < 30) raf = requestAnimationFrame(tryScroll);
+      else setScrollTo(null);
+    };
+    tryScroll();
+    return () => cancelAnimationFrame(raf);
   }, [scrollTo, filters.view]);
 
   const update = (patch: Partial<Filters>) => setFilters((f) => ({ ...f, ...patch }));

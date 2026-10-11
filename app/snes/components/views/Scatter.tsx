@@ -24,7 +24,7 @@ export default function Scatter({ games, axis, onAxis }: { games: IndexGame[]; a
         ))}
       </div>
       {points.length === 0 ? (
-        <p className="s-none">No games with {AXIS_BUTTON[axis]} scores match those filters.</p>
+        <p className="s-none">No games with {axis === 'users' ? 'player' : AXIS_BUTTON[axis]} scores match those filters.</p>
       ) : (
         <>
           <div className="s-scatter" aria-hidden="false">

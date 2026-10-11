@@ -2,7 +2,7 @@ import React from 'react';
 import fs from 'fs';
 import path from 'path';
 import '@testing-library/jest-dom';
-import { act, fireEvent, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import Library from '@/app/snes/components/Library';
 import { buildIndex, facets } from '@/lib/snes/library';
 import type { Game } from '@/lib/snes/types';
@@ -24,7 +24,7 @@ const INDEX = buildIndex([
 ]);
 const NAMES = { nintendo: 'Nintendo', konami: 'Konami', 'nintendo-ead': 'Nintendo EAD' };
 const setup = (search = '') => {
-  window.history.replaceState(null, '', `/snes${search}`);
+  window.history.replaceState(null, '', `/videogames/snes-history${search}`);
   return render(<Library games={INDEX} names={NAMES} facets={facets(INDEX, NAMES)} />);
 };
 
@@ -77,11 +77,22 @@ test('switching views updates the URL and the tab', async () => {
   await act(async () => {});
 });
 
-test('the sort control appears only on the wall and shelf', () => {
+test('the sort control appears only on the wall and shelf', async () => {
   setup();
   expect(screen.queryByRole('combobox', { name: 'Sort' })).toBeNull();
   fireEvent.click(screen.getByRole('tab', { name: 'Wall' }));
   expect(screen.getByRole('combobox', { name: 'Sort' })).toBeInTheDocument();
+  await act(async () => {});
+});
+
+test('a year tab clicked before the lazy view loads still scrolls once it mounts', async () => {
+  setup();
+  fireEvent.click(screen.getByRole('tab', { name: 'Wall' }));
+  fireEvent.click(screen.getByRole('button', { name: '1994' }));
+  await screen.findByText('1994', { selector: '.s-wall-year' });
+  await waitFor(() => expect(Element.prototype.scrollIntoView).toHaveBeenCalled());
+  const el = (Element.prototype.scrollIntoView as jest.Mock).mock.contexts[0] as HTMLElement;
+  expect(el.id).toBe('y-1994');
 });
 
 test('genre, players and the IGDB-backed controls stay hidden until the data has them', () => {
@@ -91,12 +102,12 @@ test('genre, players and the IGDB-backed controls stay hidden until the data has
   }
 });
 
-test('series, theme, camera and multiplayer controls appear when the data has them', () => {
+test('series, theme, camera and multiplayer controls appear when the data has them', async () => {
   const rich = buildIndex([
     game('a', 'Alpha', '1992-01-01', { series: 'Alpha Saga', themes: ['Fantasy'], perspectives: ['Side view'], multiplayer: { coop: true, versus: false } }),
     game('b', 'Beta', '1993-01-01', { series: 'Alpha Saga', themes: ['Science fiction'], perspectives: ['Isometric'], multiplayer: { coop: false, versus: true } }),
   ]);
-  window.history.replaceState(null, '', '/snes');
+  window.history.replaceState(null, '', '/videogames/snes-history');
   render(<Library games={rich} names={NAMES} facets={facets(rich, NAMES)} />);
   for (const name of ['Series', 'Theme', 'Camera', 'Multiplayer']) {
     expect(screen.getByRole('combobox', { name })).toBeInTheDocument();
@@ -106,9 +117,10 @@ test('series, theme, camera and multiplayer controls appear when the data has th
   expect(window.location.search).toBe('?mp=versus');
   fireEvent.click(screen.getByRole('tab', { name: 'Wall' }));
   expect(screen.getByRole('option', { name: 'Player score' })).toBeInTheDocument();
+  await act(async () => {});
 });
 
-test('/snes is kept out of search engines', () => {
+test('/videogames is kept out of search engines', () => {
   expect(fs.readFileSync(path.join(process.cwd(), 'public/robots.txt'), 'utf8')).toMatch(/^Disallow: \/videogames$/m);
   expect(fs.readFileSync(path.join(process.cwd(), 'public/sitemap.xml'), 'utf8')).not.toMatch(/\/videogames/);
   // eslint-disable-next-line @typescript-eslint/no-require-imports
