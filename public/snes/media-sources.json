@@ -2850,5 +2850,17 @@
   "college-football-usa-97-the-road-to-new-orleans": {
     "base": "College Football USA 97 (USA)",
     "clipStart": 4
+  },
+  "rpm-racing": {
+    "base": "Radical Psycho Machine Racing (USA)",
+    "clipStart": 4
+  },
+  "alfred-chicken": {
+    "base": "Super Alfred Chicken (USA)",
+    "clipStart": 4
+  },
+  "nba-hangtime": {
+    "base": "NBA Hang Time (USA)",
+    "clipStart": 4
   }
 }
