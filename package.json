@@ -17,7 +17,8 @@
     "github:contributions": "node scripts/github-contributions.mjs",
     "snes:fetch:list": "node scripts/snes/fetch-wikipedia-list.mjs",
     "snes:fetch:reviews": "node scripts/snes/fetch-wiki-reviews.mjs",
-    "snes:fetch:igdb": "node scripts/snes/fetch-igdb.mjs"
+    "snes:fetch:igdb": "node scripts/snes/fetch-igdb.mjs",
+    "snes:build": "node scripts/snes/build-games.mjs"
   },
   "keywords": [],
   "author": "",
