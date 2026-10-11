@@ -16,7 +16,8 @@
     "weekly:cards": "python3 scripts/og/build-weekly.py",
     "github:contributions": "node scripts/github-contributions.mjs",
     "snes:fetch:list": "node scripts/snes/fetch-wikipedia-list.mjs",
-    "snes:fetch:reviews": "node scripts/snes/fetch-wiki-reviews.mjs"
+    "snes:fetch:reviews": "node scripts/snes/fetch-wiki-reviews.mjs",
+    "snes:fetch:igdb": "node scripts/snes/fetch-igdb.mjs"
   },
   "keywords": [],
   "author": "",
