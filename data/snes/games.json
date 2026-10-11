@@ -23,13 +23,14 @@
         "GR": "83%",
         "ACE": "840/1000",
         "CVG": "90%",
-        "Fam": "7/10, 8/10, 8/10, 9/10 (SNES) 10/10, 8/10, 9/10, 10/10",
+        "Fam": "7/10, 8/10, 8/10, 9/10",
         "GameZone": "5/5",
+        "IGN": "7.5/10",
         "MM": "90%",
         "SP": "81%",
         "TOT": "91%",
         "Entertainment Weekly": "A−",
-        "{{ill|Play Time (magazine)|lt=Play Time|de|Play Time|italics=yes}}": "55%",
+        "Play Time": "55%",
         "The Virginian-Pilot": "A",
         "Hippon Super!": "10/10"
       }
@@ -62,7 +63,7 @@
       "nintendoPower": null,
       "other": {
         "GR": "77.50%",
-        "Fam": "7/10, 7/10, 6/10, 5/10 (SNES) 8/10, 8/10, 9/10, 8/10"
+        "Fam": "7/10, 7/10, 6/10, 5/10, 8/10, 8/10, 9/10, 8/10"
       }
     },
     "boxArt": "/snes/box/gradius-iii.jpg",
@@ -98,7 +99,7 @@
       },
       "other": {
         "GR": "82%",
-        "Fam": "8/10, 7/10, 8/10, 6/10 (SNES) 7/10, 8/10, 8/10, 7/10",
+        "Fam": "8/10, 7/10, 8/10, 6/10",
         "GI": "8.25/10",
         "GamePro": "5/5",
         "MM": "90%",
@@ -142,8 +143,7 @@
       ],
       "nintendoPower": null,
       "other": {
-        "Allgame": "5/5 (PC) 4.5/5 ({{nowrap|Macintosh}})",
-        "Fam": "9/10, 8/10, 9/10, 7/10 (SFC)",
+        "Fam": "9/10, 8/10, 9/10, 7/10",
         "MM": "94%"
       }
     },
@@ -182,7 +182,7 @@
         "GR": "94.44%",
         "Allgame": "5/5",
         "CVG": "96%",
-        "Fam": "9/10, 9/10, 8/10, 6/10 8/10, 9/10, 9/10, 8/10",
+        "Fam": "9/10, 9/10, 8/10, 6/10, 8/10, 9/10, 9/10, 8/10",
         "GI": "10/10",
         "JXV": "18/20",
         "MM": "98%",
@@ -341,11 +341,8 @@
       "egm": null,
       "nintendoPower": null,
       "other": {
-        "Fam": "7/10, 9/10, 9/10, 5/10 (SNES) 6/10, 7/10, 9/10, 6/10 (PC Engine)",
-        "Raze": "89% (Mega Drive)",
-        "Console XS": "88% (Master System)",
+        "Fam": "7/10, 9/10, 9/10, 5/10",
         "Games International": "2/5",
-        "MegaTech": "91% (Mega Drive)",
         "award1Pub": "Computer Gaming World",
         "award1": "Strategy Game of the Year (1990)",
         "award2Pub": "Origins Award",
@@ -599,9 +596,9 @@
         "GI": "7/10",
         "GX": "91%",
         "SP": "90%",
-        "TOT": "(UK) 91% (DE) 2+",
+        "TOT": "(UK) 91%, (DE) 2+",
         "VGCE": "10/10",
-        "Control": "70% 79%",
+        "Control": "70%, 79%",
         "Game Boy": "4/5, 4/5, 3/5, 4/5, 3/5",
         "Game Zone": "74/100",
         "Hippon Super!": "6/10",
@@ -791,15 +788,9 @@
     "scores": {
       "aggregate": null,
       "aggregateCount": 0,
-      "egm": [
-        6,
-        6,
-        5,
-        6
-      ],
+      "egm": null,
       "nintendoPower": null,
       "other": {
-        "Power Unlimited": "78/100 (Game Gear)",
         "award1Pub": "Amstrad Action",
         "award1": "Mastergame"
       }
@@ -828,10 +819,14 @@
     "scores": {
       "aggregate": null,
       "aggregateCount": 0,
-      "egm": null,
+      "egm": [
+        6,
+        7,
+        4,
+        4
+      ],
       "nintendoPower": null,
       "other": {
-        "Electronic Gaming Monthly": "6/10, 7/10, 4/10, 4/10",
         "Game Informer": "6/10",
         "Joystick (FR)": "87%",
         "Total!! (UK)": "46%",
@@ -871,8 +866,12 @@
         "ACE": "915/1000",
         "ASM": "10/12",
         "CVG": "89/100",
+        "EGM": "36/40",
         "Fam": "27/40",
+        "GamePro": "23/25",
+        "GameZone": "90/100",
         "MM": "94%",
+        "NLife": "WIIU",
         "SP": "85%",
         "USG": "3.5/5",
         "VGS": "84%",
@@ -1061,8 +1060,7 @@
       "egm": null,
       "nintendoPower": null,
       "other": {
-        "GameZone": "62/100",
-        "Sega Master Force": "SGG: 63% SMS: 61%"
+        "GameZone": "62/100"
       }
     },
     "boxArt": "/snes/box/home-alone.jpg",
@@ -1217,10 +1215,6 @@
       "aggregateCount": 0,
       "egm": [
         7,
-        7,
-        7,
-        8,
-        7,
         6,
         6,
         7
@@ -1263,20 +1257,19 @@
       "egm": null,
       "nintendoPower": null,
       "other": {
-        "ACE": "(SNES) 850/1000",
-        "Fam": "(SNES) 5/5, 6/5, 6/5, 5/5",
-        "GX": "(SNES) 3.5/5",
-        "NLife": "(SNES) 6/10",
-        "TOT": "(SNES) 61%",
-        "VGCE": "(SNES) 7/10",
-        "Zero": "(ARC) 2.5/5",
-        "Control": "(SNES) 48%",
-        "Electric Brain": "(SNES) 78%",
-        "Game Boy": "(SNES) 2/5, 2/5, 4/5, 3/5",
-        "Hippon Super!": "(SNES) 8/10",
-        "Super Action": "(SNES) 71%",
-        "The Super Famicom": "(SNES) B+",
-        "Super Pro": "(SNES) 43/100"
+        "ACE": "850/1000",
+        "Fam": "5/5, 6/5",
+        "GX": "3.5/5",
+        "NLife": "6/10",
+        "TOT": "61%",
+        "VGCE": "7/10",
+        "Control": "48%",
+        "Electric Brain": "78%",
+        "Game Boy": "2/5, 2/5",
+        "Hippon Super!": "8/10",
+        "Super Action": "71%",
+        "The Super Famicom": "B+",
+        "Super Pro": "43/100"
       }
     },
     "boxArt": "/snes/box/earth-defense-force.jpg",
@@ -1312,7 +1305,7 @@
       "nintendoPower": null,
       "other": {
         "SP": "72%",
-        "TOT": "75% (Game Boy)"
+        "GR": "65.88%"
       }
     },
     "boxArt": "/snes/box/joe-and-mac.jpg",
@@ -1345,9 +1338,10 @@
         "scale": 20
       },
       "other": {
-        "GR": "Genesis: 60% SNES: 64% TurboGrafx-CD: 80%",
+        "GR": "64%",
         "GamePro": "20/25",
         "RPGFan": "81%",
+        "VGS": "66%",
         "Entertainment Weekly": "C+"
       }
     },
@@ -1424,12 +1418,11 @@
       ],
       "nintendoPower": null,
       "other": {
-        "ACE": "({{abbr|AMI|Amiga}}): 895/1000",
+        "ACE": "(AMI): 895/1000",
         "AAction": "96%",
-        "CRASH": "({{abbr|ZX|ZX Spectrum}}): 97%",
-        "CVG": "({{abbr|SMD|Sega Mega Drive/Genesis}}): 83/100 ({{abbr|SMS|Sega Master System}}): 38/100 SNES: 92/100",
+        "CRASH": "(ZX): 97%",
+        "CVG": "92/100",
         "MM": "92%",
-        "MMS": "SMD & SMS: 88/100",
         "SUser": "ZX: 94%",
         "YSinclair": "ZX: 92%",
         "MicroHobby (ES)": "ZX: 89%",
@@ -1481,16 +1474,16 @@
         "GSpot": "6.6/10",
         "GX": "4/5",
         "IGN": "8.5/10",
-        "NLife": "8/10 7/10",
+        "NLife": "8/10, 7/10",
         "ONM": "92/100",
         "SP": "90%",
-        "TOT": "(UK) 90% (DE) 1-",
+        "TOT": "(UK) 90%, (DE) 1-",
         "VGCE": "6/10",
         "Game Boy": "4/5, 4/5, 4/5, 5/5, 4/5",
         "Hippon Super!": "7/10",
         "Mean Machines": "92%",
         "N-Force": "95%",
-        "Nintendo Game Zone": "93/100 90/100",
+        "Nintendo Game Zone": "93/100, 90/100",
         "SNES Force": "92/100",
         "Super Action": "70%",
         "The Super Famicom": "A",
@@ -1621,12 +1614,6 @@
       "aggregate": null,
       "aggregateCount": 0,
       "egm": [
-        6.8,
-        6.25,
-        5,
-        7,
-        6,
-        7,
         7,
         8,
         6,
@@ -1637,15 +1624,10 @@
         "GR": "83%",
         "AAction": "Amstrad: 97%",
         "CRASH": "Spectrum: 91%",
-        "CVG": "Master System: 92%",
-        "Fam": "Super Famicom: 9/10, 9/10, 8/10, 9/10",
-        "IGN": "Lynx: 9/10",
+        "Fam": "9/10, 9/10, 8/10, 9/10",
         "MM": "92%",
         "YSinclair": "Spectrum: 91%",
         "Z64": "97%",
-        "MegaTech": "Mega Drive: 92%",
-        "Mega": "Mega Drive: 90%",
-        "Commodore Force": "C64: 97%",
         "award1Pub": "Amstrad Action",
         "award1": "2nd-best rated game in the history of the magazine",
         "award2Pub": "Amiga Power",
@@ -1662,7 +1644,7 @@
         "award7": "The best Amiga game of all time (2011)",
         "award8Pub": "Next Generation",
         "award8": "8th-top game of all time (1996)",
-        "Allgame": "2.5/5 (NES) 4/5 (GG) 4.5/5"
+        "Allgame": "4.5/5"
       }
     },
     "boxArt": "/snes/box/lemmings.jpg",
@@ -1692,8 +1674,6 @@
       "egm": null,
       "nintendoPower": null,
       "other": {
-        "Game Players": "60% (Game Gear)",
-        "Mean Machines": "91% (Genesis) 88% (Master System)",
         "N-Force": "80%",
         "Super Play": "60%"
       }
@@ -1724,10 +1704,7 @@
       "aggregateCount": 0,
       "egm": null,
       "nintendoPower": null,
-      "other": {
-        "CVG_ARC": "90%",
-        "rev1_SMD": "80%"
-      }
+      "other": {}
     },
     "boxArt": "/snes/box/pit-fighter.jpg",
     "sources": {
@@ -1810,7 +1787,7 @@
       },
       "other": {
         "ASM": "10/12",
-        "GamePro": "{{Tooltip|5/5|Graphics}} {{Tooltip|5/5|Sound}} {{Tooltip|5/5|Control}} {{Tooltip|5/5|Fun Factor}}",
+        "GamePro": "5/5, 5/5, 5/5, 5/5",
         "MM": "89%",
         "NLife": "7/10",
         "PO": "94%",
@@ -1850,13 +1827,16 @@
         "scale": 20
       },
       "other": {
+        "ASM": "9/12",
         "CVG": "90/100",
         "GP": "7/10",
         "GameFan": "160/200",
+        "GamePro": "17/25",
         "GameZone": "90/100",
         "JS": "90%",
         "MMS": "80/100",
         "PO": "80%",
+        "VGS": "78%",
         "VGCE": "8/10",
         "Zero": "90/100",
         "N-Force": "90%",
@@ -2367,12 +2347,10 @@
       "egm": null,
       "nintendoPower": null,
       "other": {
-        "Entertainment Weekly": "A− (Mega Drive)",
-        "MM": "90% (MD) 90%",
+        "MM": "90%",
         "SP": "79%",
         "award1Pub": "Nintendo Power Award '92",
-        "award1": "Best Overall NES Game - Nominated",
-        "Mega Action": "86% (Mega Drive)"
+        "award1": "Best Overall NES Game - Nominated"
       }
     },
     "boxArt": "/snes/box/krustys-super-fun-house.jpg",
@@ -2519,8 +2497,7 @@
         "scale": 20
       },
       "other": {
-        "Super Play": "35%",
-        "Sega Pro": "80% (Mega Drive)"
+        "Super Play": "35%"
       }
     },
     "boxArt": "/snes/box/race-drivin.jpg",
@@ -2602,6 +2579,7 @@
       },
       "other": {
         "Edge": "9/10",
+        "EGM": "38/40",
         "Fam": "9/10, 9/10, 9/10, 8/10",
         "GamePro": "5/5",
         "rev1": "96%",
@@ -2757,7 +2735,7 @@
         "GI": "8.5/10, 8.75/10, 8.5/10",
         "GameFan": "95%, 92%",
         "SP": "89%",
-        "TOT": "(UK) 89% (DE) 2+",
+        "TOT": "(UK) 89%, (DE) 2+",
         "VGCE": "8/10",
         "Control": "77%",
         "Game Zero Magazine": "84.5/100",
@@ -3045,11 +3023,7 @@
       "aggregateCount": 0,
       "egm": null,
       "nintendoPower": null,
-      "other": {
-        "GR": "51.67% ({{abbr|SNES|Super Nintendo Entertainment System}}) 73.75 ({{abbr|GB|Game Boy}})",
-        "CVG": "35/100",
-        "VGS": "59%"
-      }
+      "other": {}
     },
     "boxArt": "/snes/box/faceball-2000.jpg",
     "sources": {
@@ -3079,7 +3053,7 @@
       "nintendoPower": null,
       "other": {
         "Mega": "35%",
-        "TOT": "20% (Game Boy)"
+        "GR": "41%"
       }
     },
     "boxArt": "/snes/box/george-foremans-ko-boxing.jpg",
@@ -3106,16 +3080,8 @@
     "scores": {
       "aggregate": null,
       "aggregateCount": 0,
-      "egm": [
-        6.25,
-        8,
-        4,
-        5
-      ],
-      "nintendoPower": {
-        "score": 3.725,
-        "scale": 5
-      },
+      "egm": null,
+      "nintendoPower": null,
       "other": {
         "GR": "50%"
       }
@@ -3149,6 +3115,7 @@
       "other": {
         "Allgame": "2/5",
         "CRASH": "89% (ZX)",
+        "CVG": "64/100",
         "AmComputing": "90% (AMI)",
         "AmFormat": "91% (AMI)",
         "AmPower": "85/100 (AMI)",
@@ -3184,11 +3151,12 @@
       "aggregate": null,
       "aggregateCount": 0,
       "egm": [
-        7.25,
-        7,
-        8
+        7.25
       ],
-      "nintendoPower": null,
+      "nintendoPower": {
+        "score": 13.6,
+        "scale": 20
+      },
       "other": {
         "CVG": "62/100",
         "GamePro": "3.625/5",
@@ -3329,8 +3297,8 @@
       "nintendoPower": null,
       "other": {
         "CP": "72%",
-        "Fam": "7/10, 6/10, 7/10, 5/10{{efn|Famitsu{{'}}s review was by four critics.}}",
-        "GameFan": "60%, 83%, 65%, 63%{{efn|GameFan{{'}}s review was by four critics.}}",
+        "Fam": "7/10, 6/10, 7/10, 5/10",
+        "GameFan": "60%, 83%, 65%, 63%",
         "GMaster": "36%",
         "Hyper": "50/100",
         "JP": "72%",
@@ -3424,20 +3392,10 @@
         7,
         7,
         6,
-        8,
-        5,
-        5,
-        4,
-        5,
-        7,
-        6,
-        6,
-        7,
-        7
+        8
       ],
       "nintendoPower": null,
       "other": {
-        "CVG": "92%",
         "Mean Machines": "94%",
         "MegaTech": "93%",
         "Amiga Action": "90%",
@@ -3445,6 +3403,7 @@
         "Amiga Format": "87%",
         "CU Amiga": "93%",
         "The One": "93%",
+        "GR": "77.33%",
         "award1Pub": "MegaTech (1991)",
         "award1": "Hyper Game Award"
       }
@@ -3515,7 +3474,9 @@
       "aggregateCount": 0,
       "egm": null,
       "nintendoPower": null,
-      "other": {}
+      "other": {
+        "Allgame": "2.5/5"
+      }
     },
     "boxArt": "/snes/box/home-alone-2-lost-in-new-york.jpg",
     "sources": {
@@ -3779,7 +3740,7 @@
         "GameFan": "87%, 94%",
         "ONM": "92%",
         "SP": "87%",
-        "TOT": "(UK) 85% (DE) 1-",
+        "TOT": "(UK) 85%, (DE) 1-",
         "Control": "70%",
         "Electronic Games": "96%",
         "Mean Machines": "92%",
@@ -3971,20 +3932,18 @@
       "egm": null,
       "nintendoPower": null,
       "other": {
-        "GR": "(SNES) 83%",
-        "Allgame": "(SNES) 3.5/5",
-        "Consoles +": "(SNES) 89%",
+        "GR": "83%",
+        "Allgame": "3.5/5",
+        "Consoles +": "89%",
         "Game Zone": "(AC) 2.5/5",
-        "Joypad": "(SNES) 83%",
-        "Joystick": "(SNES) 85%",
-        "N-Force": "(SNES) 86%",
-        "Nintendo Magazine System": "(SNES) 61/100",
-        "{{ill|Play Time (magazine)|lt=Play Time|de|Play Time}}": "(SNES) 54%",
-        "Super Play": "(SNES) 83%",
-        "Total!": "(SNES) 2-",
-        "Video Games": "(SNES) 58%",
-        "Your Sinclair": "(Arcade) 82°/100°",
-        "Zero": "(Arcade) 3/5"
+        "Joypad": "83%",
+        "Joystick": "85%",
+        "N-Force": "86%",
+        "Nintendo Magazine System": "61/100",
+        "Play Time": "54%",
+        "Super Play": "83%",
+        "Total!": "2-",
+        "Video Games": "58%"
       }
     },
     "boxArt": "/snes/box/the-irem-skins-game.jpg",
@@ -4153,7 +4112,6 @@
         "CVG": "83/100",
         "GX": "5/5 (ST)",
         "Sega Master Force": "91%",
-        "Zzap!64": "96% (C64)",
         "award1Pub": "Zzap!64",
         "award1": "Gold Medal"
       }
@@ -4286,20 +4244,18 @@
         "scale": 5
       },
       "other": {
-        "GR": "(SNES) 60.25%",
-        "Fam": "(SNES) 18/40",
-        "Consoles +": "(SNES) 71%",
-        "Famimaga": "(SNES) 17.89/30",
-        "Joypad": "(SNES) 79%",
-        "Joystick": "(SNES) 67%",
-        "N-Force": "(SNES) 70%",
-        "{{ill|Play Time (magazine)|lt=Play Time|de|Play Time}}": "(SNES) 67%",
-        "Sinclair User": "(Arcade) 79%",
-        "The Super Famicom": "(SNES) 60/100",
-        "Super Play": "(SNES) 59%",
-        "Super Pro": "(SNES) 48%",
-        "Video Games": "(SNES) 39%",
-        "Zero": "(Arcade) 2/5"
+        "GR": "60.25%",
+        "Fam": "18/40",
+        "Consoles +": "71%",
+        "Famimaga": "17.89/30",
+        "Joypad": "79%",
+        "Joystick": "67%",
+        "N-Force": "70%",
+        "Play Time": "67%",
+        "The Super Famicom": "60/100",
+        "Super Play": "59%",
+        "Super Pro": "48%",
+        "Video Games": "39%"
       }
     },
     "boxArt": "/snes/box/gunforce.jpg",
@@ -4366,7 +4322,7 @@
       "egm": null,
       "nintendoPower": null,
       "other": {
-        "GamePro": "4.5/4.0/5.0/5.0 (MD/Gen) 4.5/4.0/4.5/4.5",
+        "GamePro": "4.5/4.0/4.5/4.5",
         "Mega": "95%",
         "Mean Machines Sega": "89 out of 100",
         "N-Force": "93 out of 100"
@@ -4427,7 +4383,7 @@
       "egm": null,
       "nintendoPower": null,
       "other": {
-        "GR": "84% PC (15th Anniversary Edition): 73%",
+        "GR": "84%",
         "CVG": "94%",
         "IGN": "8.5/10",
         "Amiga Action": "89%",
@@ -4538,7 +4494,7 @@
         "GMaster": "49%",
         "ONM": "39/100",
         "SP": "42%",
-        "TOT": "(UK) 75% (DE) 2",
+        "TOT": "(UK) 75%, (DE) 2",
         "VGCE": "8/10",
         "Control": "60%",
         "Electronic Games": "92%",
@@ -4586,7 +4542,7 @@
       ],
       "nintendoPower": null,
       "other": {
-        "GameFan": "94%{{efn|In GameFan{{'}}s review, one critic gave it a 93% and another a 95%.}}",
+        "GameFan": "94%",
         "GMaster": "92%",
         "SP": "89%",
         "VGCE": "9.2/10",
@@ -4670,7 +4626,9 @@
       "aggregateCount": 0,
       "egm": null,
       "nintendoPower": null,
-      "other": {}
+      "other": {
+        "GR": "56.33%"
+      }
     },
     "boxArt": "/snes/box/wordtris.jpg",
     "sources": {
@@ -4742,28 +4700,25 @@
       "aggregate": null,
       "aggregateCount": 0,
       "egm": [
-        6,
-        6,
-        5,
-        7,
-        6.75,
-        6,
-        7,
-        8
+        6.75
       ],
-      "nintendoPower": null,
+      "nintendoPower": {
+        "score": 3.55,
+        "scale": 5
+      },
       "other": {
         "Allgame": "SGG: 2/5",
         "ASM": "7/12",
+        "CVG": "81/100",
         "GameFan": "90%",
         "GameZone": "90/100",
-        "Hyper": "SMD & SNES: 62%",
-        "MMS": "SGG: 89/100 SMD: 78/100",
+        "Hyper": "62%",
         "ONM": "89/100",
         "SP": "72%",
+        "VGS": "63%",
         "Game Players": "6/10",
         "N-Force": "75/100",
-        "{{ill|Play Time (magazine)|lt=Play Time|de|}}": "78%",
+        "Play Time": "78%",
         "Sega Magazine": "SGG: 51/100",
         "GR": "70.17%"
       }
@@ -4855,7 +4810,7 @@
         "GamePro": "14/20",
         "TOT": "65%",
         "VGS": "59%",
-        "{{ill|Play Time (magazine)|lt=Play Time|de|Play Time}}": "75%",
+        "Play Time": "75%",
         "Super Action": "85%"
       }
     },
@@ -4885,10 +4840,7 @@
       "aggregateCount": 0,
       "egm": null,
       "nintendoPower": null,
-      "other": {
-        "CP": "77%",
-        "Electronic Games": "82%"
-      }
+      "other": {}
     },
     "boxArt": "/snes/box/chester-cheetah-too-cool-to-fool.jpg",
     "sources": {
@@ -5322,7 +5274,8 @@
         "CRASH": "76%",
         "YSinclair": "52%",
         "MicroHobby (ES)": "76%",
-        "Power Play": "73%"
+        "Power Play": "73%",
+        "GR": "59.67%"
       }
     },
     "boxArt": "/snes/box/the-duel-test-drive-ii.jpg",
@@ -5349,19 +5302,9 @@
     "scores": {
       "aggregate": null,
       "aggregateCount": 0,
-      "egm": [
-        9,
-        9,
-        9,
-        9
-      ],
+      "egm": null,
       "nintendoPower": null,
-      "other": {
-        "GR": "86%",
-        "Fam": "8/10, 7/10, 8/10, 7/10",
-        "SNES Force": "91%",
-        "Super Play": "89%"
-      }
+      "other": {}
     },
     "boxArt": "/snes/box/the-magical-quest-starring-mickey-mouse.jpg",
     "sources": {
@@ -5627,8 +5570,9 @@
         "GR": "63.63% (4 reviews)",
         "Allgame": "3.5/5",
         "CVG": "45/100",
+        "EGM": "28/40",
         "Fam": "21/40",
-        "GameFan": "72.75%{{efn|In GameFan{{'}}s review, four critics scored Harley's Humongous Adventure differently: 80%, 77%, 69%, and 65%.}}",
+        "GameFan": "72.75%",
         "GamePro": "16.5/20",
         "MF": "58/100",
         "SP": "69%",
@@ -5783,15 +5727,7 @@
       "aggregateCount": 0,
       "egm": null,
       "nintendoPower": null,
-      "other": {
-        "CP": "87%",
-        "Fam": "7/10, 7/10, 7/10, 4/10",
-        "Gen4": "90%",
-        "JP": "92%",
-        "JS": "90%",
-        "Hippon Super!": "6/10",
-        "Super Gaming": "24/30"
-      }
+      "other": {}
     },
     "boxArt": "/snes/box/super-valis-iv.jpg",
     "sources": {
@@ -5818,7 +5754,10 @@
       "aggregate": null,
       "aggregateCount": 0,
       "egm": null,
-      "nintendoPower": null,
+      "nintendoPower": {
+        "score": 14.1,
+        "scale": 20
+      },
       "other": {
         "ASM": "5/12",
         "CVG": "87/100",
@@ -5829,6 +5768,7 @@
         "NLife": "7/10",
         "ONM": "89/100",
         "SP": "90%",
+        "TOT": "89%",
         "Nintendo Acción": "9/12",
         "Power Play": "65%",
         "Super Action": "88%"
@@ -5867,7 +5807,7 @@
         "GMaster": "92%",
         "ONM": "93/100",
         "SP": "89%",
-        "TOT": "(UK) 87% (DE) 2",
+        "TOT": "(UK) 87%, (DE) 2",
         "Control": "86%",
         "Hippon Super!": "7/10",
         "N-Force": "85/100",
@@ -5938,11 +5878,12 @@
       },
       "other": {
         "GR": "74.50%",
-        "ACE": "AMI: 890/1000 AST: 880/1000",
+        "ACE": "AMI: 890/1000, AST: 880/1000",
         "ASM": "8/12",
         "AmFormat": "94%",
         "AmPower": "5/5",
         "CVG": "90/100",
+        "EGM": "30/40",
         "GP": "8/10",
         "GamePro": "18/20",
         "GameZone": "4/5",
@@ -5988,7 +5929,7 @@
         "CP": "43%",
         "GameZone": "55/100",
         "VGS": "69%",
-        "{{ill|Play Time (magazine)|lt=Play Time|de|Play Time}}": "78%",
+        "Play Time": "78%",
         "SNES Force": "79/100",
         "Super Control": "71%",
         "Super Pro": "70/100"
@@ -6124,13 +6065,13 @@
         "CVG": "96/100",
         "EPD": "9/10",
         "Fam": "10/10, 9/10, 8/10, 7/10",
-        "GI": "9.25/10 8.25/10",
+        "GI": "9.25/10, 8.25/10",
         "GameFan": "94%, 96%, 91%, 95%",
         "GamePro": "20/20",
         "GMaster": "97%",
         "ONM": "96/100",
         "SP": "93%",
-        "TOT": "(UK) 96% (DE) 1-",
+        "TOT": "(UK) 96%, (DE) 1-",
         "VGCE": "9/10",
         "Control": "94%",
         "Electronic Games": "95%",
@@ -6170,8 +6111,12 @@
       "aggregate": null,
       "aggregateCount": 0,
       "egm": null,
-      "nintendoPower": null,
+      "nintendoPower": {
+        "score": 11.3,
+        "scale": 20
+      },
       "other": {
+        "Allgame": "2.5/5",
         "ASM": "4/12",
         "AmAction": "80%",
         "CVG": "17/100",
@@ -6226,7 +6171,7 @@
         "JP": "53%",
         "JS": "71%",
         "VGS": "53%",
-        "{{ill|Play Time (magazine)|lt=Play Time|de|Play Time}}": "66%",
+        "Play Time": "66%",
         "Super Pro": "63%"
       }
     },
@@ -6304,13 +6249,13 @@
       "nintendoPower": null,
       "other": {
         "CVG": "88/100",
-        "Fam": "8/10, 9/10 7/10, 8/10",
+        "Fam": "8/10, 9/10, 7/10, 8/10",
         "GI": "8.5/10, 8.25/10, 8.75/10",
         "GMaster": "89%",
         "GameZone": "88/100",
         "ONM": "94/100",
-        "SP": "91% 90%",
-        "TOT": "(UK) 83% (DE) 3+",
+        "SP": "91%, 90%",
+        "TOT": "(UK) 83%, (DE) 3+",
         "VGCE": "8/10",
         "Control": "73%",
         "Marukatsu Super Famicom": "6/10, 8/10, 8/10, 8/10",
@@ -6375,19 +6320,9 @@
     "scores": {
       "aggregate": null,
       "aggregateCount": 0,
-      "egm": [
-        4,
-        5,
-        4,
-        3
-      ],
+      "egm": null,
       "nintendoPower": null,
-      "other": {
-        "CVG": "({{abbr|NG|Neo Geo}}) 94% ({{abbr|SMD|Sega Mega Drive}}) 85%",
-        "GameFan": "(GEN) 348/400",
-        "GamePro": "(NG) 5/5",
-        "Maximum": "(NG) 2/5"
-      }
+      "other": {}
     },
     "boxArt": "/snes/box/fatal-fury.jpg",
     "sources": {
@@ -6505,21 +6440,17 @@
     "scores": {
       "aggregate": null,
       "aggregateCount": 0,
-      "egm": [
-        8,
-        6,
-        6,
-        7,
-        7
-      ],
+      "egm": null,
       "nintendoPower": {
         "score": 14.2,
         "scale": 20
       },
       "other": {
+        "Allgame": "4/5",
         "AmComputing": "84%",
         "AmPower": "87%",
-        "CVG": "88/100 (SMD) 90/100",
+        "CVG": "90/100",
+        "EGM": "30/40",
         "GamePro": "17/20",
         "GMaster": "90%",
         "GSpot": "7.1/10",
@@ -6530,7 +6461,7 @@
         "MF": "83/100",
         "MMS": "84/100",
         "TOT": "87%",
-        "VGS": "80% (SMD) 78%",
+        "VGS": "78%",
         "VGCE": "9/10",
         "The One": "90%"
       }
@@ -6618,7 +6549,7 @@
       "egm": null,
       "nintendoPower": null,
       "other": {
-        "GamePro": "{{Rating|4|5|score=3.8/5 stars}}",
+        "GamePro": "3.8/5 stars",
         "Mega": "20%"
       }
     },
@@ -6658,17 +6589,16 @@
         "scale": 10
       },
       "other": {
-        "Allgame": "(SNES) 4/5",
-        "CVG": "(SNES) 71/100",
-        "Fam": "(SNES) 8/10, 7/10, 7/10, 5/10",
-        "IGN": "(GB) 7.0/10",
-        "Dengeki Super Famicom": "(SNES) 7/10, 7/10, 7/10, 7/10",
-        "Electronic Games": "(SNES) 79%",
-        "Hippon Super!": "(SNES) 7/10",
-        "Marukatsu Super Famicom": "(SNES) 7/10, 7/10, 8/10, 6/10",
-        "ProGames": "(SNES) 3/5",
-        "The Super Famicom": "(SNES) 69/100",
-        "Super Pro": "(SNES) 60/100"
+        "Allgame": "4/5",
+        "CVG": "71/100",
+        "Fam": "8/10, 7/10, 7/10, 5/10",
+        "Dengeki Super Famicom": "7/10, 7/10",
+        "Electronic Games": "79%",
+        "Hippon Super!": "7/10",
+        "Marukatsu Super Famicom": "7/10, 7/10",
+        "ProGames": "3/5",
+        "The Super Famicom": "69/100",
+        "Super Pro": "60/100"
       }
     },
     "boxArt": "/snes/box/vegas-stakes.jpg",
@@ -6807,7 +6737,7 @@
         "NLife": "7/10",
         "ONM": "90/100",
         "SP": "87%",
-        "TOT": "(UK) 66% (DE) 1-",
+        "TOT": "(UK) 66%, (DE) 1-",
         "VGCE": "8/10",
         "Hippon Super!": "6/10",
         "Marukatsu Super Famicom": "7/10, 8/10, 8/10, 9/10",
@@ -6896,7 +6826,7 @@
       "egm": null,
       "nintendoPower": null,
       "other": {
-        "GameFan": "83.5%{{efn|In GameFan{{'}}s review, four critics scored Congo's Caper differently: 86%, 85%, 81%, and 82%.}}",
+        "GameFan": "83.5%",
         "Power Unlimited": "80/100"
       }
     },
@@ -7042,13 +6972,13 @@
       "other": {
         "GR": "76.70%",
         "CVG": "83/100",
-        "Fam": "6/10, 6/10 6/10, 6/10",
+        "Fam": "6/10, 6/10, 6/10, 6/10",
         "GI": "8/10",
         "GameFan": "85%, 92%, 93%, 80%",
         "GMaster": "90%",
         "ONM": "83/100",
         "SP": "80%",
-        "TOT": "(UK) 75% (DE) 2+",
+        "TOT": "(UK) 75%, (DE) 2+",
         "VGCE": "8/10",
         "Dengeki Super Famicom": "7/10, 6/10, 5/10, 7/10",
         "Electronic Games": "88%",
@@ -7087,8 +7017,8 @@
       "egm": null,
       "nintendoPower": null,
       "other": {
-        "TOT": "GB & SNES: 55%",
-        "VGCE": "SMD & SNES: 7/10",
+        "TOT": "55%",
+        "VGCE": "7/10",
         "VGS": "SGG: 61%",
         "Entertainment Weekly": "B",
         "Super Control": "78%",
@@ -7122,7 +7052,6 @@
       "egm": null,
       "nintendoPower": null,
       "other": {
-        "Allgame": "3/5",
         "award1Pub": "Codie award",
         "award1": "Best Home Learning Program",
         "award2Pub": "MacWorld Game Hall of Fame",
@@ -7195,8 +7124,8 @@
       },
       "other": {
         "GR": "78%",
-        "Fam": "7/10, 6/10, 6/10, 6/10 (SFC)",
-        "GameFan": "97% (SNES){{efn|In GameFan{{'}}s review, two critics scored Battletoads in Battlemaniacs 99%, one 94%, and another a 96%.}}",
+        "Fam": "7/10, 6/10, 6/10, 6/10",
+        "GameFan": "97%",
         "GamePro": "4.375",
         "Hyper": "79%",
         "SP": "80%",
@@ -7355,11 +7284,16 @@
     "scores": {
       "aggregate": null,
       "aggregateCount": 0,
-      "egm": null,
+      "egm": [
+        6,
+        8,
+        6,
+        3
+      ],
       "nintendoPower": null,
       "other": {
         "GR": "43.50%",
-        "Allgame": "2.5/5 (Macintosh) 3/5 (NES) 3/5",
+        "Allgame": "3/5",
         "CVG": "70/100",
         "GameFan": "80%/75%/87%/79%",
         "ONM": "82/100",
@@ -7401,7 +7335,7 @@
         "Hyper": "88%",
         "ONM": "90/100",
         "SP": "82%",
-        "TOT": "(UK) 76% (DE) 2-",
+        "TOT": "(UK) 76%, (DE) 2-",
         "VGCE": "7/10",
         "Control": "82%",
         "Electronic Games": "94%",
@@ -7445,6 +7379,7 @@
         "scale": 5
       },
       "other": {
+        "GR": "82.67%",
         "GI": "9/10, 8.5/10, 8.25/10",
         "ONM": "88/100"
       }
@@ -7481,7 +7416,7 @@
         "GMaster": "59%",
         "ONM": "82/100",
         "SP": "59%",
-        "TOT": "(UK) 60% (DE) 3+",
+        "TOT": "(UK) 60%, (DE) 3+",
         "VGCE": "8/10",
         "Nintendo Game Zone": "52/100",
         "Super Action": "82%",
@@ -7552,7 +7487,7 @@
       "aggregateCount": 0,
       "egm": null,
       "nintendoPower": {
-        "score": 12,
+        "score": 10.6,
         "scale": 20
       },
       "other": {
@@ -7585,20 +7520,14 @@
     "scores": {
       "aggregate": null,
       "aggregateCount": 0,
-      "egm": [
-        5.8,
-        6,
-        5
-      ],
+      "egm": null,
       "nintendoPower": {
         "score": 3.225,
         "scale": 5
       },
       "other": {
-        "GameFan": "78% (SNES){{efn|In GameFan{{'}}s review of the SNES version, four critics gave it different ratings: 79%, 68%, 80%, and 86%.}}",
+        "GameFan": "78%",
         "SP": "68%",
-        "Electronic Games": "C (MS-DOS)",
-        "PC Action": "78% (MS-DOS)",
         "Super Pro": "71/100"
       }
     },
@@ -7728,7 +7657,7 @@
       "egm": null,
       "nintendoPower": null,
       "other": {
-        "GameFan": "86%{{efn|In GameFan{{'}}s review, two critics scored the SNES version 85%, one 84%, and another 89%.}}",
+        "GameFan": "86%",
         "Hyper": "84%",
         "ONM": "82/100",
         "Nintendo Magazine Magazine (Australia)": "82/100",
@@ -7796,8 +7725,7 @@
       "other": {
         "Fam": "6/10, 6/10, 6/10, 5/10",
         "GameZone": "61/100",
-        "Z64": "97%",
-        "STRev": "5/5 (Atari ST)"
+        "Z64": "97%"
       }
     },
     "boxArt": "/snes/box/first-samurai.jpg",
@@ -7836,7 +7764,7 @@
         "GMaster": "78/100",
         "ONM": "81/100",
         "SP": "69%",
-        "TOT": "(UK) 63% (DE) 2",
+        "TOT": "(UK) 63%, (DE) 2",
         "VGCE": "7/10",
         "Electronic Games": "81%",
         "Nintendo Game Zone": "50/100",
@@ -7934,7 +7862,7 @@
       "egm": null,
       "nintendoPower": null,
       "other": {
-        "GR": "60% (Neo Geo) 63% (Genesis) 74%",
+        "GR": "74%",
         "Allgame": "3/5 (Neo Geo AES)"
       }
     },
@@ -8100,6 +8028,7 @@
       "other": {
         "CVG": "95%",
         "Edge": "9/10",
+        "EGM": "38/40",
         "Fam": "36/40",
         "GameFan": "389/400",
         "GamePro": "20/20",
@@ -8322,9 +8251,15 @@
     "scores": {
       "aggregate": null,
       "aggregateCount": 0,
-      "egm": null,
+      "egm": [
+        6,
+        5,
+        5,
+        5
+      ],
       "nintendoPower": null,
       "other": {
+        "GameZone": "80/100",
         "MMS": "Sega-CD: 51/100"
       }
     },
@@ -8356,7 +8291,6 @@
       "nintendoPower": null,
       "other": {
         "GP": "6/10",
-        "GamePro": "11.5/20 (Game Gear)",
         "award1Pub": "Sinclair User",
         "award1": "Games Most Likely To Save The Universe"
       }
@@ -8386,7 +8320,10 @@
       "aggregate": null,
       "aggregateCount": 0,
       "egm": null,
-      "nintendoPower": null,
+      "nintendoPower": {
+        "score": 15.3,
+        "scale": 20
+      },
       "other": {
         "GameZone": "88/100",
         "JP": "93%",
@@ -8611,10 +8548,7 @@
       "aggregate": null,
       "aggregateCount": 0,
       "egm": [
-        8,
-        8,
-        7,
-        9
+        8
       ],
       "nintendoPower": null,
       "other": {
@@ -8623,8 +8557,8 @@
         "CP": "70%",
         "CVG": "80/100",
         "Fam": "6/10, 7/10, 5/10, 4/10",
-        "GamePro": "4.125/5{{efn|GamePro gave Plok! three 4/5 scores for graphics, control and fun factor, and a 4.5/5 for sound.}}",
-        "GStar": "70%{{efn|While GameStar{{'}}s review was mainly by Steve Polak that rated it 86%, it featured a second opinion from another critic that scored it 55%.}}",
+        "GamePro": "4.125/5",
+        "GStar": "70%",
         "GameZone": "60/100",
         "HC": "88/100",
         "Hyper": "84%",
@@ -8634,14 +8568,14 @@
         "ONM": "81/100",
         "SJ": "94/100",
         "SP": "90%",
-        "TOT": "80% (UK) 5/6 (Germany)",
+        "TOT": "80% (UK), 5/6 (Germany)",
         "VGCE": "9/10",
         "VGS": "76%",
         "Cubed3": "8/10",
         "Electronic Games": "81%",
         "Game Power": "87/100",
         "Nintendo Acción": "82/100",
-        "{{ill|Play Time (magazine)|lt=Play Time|de|Play Time}}": "80/100",
+        "Play Time": "80/100",
         "Super Action": "80%",
         "Super Pro": "87/100"
       }
@@ -8699,9 +8633,7 @@
       "aggregate": null,
       "aggregateCount": 0,
       "egm": [
-        7.5,
-        7,
-        8
+        7.5
       ],
       "nintendoPower": {
         "score": 3.15,
@@ -8710,7 +8642,7 @@
       "other": {
         "Allgame": "3/5",
         "GP": "71%",
-        "GameFan": "83%{{efn|In GameFan{{'}}s review, Rocky Rodent was scored differently by four critics: 82%, 86%, 79%, and 85%.}}",
+        "GameFan": "83%",
         "ONM": "73/100",
         "SP": "50%",
         "VGS": "64%",
@@ -8753,7 +8685,7 @@
         "Hyper": "92%",
         "ONM": "93/100",
         "SP": "92%",
-        "TOT": "(UK) 93% (DE) 2",
+        "TOT": "(UK) 93%, (DE) 2",
         "Electronic Games": "92%",
         "Hippon Super!": "6/10",
         "Nintendo Game Zone": "87/100",
@@ -8792,19 +8724,9 @@
     "scores": {
       "aggregate": null,
       "aggregateCount": 0,
-      "egm": [
-        4
-      ],
-      "nintendoPower": {
-        "score": 3.15,
-        "scale": 5
-      },
-      "other": {
-        "Allgame": "2.5/5",
-        "GamePro": "4.5/5",
-        "SJ": "77/100",
-        "SP": "54%"
-      }
+      "egm": null,
+      "nintendoPower": null,
+      "other": {}
     },
     "boxArt": "/snes/box/super-widget.jpg",
     "sources": {
@@ -8921,7 +8843,7 @@
         "GMaster": "79%",
         "ONM": "89/100",
         "SP": "78%",
-        "TOT": "(UK) 67% (DE) 3-",
+        "TOT": "(UK) 67%, (DE) 3-",
         "VGCE": "8/10",
         "Hippon Super!": "4/10",
         "Marukatsu Super Famicom": "8/10, 7/10, 9/10, 8/10",
@@ -8963,14 +8885,12 @@
       },
       "other": {
         "ACE": "920/1000 (AMI)",
-        "CGW": "3.5/5 (MS-DOS)",
         "CVG": "88/100 (AMI)",
-        "JP": "85% (SNES, PAL) 83%",
+        "JP": "85% (SNES, PAL), 83% (SNES, NA)",
         "JS": "92% (AMI)",
         "MG": "69%",
         "ONM": "72/100",
         "VGS": "77%",
-        "Electronic Games": "75% (MS-DOS)",
         "Super Gamer": "85/100",
         "The One": "93% (AMI)",
         "MikroBitti": "89% (AMI)"
@@ -9002,24 +8922,7 @@
       "aggregateCount": 0,
       "egm": null,
       "nintendoPower": null,
-      "other": {
-        "CGW": "4.5/5",
-        "Dragon": "6/5",
-        "award1Pub": "Computer Gaming World",
-        "award1": "1991 Game of the Year",
-        "award2Pub": "Computer Gaming World",
-        "award2": "Hall of Fame",
-        "award3Pub": "Computer Gaming World",
-        "award3": "#7 Best PC Game of All Time",
-        "award4Pub": "Computer Gaming World",
-        "award4": "15 Best Ways to Die",
-        "award5Pub": "Time",
-        "award5": "100 Best Video Games of All Time",
-        "award6Pub": "PC Format",
-        "award6": "50 Best Computer Games of All Time",
-        "award7Pub": "PC Gamer US",
-        "award7": "#23 Best Game of All Time"
-      }
+      "other": {}
     },
     "boxArt": "/snes/box/wing-commander-the-secret-missions.jpg",
     "sources": {
@@ -9048,13 +8951,8 @@
       "egm": null,
       "nintendoPower": null,
       "other": {
-        "CVG": "(Arcade) 74% (SNES) 81%",
-        "Fam": "(Neo Geo) 22 / 40",
-        "GameFan": "(Neo Geo) 182 / 200",
-        "GamePro": "(Genesis) 11.5 / 20",
-        "SUser": "(Arcade) 81%",
-        "Electronic Games": "(Genesis) D",
-        "Joystick": "(Neo Geo) 88%"
+        "CVG": "81%",
+        "EGM": "26 / 40"
       }
     },
     "boxArt": "/snes/box/world-heroes.jpg",
@@ -9092,7 +8990,7 @@
       "other": {
         "Fam": "7/10, 7/10, 7/10, 5/10",
         "ONM": "77/100",
-        "{{ill|Joypad (magazine)|lt=Joypad|fr|Joypad (magazine)}}": "83%",
+        "Joypad": "83%",
         "Power Unlimited": "80/100"
       }
     },
@@ -9159,16 +9057,11 @@
     "scores": {
       "aggregate": null,
       "aggregateCount": 0,
-      "egm": [
-        7.25
-      ],
+      "egm": null,
       "nintendoPower": null,
       "other": {
         "Allgame": "3.5/5",
-        "rev2": "96%",
-        "Fam": "8/10, 6/10, 8/10, 8/10",
-        "GMaster": "81%",
-        "GR": "83.33% (3 reviews)"
+        "rev2": "96%"
       }
     },
     "boxArt": "/snes/box/mortal-kombat.jpg",
@@ -9201,9 +9094,11 @@
         "scale": 5
       },
       "other": {
+        "EGM": "23/40",
         "Fam": "27/40",
         "GP": "8/10",
         "NGen": "2/5",
+        "VGS": "71%",
         "VGCE": "7/10",
         "Mega Action": "88%",
         "Mega Power": "91%",
@@ -9392,7 +9287,7 @@
       "nintendoPower": null,
       "other": {
         "Allgame": "1/5",
-        "GP": "19% (Game Gear) 33%",
+        "GP": "33%",
         "TOT": "6%",
         "VGS": "18%"
       }
@@ -9465,7 +9360,9 @@
     "scores": {
       "aggregate": null,
       "aggregateCount": 0,
-      "egm": null,
+      "egm": [
+        7
+      ],
       "nintendoPower": {
         "score": 3.375,
         "scale": 5
@@ -9475,7 +9372,7 @@
         "SJ": "84/100",
         "SP": "89%",
         "TOT": "50%",
-        "VGS": "SMD & SNES: 77%"
+        "VGS": "77%"
       }
     },
     "boxArt": "/snes/box/nba-showdown.jpg",
@@ -9504,7 +9401,9 @@
       "aggregateCount": 0,
       "egm": null,
       "nintendoPower": null,
-      "other": {}
+      "other": {
+        "Allgame": "3.5/5"
+      }
     },
     "boxArt": "/snes/box/nhl-94.jpg",
     "sources": {
@@ -9533,9 +9432,8 @@
       "egm": null,
       "nintendoPower": null,
       "other": {
-        "GamePro": "4/5",
-        "CD-i": "80% (CD-i)",
-        "Power Unlimited": "80% (CD-i)"
+        "GR": "66%",
+        "GamePro": "4/5"
       }
     },
     "boxArt": "/snes/box/pac-attack.jpg",
@@ -9637,7 +9535,7 @@
       "egm": null,
       "nintendoPower": null,
       "other": {
-        "Fam": "(SNES) {{ubl|7/10, 7/10,|8/10, 7/10}}"
+        "Fam": "{{ubl|7/10, 7/10,|8/10, 7/10}}"
       }
     },
     "boxArt": "/snes/box/simant.jpg",
@@ -9667,6 +9565,7 @@
       "egm": null,
       "nintendoPower": null,
       "other": {
+        "EGM": "39/50",
         "SP": "87%",
         "HC": "86%",
         "rev2": "89%"
@@ -9703,6 +9602,7 @@
         "IGN": "7.5/10",
         "Allgame": "4.5/5",
         "Super Gamer": "85%",
+        "EGM": "28/40",
         "Power Unlimited": "92%"
       }
     },
@@ -9736,7 +9636,6 @@
       "nintendoPower": null,
       "other": {
         "Fam": "6/10, 6/10, 5/10, 6/10",
-        "GamePro": "3.87/5 (GEN) 3.12/5 (NES){{efn|GamePro gave the NES version three 3/5 scores for graphics, sound, and control, and 3.5/5 for fun factor.}}",
         "GP": "7/10"
       }
     },
@@ -9794,9 +9693,7 @@
       "aggregateCount": 0,
       "egm": null,
       "nintendoPower": null,
-      "other": {
-        "GameZone": "83/100 (Mega Drive)"
-      }
+      "other": {}
     },
     "boxArt": "/snes/box/the-super-aquatic-games-starring-the-aquabats.jpg",
     "sources": {
@@ -9830,7 +9727,7 @@
       "other": {
         "Allgame": "1.5/5",
         "GP": "57%",
-        "GamePro": "{{Tooltip|4/5|Graphics}} {{Tooltip|3.5/5|Sound}} {{Tooltip|3.5/5|Control}} {{Tooltip|3/5|Fun Factor}}",
+        "GamePro": "4/5, 3.5/5, 3.5/5, 3/5",
         "VGS": "60%",
         "VGCE": "7/10",
         "Super Pro": "49/100"
@@ -9972,7 +9869,7 @@
         "IGN": "7.5/10",
         "ONM": "92/100",
         "SP": "69%",
-        "TOT": "(UK) 87% (DE) 2+",
+        "TOT": "(UK) 87%, (DE) 2+",
         "Game Zero Magazine": "70.5/100",
         "Hippon Super!": "7/10",
         "Nintendo Game Zone": "69/100",
@@ -10084,7 +9981,9 @@
       "aggregateCount": 0,
       "egm": null,
       "nintendoPower": null,
-      "other": {}
+      "other": {
+        "GR": "70.75%"
+      }
     },
     "boxArt": "/snes/box/championship-pool.jpg",
     "sources": {
@@ -10111,11 +10010,6 @@
       "aggregate": null,
       "aggregateCount": 0,
       "egm": [
-        7,
-        6,
-        6,
-        6,
-        7,
         8,
         7,
         8,
@@ -10126,8 +10020,8 @@
         "Allgame": "3.5/5",
         "CP": "79%",
         "CVG": "79/100",
-        "MF": "47% (GEN) 65%",
-        "VGS": "65% (GEN) 75%"
+        "MF": "65%",
+        "VGS": "75%"
       }
     },
     "boxArt": "/snes/box/clayfighter.jpg",
@@ -10157,8 +10051,7 @@
       "egm": null,
       "nintendoPower": null,
       "other": {
-        "TGM": "83% (Amiga) 85% (ST)",
-        "{{ill|Amiga Joker|de|Amiga Joker}}": "71%",
+        "Amiga Joker": "71%",
         "award1Pub": "C+VG",
         "award1": "Hit"
       }
@@ -10198,7 +10091,7 @@
         "CVG": "87/100",
         "Edge": "6/10",
         "Fam": "{{ubl|5/10, 4/10|5/10, 4/10}}",
-        "GameFan": "{{ubl|95%, 95%|92%, 89%{{efn|In GameFan{{'}}s review, four critics each gave their own ranking.}} | GMaster = 93%}}",
+        "GameFan": "{{ubl|95%, 95%|92%, 89%, | GMaster = 93%}}",
         "SP": "89%",
         "TOT": "84%",
         "VGS": "81%",
@@ -10349,7 +10242,7 @@
       "nintendoPower": null,
       "other": {
         "SP": "76%",
-        "Electronic Games": "83% (Genesis) 75%",
+        "Electronic Games": "75%",
         "Nintendo Acción": "74",
         "Digital Press": "5/10"
       }
@@ -10546,7 +10439,9 @@
       "aggregateCount": 0,
       "egm": null,
       "nintendoPower": null,
-      "other": {}
+      "other": {
+        "Allgame": "4/5"
+      }
     },
     "boxArt": "/snes/box/tecmo-super-bowl.jpg",
     "sources": {
@@ -10575,7 +10470,7 @@
       "egm": null,
       "nintendoPower": null,
       "other": {
-        "Allgame": "1/5 (Genesis) 1.5/5",
+        "Allgame": "1.5/5",
         "TOT": "31%",
         "Electronic Games": "86%",
         "SNES Force": "46/100"
@@ -10606,17 +10501,7 @@
       "aggregate": null,
       "aggregateCount": 0,
       "egm": [
-        5.6,
-        6,
-        5,
-        6,
-        6,
-        5,
-        7,
-        6.6,
-        8,
-        6,
-        5
+        6.6
       ],
       "nintendoPower": {
         "score": 2.75,
@@ -10624,12 +10509,14 @@
       },
       "other": {
         "Allgame": "3.5/5",
-        "GameFan": "78%{{efn|In GameFan{{'}}s review of the SNES version, four critics scored it differently: 79%, 76%, 81%, and 76%.}}",
+        "ASM": "11/12",
+        "CVG": "88/100",
+        "GameFan": "78%",
         "GameZone": "85/100",
-        "MMS": "Sega CD: 46/100 SMD: 73/100",
-        "MF": "Sega CD: 20% SMD: 47% SNES: 59%",
+        "MF": "59%",
         "SP": "77%",
-        "TOT": "79%"
+        "TOT": "79%",
+        "VGS": "64%"
       }
     },
     "boxArt": "/snes/box/the-lawnmower-man.jpg",
@@ -10807,8 +10694,8 @@
         "GamePro": "4.5/5",
         "GMaster": "78%",
         "Hyper": "90%",
-        "{{ill|Datormagazin|sv|italic=yes}}": "5/5",
-        "{{ill|SEGA Magazin|de|italic=yes}}": "85%"
+        "Datormagazin": "5/5",
+        "SEGA Magazin": "85%"
       }
     },
     "boxArt": "/snes/box/aladdin.jpg",
@@ -10932,6 +10819,7 @@
       },
       "other": {
         "Allgame": "2.5/5",
+        "EGM": "31/40",
         "GamePro": "16/20",
         "MG": "58%",
         "SP": "73%",
@@ -10966,9 +10854,7 @@
       "aggregate": null,
       "aggregateCount": 0,
       "egm": [
-        8.2,
-        8,
-        9
+        8.2
       ],
       "nintendoPower": {
         "score": 3.38,
@@ -10977,10 +10863,10 @@
       "other": {
         "Allgame": "2.5/5",
         "CP": "79%",
-        "GameFan": "77.5%{{efn|GameFan{{'}}s review of the SNES version was done by four critics, who awarded it different percentages: 79%, 74%, 80%, and 77%.}}",
+        "GameFan": "77.5%",
         "GamePro": "3.5/5",
         "SP": "37%",
-        "rev3": "52%{{efn|{{ill|Play Time (magazine)|lt=Play Time|de|Play Time}} gave SNES version 48% for graphics, 53% for sound, and 56% for fun.}}"
+        "rev3": "52%"
       }
     },
     "boxArt": "/snes/box/battletoads-and-double-dragon-the-ultimate-team.jpg",
@@ -11188,6 +11074,7 @@
       "nintendoPower": null,
       "other": {
         "Dragon": "3 of 5",
+        "EGM": "7.8 of 10",
         "Fam": "28 of 40",
         "GP": "9 of 10",
         "GamePro": "4.5 of 5",
@@ -11230,7 +11117,7 @@
       "nintendoPower": null,
       "other": {
         "Allgame": "3.5/5",
-        "GStar": "75%, 70%{{Efn|GameStar{{'}}s review was primarily by a writer that scored it 75%, with a \"second opinion\" on the side with a 70% rating.}}",
+        "GStar": "75%, 70%",
         "GameZone": "60/100",
         "SP": "60%",
         "TOT": "83%",
@@ -11267,6 +11154,7 @@
         "scale": 20
       },
       "other": {
+        "EGM": "31/40",
         "GP": "92%",
         "GamePro": "16.5/20",
         "HC": "85/100",
@@ -11415,8 +11303,7 @@
       "aggregate": null,
       "aggregateCount": 0,
       "egm": [
-        6.8,
-        6.4
+        6.8
       ],
       "nintendoPower": null,
       "other": {
@@ -11425,7 +11312,7 @@
         "award1Pub": "Sega",
         "award1": "1993 Game of the Year",
         "award2Pub": "SEGA Awards",
-        "award2": "1994 Best Action Game{{citation needed|date=January 2018}}",
+        "award2": "1994 Best Action Game",
         "award3Pub": "SEGA Awards",
         "award3": "1994 Best 3rd Party Game of the Year",
         "award4Pub": "Amiga Power",
@@ -11653,19 +11540,18 @@
         "scale": 20
       },
       "other": {
-        "GR": "(SNES) 68%",
-        "Allgame": "(SNES) 2.5/5",
-        "CP": "(SNES) 83%",
-        "GamePro": "(SNES) 16.5/20",
-        "MF": "(SNES) 76%",
-        "MG": "(SNES) 75%",
-        "NGen": "(Jaguar) 2/5",
-        "PO": "(SNES) 79%",
-        "SP": "(SNES) 78%",
-        "VGS": "(SNES) 55%",
-        "Nintendo Player": "(SNES) 3/6",
-        "{{ill|Play Time (magazine)|lt=Play Time|de|Play Time}}": "(SNES) 64%",
-        "Total!": "(SNES) 3"
+        "GR": "68%",
+        "Allgame": "2.5/5",
+        "CP": "83%",
+        "GamePro": "16.5/20",
+        "MF": "76%",
+        "MG": "75%",
+        "PO": "79%",
+        "SP": "78%",
+        "VGS": "55%",
+        "Nintendo Player": "3/6",
+        "Play Time": "64%",
+        "Total!": "3"
       }
     },
     "boxArt": "/snes/box/brett-hull-hockey.jpg",
@@ -11695,9 +11581,7 @@
       "egm": [
         8,
         8,
-        7,
-        8,
-        8
+        7
       ],
       "nintendoPower": null,
       "other": {
@@ -11771,11 +11655,7 @@
       ],
       "nintendoPower": null,
       "other": {
-        "CVG": "80% (Genesis) 82% (Sega CD)",
-        "Fam": "7/10, 5/10, 7/10, 6/10 (Genesis) 8/10, 6/10, 8/10, 6/10 (Sega CD)",
-        "GMaster": "93% (Sega CD)",
-        "Electronic Games": "95% (Genesis) 93% (Sega CD)",
-        "Mega": "89% (Genesis) 89% (Sega CD)"
+        "Allgame": "3.5/5"
       }
     },
     "boxArt": "/snes/box/lethal-enforcers.jpg",
@@ -11881,7 +11761,7 @@
         "Hyper": "82%",
         "ONM": "82/100",
         "SP": "78%",
-        "TOT": "(UK) 92% (DE) 2-",
+        "TOT": "(UK) 92%, (DE) 2-",
         "Nintendo Game Zone": "47/100",
         "Nintendo Magazine System": "76/100",
         "SNES Force": "88/100",
@@ -11917,6 +11797,7 @@
       "egm": null,
       "nintendoPower": null,
       "other": {
+        "EGM": "35/50",
         "TOT": "70%"
       }
     },
@@ -11974,12 +11855,7 @@
       "aggregateCount": 0,
       "egm": null,
       "nintendoPower": null,
-      "other": {
-        "EGM_SMD": "5.8/10{{efn|In Electronic Gaming Monthly{{'}}s review of the Genesis, version, two critics scored it 5/10, two 6/10, one 7/10.}}",
-        "GameZone_GB": "57/100",
-        "rev1_GB": "80%",
-        "rev1_SMD": "81%"
-      }
+      "other": {}
     },
     "boxArt": "/snes/box/zool-ninja-of-the-nth-dimension.jpg",
     "sources": {
@@ -12086,7 +11962,9 @@
       "aggregateCount": 0,
       "egm": null,
       "nintendoPower": null,
-      "other": {}
+      "other": {
+        "Allgame": "3.5/5"
+      }
     },
     "boxArt": "/snes/box/bill-walsh-college-football.jpg",
     "sources": {
@@ -12153,10 +12031,12 @@
     "scores": {
       "aggregate": null,
       "aggregateCount": 0,
-      "egm": null,
+      "egm": [
+        8.25
+      ],
       "nintendoPower": null,
       "other": {
-        "Fam": "8/10, 8/10, 8/10, 9/10 (SFC)",
+        "Fam": "8/10, 8/10, 8/10, 9/10",
         "MegaTech": "94%",
         "Mega": "94%",
         "award1Pub": "Sega",
@@ -12206,8 +12086,7 @@
         "JP": "80%",
         "SGP": "3.3/5",
         "SP": "54%",
-        "VGCE": "8/10",
-        "Electronic Games": "B (GB) B+ (SGG)"
+        "VGCE": "8/10"
       }
     },
     "boxArt": "/snes/box/mickeys-ultimate-challenge.jpg",
@@ -12244,7 +12123,7 @@
         "Fam": "29/40",
         "MAN!AC": "61%",
         "Mega Fun": "72%",
-        "{{ill|Play Time (magazine)|lt=Play Time|de|Play Time}}": "69%",
+        "Play Time": "69%",
         "Player One": "85%",
         "Super Play": "84%"
       }
@@ -12391,7 +12270,10 @@
       "aggregate": null,
       "aggregateCount": 0,
       "egm": null,
-      "nintendoPower": null,
+      "nintendoPower": {
+        "score": 12.8,
+        "scale": 20
+      },
       "other": {
         "Allgame": "3.5/5",
         "AmFormat": "73%",
@@ -12399,6 +12281,7 @@
         "Fam": "5/10, 4/10, 4/10, 4/10",
         "GamePro": "16.5/20",
         "GameZone": "C",
+        "TOT": "81%",
         "CU Amiga": "90%",
         "Entertainment Weekly": "D-",
         "The One": "84%"
@@ -12498,7 +12381,7 @@
         "GP": "77%",
         "Hyper": "70%",
         "SP": "68%",
-        "TOT": "(UK) 71% (DE) 5",
+        "TOT": "(UK) 71%, (DE) 5",
         "Games World": "41/100",
         "Super Action": "82%",
         "Super Gamer": "74/100",
@@ -12531,10 +12414,7 @@
       "aggregateCount": 0,
       "egm": null,
       "nintendoPower": null,
-      "other": {
-        "CP": "77%",
-        "Electronic Games": "82%"
-      }
+      "other": {}
     },
     "boxArt": "/snes/box/chester-cheetah-wild-wild-quest.jpg",
     "sources": {
@@ -12561,10 +12441,7 @@
       "aggregate": null,
       "aggregateCount": 0,
       "egm": [
-        7,
-        7,
-        6,
-        8
+        7
       ],
       "nintendoPower": {
         "score": 3.525,
@@ -12626,15 +12503,15 @@
         "CVG": "88%",
         "Dragon": "3/5",
         "Fam": "29/40",
-        "GameFan": "90% 96% 83/100",
-        "GamePro": "{{Tooltip|5/5|Graphics}} {{Tooltip|5/5|Sound}} {{Tooltip|5/5|Control}} {{Tooltip|5/5|Fun Factor}}",
+        "GameFan": "90%, 96%, 83/100",
+        "GamePro": "5/5, 5/5, 5/5, 5/5",
         "GameZone": "87%",
         "Hyper": "83%",
         "JXV": "17/20",
         "MF": "79%",
         "ONM": "87/100",
         "PO": "93%",
-        "SGP": "{{Tooltip|4/5|Graphics}} {{Tooltip|4.1/5|Sound}} {{Tooltip|5/5|Difficulty}} {{Tooltip|5/5|Fun Factor}}",
+        "SGP": "4/5, 4.1/5, 5/5, 5/5",
         "SJ": "93%",
         "SP": "90%",
         "TOT": "91%",
@@ -12859,8 +12736,8 @@
       "egm": null,
       "nintendoPower": null,
       "other": {
-        "Allgame": "4.5/5 (MS-DOS) 4/5 ({{nowrap|Macintosh}}) 4/5 ({{nowrap|3DO}}) 2.5/5 (SNES) 2.5/5 (Jaguar)",
-        "Fam": "9/10, 8/10, 7/10, 8/10 ({{abbr|SFC|Super Famicom}})"
+        "Allgame": "2.5/5",
+        "Fam": "9/10, 8/10, 7/10, 8/10"
       }
     },
     "boxArt": "/snes/box/wolfenstein-3d.jpg",
@@ -12930,14 +12807,14 @@
     "scores": {
       "aggregate": null,
       "aggregateCount": 0,
-      "egm": null,
+      "egm": [
+        9
+      ],
       "nintendoPower": null,
       "other": {
         "Mega": "91%",
-        "NGen": "3/5 (Sega CD)",
         "award1Pub": "Mega",
-        "award1": "7th best game of all time",
-        "Allgame": "4.5/5 (ARC) 3.5/5 (Sega CD)"
+        "award1": "7th best game of all time"
       }
     },
     "boxArt": "/snes/box/nba-jam.jpg",
@@ -12965,19 +12842,10 @@
       "aggregate": null,
       "aggregateCount": 0,
       "egm": [
-        7.2,
         6.2
       ],
       "nintendoPower": null,
-      "other": {
-        "ACE": "780/1000",
-        "CVG": "{{ubl|96% |95% |87% }}",
-        "Dragon": "5/5",
-        "Fam": "28/40",
-        "The One": "92%",
-        "Sega Power": "81%",
-        "Allgame": "3/5 (MS-DOS)"
-      }
+      "other": {}
     },
     "boxArt": "/snes/box/advanced-dungeons-and-dragons-eye-of-the-beholder.jpg",
     "sources": {
@@ -13097,20 +12965,17 @@
     "scores": {
       "aggregate": null,
       "aggregateCount": 0,
-      "egm": null,
+      "egm": [
+        9,
+        8,
+        8,
+        8
+      ],
       "nintendoPower": {
         "score": 3.5,
         "scale": 5
       },
-      "other": {
-        "GR": "76% (Neo Geo)",
-        "CP": "92% (Mega Drive)",
-        "CVG": "80% (Mega Drive)",
-        "Fam": "29/40 (PC Engine) 27/40 (Mega Drive)",
-        "GameFan": "369/400 (Neo Geo)",
-        "SUser": "91% (Neo Geo)",
-        "Sega Power": "83% (Mega Drive)"
-      }
+      "other": {}
     },
     "boxArt": "/snes/box/fatal-fury-2.jpg",
     "sources": {
@@ -13168,12 +13033,12 @@
       "nintendoPower": null,
       "other": {
         "CVG": "70%",
-        "GI": "7/10 6.5/10",
+        "GI": "7/10, 6.5/10",
         "GP": "86%",
         "Hyper": "30/100",
         "ONM": "72/100",
         "SP": "51%",
-        "TOT": "(UK) 51% (DE) 5+",
+        "TOT": "(UK) 51%, (DE) 5+",
         "rev1": "6/10, 5/10, 6/10, 7/10",
         "rev3": "57%",
         "rev4": "26/100",
@@ -13217,10 +13082,10 @@
         "MF": "75%",
         "PO": "80%",
         "SP": "55%",
-        "TOT": "(UK) 76% (DE) 4-",
+        "TOT": "(UK) 76%, (DE) 4-",
         "VGS": "79%",
         "Nintendo Magazine System": "60/100",
-        "{{ill|Play Time (magazine)|lt=Play Time|de|Play Time}}": "75/100",
+        "Play Time": "75/100",
         "Super Power": "85/100",
         "VideoGames": "5/10"
       }
@@ -13249,12 +13114,7 @@
     "scores": {
       "aggregate": null,
       "aggregateCount": 0,
-      "egm": [
-        7,
-        7,
-        4,
-        4
-      ],
+      "egm": null,
       "nintendoPower": null,
       "other": {}
     },
@@ -13373,7 +13233,7 @@
         "GI": "7.25/10",
         "GP": "83%",
         "GameFan": "36/50, 38/50, 39/50",
-        "GamePro": "{{Tooltip|4.5/5|Graphics}}, {{Tooltip|4.5/5|Sound}}, {{Tooltip|4/5|Control}}, {{Tooltip|5/5|Fun Factor}}",
+        "GamePro": "4.5/5, 4.5/5, 4/5, 5/5",
         "Hyper": "79%",
         "VGCE": "8/10",
         "Ação Games": "12/16",
@@ -13421,7 +13281,7 @@
         "GMaster": "74%, 80%",
         "ONM": "68/100",
         "SP": "88%, 83%",
-        "TOT": "(UK) 80%, 81% (DE) 5+",
+        "TOT": "(UK) 80%, 81%, (DE) 5+",
         "Dengeki Super Famicom": "7/10, 7/10, 7/10, 8/10",
         "Hippon Super!": "7/10",
         "Marukatsu Super Famicom": "8/10, 7/10, 8/10, 6/10",
@@ -13488,28 +13348,22 @@
       "aggregateCount": 0,
       "egm": [
         8,
-        7,
-        7,
-        8
+        7
       ],
       "nintendoPower": null,
       "other": {
-        "CVG": "(SNES) 77/100",
-        "GI": "(SNES) 5/10",
-        "GP": "(SNES) 57%",
-        "Hyper": "(SNES) 30/100",
-        "ONM": "(SNES) 64/100",
-        "SP": "(SNES) 53%",
-        "TOT": "(SNES) 60% (SNES) 3-",
-        "Zero": "(ARC) 4/5",
-        "Electronic Games": "(SNES) C+",
-        "Game Zone": "(ARC) 4/5",
-        "Super Gamer": "(SNES) 53/100",
-        "VideoGames": "(SNES) 5/10",
+        "CVG": "77/100",
+        "GI": "5/10",
+        "GP": "57%",
+        "Hyper": "30/100",
+        "ONM": "64/100",
+        "SP": "53%",
+        "TOT": "60%, 3-",
+        "Electronic Games": "C+",
+        "Super Gamer": "53/100",
+        "VideoGames": "5/10",
         "award1Pub": "Gamest (1991)",
-        "award1": "(ARC) Best Action Award 2nd, Best Production Award 9th, Best Graphic Award 8th, Annual Hit Game 19th",
-        "award2Pub": "Micom BASIC Magazine (1991)",
-        "award2": "(ARC) Overall Grand Prize 5th, Player Division 6th, Best Action 3rd, Game Center Department 9th"
+        "award2Pub": "Micom BASIC Magazine (1991)"
       }
     },
     "boxArt": "/snes/box/the-king-of-dragons.jpg",
@@ -13542,14 +13396,14 @@
         "CP": "87%",
         "CVG": "89%",
         "GP": "62%",
-        "GameFan": "78%, 78%, 80%, 86%{{efn|GameFan{{'}}s review was by four critics with four different ratings.}}",
+        "GameFan": "78%, 78%, 80%, 86%",
         "GamePro": "17/20",
         "GMaster": "72/100",
         "JP": "84%",
         "ONM": "87/100",
         "PO": "79%",
         "SJ": "85/100",
-        "TOT": "(UK) 70% (DE) 4",
+        "TOT": "(UK) 70%, (DE) 4",
         "VGS": "78%",
         "VGCE": "8/10",
         "rev1": "82%",
@@ -13586,7 +13440,7 @@
       "nintendoPower": null,
       "other": {
         "Z64": "98%",
-        "Dragon": "5/5 (MS-DOS) 3/5",
+        "Dragon": "3/5",
         "award1Pub": "Computer Gaming World",
         "award1": "Role-Playing Game of the Year 1990 (Nominated), inducted into CGW Hall of Fame"
       }
@@ -13731,11 +13585,6 @@
       "aggregate": null,
       "aggregateCount": 0,
       "egm": [
-        7,
-        6,
-        6,
-        6,
-        7,
         8,
         7,
         8,
@@ -13746,8 +13595,8 @@
         "Allgame": "3.5/5",
         "CP": "79%",
         "CVG": "79/100",
-        "MF": "47% (GEN) 65%",
-        "VGS": "65% (GEN) 75%"
+        "MF": "65%",
+        "VGS": "75%"
       }
     },
     "boxArt": "/snes/box/clayfighter-tournament-edition.jpg",
@@ -13806,6 +13655,7 @@
       "nintendoPower": null,
       "other": {
         "CVG": "90/100",
+        "EGM": "33/40",
         "GamePro": "16.5/20",
         "NGen": "5/5",
         "ONM": "92/100",
@@ -13952,6 +13802,7 @@
       "nintendoPower": null,
       "other": {
         "Dragon": "5/5",
+        "EGM": "28/50",
         "GamePro": "18.5/20",
         "MG": "61%",
         "ONM": "84/100",
@@ -14020,7 +13871,7 @@
       "egm": null,
       "nintendoPower": null,
       "other": {
-        "Allgame": "3/5 (Arcade) 2.5/5",
+        "Allgame": "2.5/5",
         "GamePro": "4/5"
       }
     },
@@ -14220,9 +14071,7 @@
       "aggregateCount": 0,
       "egm": null,
       "nintendoPower": null,
-      "other": {
-        "GR": "71.23%"
-      }
+      "other": {}
     },
     "boxArt": "/snes/box/final-fight-guy.jpg",
     "sources": {
@@ -14257,7 +14106,7 @@
       ],
       "nintendoPower": null,
       "other": {
-        "GamePro": "{{Tooltip|3.5/5|Graphics}} {{Tooltip|4/5|Sound}} {{Tooltip|4/5|Control}} {{Tooltip|3.5/5|Fun Factor}}",
+        "GamePro": "3.5/5, 4/5, 4/5, 3.5/5",
         "TOT": "62%"
       }
     },
@@ -14348,13 +14197,14 @@
         "scale": 20
       },
       "other": {
+        "Allgame": "3.5/5",
+        "EGM": "29/40",
         "GameFan": "240/300",
-        "GamePro": "NEOGEO: 17/20 SMD: 10/20 SNES: 11.5/20",
+        "GamePro": "11.5/20",
         "GameZone": "55/100",
         "HC": "89/100",
         "ONM": "64/100",
         "SUser": "57/100",
-        "VGCE": "NEOGOE: 7/10 SMD: 6/10",
         "Flux": "6/10",
         "Mega": "48%",
         "MegaTech": "69%"
@@ -14600,7 +14450,7 @@
         "Games World": "57/100",
         "Super Gamer": "77/100",
         "award1Pub": "GameFan (1994)",
-        "award1": "Best Simulation {{small|(SNES)}}"
+        "award1": "Best Simulation"
       }
     },
     "boxArt": "/snes/box/tommy-moes-winter-extreme-skiing-and-snowboarding.jpg",
@@ -14657,9 +14507,7 @@
       "aggregateCount": 0,
       "egm": null,
       "nintendoPower": null,
-      "other": {
-        "Mean Machines Sega": "67% {{small|(GEN)}}"
-      }
+      "other": {}
     },
     "boxArt": "/snes/box/world-cup-usa-94.jpg",
     "sources": {
@@ -15020,7 +14868,6 @@
       "egm": null,
       "nintendoPower": null,
       "other": {
-        "Commodore Format": "90% (C64)",
         "ST Action": "92% (ST)",
         "ST Format": "92% (ST)"
       }
@@ -15212,11 +15059,17 @@
     "scores": {
       "aggregate": null,
       "aggregateCount": 0,
-      "egm": null,
+      "egm": [
+        9,
+        8,
+        8,
+        7,
+        8
+      ],
       "nintendoPower": null,
       "other": {
-        "Electronic Gaming Monthly": "6/10, 7/10, 6/10, 6/10 (NES) 9/10, 8/10, 8/10, 7/10, 8/10",
-        "GamePro": "5/5 (SNES){{Full citation needed|date=August 2025}}"
+        "GamePro": "5/5",
+        "GR": "85.83%"
       }
     },
     "boxArt": "/snes/box/tetris-2.jpg",
@@ -15294,8 +15147,9 @@
       "egm": null,
       "nintendoPower": null,
       "other": {
-        "Allgame": "({{abbr|SNES|Super Nintendo Entertainment System}}): 3/5 ({{abbr|SMD|Sega Mega Drive}}): 2.5/5",
-        "GameFan": "230/300"
+        "Allgame": ": 3/5",
+        "GameFan": "230/300",
+        "GamePro": "14.5/20"
       }
     },
     "boxArt": "/snes/box/the-incredible-hulk.jpg",
@@ -15551,9 +15405,7 @@
       "aggregateCount": 0,
       "egm": null,
       "nintendoPower": null,
-      "other": {
-        "CD-ROM Today": "3/5"
-      }
+      "other": {}
     },
     "boxArt": "/snes/box/marios-early-years-fun-with-letters.jpg",
     "sources": {
@@ -15666,8 +15518,8 @@
       "egm": null,
       "nintendoPower": null,
       "other": {
-        "Fam": "9/10, 8/10, 8/10, 8/10 ({{abbr|SFC|Super Famicom}})",
-        "PlayStation Magazine (JP)": "(SNES) 23.9/30"
+        "Fam": "9/10, 8/10, 8/10, 8/10",
+        "PlayStation Magazine (JP)": "23.9/30"
       }
     },
     "boxArt": "/snes/box/pac-man-2-the-new-adventures.jpg",
@@ -15706,7 +15558,7 @@
         "NGen": "5/5",
         "ONM": "92/100",
         "SP": "91%",
-        "TOT": "(UK) 94/100 (DE) 5+",
+        "TOT": "(UK) 94/100, (DE) 5+",
         "VGCE": "6/10",
         "Digital Press": "10/10",
         "Games World": "89/100",
@@ -15825,7 +15677,7 @@
         "NLife": "7/10",
         "ONM": "93/100",
         "SP": "90%",
-        "TOT": "(UK) 85/100 (DE) 4+",
+        "TOT": "(UK) 85/100, (DE) 4+",
         "Electronic Games": "B",
         "Games World": "75/100",
         "Nintendo Magazine System": "94/100",
@@ -15889,10 +15741,9 @@
       "egm": null,
       "nintendoPower": null,
       "other": {
-        "Fam": "(Neo Geo) 25 / 40",
-        "GameFan": "(Neo Geo) 349 / 400 (SNES) 244 / 300",
-        "GamePro": "(SNES) 17 / 20",
-        "Allgame": "3.5/5 (Neo Geo)"
+        "EGM": "37 / 50",
+        "GameFan": "244 / 300",
+        "GamePro": "17 / 20"
       }
     },
     "boxArt": "/snes/box/world-heroes-2.jpg",
@@ -15927,12 +15778,14 @@
       ],
       "nintendoPower": null,
       "other": {
+        "GR": "86%",
+        "CVG": "96%",
         "Fam": "8/10, 7/10, 7/10, 6/10",
         "GamePro": "20/20",
         "NGen": "5/5",
         "Amiga Format": "AMI: 90%",
         "CU Amiga": "AMI: 95%",
-        "Sega Saturn Magazine": "SSAT (Pre-release): 93% 2/5",
+        "Sega Saturn Magazine": "SSAT (Pre-release): 93%, 2/5",
         "VG&CE": "10/10"
       }
     },
@@ -15968,7 +15821,9 @@
         5
       ],
       "nintendoPower": null,
-      "other": {}
+      "other": {
+        "GR": "66.33%"
+      }
     },
     "boxArt": "/snes/box/spider-man-and-venom-maximum-carnage.jpg",
     "sources": {
@@ -16008,7 +15863,7 @@
         "Hyper": "86%",
         "ONM": "91/100, 88/100",
         "SP": "88%",
-        "TOT": "(UK) 86/100 (DE) 2-",
+        "TOT": "(UK) 86/100, (DE) 2-",
         "Electronic Games": "B",
         "Games World": "90/100",
         "Hippon Super!": "9/10",
@@ -16160,31 +16015,19 @@
       "aggregate": null,
       "aggregateCount": 0,
       "egm": [
-        9,
-        9,
-        9,
-        8,
         8,
         9,
         9,
         8,
-        8,
-        9,
-        8.5,
-        9,
-        9,
-        6.5
+        8
       ],
       "nintendoPower": null,
       "other": {
+        "GR": "83%",
         "Fam": "6/10, 8/10, 7/10, 9/10",
-        "GameFan": "98/100, 97/100, 98/100 {{small|(Sega CD)}}",
-        "Maximum": "4/5",
-        "Mega": "92%",
-        "NGen": "4/5 4/5 3/5",
-        "Computer Game Review": "86/100, 79/100, 68/100 {{small|(Windows 95)}}",
         "award1Pub": "VideoGames",
-        "award1": "Best Genesis Game"
+        "award1": "Best Genesis Game",
+        "Allgame": "4.5/5"
       }
     },
     "boxArt": "/snes/box/earthworm-jim.jpg",
@@ -16325,7 +16168,7 @@
         "Hyper": "78/100",
         "ONM": "85/100",
         "SP": "29%",
-        "TOT": "(UK) 75/100 (DE) 2",
+        "TOT": "(UK) 75/100, (DE) 2",
         "Electronic Games": "B",
         "Games World": "85/100",
         "Super Gamer": "82/100",
@@ -16390,9 +16233,7 @@
       "aggregateCount": 0,
       "egm": null,
       "nintendoPower": null,
-      "other": {
-        "CD-ROM Today": "3/5"
-      }
+      "other": {}
     },
     "boxArt": "/snes/box/marios-early-years-fun-with-numbers.jpg",
     "sources": {
@@ -16645,11 +16486,7 @@
       "aggregate": null,
       "aggregateCount": 0,
       "egm": [
-        5.5,
-        5,
-        5,
-        5,
-        6
+        5.5
       ],
       "nintendoPower": null,
       "other": {
@@ -16803,7 +16640,7 @@
         "GameFan": "89/100, 88/100, 80/100",
         "ONM": "91/100",
         "SP": "89%",
-        "TOT": "(UK) 84/100 (DE) 2+",
+        "TOT": "(UK) 84/100, (DE) 2+",
         "Games World": "86/100",
         "The Super Famicom": "72/100",
         "Super Gamer": "83/100",
@@ -16903,19 +16740,9 @@
     "scores": {
       "aggregate": null,
       "aggregateCount": 0,
-      "egm": [
-        9,
-        9,
-        9,
-        9
-      ],
+      "egm": null,
       "nintendoPower": null,
-      "other": {
-        "GR": "86%",
-        "Fam": "8/10, 7/10, 8/10, 7/10",
-        "SNES Force": "91%",
-        "Super Play": "89%"
-      }
+      "other": {}
     },
     "boxArt": "/snes/box/the-great-circus-mystery-starring-mickey-and-minnie.jpg",
     "sources": {
@@ -17010,6 +16837,7 @@
       "other": {
         "GR": "84% (based on 3 reviews)",
         "Allgame": "4/5",
+        "EGM": "{{plainlist|* 86%, * 79%}}",
         "Fam": "26/40",
         "GI": "8.75/10",
         "GamePro": "18.5/20",
@@ -17084,7 +16912,7 @@
         "MF": "57%",
         "TOT": "4+",
         "VGS": "69%",
-        "{{ill|Play Time (magazine)|lt=Play Time|de|Play Time}}": "55%"
+        "Play Time": "55%"
       }
     },
     "boxArt": "/snes/box/acme-animation-factory.jpg",
@@ -17200,7 +17028,9 @@
       "aggregateCount": 0,
       "egm": null,
       "nintendoPower": null,
-      "other": {}
+      "other": {
+        "GR": "62.15%"
+      }
     },
     "boxArt": "/snes/box/animaniacs.jpg",
     "sources": {
@@ -17332,7 +17162,7 @@
         "NGen": "3/5",
         "ONM": "73/100",
         "SP": "80%",
-        "TOT": "(UK) 82/100 (DE) 2+",
+        "TOT": "(UK) 82/100, (DE) 2+",
         "Electronic Games": "B+",
         "Super Gamer": "79/100",
         "VideoGames": "8/10"
@@ -17363,17 +17193,14 @@
       "aggregate": null,
       "aggregateCount": 0,
       "egm": [
-        7,
-        7,
-        6,
-        8
+        7
       ],
       "nintendoPower": {
         "score": 3.3,
         "scale": 5
       },
       "other": {
-        "GamePro": "3.625/5{{efn|GamePro gave Dragon View two 4/5 scores for control and fun factor, 3.5/5 for graphics, and 3/5 for sound.}}",
+        "GamePro": "3.625/5",
         "MF": "75%",
         "RPGFan": "75%",
         "VGS": "60%"
@@ -17474,7 +17301,7 @@
         "Hyper": "70/100",
         "ONM": "81/100",
         "SP": "82%",
-        "TOT": "(UK) 89/100 (DE) 2-",
+        "TOT": "(UK) 89/100, (DE) 2-",
         "Games World": "73/100",
         "Super Gamer": "67/100",
         "Ultimate Future Games": "89%",
@@ -17602,10 +17429,10 @@
       "egm": null,
       "nintendoPower": null,
       "other": {
-        "CVG": "83% (Game Boy) 79% (Mega Drive) 84%",
-        "GamePro": "3.5/3.5/4.0/3.5 (Mega Drive) 4.0/4.5/4.0/4.5",
-        "Hyper": "88%",
-        "NGen": "4/5 (Mega Drive)"
+        "CVG": "84%",
+        "GamePro": "4.0/4.5/4.0/4.5",
+        "EGM": "7.8",
+        "Hyper": "88%"
       }
     },
     "boxArt": "/snes/box/lemmings-2-the-tribes.jpg",
@@ -17662,9 +17489,7 @@
       "aggregateCount": 0,
       "egm": null,
       "nintendoPower": null,
-      "other": {
-        "CD-ROM Today": "3/5"
-      }
+      "other": {}
     },
     "boxArt": "/snes/box/marios-early-years-preschool-fun.jpg",
     "sources": {
@@ -17792,7 +17617,7 @@
       "egm": null,
       "nintendoPower": null,
       "other": {
-        "Allgame": "4/5 (Genesis) 3.5/5"
+        "Allgame": "3.5/5"
       }
     },
     "boxArt": "/snes/box/nhl-95.jpg",
@@ -17876,23 +17701,18 @@
       "aggregate": null,
       "aggregateCount": 0,
       "egm": [
-        7,
-        8,
-        8,
-        7,
-        7,
-        8,
-        7.8,
-        6.625
+        7.8
       ],
       "nintendoPower": null,
       "other": {
         "ASM": "11/12",
+        "CVG": "92/100",
         "Fam": "8/10, 8/10, 6/10, 8/10",
+        "NGen": "2/5",
         "VGCE": "9/10",
         "Entertainment Weekly": "B+",
         "award1Pub": "VideoGames (1994)",
-        "award1": "Best Music",
+        "award1": "Best Music (CD)",
         "award2Pub": "Power Play (1995)",
         "award2": "Best Dexterity Game in 1995"
       }
@@ -17934,10 +17754,10 @@
         "ONM": "87/100",
         "PO": "80%",
         "SP": "79%",
-        "TOT": "(UK) 79/100 (DE) 2",
+        "TOT": "(UK) 79/100, (DE) 2",
         "VGS": "73%",
         "Dengeki Super Famicom": "6/10, 7/10, 8/10, 7/10",
-        "{{ill|Play Time (magazine)|lt=Play Time|de|Play Time}}": "77/100",
+        "Play Time": "77/100",
         "Super Gamer": "83/100",
         "Super Power": "78/100",
         "Top Consoles": "17/20",
@@ -17971,19 +17791,13 @@
       "egm": null,
       "nintendoPower": null,
       "other": {
-        "CVG": "90% (Neo Geo)",
-        "Fam": "25/40 (3DO) 6/10, 5/10, 5/10, 5/10 (Game Boy) 8/10 (Super Famicom)",
-        "GamePro": "17.5/20 (Genesis) 14/20 (SNES) 15/20 (Game Boy) 15/20 (3DO) 13.5/20 (Sega CD)",
-        "PO": "94% (Mega Drive)",
-        "award1Pub": "Gamest Grand Prize",
+        "EGM": "37/50",
+        "Fam": "8/10",
+        "GamePro": "14/20",
+        "award1Pub": "[[Gamest|Gamest, Grand Prize]]",
         "award1": "Game of the Year, Best Fighting Game, Best Direction, Best VGM, Best Album, Best Character (Nakoruru)",
         "award2Pub": "Electronic Gaming Monthly",
-        "award2": "Game of the Year, {{nowrap|Best Neo-Geo Game}}, {{nowrap|Best Fighting Game}}",
-        "award3Pub": "European Computer Trade Show",
-        "award3": "Game of the Year",
-        "award4Pub": "AMOA Awards",
-        "award4": "Most Played Conversion Kit (nominee)",
-        "Allgame": "4/5 (SNES) 3.5/5 (Neo Geo)"
+        "award2": "| Allgame = 4/5"
       }
     },
     "boxArt": "/snes/box/samurai-shodown.jpg",
@@ -18150,7 +17964,7 @@
         "NLife": "8/10",
         "ONM": "83/100",
         "SP": "75%",
-        "TOT": "(UK) 85/100 (DE) 2",
+        "TOT": "(UK) 85/100, (DE) 2",
         "Games Amusement Pleasure": "77%",
         "Nintendo Magazine System": "8/10",
         "Super Gamer": "85/100",
@@ -18270,7 +18084,7 @@
         "CVG": "86/100",
         "EPD": "8/10",
         "GP": "80%",
-        "GamePro": "{{Tooltip|4/5|Graphics}} {{Tooltip|4/5|Sound}} {{Tooltip|3.5/5|Control}} {{Tooltip|3.5/5|Fun Factor}}",
+        "GamePro": "4/5, 4/5, 3.5/5, 3.5/5",
         "ONM": "85/100",
         "SGP": "2.8/5",
         "SP": "61%",
@@ -18374,7 +18188,7 @@
       "other": {
         "GI": "7.5/10",
         "GamePro": "3.5/5",
-        "{{ill|Total! (magazine)|lt=Total!|de|Total (Zeitschrift)}}": "4.25/6"
+        "Total!": "4.25/6"
       }
     },
     "boxArt": "/snes/box/ultima-runes-of-virtue-ii.jpg",
@@ -18601,9 +18415,11 @@
         "scale": 20
       },
       "other": {
+        "EGM": "SGG: 31/40",
         "GameFan": "268/300",
         "NGen": "4/5",
-        "VGCE": "SMD & SNES: 7/10",
+        "VGCE": "7/10",
+        "Entertainment Weekly": "A",
         "Games World": "SGG: 85/100"
       }
     },
@@ -18640,6 +18456,7 @@
       "nintendoPower": null,
       "other": {
         "Fam": "28/40",
+        "GMaster": "58%",
         "JS": "3DO 68/100",
         "TOT": "69%"
       }
@@ -18670,12 +18487,14 @@
       "aggregateCount": 0,
       "egm": [
         10,
+        9,
+        9,
         9
       ],
       "nintendoPower": null,
       "other": {
         "CVG": "90/100",
-        "Fam": "7/8/8/8{{efn|Weekly Famitsu{{'s}} four reviewers gave Donkey Kong Country one 7/10 score and three 8/10 scores.}}",
+        "Fam": "7/8/8/8",
         "GameFan": "100/100",
         "NGen": "4/5",
         "TOT": "97/100",
@@ -18755,10 +18574,15 @@
     "scores": {
       "aggregate": null,
       "aggregateCount": 0,
-      "egm": null,
+      "egm": [
+        7,
+        7,
+        5,
+        7
+      ],
       "nintendoPower": null,
       "other": {
-        "NGen": "3/5"
+        "NGen": "3/5 (SNES, MS-DOS & Sega 32X)"
       }
     },
     "boxArt": "/snes/box/brutal-paws-of-fury.jpg",
@@ -18899,17 +18723,7 @@
       "aggregateCount": 0,
       "egm": null,
       "nintendoPower": null,
-      "other": {
-        "CVG": "89% (Mega Drive) 89% (Game Gear)",
-        "GMaster": "93% (Mega Drive)",
-        "JP": "89% (Game Gear) 88% (Master System)",
-        "MMS": "94% (Game Gear) 93% (Mega Drive) 93% (Master System)",
-        "PO": "90% (Master System) 90% (Game Gear)",
-        "Mega": "92% (Mega Drive)",
-        "Sega Force": "90% (Mega Drive)",
-        "Sega Master Force": "90% (Game Gear)",
-        "Supersonic": "86% (Mega Drive)"
-      }
+      "other": {}
     },
     "boxArt": "/snes/box/micro-machines.jpg",
     "sources": {
@@ -18938,6 +18752,7 @@
       "egm": null,
       "nintendoPower": null,
       "other": {
+        "EGM": "15/20",
         "Fam": "26/40"
       }
     },
@@ -19033,15 +18848,15 @@
     "scores": {
       "aggregate": null,
       "aggregateCount": 0,
-      "egm": null,
+      "egm": [
+        4.4
+      ],
       "nintendoPower": null,
       "other": {
         "Allgame": "2/5",
         "Amiga Power": "5%",
         "NGen": "2/5",
         "The One Amiga": "59%",
-        "CD-i": "65% (CD-i)",
-        "Power Unlimited": "30% (CD-i)",
         "Sega Power": "3%"
       }
     },
@@ -19264,7 +19079,7 @@
       "egm": null,
       "nintendoPower": null,
       "other": {
-        "Fam": "6/10, 6/10, 8/10, 8/10 ({{abbr|SFC|Super Famicom}})"
+        "Fam": "6/10, 6/10, 8/10, 8/10"
       }
     },
     "boxArt": "/snes/box/tiny-toon-adventures-wacky-sports-challenge.jpg",
@@ -19312,7 +19127,7 @@
         "NGen": "3/5",
         "ONM": "92/100",
         "SP": "85%",
-        "TOT": "(UK) 90/100 (DE) 2+",
+        "TOT": "(UK) 90/100, (DE) 2+",
         "Electronic Games": "A",
         "Entertainment Weekly": "B−",
         "Games World": "93/100",
@@ -19427,7 +19242,7 @@
       "egm": null,
       "nintendoPower": null,
       "other": {
-        "Allgame": "2.5/5 (Sega CD)"
+        "NGen": "2/5"
       }
     },
     "boxArt": "/snes/box/brett-hull-hockey-95.jpg",
@@ -19497,7 +19312,7 @@
       "egm": null,
       "nintendoPower": null,
       "other": {
-        "GameFan": "(SNES) 287 / 300"
+        "GameFan": "287 / 300"
       }
     },
     "boxArt": "/snes/box/clayfighter-2-judgment-clay.jpg",
@@ -19813,12 +19628,12 @@
       "other": {
         "GameFan": "258/300",
         "GMaster": "82/100",
-        "MF": "SMD & SNES: 75%",
+        "MF": "75%",
         "NLife": "8/10",
         "ONM": "90/100",
         "TOT": "80/100",
-        "VGS": "SMD & SNES: 62%",
-        "Games World": "SMD & SNES: 69%"
+        "VGS": "62%",
+        "Games World": "69%"
       }
     },
     "boxArt": "/snes/box/addams-family-values.jpg",
@@ -19935,7 +19750,7 @@
         "Consoles +": "85%",
         "MAN!AC": "67%",
         "Mega Fun": "79%",
-        "{{ill|Play Time (magazine)|lt=Play Time|de|Play Time}}": "79%",
+        "Play Time": "79%",
         "Player One": "90%",
         "Power Unlimited": "83/100",
         "Total!": "2- (B-)",
@@ -20116,14 +19931,14 @@
         "scale": 5
       },
       "other": {
-        "CVG": "35% (GEN) 37%",
-        "HC": "75/100 (GEN) 78/100",
-        "Hyper": "48/100 (GEN) 48/100",
+        "CVG": "37%",
+        "HC": "78/100",
+        "Hyper": "48/100",
         "NGen": "1/5",
         "TOT": "81/100",
         "Consoles +": "70%",
         "MAN!AC": "39%",
-        "Player One": "60% (GEN) 60%"
+        "Player One": "60%"
       }
     },
     "boxArt": "/snes/box/the-adventures-of-mighty-max.jpg",
@@ -20259,13 +20074,7 @@
       "aggregateCount": 0,
       "egm": null,
       "nintendoPower": null,
-      "other": {
-        "Mega": "91%",
-        "NGen": "3/5 (Sega CD)",
-        "award1Pub": "Mega",
-        "award1": "7th best game of all time",
-        "Allgame": "4.5/5 (ARC) 3.5/5 (Sega CD)"
-      }
+      "other": {}
     },
     "boxArt": "/snes/box/nba-jam-tournament-edition.jpg",
     "sources": {
@@ -20294,6 +20103,8 @@
       "egm": null,
       "nintendoPower": null,
       "other": {
+        "EGM": "39/50",
+        "NGen": "4/5",
         "SP": "84%"
       }
     },
@@ -20380,6 +20191,8 @@
       "egm": null,
       "nintendoPower": null,
       "other": {
+        "MF": "44%",
+        "NGen": "2/5",
         "TOT": "55/100"
       }
     },
@@ -20408,11 +20221,6 @@
       "aggregate": null,
       "aggregateCount": 0,
       "egm": [
-        9,
-        9,
-        8,
-        8,
-        7.375,
         7.375
       ],
       "nintendoPower": {
@@ -20420,12 +20228,9 @@
         "scale": 20
       },
       "other": {
-        "CP": "Game Gear: 92% Mega CD: 85% SNES: 86%",
-        "Edge": "Neo Geo: 8/10",
-        "Fam": "Game Gear: 22/40 PC Engine: 29/40 Mega CD: 21/40",
+        "CP": "86%",
         "NGen": "2/5",
-        "ONM": "92%",
-        "Digital Press": "Neo Geo: 9/10 Game Gear: 8.5/10"
+        "ONM": "92%"
       }
     },
     "boxArt": "/snes/box/fatal-fury-special.jpg",
@@ -20826,7 +20631,7 @@
         "NGen": "3/5",
         "ONM": "90/100",
         "SP": "74%",
-        "TOT": "(UK) 86/100 (DE) 3+",
+        "TOT": "(UK) 86/100, (DE) 3+",
         "Electronic Games": "B+",
         "Games World": "73%",
         "Super Gamer": "89/100",
@@ -20873,7 +20678,7 @@
         "NGen": "3/5",
         "ONM": "96/100",
         "SP": "92%",
-        "TOT": "(UK) 88/100 (DE) 2",
+        "TOT": "(UK) 88/100, (DE) 2",
         "Games World": "90/100",
         "Super Gamer": "95/100",
         "Ultimate Future Games": "83%",
@@ -20914,7 +20719,8 @@
         "CU Amiga": "85%",
         "Amiga Power": "77%",
         "award1Pub": "MegaTech",
-        "award1": "Hyper Game"
+        "award1": "Hyper Game",
+        "GR": "71.87%"
       }
     },
     "boxArt": "/snes/box/jungle-strike.jpg",
@@ -20944,6 +20750,7 @@
       "egm": null,
       "nintendoPower": null,
       "other": {
+        "Fam": "6/10, 6/10, 6/10, 5/10",
         "Hyper": "66%"
       }
     },
@@ -21152,14 +20959,12 @@
       "aggregate": null,
       "aggregateCount": 0,
       "egm": [
-        7.625,
-        6.625,
-        5.625
+        7.625
       ],
       "nintendoPower": null,
       "other": {
-        "Fam": "7/10, 5/10, 5/10, 7/10 4/10, 3/10, 4/10, 4/10 6/10, 4/10, 5/10, 4/10",
-        "NGen": "3/5 2/5"
+        "Fam": "7/10, 5/10, 5/10, 7/10",
+        "NGen": "2/5"
       }
     },
     "boxArt": "/snes/box/judge-dredd.jpg",
@@ -21216,6 +21021,7 @@
       "egm": null,
       "nintendoPower": null,
       "other": {
+        "NGen": "4/5",
         "Play": "81%",
         "Computer Game Review": "96/96/96"
       }
@@ -21383,7 +21189,9 @@
       "other": {
         "IGN": "8/10",
         "NLife": "9/10",
+        "Fam": "26/40",
         "Mega Fun": "66%",
+        "MAN!AC": "69%",
         "Superjuegos": "92/100"
       }
     },
@@ -21421,6 +21229,7 @@
         "HC": "78/100",
         "Hyper": "74%",
         "MF": "63%",
+        "MG": "54%",
         "MMS": "61/100",
         "ONM": "82/100",
         "PO": "85/100",
@@ -21459,21 +21268,17 @@
       "egm": null,
       "nintendoPower": null,
       "other": {
-        "Allgame": "(SNES) 2.5/5",
-        "CP": "(SNES) 80% (PS) 86%",
-        "Hyper": "(SNES) 72/100",
-        "MG": "(SNES) 53%",
-        "MF": "(SNES) 59%",
-        "PO": "(SNES) 69%",
-        "TOT": "(SNES) 5+",
-        "VGS": "(SNES) 57%",
-        "Zero": "(ARC) 2.5/5",
-        "Fun Generation": "(PS) 2/10",
-        "Game Zone": "(ARC) 2.5/5",
-        "Top Consoles": "(SNES) 13/20",
-        "Última Generación": "(SNES) 62/100",
-        "award1Pub": "Gamest (1992)",
-        "award1": "(ARC) Grand Prize 7th, Best Action Award 3rd, Best VGM Award 10th, Player Popularity 3rd, Annual Hit Game 3rd, Editorial Department Special Award"
+        "Allgame": "2.5/5",
+        "CP": "80%",
+        "Hyper": "72/100",
+        "MG": "53%",
+        "MF": "59%",
+        "PO": "69%",
+        "TOT": "5+",
+        "VGS": "57%",
+        "Top Consoles": "13/20",
+        "Última Generación": "62/100",
+        "award1Pub": "Gamest (1992)"
       }
     },
     "boxArt": "/snes/box/captain-commando.jpg",
@@ -21657,12 +21462,12 @@
       "egm": null,
       "nintendoPower": null,
       "other": {
-        "Allgame": "2.5/5 (SAT) 2/5 (JCD)",
         "AmPower": "77% (AGA)",
         "HC": "91/100",
         "JXV": "12/20",
+        "MF": "70%",
         "NGen": "2/5",
-        "MG": "68% (GEN) 59% (SNES) 68%"
+        "MG": "59%"
       }
     },
     "boxArt": "/snes/box/primal-rage.jpg",
@@ -21699,12 +21504,13 @@
       "other": {
         "CVG": "93%",
         "GameFan": "281/300",
-        "NGen": "4/5 (ARC) 3/5",
+        "NGen": "3/5",
         "TOT": "95/100",
         "VGCE": "8/10",
         "Entertainment Weekly": "A",
         "award1Pub": "AMOA Awards",
-        "award1": "Most Innovative New Technology (nomination)"
+        "award1": "Most Innovative New Technology (nomination)",
+        "Allgame": "4.5/5"
       }
     },
     "boxArt": "/snes/box/killer-instinct.jpg",
@@ -21968,16 +21774,12 @@
     "scores": {
       "aggregate": null,
       "aggregateCount": 0,
-      "egm": [
-        7.75
-      ],
+      "egm": null,
       "nintendoPower": null,
       "other": {
-        "GamePro": "4.5/5 3.625/5",
-        "GSpot": "7.9/10",
-        "PCGUS": "90%",
-        "Game Players": "96% 89%",
-        "NGen": "5/5 4/5",
+        "GamePro": "3.625/5",
+        "Game Players": "89%",
+        "NGen": "5/5",
         "PCM": "3/4"
       }
     },
@@ -22006,12 +21808,11 @@
       "aggregate": null,
       "aggregateCount": 0,
       "egm": [
-        7,
         7
       ],
       "nintendoPower": null,
       "other": {
-        "NGen": "2/5 1/5",
+        "NGen": "2/5",
         "GR": "66%"
       }
     },
@@ -22052,7 +21853,7 @@
         "NGen": "4/5",
         "ONM": "92/100",
         "SP": "75%",
-        "TOT": "(UK) 73/100 (DE) 2",
+        "TOT": "(UK) 73/100, (DE) 2",
         "rev3": "91/100",
         "rev4": "8/10"
       }
@@ -22121,7 +21922,8 @@
       "egm": null,
       "nintendoPower": null,
       "other": {
-        "HC": "83/100 (GEN) 90/100"
+        "Fam": "5/10, 5/10, 5/10, 5/10",
+        "HC": "90/100"
       }
     },
     "boxArt": "/snes/box/batman-forever.jpg",
@@ -22177,7 +21979,6 @@
       "aggregate": null,
       "aggregateCount": 0,
       "egm": [
-        7.5,
         6.75
       ],
       "nintendoPower": null,
@@ -22214,7 +22015,7 @@
       "egm": null,
       "nintendoPower": null,
       "other": {
-        "NGen": "5/5 (GEN) 4/5"
+        "NGen": "4/5"
       }
     },
     "boxArt": "/snes/box/nba-live-96.jpg",
@@ -22336,6 +22137,7 @@
       "other": {
         "GR": "81%",
         "Allgame": "4/5",
+        "EGM": "33.5 out of 40",
         "EPD": "8 out of 10",
         "GP": "88 out of 100",
         "GameFan": "246 out of 300",
@@ -22454,7 +22256,7 @@
         "NGen": "3/5",
         "ONM": "85/100",
         "SP": "70%",
-        "TOT": "(UK) 82/100 (DE) 3+",
+        "TOT": "(UK) 82/100, (DE) 3+",
         "Nintendo Magazine System": "79/100",
         "VideoGames": "6/10"
       }
@@ -22500,7 +22302,7 @@
         "NGen": "1/5",
         "ONM": "76/100",
         "SP": "56%",
-        "TOT": "(UK) 71/100 (DE) 3+",
+        "TOT": "(UK) 71/100, (DE) 3+",
         "Nintendo Magazine System": "73/100",
         "VideoGames": "5/10"
       }
@@ -22530,11 +22332,11 @@
       "aggregate": null,
       "aggregateCount": 0,
       "egm": [
-        8.675,
         8.375
       ],
       "nintendoPower": null,
       "other": {
+        "CVG": "92%",
         "PCM": "3/4"
       }
     },
@@ -22652,6 +22454,7 @@
         "scale": 20
       },
       "other": {
+        "NGen": "2/5",
         "SP": "68%",
         "TOT": "80/100"
       }
@@ -22896,7 +22699,7 @@
         "PO": "90%",
         "SJ": "91/100",
         "SP": "84%",
-        "TOT": "(UK) 91/100 (DE) 1-",
+        "TOT": "(UK) 91/100, (DE) 1-",
         "VGS": "85%",
         "Games World": "86%",
         "Nintendo Acción": "89/100",
@@ -22972,7 +22775,10 @@
       "aggregateCount": 0,
       "egm": null,
       "nintendoPower": null,
-      "other": {}
+      "other": {
+        "NGen": "2/5",
+        "GR": "61.50%"
+      }
     },
     "boxArt": "/snes/box/venom-spider-man-separation-anxiety.jpg",
     "sources": {
@@ -23035,7 +22841,7 @@
       "nintendoPower": null,
       "other": {
         "Allgame": "4.5/5",
-        "GamePro": "{{Tooltip|4.5/5|Graphics}} {{Tooltip|4.5/5|Sound}} {{Tooltip|4.5/5|Control}} {{Tooltip|4.5/5|Fun Factor}}",
+        "GamePro": "4.5/5, 4.5/5, 4.5/5, 4.5/5",
         "Hyper": "93/100",
         "ONM": "91/100",
         "SGP": "4.8/5",
@@ -23120,11 +22926,11 @@
         "GameFan": "55/100, 77/100, 67/100",
         "GMaster": "80%",
         "NGen": "2/5",
-        "NLife": "8/10 7/10",
+        "NLife": "8/10, 7/10",
         "ONM": "61/100",
         "Retro": "80%",
         "SP": "49%",
-        "TOT": "(UK) 64/100 (DE) 2-",
+        "TOT": "(UK) 64/100, (DE) 2-",
         "Nintendo Magazine System": "74/100"
       }
     },
@@ -23213,7 +23019,7 @@
       ],
       "nintendoPower": null,
       "other": {
-        "Allgame": "4.5/5 (ARC) 2.5/5",
+        "Allgame": "2.5/5",
         "Hyper": "62/100",
         "NGen": "1/5"
       }
@@ -23272,15 +23078,26 @@
     "scores": {
       "aggregate": null,
       "aggregateCount": 0,
-      "egm": null,
+      "egm": [
+        6.75
+      ],
       "nintendoPower": {
         "score": 14.3,
         "scale": 20
       },
       "other": {
-        "GR_PC": "70%",
+        "Allgame": "3.5/5",
+        "CVG": "4/5",
         "Fam": "6/10, 6/10, 7/10, 7/10",
-        "SP": "79%"
+        "GameFan": "80%",
+        "GamePro": "14/20",
+        "GI": "8.75/10",
+        "JXV": "17/20",
+        "MG": "63%",
+        "ONM": "92/100",
+        "SJ": "90/100",
+        "SP": "79%",
+        "TOT": "90/100"
       }
     },
     "boxArt": "/snes/box/toy-story.jpg",
@@ -23337,7 +23154,9 @@
       "aggregateCount": 0,
       "egm": null,
       "nintendoPower": null,
-      "other": {}
+      "other": {
+        "GR": "66.83%"
+      }
     },
     "boxArt": "/snes/box/wayne-gretzky-and-the-nhlpa-all-stars.jpg",
     "sources": {
@@ -23366,6 +23185,7 @@
       "egm": null,
       "nintendoPower": null,
       "other": {
+        "GR": "90%",
         "Allgame": "4.5/5",
         "CVG": "94%",
         "Fam": "8/10, 9/10, 8/10, 7/10",
@@ -23373,7 +23193,7 @@
         "IGN": "8.8/10",
         "Nintendojo": "9.9/10",
         "Cubed3": "8/10",
-        "award1": "{{nowrap|Editors' Choice Award}}",
+        "award1": "Editors' Choice Award",
         "award1Pub": "IGN",
         "award2": "Best SNES Game of 1995",
         "award2Pub": "GamePro",
@@ -23411,7 +23231,7 @@
         "scale": 20
       },
       "other": {
-        "GR": "69% (SMD) 73%",
+        "GR": "73%",
         "Allgame": "3.5/5",
         "GI": "7.5/10",
         "ONM": "86/100",
@@ -23515,7 +23335,9 @@
       "aggregateCount": 0,
       "egm": null,
       "nintendoPower": null,
-      "other": {}
+      "other": {
+        "Allgame": "3.5/5"
+      }
     },
     "boxArt": "/snes/box/pga-tour-96.jpg",
     "sources": {
@@ -23619,7 +23441,7 @@
         "MF": "70%",
         "ONM": "74/100",
         "SP": "29%",
-        "TOT": "(UK) 31/100 (DE) 4",
+        "TOT": "(UK) 31/100, (DE) 4",
         "Super Power": "61%"
       }
     },
@@ -23718,7 +23540,7 @@
         "ONM": "76/100",
         "PO": "68%",
         "SP": "42%",
-        "TOT": "(UK) 59/100 (DE) 4-",
+        "TOT": "(UK) 59/100, (DE) 4-",
         "VGS": "65%",
         "Nintendo Magazine System": "89/100",
         "Power Unlimited": "68/100",
@@ -23760,7 +23582,6 @@
       "nintendoPower": null,
       "other": {
         "GR": "89%",
-        "MC": "(NS) 84/100",
         "OC": "93% recommend",
         "1UP": "A",
         "Allgame": "5/5",
@@ -23904,7 +23725,7 @@
       "nintendoPower": null,
       "other": {
         "GR": "80%",
-        "Fam": "30/40 10/10",
+        "Fam": "30/40, 10/10",
         "GameFan": "270/300",
         "NLife": "9/10",
         "RPG": "4/5",
@@ -24115,7 +23936,7 @@
         "NLife": "9/10, 8/10",
         "ONM": "72/100",
         "SP": "89%",
-        "TOT": "(UK) 83/100 (DE) 1-",
+        "TOT": "(UK) 83/100, (DE) 1-",
         "Nintendo Magazine System": "79/100"
       }
     },
@@ -24148,7 +23969,7 @@
       "other": {
         "PSM": "8/10",
         "Sega Saturn Magazine": "92% (SS)",
-        "Allgame": "3/5 (SNES) 3/5 (PS1) 4/5 (SS)"
+        "Allgame": "3/5"
       }
     },
     "boxArt": "/snes/box/madden-nfl-97.jpg",
@@ -24294,12 +24115,14 @@
     "scores": {
       "aggregate": null,
       "aggregateCount": 0,
-      "egm": null,
+      "egm": [
+        8,
+        6,
+        7,
+        6.5
+      ],
       "nintendoPower": null,
-      "other": {
-        "CVG": "SMD, SNES & SSAT: 4/5",
-        "NGen": "Arcade & SSAT: 3/5"
-      }
+      "other": {}
     },
     "boxArt": "/snes/box/ultimate-mortal-kombat-3.jpg",
     "sources": {
@@ -24428,8 +24251,8 @@
       "egm": null,
       "nintendoPower": null,
       "other": {
-        "EPD": "6/10 (PS) 5/10 (SAT) 9.5/10 (SMD) 6.5/10",
-        "VGS": "88% (PS) 82% (SMD) 80%"
+        "EPD": "6.5/10",
+        "VGS": "80%"
       }
     },
     "boxArt": "/snes/box/fifa-97-gold-edition.jpg",
@@ -24906,7 +24729,6 @@
       "aggregate": null,
       "aggregateCount": 0,
       "egm": [
-        7.375,
         7.625
       ],
       "nintendoPower": null,
@@ -25033,7 +24855,7 @@
       "other": {
         "PSM": "9/10",
         "award1Pub": "PSM",
-        "award1": "Starplayer{{citation needed|date=November 2017}}"
+        "award1": "Starplayer"
       }
     },
     "boxArt": "/snes/box/nhl-98.jpg",
@@ -25134,7 +24956,7 @@
       "other": {
         "Allgame": "4/5",
         "EuroG": "5/10",
-        "Fam": "6/10, 4/10, 6/10, 5/10 ({{abbr|SFC|Super Famicom}})",
+        "Fam": "6/10, 4/10, 6/10, 5/10",
         "IGN": "5/10",
         "NLife": "2/10",
         "Mega Play": "41%"
@@ -25235,7 +25057,9 @@
       "aggregateCount": 0,
       "egm": null,
       "nintendoPower": null,
-      "other": {}
+      "other": {
+        "Allgame": "4/5"
+      }
     },
     "boxArt": "/snes/box/madden-nfl-98.jpg",
     "sources": {
@@ -25264,12 +25088,9 @@
       "egm": null,
       "nintendoPower": null,
       "other": {
-        "Allgame_ARC": "5/5",
         "Allgame_A2600": "4.5/5",
-        "CVG_ARC": "Positive",
         "rev1_A2600": "9/10",
         "rev2_CV": "Classic",
-        "rev2_PC": "Classic",
         "rev3_A2600": "Positive",
         "rev4_A2600": "A",
         "rev5_A2600": "Positive"

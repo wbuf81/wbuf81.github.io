@@ -429,7 +429,7 @@ US box art from [libretro-thumbnails](https://github.com/libretro-thumbnails/Nin
 | rival-turf | Rival Turf! (USA).png |
 | road-riot-4wd | Road Riot 4WD (USA).png |
 | road-runners-death-valley-rally | Road Runner's Death Valley Rally (USA).png |
-| robocop-3 | RoboCop 3 (USA) (Arcade).png |
+| robocop-3 | RoboCop 3 (USA).png |
 | robocop-versus-the-terminator | RoboCop versus The Terminator (USA).png |
 | robotrek | Robotrek (USA).png |
 | rock-n-roll-racing | Rock N' Roll Racing (USA).png |
