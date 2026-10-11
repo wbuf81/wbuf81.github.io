@@ -15,7 +15,8 @@
     "weekly:stats": "node scripts/weekly-stats.mjs",
     "weekly:cards": "python3 scripts/og/build-weekly.py",
     "github:contributions": "node scripts/github-contributions.mjs",
-    "snes:fetch:list": "node scripts/snes/fetch-wikipedia-list.mjs"
+    "snes:fetch:list": "node scripts/snes/fetch-wikipedia-list.mjs",
+    "snes:fetch:reviews": "node scripts/snes/fetch-wiki-reviews.mjs"
   },
   "keywords": [],
   "author": "",
