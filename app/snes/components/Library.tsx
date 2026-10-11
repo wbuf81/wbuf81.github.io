@@ -15,6 +15,12 @@ const Shelf = lazy(() => import('./views/Shelf'));
 const Scatter = lazy(() => import('./views/Scatter'));
 const YEARS = Array.from({ length: LAST_YEAR - FIRST_YEAR + 1 }, (_, i) => FIRST_YEAR + i);
 
+// While a lazy view loads, React keeps the previous view's DOM mounted but display:none; its anchors must not count.
+const hiddenBySuspense = (el: HTMLElement) => {
+  for (let n: HTMLElement | null = el; n; n = n.parentElement) if (n.style.display === 'none') return true;
+  return false;
+};
+
 export function Empty({ onClear }: { onClear: () => void }) {
   return (
     <div className="s-empty">
@@ -41,12 +47,12 @@ export default function Library({ games, names, facets }: { games: IndexGame[]; 
   }, [filters, ready]);
   useEffect(() => {
     if (!scrollTo) return;
-    // Lazy views may not be mounted yet: keep the request pending and retry for ~30 frames.
+    // Lazy views may not be mounted (or visible) yet: keep the request pending and retry for ~30 frames.
     let frames = 0;
     let raf = 0;
     const tryScroll = () => {
       const el = document.getElementById(scrollTo);
-      if (el) {
+      if (el && !hiddenBySuspense(el)) {
         el.scrollIntoView({ behavior: 'smooth', block: 'start' });
         setScrollTo(null);
       } else if (++frames < 30) raf = requestAnimationFrame(tryScroll);

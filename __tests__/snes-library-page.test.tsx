@@ -86,13 +86,16 @@ test('the sort control appears only on the wall and shelf', async () => {
 });
 
 test('a year tab clicked before the lazy view loads still scrolls once it mounts', async () => {
+  // Shelf is resolved by no other test in this file, so its lazy import is still pending here.
   setup();
-  fireEvent.click(screen.getByRole('tab', { name: 'Wall' }));
+  fireEvent.click(screen.getByRole('tab', { name: 'Shelf' }));
   fireEvent.click(screen.getByRole('button', { name: '1994' }));
-  await screen.findByText('1994', { selector: '.s-wall-year' });
   await waitFor(() => expect(Element.prototype.scrollIntoView).toHaveBeenCalled());
   const el = (Element.prototype.scrollIntoView as jest.Mock).mock.contexts[0] as HTMLElement;
+  // The timeline's stale anchor is still in the DOM while the Shelf suspends; the scroll must land on the Shelf's marker.
   expect(el.id).toBe('y-1994');
+  expect(el.className).toBe('s-shelf-year');
+  expect(el.isConnected).toBe(true);
 });
 
 test('genre, players and the IGDB-backed controls stay hidden until the data has them', () => {
