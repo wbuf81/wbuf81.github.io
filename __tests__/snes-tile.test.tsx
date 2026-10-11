@@ -34,7 +34,7 @@ const enter = (el: Element) => {
 test('shows the cover, title, publisher, chips and links to the game page', () => {
   render(<GameTile game={base} publisherName="Nintendo" genre="Racing" />);
   const link = screen.getByRole('link', { name: /F-Zero, August 23, 1991/ });
-  expect(link).toHaveAttribute('href', '/snes/f-zero');
+  expect(link).toHaveAttribute('href', '/videogames/snes-history/f-zero');
   expect(link.querySelector('img')).toHaveAttribute('src', '/snes/box/f-zero.jpg');
   expect(screen.getByText('Nintendo · Racing')).toBeInTheDocument();
   expect(screen.getByText('Day One')).toBeInTheDocument();

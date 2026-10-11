@@ -4,6 +4,7 @@ Allow: /
 
 # Personal tracker page — unlinked and not for indexing
 Disallow: /health
+Disallow: /videogames
 
 # Sitemap location
 Sitemap: https://wesleybard.com/sitemap.xml

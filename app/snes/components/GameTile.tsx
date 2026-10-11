@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import type { IndexGame } from '@/lib/snes/library';
+import { gamePath } from '@/lib/snes/routes';
 import { formatRelease } from '@/lib/snes/display';
 import { useSound } from './sound';
 
@@ -47,7 +48,7 @@ export function GameTile({ game, publisherName, genre }: { game: IndexGame; publ
   const when = formatRelease(game.releasedUS, game.datePrecision);
   const label = [game.title, when, game.egmAvg !== null ? `EGM ${game.egmAvg.toFixed(1)}` : ''].filter(Boolean).join(', ');
   return (
-    <Link href={`/snes/${game.slug}`} className={`s-tile${playing ? ' is-playing' : ''}`} aria-label={label} onMouseEnter={start} onMouseLeave={stop}>
+    <Link href={gamePath(game.slug)} className={`s-tile${playing ? ' is-playing' : ''}`} aria-label={label} onMouseEnter={start} onMouseLeave={stop}>
       <span className="s-art">
         {game.boxArt ? <img src={game.boxArt} alt="" width={300} height={209} loading="lazy" decoding="async" /> : <span className="s-noart">{game.title}</span>}
         {playing && game.video ? <video ref={video} src={game.video} loop playsInline autoPlay muted={!sound.on} /> : null}
