@@ -32,7 +32,7 @@ export default function MediaFrame({ game }: { game: Game }) {
         {mode === 'cover' ? (
           game.boxArt ? <img src={game.boxArt} alt={`${game.title} box art`} width={300} height={209} /> : <span className="s-noart">{game.title}</span>
         ) : null}
-        {mode === 'box3d' ? <img className="s-box3d" src={`/snes/box3d/${game.slug}.webp`} alt={`${game.title} box, 3D`} /> : null}
+        {mode === 'box3d' ? <img className="s-box3d" src={`/snes/box3d/${game.slug}.webp`} alt={`${game.title} box, 3D`} width={300} height={209} /> : null}
         {game.media.video ? (
           <video
             ref={(el) => {

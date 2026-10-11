@@ -26,7 +26,7 @@ export default function Booklet({ game, names }: { game: Game; names: Record<str
   const { critic, criticCount, users, usersCount } = game.scores;
   const anyScore = Boolean(egm || nintendoPower || fam || rest.length || critic !== null || users !== null);
   const { coop, versus } = game.multiplayer;
-  const multiplayer = [coop ? 'Co-op' : '', versus ? 'Versus' : ''].filter(Boolean).join(' · ');
+  const multiplayer = [coop ? 'Co-op' : '', versus ? '2+ players' : ''].filter(Boolean).join(' · ');
   const company = (slug: string) => <Link href={companyPath(slug)}>{names[slug] ?? slug}</Link>;
 
   return (
@@ -81,8 +81,8 @@ export default function Booklet({ game, names }: { game: Game; names: Record<str
             {egm ? <Bars scores={egm} label={`EGM · ${reviewers(egm.length)}`} /> : <p className="s-none">EGM · not on record yet</p>}
             {fam ? <Bars scores={fam} label={`Famitsu · ${reviewers(fam.length)}`} /> : null}
             <dl className="s-crs">
-              {critic !== null ? <div className="s-cr"><dt>Critics</dt><dd>{critic} ({criticCount} {criticCount === 1 ? 'review' : 'reviews'})</dd></div> : null}
-              {users !== null ? <div className="s-cr"><dt>Players</dt><dd>{users} ({usersCount} {usersCount === 1 ? 'rating' : 'ratings'})</dd></div> : null}
+              {critic !== null ? <div className="s-cr"><dt>Critics</dt><dd>{critic}/100 ({criticCount} {criticCount === 1 ? 'review' : 'reviews'})</dd></div> : null}
+              {users !== null ? <div className="s-cr"><dt>Players</dt><dd>{users}/100 ({usersCount} {usersCount === 1 ? 'rating' : 'ratings'})</dd></div> : null}
               {nintendoPower ? <div className="s-cr"><dt>Nintendo Power</dt><dd>{npLabel(nintendoPower)}</dd></div> : null}
               {rest.map((m) => <div key={m.name} className="s-cr"><dt>{m.name}</dt><dd>{m.score}</dd></div>)}
             </dl>

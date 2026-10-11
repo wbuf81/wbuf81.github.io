@@ -24,7 +24,7 @@ export default function VideoGamesPage() {
           <div className="s-hub">
             <a className="s-hub-card" href={SNES_BASE}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/snes/box/super-mario-world.jpg" alt="" />
+              <img src="/snes/box/super-mario-world.jpg" alt="" width={300} height={209} />
               <span className="s-hub-t">Super Nintendo history</span>
               <span className="s-hub-p">717 games, 1991–1998 — timeline, cover wall, shelf and more</span>
             </a>

@@ -22,3 +22,10 @@ test('a company page counts its games as developer and publisher and lays them o
     '/videogames/snes-history', '/videogames/snes-history/a', '/videogames/snes-history/b', '/videogames/snes-history/c',
   ]);
 });
+
+test('a company page is kept out of search engines', async () => {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const { generateMetadata } = require('@/app/videogames/snes-history/company/[slug]/page');
+  const meta = await generateMetadata({ params: Promise.resolve({ slug: 'konami' }) });
+  expect(meta.robots).toEqual({ index: false, follow: false });
+});

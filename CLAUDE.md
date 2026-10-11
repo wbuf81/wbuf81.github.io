@@ -168,19 +168,22 @@ Piece 2 (spec `docs/superpowers/specs/2026-10-11-snes-library-design.md`, plan `
 
 - **Routes** (all static: `generateStaticParams`, `dynamicParams = false`; built to `out/videogames/...`):
   - `/videogames`: hub page (`out/videogames.html`).
-  - `/videogames/snes-history`: hero, sticky filter bar and five views (Timeline · Heatmap · Wall · Shelf · Scatter).
+  - `/videogames/snes-history`: hero, compact filter bar and five views (Timeline · Heatmap · Wall · Shelf · Scatter).
   - `/videogames/snes-history/<slug>`: 717 instruction-booklet game pages.
   - `/videogames/snes-history/company/<slug>`: company pages.
   - Route paths come from `lib/snes/routes.ts` (`SNES_BASE`, `gamePath`, `companyPath`); never hard-code them. Static asset URLs under `/snes/` (public/snes) are separate.
 - **Code:**
   - Logic lives in `lib/snes/library.ts`: index, filters, URL state, months, heatmap, scatter, neighbours. Labels live in `lib/snes/display.ts`. Both are tested.
   - Pages read `lib/snes/data.ts`, which client components never import. The library page passes a slim index (`buildIndex`) to the client `Library`.
-  - `__tests__/snes-real-data.test.tsx` renders all 717 real games and checks every `/snes/...` image or clip they reference exists, plus the library's server-rendered size (under 450 KB).
-- **URL state:** filters live in the query string (`?q=&year=&publisher=&developer=&chip=&scores=&launch=1&genre=&players=&series=&theme=&camera=&mp=coop|versus&sort=&view=&y=`). Invalid values are dropped, never an error. Filters include Series, Theme, Camera and Multiplayer; sort and scatter include Player score.
+  - `__tests__/snes-real-data.test.tsx` renders all 717 real games and checks every `/snes/...` image or clip they reference exists, plus the library's server-rendered size (under 450 KB; that check measures server-rendered markup only).
+  - **Page budget: ≤150 KB gzipped.** The built library page measured 856 KB raw / ~105 KB gzipped.
+- **Filter bar:** one compact row (search, a Filters button with the active count, sound, view tabs, and the sort select on Wall/Shelf). The Filters panel holds every other control plus Clear filters, and closes on Escape or a click outside. The bar is in the server HTML (no layout shift), and it is sticky on desktop (min-width 761px) only, so the `scroll-margin-top` on year/month anchors (80px) clears it there.
+- **Links don't prefetch:** every game link uses `prefetch={false}`. Next's viewport prefetch would download megabytes per view (the Wall alone was ~13 MB).
+- **URL state:** filters live in the query string (`?q=&year=&publisher=&developer=&chip=&scores=&launch=1&genre=&players=&series=&theme=&camera=&mp=coop|versus&sort=&view=&y=`; `mp=versus` is labelled "2+ players" because IGDB's offline max counts co-op). Invalid values are dropped, never an error. Filters include Series, Theme, Camera and Multiplayer; sort and scatter include Player score.
 - **Tiles and hover:**
   - Tiles are dark screen-colored cards.
   - Hover gives a purple glow, with **light** scanlines easing in. Wes found the heavier "arcade" scanlines too much, and rejected a power-on flicker, so don't reintroduce either.
-  - After 300 ms of hover the game's 12-second clip plays in the tile. One plays at a time; there's none on touch or with reduced motion.
+  - After 300 ms of hover the game's 12-second clip plays in the tile. One plays at a time; there's none on touch or with reduced motion. A playing clip stops when the page is hidden or the window loses focus. Game-page strips are silent until the visitor's first click, then play with sound (no button there).
 - **Sound:** on by default, but browsers block audio until the first click, tap or keypress, so hover clips are muted until then. The sound button mutes, and a mute is stored as `localStorage` `snes-sound=off`.
 - **IGDB extras:** series, similar games, themes, camera views, co-op/versus and the player score. The critic score is shown only on the rare game that has one. Data is fetched to `.snes-cache/igdb.json` and copied into `games.json` at build; keys live in `.env.local`. Game pages show "If you like X, try…" and "More in the X series" strips.
 - **Media:** clips, logos and 3D boxes come from Wes's media set via `npm run snes:media`, from `SNES_MEDIA_DIR` (default `../snes-media`).
