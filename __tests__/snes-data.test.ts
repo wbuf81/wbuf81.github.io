@@ -91,3 +91,26 @@ test('every cover has a 96px thumbnail, and no thumbnail is orphaned', () => {
   const thumbs = fs.existsSync(dir) ? fs.readdirSync(dir).filter((f) => f.endsWith('.jpg')) : [];
   expect(thumbs.sort()).toEqual(games.filter((g) => g.boxArt).map((g) => `${g.slug}.jpg`).sort());
 });
+
+describe('media', () => {
+  const pub = (p: string) => path.join(process.cwd(), 'public/snes', p);
+  const size = (dir: string) => fs.readdirSync(pub(dir)).reduce((n, f) => n + fs.statSync(pub(`${dir}/${f}`)).size, 0);
+
+  test('every media flag points at a real file, and every file belongs to a flagged game', () => {
+    for (const [kind, ext] of [['video', 'mp4'], ['logo', 'png'], ['box3d', 'png']] as const) {
+      const files = fs.readdirSync(pub(kind)).sort();
+      expect(files).toEqual(games.filter((g) => g.media[kind]).map((g) => `${g.slug}.${ext}`).sort());
+    }
+  });
+
+  test('stays inside the size budgets (GitHub Pages caps a site at 1 GB)', () => {
+    expect(size('video')).toBeLessThanOrEqual(350e6);
+    for (const f of fs.readdirSync(pub('video'))) expect(fs.statSync(pub(`video/${f}`)).size).toBeLessThanOrEqual(600e3);
+    const total = ['box', 'thumb', 'video', 'logo', 'box3d'].reduce((n, d) => n + size(d), 0);
+    expect(total).toBeLessThanOrEqual(600e6);
+  });
+
+  test('at least 700 games have a clip', () => {
+    expect(games.filter((g) => g.media.video).length).toBeGreaterThanOrEqual(700);
+  });
+});

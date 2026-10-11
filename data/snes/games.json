@@ -36,6 +36,11 @@
       }
     },
     "boxArt": "/snes/box/f-zero.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "F-Zero (video game)",
       "igdb": null
@@ -67,6 +72,11 @@
       }
     },
     "boxArt": "/snes/box/gradius-iii.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Gradius III",
       "igdb": null
@@ -111,6 +121,11 @@
       }
     },
     "boxArt": "/snes/box/pilotwings.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Pilotwings (video game)",
       "igdb": null
@@ -148,6 +163,11 @@
       }
     },
     "boxArt": "/snes/box/simcity.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "SimCity (1989 video game)",
       "igdb": null
@@ -196,6 +216,11 @@
       }
     },
     "boxArt": "/snes/box/super-mario-world.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Super Mario World",
       "igdb": null
@@ -226,6 +251,11 @@
       }
     },
     "boxArt": "/snes/box/drakkhen.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Drakkhen",
       "igdb": null
@@ -270,6 +300,11 @@
       }
     },
     "boxArt": "/snes/box/hals-hole-in-one-golf.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Hal's Hole in One Golf",
       "igdb": null
@@ -315,6 +350,11 @@
       }
     },
     "boxArt": "/snes/box/hyperzone.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "HyperZone",
       "igdb": null
@@ -352,6 +392,11 @@
       }
     },
     "boxArt": "/snes/box/populous.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Populous (video game)",
       "igdb": null
@@ -392,6 +437,11 @@
       }
     },
     "boxArt": "/snes/box/super-bases-loaded.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Super Bases Loaded",
       "igdb": null
@@ -446,6 +496,11 @@
       }
     },
     "boxArt": "/snes/box/super-r-type.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Super R-Type",
       "igdb": null
@@ -474,6 +529,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/the-chessmaster.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "The Chessmaster",
       "igdb": null
@@ -505,6 +565,11 @@
       }
     },
     "boxArt": "/snes/box/u-n-squadron.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "U.N. Squadron",
       "igdb": null
@@ -555,6 +620,11 @@
       }
     },
     "boxArt": "/snes/box/ultraman-towards-the-future.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Ultraman: Towards the Future (video game)",
       "igdb": null
@@ -611,6 +681,11 @@
       }
     },
     "boxArt": "/snes/box/actraiser.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "ActRaiser",
       "igdb": null
@@ -661,6 +736,11 @@
       }
     },
     "boxArt": "/snes/box/darius-twin.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Darius Twin",
       "igdb": null
@@ -704,6 +784,11 @@
       }
     },
     "boxArt": "/snes/box/final-fantasy-ii.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Final Fantasy IV",
       "igdb": null
@@ -734,6 +819,11 @@
       }
     },
     "boxArt": "/snes/box/final-fight.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Final Fight (video game)",
       "igdb": null
@@ -765,6 +855,11 @@
       }
     },
     "boxArt": "/snes/box/john-madden-football.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "John Madden Football (1990 video game)",
       "igdb": null
@@ -796,6 +891,11 @@
       }
     },
     "boxArt": "/snes/box/paperboy-2.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Paperboy 2",
       "igdb": null
@@ -834,6 +934,11 @@
       }
     },
     "boxArt": "/snes/box/rpm-racing.jpg",
+    "media": {
+      "video": false,
+      "logo": false,
+      "box3d": false
+    },
     "sources": {
       "wikipedia": "RPM Racing",
       "igdb": null
@@ -880,6 +985,11 @@
       }
     },
     "boxArt": "/snes/box/super-ghouls-n-ghosts.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Super Ghouls 'n Ghosts",
       "igdb": null
@@ -928,6 +1038,11 @@
       }
     },
     "boxArt": "/snes/box/super-tennis.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Super Tennis",
       "igdb": null
@@ -963,6 +1078,11 @@
       }
     },
     "boxArt": "/snes/box/true-golf-classics-waialae-country-club.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "True Golf Classics: Waialae Country Club",
       "igdb": null
@@ -994,6 +1114,11 @@
       }
     },
     "boxArt": "/snes/box/bill-laimbeers-combat-basketball.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Bill Laimbeer's Combat Basketball",
       "igdb": null
@@ -1034,6 +1159,11 @@
       }
     },
     "boxArt": "/snes/box/d-force.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "D-Force",
       "igdb": null
@@ -1064,6 +1194,11 @@
       }
     },
     "boxArt": "/snes/box/home-alone.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Home Alone (video game)",
       "igdb": null
@@ -1094,6 +1229,11 @@
       }
     },
     "boxArt": "/snes/box/lagoon.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Lagoon (video game)",
       "igdb": null
@@ -1124,6 +1264,11 @@
       }
     },
     "boxArt": "/snes/box/miracle-piano.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Miracle Piano",
       "igdb": null
@@ -1152,6 +1297,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/super-baseball-simulator-1-000.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Super Baseball Simulator 1.000",
       "igdb": null
@@ -1190,6 +1340,11 @@
       }
     },
     "boxArt": "/snes/box/super-castlevania-iv.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Super Castlevania IV",
       "igdb": null
@@ -1231,6 +1386,11 @@
       }
     },
     "boxArt": "/snes/box/super-off-road.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Super Off Road",
       "igdb": null
@@ -1273,6 +1433,11 @@
       }
     },
     "boxArt": "/snes/box/earth-defense-force.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Earth Defense Force (video game)",
       "igdb": null
@@ -1309,6 +1474,11 @@
       }
     },
     "boxArt": "/snes/box/joe-and-mac.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Joe & Mac",
       "igdb": null
@@ -1346,6 +1516,11 @@
       }
     },
     "boxArt": "/snes/box/ys-iii-wanderers-from-ys.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Ys III: Wanderers from Ys",
       "igdb": null
@@ -1387,6 +1562,11 @@
       }
     },
     "boxArt": "/snes/box/super-scope-6.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Super Scope 6",
       "igdb": null
@@ -1436,6 +1616,11 @@
       }
     },
     "boxArt": "/snes/box/super-smash-tv.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Smash TV",
       "igdb": null
@@ -1492,6 +1677,11 @@
       }
     },
     "boxArt": "/snes/box/the-legend-of-the-mystical-ninja.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "The Legend of the Mystical Ninja",
       "igdb": null
@@ -1520,6 +1710,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/nolan-ryans-baseball.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Nolan Ryan's Baseball",
       "igdb": null
@@ -1561,6 +1756,11 @@
       }
     },
     "boxArt": "/snes/box/contra-iii-the-alien-wars.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Contra III: The Alien Wars",
       "igdb": null
@@ -1589,6 +1789,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/extra-innings.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Extra Innings (video game)",
       "igdb": null
@@ -1648,6 +1853,11 @@
       }
     },
     "boxArt": "/snes/box/lemmings.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Lemmings (video game)",
       "igdb": null
@@ -1679,6 +1889,11 @@
       }
     },
     "boxArt": "/snes/box/pga-tour-golf.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "PGA Tour Golf",
       "igdb": null
@@ -1707,6 +1922,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/pit-fighter.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Pit-Fighter",
       "igdb": null
@@ -1752,6 +1972,11 @@
       }
     },
     "boxArt": "/snes/box/smart-ball.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Smart Ball",
       "igdb": null
@@ -1798,6 +2023,11 @@
       }
     },
     "boxArt": "/snes/box/the-addams-family.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "The Addams Family (video game)",
       "igdb": null
@@ -1844,6 +2074,11 @@
       }
     },
     "boxArt": "/snes/box/wwf-super-wrestlemania.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "WWF Super WrestleMania",
       "igdb": null
@@ -1873,6 +2108,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/raiden-trad.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Raiden (video game)",
       "igdb": null
@@ -1925,6 +2165,11 @@
       }
     },
     "boxArt": "/snes/box/super-adventure-island.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Super Adventure Island",
       "igdb": null
@@ -1970,6 +2215,11 @@
       }
     },
     "boxArt": "/snes/box/top-gear.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Top Gear (video game)",
       "igdb": null
@@ -1998,6 +2248,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/true-golf-classics-pebble-beach-golf-links.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "True Golf Classics: Pebble Beach Golf Links",
       "igdb": null
@@ -2028,6 +2283,11 @@
       }
     },
     "boxArt": "/snes/box/world-league-soccer.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "World League Soccer",
       "igdb": null
@@ -2071,6 +2331,11 @@
       }
     },
     "boxArt": "/snes/box/xardion.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Xardion",
       "igdb": null
@@ -2113,6 +2378,11 @@
       }
     },
     "boxArt": "/snes/box/the-legend-of-zelda-a-link-to-the-past.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "The Legend of Zelda: A Link to the Past",
       "igdb": null
@@ -2157,6 +2427,11 @@
       }
     },
     "boxArt": "/snes/box/arcana.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Arcana (video game)",
       "igdb": null
@@ -2190,6 +2465,11 @@
       }
     },
     "boxArt": "/snes/box/jack-nicklaus-golf.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Jack Nicklaus' Unlimited Golf & Course Design",
       "igdb": null
@@ -2218,6 +2498,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/romance-of-the-three-kingdoms-ii.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Romance of the Three Kingdoms II",
       "igdb": null
@@ -2262,6 +2547,11 @@
       }
     },
     "boxArt": "/snes/box/super-soccer.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Super Soccer",
       "igdb": null
@@ -2290,6 +2580,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/the-rocketeer.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": null,
       "igdb": null
@@ -2321,6 +2616,11 @@
       }
     },
     "boxArt": "/snes/box/garry-kitchens-super-battletank-war-in-the-gulf.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Super Battletank",
       "igdb": null
@@ -2354,6 +2654,11 @@
       }
     },
     "boxArt": "/snes/box/krustys-super-fun-house.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Krusty's Super Fun House",
       "igdb": null
@@ -2382,6 +2687,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/space-football-one-on-one.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Space Football: One on One",
       "igdb": null
@@ -2410,6 +2720,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/super-soccer-champ.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Super Soccer Champ",
       "igdb": null
@@ -2440,6 +2755,11 @@
       }
     },
     "boxArt": "/snes/box/thunder-spirits.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Thunder Spirits",
       "igdb": null
@@ -2468,6 +2788,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/clue.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Clue (1992 video game)",
       "igdb": null
@@ -2501,6 +2826,11 @@
       }
     },
     "boxArt": "/snes/box/race-drivin.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Race Drivin'",
       "igdb": null
@@ -2549,6 +2879,11 @@
       }
     },
     "boxArt": "/snes/box/spankys-quest.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Spanky's Quest",
       "igdb": null
@@ -2591,6 +2926,11 @@
       }
     },
     "boxArt": "/snes/box/street-fighter-ii-the-world-warrior.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Street Fighter II: The World Warrior",
       "igdb": null
@@ -2624,6 +2964,11 @@
       }
     },
     "boxArt": "/snes/box/ka-blooey.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Ka-Blooey",
       "igdb": null
@@ -2666,6 +3011,11 @@
       }
     },
     "boxArt": "/snes/box/magic-sword.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Magic Sword (video game)",
       "igdb": null
@@ -2694,6 +3044,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/rampart.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Rampart (video game)",
       "igdb": null
@@ -2748,6 +3103,11 @@
       }
     },
     "boxArt": "/snes/box/soul-blazer.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Soul Blazer",
       "igdb": null
@@ -2776,6 +3136,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/super-play-action-football.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Super Play Action Football",
       "igdb": null
@@ -2820,6 +3185,11 @@
       }
     },
     "boxArt": "/snes/box/teenage-mutant-ninja-turtles-iv-turtles-in-time.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Teenage Mutant Ninja Turtles IV: Turtles in Time",
       "igdb": null
@@ -2865,6 +3235,11 @@
       }
     },
     "boxArt": "/snes/box/mario-paint.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": false
+    },
     "sources": {
       "wikipedia": "Mario Paint",
       "igdb": null
@@ -2919,6 +3294,11 @@
       }
     },
     "boxArt": "/snes/box/axelay.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Axelay",
       "igdb": null
@@ -2966,6 +3346,11 @@
       }
     },
     "boxArt": "/snes/box/dinocity.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "DinoCity",
       "igdb": null
@@ -2998,6 +3383,11 @@
       }
     },
     "boxArt": "/snes/box/f1-roc-race-of-champions.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "F1 ROC: Race of Champions",
       "igdb": null
@@ -3026,6 +3416,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/faceball-2000.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Faceball 2000",
       "igdb": null
@@ -3057,6 +3452,11 @@
       }
     },
     "boxArt": "/snes/box/george-foremans-ko-boxing.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "George Foreman's KO Boxing",
       "igdb": null
@@ -3087,6 +3487,11 @@
       }
     },
     "boxArt": "/snes/box/monopoly.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Monopoly (1991 video game)",
       "igdb": null
@@ -3127,6 +3532,11 @@
       }
     },
     "boxArt": "/snes/box/robocop-3.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "RoboCop 3 (video game)",
       "igdb": null
@@ -3169,6 +3579,11 @@
       }
     },
     "boxArt": "/snes/box/super-bowling.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Super Bowling",
       "igdb": null
@@ -3214,6 +3629,11 @@
       }
     },
     "boxArt": "/snes/box/super-mario-kart.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Super Mario Kart",
       "igdb": null
@@ -3242,6 +3662,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/wheel-of-fortune-featuring-vanna-white.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": null,
       "igdb": null
@@ -3270,6 +3695,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/roger-clemens-mvp-baseball.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Roger Clemens' MVP Baseball",
       "igdb": null
@@ -3317,6 +3747,11 @@
       }
     },
     "boxArt": "/snes/box/battle-clash.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Battle Clash",
       "igdb": null
@@ -3365,6 +3800,11 @@
       }
     },
     "boxArt": "/snes/box/blazeon-the-bio-cyborg-challenge.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "BlaZeon: The Bio-Cyborg Challenge",
       "igdb": null
@@ -3409,6 +3849,11 @@
       }
     },
     "boxArt": "/snes/box/desert-strike-return-to-the-gulf.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Desert Strike: Return to the Gulf",
       "igdb": null
@@ -3449,6 +3894,11 @@
       }
     },
     "boxArt": "/snes/box/final-fantasy-mystic-quest.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Final Fantasy Mystic Quest",
       "igdb": null
@@ -3479,6 +3929,11 @@
       }
     },
     "boxArt": "/snes/box/home-alone-2-lost-in-new-york.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Home Alone 2: Lost in New York (video game)",
       "igdb": null
@@ -3515,6 +3970,11 @@
       }
     },
     "boxArt": "/snes/box/hook.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Hook (video game)",
       "igdb": null
@@ -3543,6 +4003,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/james-bond-jr.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": null,
       "igdb": null
@@ -3574,6 +4039,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/king-of-the-monsters.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "King of the Monsters (video game)",
       "igdb": null
@@ -3607,6 +4077,11 @@
       }
     },
     "boxArt": "/snes/box/ncaa-basketball.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "NCAA Basketball (video game)",
       "igdb": null
@@ -3647,6 +4122,11 @@
       }
     },
     "boxArt": "/snes/box/phalanx.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Phalanx (video game)",
       "igdb": null
@@ -3675,6 +4155,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/q-bert-3.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Q*bert 3",
       "igdb": null
@@ -3703,6 +4188,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/skuljagger-revolt-of-the-westicans.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Sküljagger: Revolt of the Westicans",
       "igdb": null
@@ -3751,6 +4241,11 @@
       }
     },
     "boxArt": "/snes/box/space-megaforce.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Space Megaforce",
       "igdb": null
@@ -3786,6 +4281,11 @@
       }
     },
     "boxArt": "/snes/box/strike-gunner-s-t-g.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Strike Gunner S.T.G",
       "igdb": null
@@ -3823,6 +4323,11 @@
       }
     },
     "boxArt": "/snes/box/super-batter-up.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Super Batter Up",
       "igdb": null
@@ -3858,6 +4363,11 @@
       }
     },
     "boxArt": "/snes/box/super-buster-bros.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Super Buster Bros.",
       "igdb": null
@@ -3906,6 +4416,11 @@
       }
     },
     "boxArt": "/snes/box/super-double-dragon.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Super Double Dragon",
       "igdb": null
@@ -3947,6 +4462,11 @@
       }
     },
     "boxArt": "/snes/box/the-irem-skins-game.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Major Title",
       "igdb": null
@@ -3989,6 +4509,11 @@
       }
     },
     "boxArt": "/snes/box/the-simpsons-barts-nightmare.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "The Simpsons: Bart's Nightmare",
       "igdb": null
@@ -4017,6 +4542,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/tko-super-championship-boxing.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "TKO Super Championship Boxing",
       "igdb": null
@@ -4051,6 +4581,11 @@
       }
     },
     "boxArt": "/snes/box/wings-2-aces-high.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Wings 2: Aces High",
       "igdb": null
@@ -4083,6 +4618,11 @@
       }
     },
     "boxArt": "/snes/box/captain-novolin.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Captain Novolin",
       "igdb": null
@@ -4117,6 +4657,11 @@
       }
     },
     "boxArt": "/snes/box/chuck-rock.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Chuck Rock",
       "igdb": null
@@ -4145,6 +4690,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/cyber-spin.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Cyber Spin",
       "igdb": null
@@ -4184,6 +4734,11 @@
       }
     },
     "boxArt": "/snes/box/david-cranes-amazing-tennis.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "David Crane's Amazing Tennis",
       "igdb": null
@@ -4215,6 +4770,11 @@
       }
     },
     "boxArt": "/snes/box/firepower-2000.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Super SWIV",
       "igdb": null
@@ -4259,6 +4819,11 @@
       }
     },
     "boxArt": "/snes/box/gunforce.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "GunForce",
       "igdb": null
@@ -4296,6 +4861,11 @@
       }
     },
     "boxArt": "/snes/box/imperium.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Imperium (1992 video game)",
       "igdb": null
@@ -4329,6 +4899,11 @@
       }
     },
     "boxArt": "/snes/box/john-madden-football-93.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "John Madden Football '93",
       "igdb": null
@@ -4357,6 +4932,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/on-the-ball.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Cameltry",
       "igdb": null
@@ -4398,6 +4978,11 @@
       }
     },
     "boxArt": "/snes/box/out-of-this-world.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Another World (video game)",
       "igdb": null
@@ -4429,6 +5014,11 @@
       }
     },
     "boxArt": "/snes/box/prince-of-persia.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Prince of Persia (1989 video game)",
       "igdb": null
@@ -4457,6 +5047,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/road-riot-4wd.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Road Riot 4WD",
       "igdb": null
@@ -4510,6 +5105,11 @@
       }
     },
     "boxArt": "/snes/box/road-runners-death-valley-rally.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Road Runner's Death Valley Rally",
       "igdb": null
@@ -4556,6 +5156,11 @@
       }
     },
     "boxArt": "/snes/box/super-star-wars.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Super Star Wars",
       "igdb": null
@@ -4601,6 +5206,11 @@
       }
     },
     "boxArt": "/snes/box/wing-commander.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Wing Commander (video game)",
       "igdb": null
@@ -4631,6 +5241,11 @@
       }
     },
     "boxArt": "/snes/box/wordtris.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Wordtris",
       "igdb": null
@@ -4676,6 +5291,11 @@
       }
     },
     "boxArt": "/snes/box/x-zone.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": false
+    },
     "sources": {
       "wikipedia": "X-Zone",
       "igdb": null
@@ -4724,6 +5344,11 @@
       }
     },
     "boxArt": "/snes/box/spider-man-and-the-x-men-in-arcades-revenge.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Spider-Man and the X-Men in Arcade's Revenge",
       "igdb": null
@@ -4752,6 +5377,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/bazooka-blitzkrieg.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": null,
       "igdb": null
@@ -4780,6 +5410,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/bulls-vs-blazers-and-the-nba-playoffs.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Bulls vs. Blazers and the NBA Playoffs",
       "igdb": null
@@ -4815,6 +5450,11 @@
       }
     },
     "boxArt": "/snes/box/cal-ripken-jr-baseball.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Cal Ripken Jr. Baseball",
       "igdb": null
@@ -4843,6 +5483,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/chester-cheetah-too-cool-to-fool.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Chester Cheetah: Too Cool to Fool",
       "igdb": null
@@ -4873,6 +5518,11 @@
       }
     },
     "boxArt": "/snes/box/gemfire.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Gemfire",
       "igdb": null
@@ -4901,6 +5551,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/goal.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Goal! (1992 video game)",
       "igdb": null
@@ -4938,6 +5593,11 @@
       }
     },
     "boxArt": "/snes/box/gods.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Gods (video game)",
       "igdb": null
@@ -4966,6 +5626,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/jeopardy.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": null,
       "igdb": null
@@ -4994,6 +5659,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/jimmy-connors-pro-tennis-tour.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Jimmy Connors Pro Tennis Tour",
       "igdb": null
@@ -5024,6 +5694,11 @@
       }
     },
     "boxArt": "/snes/box/lethal-weapon.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Lethal Weapon (video game)",
       "igdb": null
@@ -5063,6 +5738,11 @@
       }
     },
     "boxArt": "/snes/box/musya.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Musya",
       "igdb": null
@@ -5093,6 +5773,11 @@
       }
     },
     "boxArt": "/snes/box/nba-all-star-challenge.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "NBA All-Star Challenge",
       "igdb": null
@@ -5126,6 +5811,11 @@
       }
     },
     "boxArt": "/snes/box/nhlpa-hockey-93.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "NHLPA Hockey '93",
       "igdb": null
@@ -5157,6 +5847,11 @@
       }
     },
     "boxArt": "/snes/box/pro-quarterback.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Pro Quarterback",
       "igdb": null
@@ -5187,6 +5882,11 @@
       }
     },
     "boxArt": "/snes/box/push-over.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Push-Over (video game)",
       "igdb": null
@@ -5240,6 +5940,11 @@
       }
     },
     "boxArt": "/snes/box/rival-turf.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Rival Turf!",
       "igdb": null
@@ -5279,6 +5984,11 @@
       }
     },
     "boxArt": "/snes/box/the-duel-test-drive-ii.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "The Duel: Test Drive II",
       "igdb": null
@@ -5307,6 +6017,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/the-magical-quest-starring-mickey-mouse.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "The Magical Quest Starring Mickey Mouse",
       "igdb": null
@@ -5335,6 +6050,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/warpspeed.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "WarpSpeed",
       "igdb": null
@@ -5365,6 +6085,11 @@
       }
     },
     "boxArt": "/snes/box/california-games-ii.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "California Games II",
       "igdb": null
@@ -5393,6 +6118,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/power-moves.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Power Moves",
       "igdb": null
@@ -5421,6 +6151,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/the-hunt-for-red-october.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "The Hunt for Red October (console game)",
       "igdb": null
@@ -5449,6 +6184,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/uncharted-waters.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Uncharted Waters (video game)",
       "igdb": null
@@ -5482,6 +6222,11 @@
       }
     },
     "boxArt": "/snes/box/aerobiz.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Aerobiz",
       "igdb": null
@@ -5510,6 +6255,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/cool-world.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Cool World (SNES video game)",
       "igdb": null
@@ -5538,6 +6288,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/dragons-lair.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Dragon's Lair (1983 video game)",
       "igdb": null
@@ -5585,6 +6340,11 @@
       }
     },
     "boxArt": "/snes/box/harleys-humongous-adventure.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Harley's Humongous Adventure",
       "igdb": null
@@ -5613,6 +6373,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/hit-the-ice.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Hit the Ice",
       "igdb": null
@@ -5641,6 +6406,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/shanghai-ii-dragons-eye.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Shanghai II: Dragon's Eye",
       "igdb": null
@@ -5671,6 +6441,11 @@
       }
     },
     "boxArt": "/snes/box/simearth.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "SimEarth",
       "igdb": null
@@ -5702,6 +6477,11 @@
       }
     },
     "boxArt": "/snes/box/sonic-blast-man.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Sonic Blast Man",
       "igdb": null
@@ -5730,6 +6510,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/super-valis-iv.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Super Valis IV",
       "igdb": null
@@ -5775,6 +6560,11 @@
       }
     },
     "boxArt": "/snes/box/the-addams-family-pugsleys-scavenger-hunt.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "The Addams Family: Pugsley's Scavenger Hunt",
       "igdb": null
@@ -5820,6 +6610,11 @@
       }
     },
     "boxArt": "/snes/box/tiny-toon-adventures-buster-busts-loose.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Tiny Toon Adventures: Buster Busts Loose!",
       "igdb": null
@@ -5848,6 +6643,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/inindo-way-of-the-ninja.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Inindo: Way of the Ninja",
       "igdb": null
@@ -5897,6 +6697,11 @@
       }
     },
     "boxArt": "/snes/box/spindizzy-worlds.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Spindizzy Worlds",
       "igdb": null
@@ -5936,6 +6741,11 @@
       }
     },
     "boxArt": "/snes/box/super-conflict.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Super Conflict",
       "igdb": null
@@ -5964,6 +6774,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/super-strike-eagle.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Super Strike Eagle",
       "igdb": null
@@ -5998,6 +6813,11 @@
       }
     },
     "boxArt": "/snes/box/tecmo-super-nba-basketball.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Tecmo Super NBA Basketball",
       "igdb": null
@@ -6026,6 +6846,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/the-combatribes.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "The Combatribes",
       "igdb": null
@@ -6087,6 +6912,11 @@
       }
     },
     "boxArt": "/snes/box/star-fox.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Star Fox (1993 video game)",
       "igdb": null
@@ -6134,6 +6964,11 @@
       }
     },
     "boxArt": "/snes/box/american-gladiators.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "American Gladiators (video game)",
       "igdb": null
@@ -6176,6 +7011,11 @@
       }
     },
     "boxArt": "/snes/box/battle-grand-prix.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Battle Grand Prix",
       "igdb": null
@@ -6220,6 +7060,11 @@
       }
     },
     "boxArt": "/snes/box/brawl-brothers.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Brawl Brothers",
       "igdb": null
@@ -6267,6 +7112,11 @@
       }
     },
     "boxArt": "/snes/box/cybernator.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Cybernator",
       "igdb": null
@@ -6297,6 +7147,11 @@
       }
     },
     "boxArt": "/snes/box/doomsday-warrior.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Doomsday Warrior (video game)",
       "igdb": null
@@ -6325,6 +7180,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/fatal-fury.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Fatal Fury: King of Fighters",
       "igdb": null
@@ -6355,6 +7215,11 @@
       }
     },
     "boxArt": "/snes/box/outlander.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Outlander (video game)",
       "igdb": null
@@ -6385,6 +7250,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/street-combat.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Street Combat",
       "igdb": null
@@ -6417,6 +7287,11 @@
       }
     },
     "boxArt": "/snes/box/super-ninja-boy.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Super Ninja Boy",
       "igdb": null
@@ -6467,6 +7342,11 @@
       }
     },
     "boxArt": "/snes/box/the-lost-vikings.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "The Lost Vikings",
       "igdb": null
@@ -6495,6 +7375,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/the-terminator.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": null,
       "igdb": null
@@ -6523,6 +7408,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/tom-and-jerry.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": null,
       "igdb": null
@@ -6554,6 +7444,11 @@
       }
     },
     "boxArt": "/snes/box/toys.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Toys (video game)",
       "igdb": null
@@ -6602,6 +7497,11 @@
       }
     },
     "boxArt": "/snes/box/vegas-stakes.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Vegas Stakes",
       "igdb": null
@@ -6639,6 +7539,11 @@
       }
     },
     "boxArt": "/snes/box/waynes-world.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Wayne's World (video game)",
       "igdb": null
@@ -6669,6 +7574,11 @@
       }
     },
     "boxArt": "/snes/box/yoshis-cookie.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Yoshi's Cookie",
       "igdb": null
@@ -6704,6 +7614,11 @@
       }
     },
     "boxArt": "/snes/box/alien-3.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Alien³ (SNES)",
       "igdb": null
@@ -6751,6 +7666,11 @@
       }
     },
     "boxArt": "/snes/box/batman-returns.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Batman Returns (SNES video game)",
       "igdb": null
@@ -6800,6 +7720,11 @@
       }
     },
     "boxArt": "/snes/box/bubsy-in-claws-encounters-of-the-furred-kind.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Bubsy in Claws Encounters of the Furred Kind",
       "igdb": null
@@ -6831,6 +7756,11 @@
       }
     },
     "boxArt": "/snes/box/congos-caper.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Congo's Caper",
       "igdb": null
@@ -6863,6 +7793,11 @@
       }
     },
     "boxArt": "/snes/box/mechwarrior.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "MechWarrior (1993 video game)",
       "igdb": null
@@ -6911,6 +7846,11 @@
       }
     },
     "boxArt": "/snes/box/shadowrun.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Shadowrun (SNES)",
       "igdb": null
@@ -6939,6 +7879,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/super-black-bass.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "The Black Bass (1984 video game)",
       "igdb": null
@@ -6991,6 +7936,11 @@
       }
     },
     "boxArt": "/snes/box/super-turrican.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Super Turrican (SNES)",
       "igdb": null
@@ -7026,6 +7976,11 @@
       }
     },
     "boxArt": "/snes/box/taz-mania.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Taz-Mania (video game)",
       "igdb": null
@@ -7059,6 +8014,11 @@
       }
     },
     "boxArt": "/snes/box/where-in-time-is-carmen-sandiego.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Where in Time Is Carmen Sandiego? (video game)",
       "igdb": null
@@ -7089,6 +8049,11 @@
       }
     },
     "boxArt": "/snes/box/b-o-b.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "B.O.B. (video game)",
       "igdb": null
@@ -7134,6 +8099,11 @@
       }
     },
     "boxArt": "/snes/box/battletoads-in-battlemaniacs.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Battletoads in Battlemaniacs",
       "igdb": null
@@ -7176,6 +8146,11 @@
       }
     },
     "boxArt": "/snes/box/cacoma-knight-in-bizyland.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Cacoma Knight in Bizyland",
       "igdb": null
@@ -7205,6 +8180,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/dungeon-master.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Dungeon Master (video game)",
       "igdb": null
@@ -7233,6 +8213,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/family-dog.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": null,
       "igdb": null
@@ -7261,6 +8246,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/kawasaki-caribbean-challenge.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Kawasaki Caribbean Challenge",
       "igdb": null
@@ -7301,6 +8291,11 @@
       }
     },
     "boxArt": "/snes/box/mario-is-missing.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Mario is Missing!",
       "igdb": null
@@ -7350,6 +8345,11 @@
       }
     },
     "boxArt": "/snes/box/pocky-and-rocky.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Pocky & Rocky (video game)",
       "igdb": null
@@ -7385,6 +8385,11 @@
       }
     },
     "boxArt": "/snes/box/rock-n-roll-racing.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Rock n' Roll Racing",
       "igdb": null
@@ -7425,6 +8430,11 @@
       }
     },
     "boxArt": "/snes/box/run-saber.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Run Saber",
       "igdb": null
@@ -7462,6 +8472,11 @@
       }
     },
     "boxArt": "/snes/box/super-high-impact.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Super High Impact",
       "igdb": null
@@ -7497,6 +8512,11 @@
       }
     },
     "boxArt": "/snes/box/the-adventures-of-rocky-and-bullwinkle-and-friends.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "The Adventures of Rocky and Bullwinkle and Friends (video game)",
       "igdb": null
@@ -7532,6 +8552,11 @@
       }
     },
     "boxArt": "/snes/box/the-blues-brothers.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "The Blues Brothers: Jukebox Adventure",
       "igdb": null
@@ -7560,6 +8585,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/the-great-waldo-search.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "The Great Waldo Search (video game)",
       "igdb": null
@@ -7597,6 +8627,11 @@
       }
     },
     "boxArt": "/snes/box/where-in-the-world-is-carmen-sandiego.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Where in the World Is Carmen Sandiego? (1985 video game)",
       "igdb": null
@@ -7631,6 +8666,11 @@
       }
     },
     "boxArt": "/snes/box/wolfchild.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Wolfchild",
       "igdb": null
@@ -7665,6 +8705,11 @@
       }
     },
     "boxArt": "/snes/box/wwf-royal-rumble.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "WWF Royal Rumble (1993 video game)",
       "igdb": null
@@ -7697,6 +8742,11 @@
       }
     },
     "boxArt": "/snes/box/e-v-o-search-for-eden.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "E.V.O.: Search for Eden",
       "igdb": null
@@ -7729,6 +8779,11 @@
       }
     },
     "boxArt": "/snes/box/first-samurai.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "First Samurai",
       "igdb": null
@@ -7775,6 +8830,11 @@
       }
     },
     "boxArt": "/snes/box/goof-troop.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Goof Troop (video game)",
       "igdb": null
@@ -7803,6 +8863,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/nfl-football.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": null,
       "igdb": null
@@ -7836,6 +8901,11 @@
       }
     },
     "boxArt": "/snes/box/nigel-mansells-world-championship-racing.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Nigel Mansell's World Championship Racing",
       "igdb": null
@@ -7867,6 +8937,11 @@
       }
     },
     "boxArt": "/snes/box/super-baseball-2020.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Super Baseball 2020",
       "igdb": null
@@ -7897,6 +8972,11 @@
       }
     },
     "boxArt": "/snes/box/super-james-pond.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "James Pond 2",
       "igdb": null
@@ -7925,6 +9005,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/super-off-road-the-baja.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": null,
       "igdb": null
@@ -7953,6 +9038,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/super-slam-dunk.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Super Slam Dunk",
       "igdb": null
@@ -8000,6 +9090,11 @@
       }
     },
     "boxArt": "/snes/box/final-fight-2.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Final Fight 2",
       "igdb": null
@@ -8040,6 +9135,11 @@
       }
     },
     "boxArt": "/snes/box/street-fighter-ii-turbo-hyper-fighting.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Street Fighter II: Hyper Fighting",
       "igdb": null
@@ -8076,6 +9176,11 @@
       }
     },
     "boxArt": "/snes/box/super-caesars-palace.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Super Caesars Palace",
       "igdb": null
@@ -8118,6 +9223,11 @@
       }
     },
     "boxArt": "/snes/box/super-mario-all-stars.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Super Mario All-Stars",
       "igdb": null
@@ -8146,6 +9256,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/super-slap-shot.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Super Slap Shot",
       "igdb": null
@@ -8176,6 +9291,11 @@
       }
     },
     "boxArt": "/snes/box/top-gear-2.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Top Gear 2",
       "igdb": null
@@ -8227,6 +9347,11 @@
       }
     },
     "boxArt": "/snes/box/alien-vs-predator.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Alien vs Predator (SNES video game)",
       "igdb": null
@@ -8264,6 +9389,11 @@
       }
     },
     "boxArt": "/snes/box/bram-stokers-dracula.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Bram Stoker's Dracula (video game)",
       "igdb": null
@@ -8296,6 +9426,11 @@
       }
     },
     "boxArt": "/snes/box/captain-america-and-the-avengers.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Captain America and The Avengers",
       "igdb": null
@@ -8335,6 +9470,11 @@
       }
     },
     "boxArt": "/snes/box/cool-spot.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Cool Spot",
       "igdb": null
@@ -8363,6 +9503,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/f1-pole-position.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "F1 Pole Position (video game)",
       "igdb": null
@@ -8391,6 +9536,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/family-feud.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": null,
       "igdb": null
@@ -8421,6 +9571,11 @@
       }
     },
     "boxArt": "/snes/box/gp-1.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "GP-1",
       "igdb": null
@@ -8449,6 +9604,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/mecarobot-golf.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Mecarobot Golf",
       "igdb": null
@@ -8496,6 +9656,11 @@
       }
     },
     "boxArt": "/snes/box/operation-logic-bomb.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Operation Logic Bomb",
       "igdb": null
@@ -8524,6 +9689,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/p-t-o-pacific-theater-of-operations.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "P.T.O.: Pacific Theater of Operations",
       "igdb": null
@@ -8581,6 +9751,11 @@
       }
     },
     "boxArt": "/snes/box/plok.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Plok",
       "igdb": null
@@ -8609,6 +9784,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/redline-f-1-racer.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Redline F-1 Racer",
       "igdb": null
@@ -8654,6 +9834,11 @@
       }
     },
     "boxArt": "/snes/box/rocky-rodent.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Rocky Rodent",
       "igdb": null
@@ -8701,6 +9886,11 @@
       }
     },
     "boxArt": "/snes/box/super-bomberman.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Super Bomberman",
       "igdb": null
@@ -8729,6 +9919,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/super-widget.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Super Widget",
       "igdb": null
@@ -8778,6 +9973,11 @@
       }
     },
     "boxArt": "/snes/box/the-7th-saga.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "The 7th Saga",
       "igdb": null
@@ -8806,6 +10006,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/thomas-the-tank-engine-and-friends.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Thomas the Tank Engine & Friends (video game)",
       "igdb": null
@@ -8855,6 +10060,11 @@
       }
     },
     "boxArt": "/snes/box/tuff-e-nuff.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Tuff E Nuff",
       "igdb": null
@@ -8897,6 +10107,11 @@
       }
     },
     "boxArt": "/snes/box/utopia-the-creation-of-a-nation.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Utopia: The Creation of a Nation",
       "igdb": null
@@ -8925,6 +10140,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/wing-commander-the-secret-missions.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Wing Commander: The Secret Missions",
       "igdb": null
@@ -8956,6 +10176,11 @@
       }
     },
     "boxArt": "/snes/box/world-heroes.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "World Heroes (video game)",
       "igdb": null
@@ -8995,6 +10220,11 @@
       }
     },
     "boxArt": "/snes/box/yoshis-safari.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Yoshi's Safari",
       "igdb": null
@@ -9034,6 +10264,11 @@
       }
     },
     "boxArt": "/snes/box/zombies-ate-my-neighbors.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Zombies Ate My Neighbors",
       "igdb": null
@@ -9065,6 +10300,11 @@
       }
     },
     "boxArt": "/snes/box/mortal-kombat.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Mortal Kombat (1992 video game)",
       "igdb": null
@@ -9107,6 +10347,11 @@
       }
     },
     "boxArt": "/snes/box/boxing-legends-of-the-ring.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Boxing Legends of the Ring",
       "igdb": null
@@ -9135,6 +10380,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/capcoms-mvp-football.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Capcom's MVP Football",
       "igdb": null
@@ -9163,6 +10413,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/cliffhanger.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Cliffhanger (video game)",
       "igdb": null
@@ -9193,6 +10448,11 @@
       }
     },
     "boxArt": "/snes/box/daffy-duck-the-marvin-missions.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Daffy Duck: The Marvin Missions",
       "igdb": null
@@ -9221,6 +10481,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/football-fury.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Football Fury",
       "igdb": null
@@ -9260,6 +10525,11 @@
       }
     },
     "boxArt": "/snes/box/kendo-rage.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Kendo Rage",
       "igdb": null
@@ -9293,6 +10563,11 @@
       }
     },
     "boxArt": "/snes/box/last-action-hero.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Last Action Hero (video game)",
       "igdb": null
@@ -9337,6 +10612,11 @@
       }
     },
     "boxArt": "/snes/box/lock-on.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Super Air Diver",
       "igdb": null
@@ -9376,6 +10656,11 @@
       }
     },
     "boxArt": "/snes/box/nba-showdown.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "NBA Showdown (video game)",
       "igdb": null
@@ -9406,6 +10691,11 @@
       }
     },
     "boxArt": "/snes/box/nhl-94.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "NHL '94",
       "igdb": null
@@ -9437,6 +10727,11 @@
       }
     },
     "boxArt": "/snes/box/pac-attack.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Pac-Attack",
       "igdb": null
@@ -9470,6 +10765,11 @@
       }
     },
     "boxArt": "/snes/box/paladins-quest.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Paladin's Quest",
       "igdb": null
@@ -9509,6 +10809,11 @@
       }
     },
     "boxArt": "/snes/box/secret-of-mana.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Secret of Mana",
       "igdb": null
@@ -9539,6 +10844,11 @@
       }
     },
     "boxArt": "/snes/box/simant.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "SimAnt",
       "igdb": null
@@ -9572,6 +10882,11 @@
       }
     },
     "boxArt": "/snes/box/sunset-riders.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Sunset Riders",
       "igdb": null
@@ -9607,6 +10922,11 @@
       }
     },
     "boxArt": "/snes/box/super-star-wars-the-empire-strikes-back.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Super Star Wars: The Empire Strikes Back",
       "igdb": null
@@ -9640,6 +10960,11 @@
       }
     },
     "boxArt": "/snes/box/the-incredible-crash-dummies.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "The Incredible Crash Dummies (video game)",
       "igdb": null
@@ -9668,6 +10993,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/the-ren-and-stimpy-show-veediots.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": null,
       "igdb": null
@@ -9696,6 +11026,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/the-super-aquatic-games-starring-the-aquabats.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "The Aquatic Games",
       "igdb": null
@@ -9734,6 +11069,11 @@
       }
     },
     "boxArt": "/snes/box/the-wizard-of-oz.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "The Wizard of Oz (1993 video game)",
       "igdb": null
@@ -9765,6 +11105,11 @@
       }
     },
     "boxArt": "/snes/box/troddlers.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Troddlers",
       "igdb": null
@@ -9793,6 +11138,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/true-golf-classics-wicked-18.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "True Golf Classics: Wicked 18",
       "igdb": null
@@ -9829,6 +11179,11 @@
       }
     },
     "boxArt": "/snes/box/aero-the-acro-bat.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Aero the Acro-Bat",
       "igdb": null
@@ -9879,6 +11234,11 @@
       }
     },
     "boxArt": "/snes/box/actraiser-2.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "ActRaiser 2",
       "igdb": null
@@ -9907,6 +11267,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/best-of-the-best-championship-karate.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Best of the Best: Championship Karate",
       "igdb": null
@@ -9956,6 +11321,11 @@
       }
     },
     "boxArt": "/snes/box/biometal.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "BioMetal (video game)",
       "igdb": null
@@ -9986,6 +11356,11 @@
       }
     },
     "boxArt": "/snes/box/championship-pool.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Championship Pool",
       "igdb": null
@@ -10025,6 +11400,11 @@
       }
     },
     "boxArt": "/snes/box/clayfighter.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "ClayFighter (video game)",
       "igdb": null
@@ -10057,6 +11437,11 @@
       }
     },
     "boxArt": "/snes/box/international-tennis-tour.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "International Tennis Tour",
       "igdb": null
@@ -10100,6 +11485,11 @@
       }
     },
     "boxArt": "/snes/box/jurassic-park.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Jurassic Park (SNES video game)",
       "igdb": null
@@ -10128,6 +11518,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/lamborghini-american-challenge.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Lamborghini American Challenge",
       "igdb": null
@@ -10159,6 +11554,11 @@
       }
     },
     "boxArt": "/snes/box/madden-nfl-94.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Madden NFL '94",
       "igdb": null
@@ -10187,6 +11587,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/nhl-stanley-cup.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "NHL Stanley Cup (Super NES)",
       "igdb": null
@@ -10215,6 +11620,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/out-to-lunch.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Out to Lunch (video game)",
       "igdb": null
@@ -10248,6 +11658,11 @@
       }
     },
     "boxArt": "/snes/box/pink-goes-to-hollywood.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Pink Goes to Hollywood",
       "igdb": null
@@ -10300,6 +11715,11 @@
       }
     },
     "boxArt": "/snes/box/ranma-1-2-hard-battle.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Ranma ½: Hard Battle",
       "igdb": null
@@ -10330,6 +11750,11 @@
       }
     },
     "boxArt": "/snes/box/robocop-versus-the-terminator.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "RoboCop Versus The Terminator",
       "igdb": null
@@ -10358,6 +11783,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/steel-talons.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Steel Talons",
       "igdb": null
@@ -10386,6 +11816,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/super-battleship.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Super Battleship",
       "igdb": null
@@ -10414,6 +11849,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/super-putty.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Super Putty",
       "igdb": null
@@ -10444,6 +11884,11 @@
       }
     },
     "boxArt": "/snes/box/tecmo-super-bowl.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Tecmo Super Bowl",
       "igdb": null
@@ -10477,6 +11922,11 @@
       }
     },
     "boxArt": "/snes/box/terminator-2-judgment-day.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Terminator 2 (16-bit video game)",
       "igdb": null
@@ -10520,6 +11970,11 @@
       }
     },
     "boxArt": "/snes/box/the-lawnmower-man.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "The Lawnmower Man (video game)",
       "igdb": null
@@ -10555,6 +12010,11 @@
       }
     },
     "boxArt": "/snes/box/time-slip.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Time Slip",
       "igdb": null
@@ -10589,6 +12049,11 @@
       }
     },
     "boxArt": "/snes/box/tony-meolas-sidekicks-soccer.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Tony Meola's Sidekicks Soccer",
       "igdb": null
@@ -10628,6 +12093,11 @@
       }
     },
     "boxArt": "/snes/box/total-carnage.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Total Carnage",
       "igdb": null
@@ -10656,6 +12126,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/were-back-a-dinosaurs-story.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": null,
       "igdb": null
@@ -10699,6 +12174,11 @@
       }
     },
     "boxArt": "/snes/box/aladdin.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Disney's Aladdin (SNES video game)",
       "igdb": null
@@ -10728,6 +12208,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/abc-monday-night-football.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "ABC Monday Night Football (video game)",
       "igdb": null
@@ -10759,6 +12244,11 @@
       }
     },
     "boxArt": "/snes/box/art-of-fighting.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Art of Fighting (video game)",
       "igdb": null
@@ -10789,6 +12279,11 @@
       }
     },
     "boxArt": "/snes/box/barbie-super-model.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Barbie: Super Model",
       "igdb": null
@@ -10830,6 +12325,11 @@
       }
     },
     "boxArt": "/snes/box/battle-cars.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Battle Cars",
       "igdb": null
@@ -10870,6 +12370,11 @@
       }
     },
     "boxArt": "/snes/box/battletoads-and-double-dragon-the-ultimate-team.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Battletoads/Double Dragon",
       "igdb": null
@@ -10898,6 +12403,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/beethoven-the-ultimate-canine-caper.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Beethoven: The Ultimate Canine Caper",
       "igdb": null
@@ -10933,6 +12443,11 @@
       }
     },
     "boxArt": "/snes/box/dennis-the-menace.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Dennis the Menace (video game)",
       "igdb": null
@@ -10963,6 +12478,11 @@
       }
     },
     "boxArt": "/snes/box/dig-and-spike-volleyball.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Dig & Spike Volleyball",
       "igdb": null
@@ -10991,6 +12511,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/genghis-khan-ii-clan-of-the-gray-wolf.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Genghis Khan II: Clan of the Gray Wolf",
       "igdb": null
@@ -11019,6 +12544,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/inspector-gadget.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Inspector Gadget (video game)",
       "igdb": null
@@ -11047,6 +12577,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/jim-power-the-lost-dimension-in-3-d.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Jim Power: The Lost Dimension in 3-D",
       "igdb": null
@@ -11085,6 +12620,11 @@
       }
     },
     "boxArt": "/snes/box/lufia-and-the-fortress-of-doom.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Lufia & the Fortress of Doom",
       "igdb": null
@@ -11125,6 +12665,11 @@
       }
     },
     "boxArt": "/snes/box/marios-time-machine.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Mario's Time Machine",
       "igdb": null
@@ -11163,6 +12708,11 @@
       }
     },
     "boxArt": "/snes/box/metal-combat-falcons-revenge.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Metal Combat: Falcon's Revenge",
       "igdb": null
@@ -11193,6 +12743,11 @@
       }
     },
     "boxArt": "/snes/box/metal-marines.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Metal Marines",
       "igdb": null
@@ -11221,6 +12776,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/nobunagas-ambition.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Nobunaga's Ambition (video game)",
       "igdb": null
@@ -11251,6 +12811,11 @@
       }
     },
     "boxArt": "/snes/box/romance-of-the-three-kingdoms-iii-dragon-of-destiny.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Romance of the Three Kingdoms III: Dragon of Destiny",
       "igdb": null
@@ -11279,6 +12844,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/side-pocket.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Side Pocket",
       "igdb": null
@@ -11322,6 +12892,11 @@
       }
     },
     "boxArt": "/snes/box/soldiers-of-fortune.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "The Chaos Engine",
       "igdb": null
@@ -11350,6 +12925,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/super-chase-h-q.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Chase H.Q.",
       "igdb": null
@@ -11385,6 +12965,11 @@
       }
     },
     "boxArt": "/snes/box/super-nova.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Darius Force",
       "igdb": null
@@ -11413,6 +12998,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/teenage-mutant-ninja-turtles-tournament-fighters.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": null,
       "igdb": null
@@ -11441,6 +13031,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/the-adventures-of-dr-franken.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "The Adventures of Dr. Franken",
       "igdb": null
@@ -11469,6 +13064,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/world-soccer-94-road-to-glory.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Striker (video game)",
       "igdb": null
@@ -11511,6 +13111,11 @@
       }
     },
     "boxArt": "/snes/box/battle-blaze.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Battle Blaze",
       "igdb": null
@@ -11555,6 +13160,11 @@
       }
     },
     "boxArt": "/snes/box/brett-hull-hockey.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Brett Hull Hockey",
       "igdb": null
@@ -11589,6 +13199,11 @@
       }
     },
     "boxArt": "/snes/box/choplifter-iii.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Choplifter III",
       "igdb": null
@@ -11627,6 +13242,11 @@
       }
     },
     "boxArt": "/snes/box/lester-the-unlikely.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Lester the Unlikely",
       "igdb": null
@@ -11659,6 +13279,11 @@
       }
     },
     "boxArt": "/snes/box/lethal-enforcers.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Lethal Enforcers",
       "igdb": null
@@ -11701,6 +13326,11 @@
       }
     },
     "boxArt": "/snes/box/mega-man-x.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Mega Man X (video game)",
       "igdb": null
@@ -11729,6 +13359,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/riddick-bowe-boxing.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Riddick Bowe Boxing",
       "igdb": null
@@ -11771,6 +13406,11 @@
       }
     },
     "boxArt": "/snes/box/skyblazer.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Skyblazer",
       "igdb": null
@@ -11802,6 +13442,11 @@
       }
     },
     "boxArt": "/snes/box/super-battletank-2.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Super Battletank 2",
       "igdb": null
@@ -11830,6 +13475,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/super-solitaire.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Super Solitaire",
       "igdb": null
@@ -11858,6 +13508,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/zool-ninja-of-the-nth-dimension.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Zool",
       "igdb": null
@@ -11894,6 +13549,11 @@
       }
     },
     "boxArt": "/snes/box/alfred-chicken.jpg",
+    "media": {
+      "video": false,
+      "logo": false,
+      "box3d": false
+    },
     "sources": {
       "wikipedia": "Alfred Chicken",
       "igdb": null
@@ -11937,6 +13597,11 @@
       }
     },
     "boxArt": "/snes/box/ardy-lightfoot.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Ardy Lightfoot",
       "igdb": null
@@ -11967,6 +13632,11 @@
       }
     },
     "boxArt": "/snes/box/bill-walsh-college-football.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Bill Walsh College Football",
       "igdb": null
@@ -12007,6 +13677,11 @@
       }
     },
     "boxArt": "/snes/box/bugs-bunny-rabbit-rampage.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Bugs Bunny Rabbit Rampage",
       "igdb": null
@@ -12054,6 +13729,11 @@
       }
     },
     "boxArt": "/snes/box/flashback.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Flashback (1992 video game)",
       "igdb": null
@@ -12090,6 +13770,11 @@
       }
     },
     "boxArt": "/snes/box/mickeys-ultimate-challenge.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Mickey's Ultimate Challenge",
       "igdb": null
@@ -12129,6 +13814,11 @@
       }
     },
     "boxArt": "/snes/box/ninja-warriors.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "The Ninja Warriors (1994 video game)",
       "igdb": null
@@ -12157,6 +13847,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/pro-sport-hockey.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Pro Sport Hockey",
       "igdb": null
@@ -12185,6 +13880,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/sports-illustrated-championship-football-and-baseball.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Sports Illustrated: Championship Football & Baseball",
       "igdb": null
@@ -12213,6 +13913,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/super-bases-loaded-2.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Super Bases Loaded 2",
       "igdb": null
@@ -12246,6 +13951,11 @@
       }
     },
     "boxArt": "/snes/box/super-troll-islands.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Super Troll Islands",
       "igdb": null
@@ -12288,6 +13998,11 @@
       }
     },
     "boxArt": "/snes/box/t2-the-arcade-game.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "T2: The Arcade Game",
       "igdb": null
@@ -12316,6 +14031,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/turn-and-burn-no-fly-zone.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Turn and Burn: No-Fly Zone",
       "igdb": null
@@ -12344,6 +14064,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/winter-olympic-games-lillehammer-94.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Winter Olympic Games: Lillehammer '94",
       "igdb": null
@@ -12389,6 +14114,11 @@
       }
     },
     "boxArt": "/snes/box/x-kaliber-2097.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "X-Kaliber 2097",
       "igdb": null
@@ -12417,6 +14147,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/chester-cheetah-wild-wild-quest.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Chester Cheetah: Wild Wild Quest",
       "igdb": null
@@ -12464,6 +14199,11 @@
       }
     },
     "boxArt": "/snes/box/claymates.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Claymates",
       "igdb": null
@@ -12532,6 +14272,11 @@
       }
     },
     "boxArt": "/snes/box/equinox.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Equinox (1993 video game)",
       "igdb": null
@@ -12569,6 +14314,11 @@
       }
     },
     "boxArt": "/snes/box/ken-griffey-jr-presents-major-league-baseball.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Ken Griffey Jr. Presents Major League Baseball",
       "igdb": null
@@ -12597,6 +14347,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/mlbpa-baseball.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "MLBPA Baseball",
       "igdb": null
@@ -12632,6 +14387,11 @@
       }
     },
     "boxArt": "/snes/box/star-trek-the-next-generation-futures-past.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Star Trek: The Next Generation (1994 video game)",
       "igdb": null
@@ -12668,6 +14428,11 @@
       }
     },
     "boxArt": "/snes/box/the-flintstones-the-treasure-of-sierra-madrock.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "The Flintstones: The Treasure of Sierra Madrock",
       "igdb": null
@@ -12710,6 +14475,11 @@
       }
     },
     "boxArt": "/snes/box/the-peace-keepers.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "The Peace Keepers",
       "igdb": null
@@ -12741,6 +14511,11 @@
       }
     },
     "boxArt": "/snes/box/wolfenstein-3d.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Wolfenstein 3D",
       "igdb": null
@@ -12784,6 +14559,11 @@
       }
     },
     "boxArt": "/snes/box/young-merlin.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Young Merlin",
       "igdb": null
@@ -12818,6 +14598,11 @@
       }
     },
     "boxArt": "/snes/box/nba-jam.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "NBA Jam (1993 video game)",
       "igdb": null
@@ -12848,6 +14633,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/advanced-dungeons-and-dragons-eye-of-the-beholder.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Eye of the Beholder (video game)",
       "igdb": null
@@ -12876,6 +14666,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/bebes-kids.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Bebe's Kids (video game)",
       "igdb": null
@@ -12906,6 +14701,11 @@
       }
     },
     "boxArt": "/snes/box/champions-world-class-soccer.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Champions World Class Soccer",
       "igdb": null
@@ -12942,6 +14742,11 @@
       }
     },
     "boxArt": "/snes/box/dream-tv.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Dream TV (video game)",
       "igdb": null
@@ -12978,6 +14783,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/fatal-fury-2.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Fatal Fury 2",
       "igdb": null
@@ -13006,6 +14816,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/joe-and-mac-2-lost-in-the-tropics.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Joe & Mac 2: Lost in the Tropics",
       "igdb": null
@@ -13046,6 +14861,11 @@
       }
     },
     "boxArt": "/snes/box/knights-of-the-round.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Knights of the Round (video game)",
       "igdb": null
@@ -13091,6 +14911,11 @@
       }
     },
     "boxArt": "/snes/box/legend.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Legend (1994 video game)",
       "igdb": null
@@ -13119,6 +14944,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/liberty-or-death.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Liberty or Death (video game)",
       "igdb": null
@@ -13166,6 +14996,11 @@
       }
     },
     "boxArt": "/snes/box/mega-man-soccer.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Mega Man Soccer",
       "igdb": null
@@ -13196,6 +15031,11 @@
       }
     },
     "boxArt": "/snes/box/pinball-dreams.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Pinball Dreams",
       "igdb": null
@@ -13241,6 +15081,11 @@
       }
     },
     "boxArt": "/snes/box/rockos-modern-life-spunkys-dangerous-day.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Rocko's Modern Life: Spunky's Dangerous Day",
       "igdb": null
@@ -13290,6 +15135,11 @@
       }
     },
     "boxArt": "/snes/box/sos.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "SOS (1993 video game)",
       "igdb": null
@@ -13323,6 +15173,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/super-goal-2.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Super Goal! 2",
       "igdb": null
@@ -13367,6 +15222,11 @@
       }
     },
     "boxArt": "/snes/box/the-king-of-dragons.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "The King of Dragons",
       "igdb": null
@@ -13413,6 +15273,11 @@
       }
     },
     "boxArt": "/snes/box/time-trax.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Time Trax (1994 video game)",
       "igdb": null
@@ -13446,6 +15311,11 @@
       }
     },
     "boxArt": "/snes/box/ultima-vi-the-false-prophet.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Ultima VI: The False Prophet",
       "igdb": null
@@ -13474,6 +15344,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/wheel-of-fortune-deluxe.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": null,
       "igdb": null
@@ -13502,6 +15377,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/wizardry-v-heart-of-the-maelstrom.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Wizardry V: Heart of the Maelstrom",
       "igdb": null
@@ -13561,6 +15441,11 @@
       }
     },
     "boxArt": "/snes/box/super-metroid.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": false
+    },
     "sources": {
       "wikipedia": "Super Metroid",
       "igdb": null
@@ -13600,6 +15485,11 @@
       }
     },
     "boxArt": "/snes/box/clayfighter-tournament-edition.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "ClayFighter: Tournament Edition",
       "igdb": null
@@ -13628,6 +15518,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/espn-baseball-tonight.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "ESPN Baseball Tonight",
       "igdb": null
@@ -13663,6 +15558,11 @@
       }
     },
     "boxArt": "/snes/box/fifa-international-soccer.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "FIFA International Soccer",
       "igdb": null
@@ -13691,6 +15591,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/jeopardy-sports-edition.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": null,
       "igdb": null
@@ -13719,6 +15624,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/relief-pitcher.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Relief Pitcher (video game)",
       "igdb": null
@@ -13747,6 +15657,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/rex-ronan-experimental-surgeon.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Rex Ronan: Experimental Surgeon",
       "igdb": null
@@ -13775,6 +15690,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/space-ace.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Space Ace (SNES video game)",
       "igdb": null
@@ -13812,6 +15732,11 @@
       }
     },
     "boxArt": "/snes/box/spectre.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Spectre (1991 video game)",
       "igdb": null
@@ -13845,6 +15770,11 @@
       }
     },
     "boxArt": "/snes/box/super-pinball-behind-the-mask.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Super Pinball: Behind the Mask",
       "igdb": null
@@ -13876,6 +15806,11 @@
       }
     },
     "boxArt": "/snes/box/suzuka-8-hours.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Suzuka 8 Hours (video game)",
       "igdb": null
@@ -13904,6 +15839,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/the-pirates-of-dark-water.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": null,
       "igdb": null
@@ -13934,6 +15874,11 @@
       }
     },
     "boxArt": "/snes/box/andre-agassi-tennis.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Andre Agassi Tennis",
       "igdb": null
@@ -13962,6 +15907,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/3-ninjas-kick-back.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "3 Ninjas Kick Back (video game)",
       "igdb": null
@@ -13990,6 +15940,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/breakthru.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "BreakThru!",
       "igdb": null
@@ -14018,6 +15973,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/capcoms-soccer-shootout.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": null,
       "igdb": null
@@ -14046,6 +16006,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/championship-soccer-94.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Sensible Soccer",
       "igdb": null
@@ -14074,6 +16039,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/final-fight-guy.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Final Fight Guy",
       "igdb": null
@@ -14111,6 +16081,11 @@
       }
     },
     "boxArt": "/snes/box/hardball-iii.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Hardball III",
       "igdb": null
@@ -14139,6 +16114,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/hyper-v-ball.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Hyper V-Ball",
       "igdb": null
@@ -14167,6 +16147,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/jeopardy-deluxe-edition.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": null,
       "igdb": null
@@ -14211,6 +16196,11 @@
       }
     },
     "boxArt": "/snes/box/king-of-the-monsters-2.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "King of the Monsters 2",
       "igdb": null
@@ -14239,6 +16229,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/natsume-championship-wrestling.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Natsume Championship Wrestling",
       "igdb": null
@@ -14269,6 +16264,11 @@
       }
     },
     "boxArt": "/snes/box/operation-europe-path-to-victory-1939-1945.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Operation Europe: Path to Victory",
       "igdb": null
@@ -14305,6 +16305,11 @@
       }
     },
     "boxArt": "/snes/box/saturday-night-slam-masters.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Saturday Night Slam Masters",
       "igdb": null
@@ -14333,6 +16338,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/the-jetsons-invasion-of-the-planet-pirates.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "The Jetsons: Invasion of the Planet Pirates",
       "igdb": null
@@ -14361,6 +16371,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/the-ren-and-stimpy-show-fire-dogs.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": null,
       "igdb": null
@@ -14409,6 +16424,11 @@
       }
     },
     "boxArt": "/snes/box/the-twisted-tales-of-spike-mcfang.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "The Twisted Tales of Spike McFang",
       "igdb": null
@@ -14454,6 +16474,11 @@
       }
     },
     "boxArt": "/snes/box/tommy-moes-winter-extreme-skiing-and-snowboarding.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Tommy Moe's Winter Extreme: Skiing & Snowboarding",
       "igdb": null
@@ -14482,6 +16507,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/ultimate-fighter.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Ultimate Fighter",
       "igdb": null
@@ -14510,6 +16540,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/world-cup-usa-94.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "World Cup USA '94",
       "igdb": null
@@ -14551,6 +16586,11 @@
       }
     },
     "boxArt": "/snes/box/barkley-shut-up-and-jam.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Barkley Shut Up and Jam!",
       "igdb": null
@@ -14579,6 +16619,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/beauty-and-the-beast.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Disney's Beauty and the Beast (SNES video game)",
       "igdb": null
@@ -14607,6 +16652,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/f1-roc-ii-race-of-champions.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "F1 ROC II: Race of Champions",
       "igdb": null
@@ -14663,6 +16713,11 @@
       }
     },
     "boxArt": "/snes/box/stunt-race-fx.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Stunt Race FX",
       "igdb": null
@@ -14702,6 +16757,11 @@
       }
     },
     "boxArt": "/snes/box/super-godzilla.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Super Godzilla",
       "igdb": null
@@ -14733,6 +16793,11 @@
       }
     },
     "boxArt": "/snes/box/super-street-fighter-ii-the-new-challengers.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Super Street Fighter II: The New Challengers",
       "igdb": null
@@ -14761,6 +16826,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/aerobiz-supersonic.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Aerobiz Supersonic",
       "igdb": null
@@ -14803,6 +16873,11 @@
       }
     },
     "boxArt": "/snes/box/an-american-tail-fievel-goes-west.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "An American Tail: Fievel Goes West (video game)",
       "igdb": null
@@ -14842,6 +16917,11 @@
       }
     },
     "boxArt": "/snes/box/breath-of-fire.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Breath of Fire (video game)",
       "igdb": null
@@ -14873,6 +16953,11 @@
       }
     },
     "boxArt": "/snes/box/eek-the-cat.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Sleepwalker (video game)",
       "igdb": null
@@ -14902,6 +16987,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/elite-soccer.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": null,
       "igdb": null
@@ -14935,6 +17025,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/fighters-history.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Fighter's History (video game)",
       "igdb": null
@@ -14963,6 +17058,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/fun-n-games.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Fun 'n Games",
       "igdb": null
@@ -15008,6 +17108,11 @@
       }
     },
     "boxArt": "/snes/box/mr-nutz.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Mr. Nutz",
       "igdb": null
@@ -15036,6 +17141,11 @@
       "other": {}
     },
     "boxArt": null,
+    "media": {
+      "video": false,
+      "logo": false,
+      "box3d": false
+    },
     "sources": {
       "wikipedia": "Soccer Kid",
       "igdb": null
@@ -15073,6 +17183,11 @@
       }
     },
     "boxArt": "/snes/box/tetris-2.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Tetris 2 (1993 video game)",
       "igdb": null
@@ -15121,6 +17236,11 @@
       }
     },
     "boxArt": "/snes/box/the-death-and-return-of-superman.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "The Death and Return of Superman",
       "igdb": null
@@ -15153,6 +17273,11 @@
       }
     },
     "boxArt": "/snes/box/the-incredible-hulk.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "The Incredible Hulk (1994 video game)",
       "igdb": null
@@ -15187,6 +17312,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/the-jungle-book.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "The Jungle Book (video game)",
       "igdb": null
@@ -15215,6 +17345,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/the-untouchables.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": null,
       "igdb": null
@@ -15243,6 +17378,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/troy-aikman-nfl-football.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Troy Aikman NFL Football",
       "igdb": null
@@ -15282,6 +17422,11 @@
       }
     },
     "boxArt": "/snes/box/double-dragon-v-the-shadow-falls.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Double Dragon V: The Shadow Falls",
       "igdb": null
@@ -15315,6 +17460,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/blackthorne.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Blackthorne",
       "igdb": null
@@ -15352,6 +17502,11 @@
       }
     },
     "boxArt": "/snes/box/kid-klown-in-crazy-chase.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Kid Klown in Crazy Chase",
       "igdb": null
@@ -15380,6 +17535,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/king-arthurs-world.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "King Arthur's World",
       "igdb": null
@@ -15408,6 +17568,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/marios-early-years-fun-with-letters.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Mario's Early Years!",
       "igdb": null
@@ -15436,6 +17601,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/michael-andrettis-indy-car-challenge.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Michael Andretti's Indy Car Challenge",
       "igdb": null
@@ -15464,6 +17634,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/mighty-morphin-power-rangers.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": null,
       "igdb": null
@@ -15492,6 +17667,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/obitus.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Obitus",
       "igdb": null
@@ -15523,6 +17703,11 @@
       }
     },
     "boxArt": "/snes/box/pac-man-2-the-new-adventures.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Pac-Man 2: The New Adventures",
       "igdb": null
@@ -15566,6 +17751,11 @@
       }
     },
     "boxArt": "/snes/box/super-bomberman-2.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Super Bomberman 2",
       "igdb": null
@@ -15594,6 +17784,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/tecmo-super-baseball.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Tecmo Super Baseball",
       "igdb": null
@@ -15635,6 +17830,11 @@
       }
     },
     "boxArt": "/snes/box/virtual-bart.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Virtual Bart",
       "igdb": null
@@ -15687,6 +17887,11 @@
       }
     },
     "boxArt": "/snes/box/vortex.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Vortex (video game)",
       "igdb": null
@@ -15715,6 +17920,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/wildsnake.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "WildSnake",
       "igdb": null
@@ -15747,6 +17957,11 @@
       }
     },
     "boxArt": "/snes/box/world-heroes-2.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "World Heroes 2",
       "igdb": null
@@ -15790,6 +18005,11 @@
       }
     },
     "boxArt": "/snes/box/mortal-kombat-ii.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Mortal Kombat II",
       "igdb": null
@@ -15826,6 +18046,11 @@
       }
     },
     "boxArt": "/snes/box/spider-man-and-venom-maximum-carnage.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Spider-Man and Venom: Maximum Carnage",
       "igdb": null
@@ -15879,6 +18104,11 @@
       }
     },
     "boxArt": "/snes/box/illusion-of-gaia.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Illusion of Gaia",
       "igdb": null
@@ -15907,6 +18137,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/adventures-of-yogi-bear.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Adventures of Yogi Bear",
       "igdb": null
@@ -15949,6 +18184,11 @@
       }
     },
     "boxArt": "/snes/box/bonkers.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Bonkers (SNES video game)",
       "igdb": null
@@ -15991,6 +18231,11 @@
       }
     },
     "boxArt": "/snes/box/brain-lord.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Brain Lord",
       "igdb": null
@@ -16031,6 +18276,11 @@
       }
     },
     "boxArt": "/snes/box/earthworm-jim.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Earthworm Jim (video game)",
       "igdb": null
@@ -16069,6 +18319,11 @@
       }
     },
     "boxArt": "/snes/box/final-fantasy-iii.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Final Fantasy VI",
       "igdb": null
@@ -16097,6 +18352,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/firestriker.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Firestriker",
       "igdb": null
@@ -16125,6 +18385,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/hammerlock-wrestling.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "HammerLock Wrestling",
       "igdb": null
@@ -16177,6 +18442,11 @@
       }
     },
     "boxArt": "/snes/box/indiana-jones-greatest-adventures.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Indiana Jones' Greatest Adventures",
       "igdb": null
@@ -16208,6 +18478,11 @@
       }
     },
     "boxArt": "/snes/box/j-r-r-tolkiens-the-lord-of-the-rings-vol-i.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "J.R.R. Tolkien's The Lord of the Rings, Vol. I (SNES video game)",
       "igdb": null
@@ -16236,6 +18511,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/marios-early-years-fun-with-numbers.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Mario's Early Years!",
       "igdb": null
@@ -16264,6 +18544,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/math-blaster-episode-1.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Math Blaster: Episode 1",
       "igdb": null
@@ -16292,6 +18577,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/mountain-bike-rally.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Mountain Bike Rally",
       "igdb": null
@@ -16324,6 +18614,11 @@
       }
     },
     "boxArt": "/snes/box/nba-live-95.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "NBA Live 95",
       "igdb": null
@@ -16352,6 +18647,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/ncaa-football.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": null,
       "igdb": null
@@ -16380,6 +18680,11 @@
       "other": {}
     },
     "boxArt": null,
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Nobunaga's Ambition: Lord of Darkness",
       "igdb": null
@@ -16411,6 +18716,11 @@
       }
     },
     "boxArt": "/snes/box/operation-thunderbolt.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Operation Thunderbolt (video game)",
       "igdb": null
@@ -16462,6 +18772,11 @@
       }
     },
     "boxArt": "/snes/box/r-type-iii-the-third-lightning.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "R-Type III: The Third Lightning",
       "igdb": null
@@ -16495,6 +18810,11 @@
       }
     },
     "boxArt": "/snes/box/radical-rex.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Radical Rex",
       "igdb": null
@@ -16535,6 +18855,11 @@
       }
     },
     "boxArt": "/snes/box/robotrek.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Robotrek",
       "igdb": null
@@ -16574,6 +18899,11 @@
       }
     },
     "boxArt": "/snes/box/shiens-revenge.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Shien's Revenge",
       "igdb": null
@@ -16602,6 +18932,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/snow-white-happily-ever-after.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Snow White: Happily Ever After (video game)",
       "igdb": null
@@ -16648,6 +18983,11 @@
       }
     },
     "boxArt": "/snes/box/sparkster.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Sparkster",
       "igdb": null
@@ -16679,6 +19019,11 @@
       }
     },
     "boxArt": "/snes/box/super-adventure-island-ii.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Super Adventure Island II",
       "igdb": null
@@ -16717,6 +19062,11 @@
       }
     },
     "boxArt": "/snes/box/super-star-wars-return-of-the-jedi.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Super Star Wars: Return of the Jedi",
       "igdb": null
@@ -16745,6 +19095,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/the-great-circus-mystery-starring-mickey-and-minnie.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "The Great Circus Mystery Starring Mickey & Minnie",
       "igdb": null
@@ -16773,6 +19128,11 @@
       "other": {}
     },
     "boxArt": null,
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Uncharted Waters: New Horizons",
       "igdb": null
@@ -16808,6 +19168,11 @@
       }
     },
     "boxArt": "/snes/box/bubsy-ii.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Bubsy II",
       "igdb": null
@@ -16848,6 +19213,11 @@
       }
     },
     "boxArt": "/snes/box/super-punch-out.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Super Punch-Out!!",
       "igdb": null
@@ -16879,6 +19249,11 @@
       }
     },
     "boxArt": "/snes/box/shaq-fu.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Shaq Fu",
       "igdb": null
@@ -16916,6 +19291,11 @@
       }
     },
     "boxArt": "/snes/box/acme-animation-factory.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Acme Animation Factory",
       "igdb": null
@@ -16944,6 +19324,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/aero-fighters.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Aero Fighters",
       "igdb": null
@@ -16975,6 +19360,11 @@
       }
     },
     "boxArt": "/snes/box/aero-the-acro-bat-2.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Aero the Acro-Bat 2",
       "igdb": null
@@ -17003,6 +19393,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/al-unser-jr-s-road-to-the-top.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Al Unser Jr.'s Road to the Top",
       "igdb": null
@@ -17033,6 +19428,11 @@
       }
     },
     "boxArt": "/snes/box/animaniacs.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Animaniacs (video game)",
       "igdb": null
@@ -17061,6 +19461,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/bassins-black-bass-with-hank-parker.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Bassin's Black Bass with Hank Parker",
       "igdb": null
@@ -17089,6 +19494,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/beavis-and-butt-head.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Beavis and Butt-head (video game)",
       "igdb": null
@@ -17117,6 +19527,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/cannondale-cup.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": null,
       "igdb": null
@@ -17169,6 +19584,11 @@
       }
     },
     "boxArt": "/snes/box/demons-crest.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Demon's Crest",
       "igdb": null
@@ -17207,6 +19627,11 @@
       }
     },
     "boxArt": "/snes/box/dragon-view.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Dragon View",
       "igdb": null
@@ -17235,6 +19660,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/espn-speedworld.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "ESPN SpeedWorld (video game)",
       "igdb": null
@@ -17263,6 +19693,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/espn-sunday-night-nfl.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "ESPN Sunday Night NFL",
       "igdb": null
@@ -17309,6 +19744,11 @@
       }
     },
     "boxArt": "/snes/box/ghoul-patrol.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Ghoul Patrol",
       "igdb": null
@@ -17337,6 +19777,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/home-improvement-power-tool-pursuit.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Home Improvement: Power Tool Pursuit!",
       "igdb": null
@@ -17365,6 +19810,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/jammit.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Jammit",
       "igdb": null
@@ -17403,6 +19853,11 @@
       }
     },
     "boxArt": "/snes/box/jurassic-park-2-the-chaos-continues.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Jurassic Park 2: The Chaos Continues",
       "igdb": null
@@ -17436,6 +19891,11 @@
       }
     },
     "boxArt": "/snes/box/lemmings-2-the-tribes.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Lemmings 2: The Tribes",
       "igdb": null
@@ -17464,6 +19924,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/madden-nfl-95.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Madden NFL '95",
       "igdb": null
@@ -17492,6 +19957,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/marios-early-years-preschool-fun.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Mario's Early Years!",
       "igdb": null
@@ -17522,6 +19992,11 @@
       }
     },
     "boxArt": "/snes/box/mary-shelleys-frankenstein.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Mary Shelley's Frankenstein (video game)",
       "igdb": null
@@ -17562,6 +20037,11 @@
       }
     },
     "boxArt": "/snes/box/michael-jordan-chaos-in-the-windy-city.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Michael Jordan: Chaos in the Windy City",
       "igdb": null
@@ -17590,6 +20070,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/newman-haas-indycar-featuring-nigel-mansell.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Newman/Haas IndyCar featuring Nigel Mansell",
       "igdb": null
@@ -17621,6 +20106,11 @@
       }
     },
     "boxArt": "/snes/box/nhl-95.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "NHL 95",
       "igdb": null
@@ -17649,6 +20139,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/nickelodeon-guts.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": null,
       "igdb": null
@@ -17677,6 +20172,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/no-escape.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "No Escape (video game)",
       "igdb": null
@@ -17718,6 +20218,11 @@
       }
     },
     "boxArt": "/snes/box/pitfall-the-mayan-adventure.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Pitfall: The Mayan Adventure",
       "igdb": null
@@ -17765,6 +20270,11 @@
       }
     },
     "boxArt": "/snes/box/pocky-and-rocky-2.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Pocky & Rocky 2",
       "igdb": null
@@ -17801,6 +20311,11 @@
       }
     },
     "boxArt": "/snes/box/samurai-shodown.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Samurai Shodown (1993 video game)",
       "igdb": null
@@ -17844,6 +20359,11 @@
       }
     },
     "boxArt": "/snes/box/sonic-blast-man-ii.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Sonic Blast Man II",
       "igdb": null
@@ -17872,6 +20392,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/speed-racer-in-my-most-dangerous-adventures.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Speed Racer in My Most Dangerous Adventures",
       "igdb": null
@@ -17900,6 +20425,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/stone-protectors.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": null,
       "igdb": null
@@ -17928,6 +20458,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/street-hockey-95.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Street Hockey '95",
       "igdb": null
@@ -17972,6 +20507,11 @@
       }
     },
     "boxArt": "/snes/box/super-bonk.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Super Bonk",
       "igdb": null
@@ -18023,6 +20563,11 @@
       }
     },
     "boxArt": "/snes/box/the-pagemaster.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "The Pagemaster (video game)",
       "igdb": null
@@ -18051,6 +20596,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/the-ren-and-stimpy-show-time-warp.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "The Ren & Stimpy Show: Time Warp",
       "igdb": null
@@ -18095,6 +20645,11 @@
       }
     },
     "boxArt": "/snes/box/tin-star.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Tin Star (video game)",
       "igdb": null
@@ -18123,6 +20678,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/tnn-bass-tournament-of-champions.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": null,
       "igdb": null
@@ -18157,6 +20717,11 @@
       }
     },
     "boxArt": "/snes/box/ultima-vii-the-black-gate.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Ultima VII: The Black Gate",
       "igdb": null
@@ -18192,6 +20757,11 @@
       }
     },
     "boxArt": "/snes/box/ultima-runes-of-virtue-ii.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Ultima: Runes of Virtue II",
       "igdb": null
@@ -18220,6 +20790,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/wcw-superbrawl-wrestling.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "WCW SuperBrawl Wrestling",
       "igdb": null
@@ -18248,6 +20823,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/wolverine-adamantium-rage.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Wolverine: Adamantium Rage",
       "igdb": null
@@ -18281,6 +20861,11 @@
       }
     },
     "boxArt": "/snes/box/wwf-raw.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "WWF Raw (1994 video game)",
       "igdb": null
@@ -18326,6 +20911,11 @@
       }
     },
     "boxArt": "/snes/box/x-men-mutant-apocalypse.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "X-Men: Mutant Apocalypse",
       "igdb": null
@@ -18354,6 +20944,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/mickey-mania-the-timeless-adventures-of-mickey-mouse.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Mickey Mania: The Timeless Adventures of Mickey Mouse",
       "igdb": null
@@ -18386,6 +20981,11 @@
       }
     },
     "boxArt": "/snes/box/zero-the-kamikaze-squirrel.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Zero the Kamikaze Squirrel",
       "igdb": null
@@ -18424,6 +21024,11 @@
       }
     },
     "boxArt": "/snes/box/the-lion-king.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "The Lion King (video game)",
       "igdb": null
@@ -18462,6 +21067,11 @@
       }
     },
     "boxArt": "/snes/box/ballz.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Ballz",
       "igdb": null
@@ -18511,6 +21121,11 @@
       }
     },
     "boxArt": "/snes/box/donkey-kong-country.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Donkey Kong Country",
       "igdb": null
@@ -18551,6 +21166,11 @@
       }
     },
     "boxArt": "/snes/box/biker-mice-from-mars.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Biker Mice from Mars (1994 video game)",
       "igdb": null
@@ -18586,6 +21206,11 @@
       }
     },
     "boxArt": "/snes/box/brutal-paws-of-fury.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Brutal: Paws of Fury",
       "igdb": null
@@ -18614,6 +21239,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/espn-national-hockey-night.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "ESPN National Hockey Night (video game)",
       "igdb": null
@@ -18642,6 +21272,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/gp-1-part-ii.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "GP-1: Part II",
       "igdb": null
@@ -18670,6 +21305,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/hurricanes.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": null,
       "igdb": null
@@ -18698,6 +21338,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/metal-morph.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Metal Morph",
       "igdb": null
@@ -18726,6 +21371,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/micro-machines.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Micro Machines (video game)",
       "igdb": null
@@ -18757,6 +21407,11 @@
       }
     },
     "boxArt": "/snes/box/nfl-quarterback-club.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "NFL Quarterback Club (video game)",
       "igdb": null
@@ -18797,6 +21452,11 @@
       }
     },
     "boxArt": "/snes/box/pieces.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Pieces (video game)",
       "igdb": null
@@ -18825,6 +21485,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/power-instinct.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Power Instinct",
       "igdb": null
@@ -18861,6 +21526,11 @@
       }
     },
     "boxArt": "/snes/box/rise-of-the-robots.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Rise of the Robots",
       "igdb": null
@@ -18889,6 +21559,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/star-trek-starfleet-academy-starship-bridge-simulator.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Star Trek: Starfleet Academy - Starship Bridge Simulator",
       "igdb": null
@@ -18920,6 +21595,11 @@
       }
     },
     "boxArt": "/snes/box/street-racer.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Street Racer (1994 video game)",
       "igdb": null
@@ -18948,6 +21628,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/super-mario-all-stars-super-mario-world.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": null,
       "igdb": null
@@ -18982,6 +21667,11 @@
       }
     },
     "boxArt": "/snes/box/tetris-and-dr-mario.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Tetris & Dr. Mario",
       "igdb": null
@@ -19025,6 +21715,11 @@
       }
     },
     "boxArt": "/snes/box/the-adventures-of-batman-and-robin.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "The Adventures of Batman & Robin (video game)",
       "igdb": null
@@ -19053,6 +21748,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/the-tick.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "The Tick (video game)",
       "igdb": null
@@ -19083,6 +21783,11 @@
       }
     },
     "boxArt": "/snes/box/tiny-toon-adventures-wacky-sports-challenge.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Tiny Toon Adventures: Wacky Sports Challenge",
       "igdb": null
@@ -19137,6 +21842,11 @@
       }
     },
     "boxArt": "/snes/box/uniracers.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Uniracers",
       "igdb": null
@@ -19169,6 +21879,11 @@
       }
     },
     "boxArt": "/snes/box/warios-woods.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Wario's Woods",
       "igdb": null
@@ -19216,6 +21931,11 @@
       }
     },
     "boxArt": "/snes/box/a-s-p-air-strike-patrol.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "A.S.P. Air Strike Patrol",
       "igdb": null
@@ -19246,6 +21966,11 @@
       }
     },
     "boxArt": "/snes/box/brett-hull-hockey-95.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Brett Hull Hockey '95",
       "igdb": null
@@ -19286,6 +22011,11 @@
       }
     },
     "boxArt": "/snes/box/carrier-aces.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Carrier Aces",
       "igdb": null
@@ -19316,6 +22046,11 @@
       }
     },
     "boxArt": "/snes/box/clayfighter-2-judgment-clay.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "ClayFighter 2: Judgment Clay",
       "igdb": null
@@ -19344,6 +22079,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/full-throttle-all-american-racing.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Full Throttle: All-American Racing",
       "igdb": null
@@ -19388,6 +22128,11 @@
       }
     },
     "boxArt": "/snes/box/mega-man-x2.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Mega Man X2",
       "igdb": null
@@ -19420,6 +22165,11 @@
       }
     },
     "boxArt": "/snes/box/might-and-magic-iii-isles-of-terra.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Might and Magic III: Isles of Terra",
       "igdb": null
@@ -19456,6 +22206,11 @@
       }
     },
     "boxArt": "/snes/box/pac-in-time.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Pac-In-Time",
       "igdb": null
@@ -19484,6 +22239,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/rap-jam-volume-one.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Rap Jam: Volume One",
       "igdb": null
@@ -19527,6 +22287,11 @@
       }
     },
     "boxArt": "/snes/box/seaquest-dsv.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "SeaQuest DSV (video game)",
       "igdb": null
@@ -19555,6 +22320,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/tecmo-super-bowl-ii-special-edition.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Tecmo Super Bowl II: Special Edition",
       "igdb": null
@@ -19597,6 +22367,11 @@
       }
     },
     "boxArt": "/snes/box/the-ignition-factor.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "The Ignition Factor",
       "igdb": null
@@ -19637,6 +22412,11 @@
       }
     },
     "boxArt": "/snes/box/addams-family-values.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Addams Family Values (video game)",
       "igdb": null
@@ -19671,6 +22451,11 @@
       }
     },
     "boxArt": "/snes/box/brandish.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Brandish (video game)",
       "igdb": null
@@ -19719,6 +22504,11 @@
       }
     },
     "boxArt": "/snes/box/kirbys-dream-course.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Kirby's Dream Course",
       "igdb": null
@@ -19760,6 +22550,11 @@
       }
     },
     "boxArt": "/snes/box/looney-tunes-b-ball.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Looney Tunes B-Ball",
       "igdb": null
@@ -19788,6 +22583,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/ncaa-final-four-basketball.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "NCAA Final Four Basketball",
       "igdb": null
@@ -19816,6 +22616,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/pinball-fantasies.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Pinball Fantasies",
       "igdb": null
@@ -19846,6 +22651,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/rise-of-the-phoenix.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Rise of the Phoenix (video game)",
       "igdb": null
@@ -19874,6 +22684,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/spider-man.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Spider-Man (1995 video game)",
       "igdb": null
@@ -19902,6 +22717,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/super-bases-loaded-3-license-to-steal.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Super Bases Loaded 3: License to Steal",
       "igdb": null
@@ -19942,6 +22762,11 @@
       }
     },
     "boxArt": "/snes/box/the-adventures-of-mighty-max.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "The Adventures of Mighty Max",
       "igdb": null
@@ -19979,6 +22804,11 @@
       }
     },
     "boxArt": "/snes/box/the-flintstones.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "The Flintstones (Ocean Software)",
       "igdb": null
@@ -20016,6 +22846,11 @@
       }
     },
     "boxArt": "/snes/box/top-gear-3000.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Top Gear 3000",
       "igdb": null
@@ -20049,6 +22884,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/true-lies.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "True Lies (video game)",
       "igdb": null
@@ -20077,6 +22917,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/nba-jam-tournament-edition.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "NBA Jam Tournament Edition",
       "igdb": null
@@ -20109,6 +22954,11 @@
       }
     },
     "boxArt": "/snes/box/bust-a-move.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Bust-a-Move",
       "igdb": null
@@ -20137,6 +22987,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/sterling-sharpe-end-2-end.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Sterling Sharpe: End 2 End",
       "igdb": null
@@ -20165,6 +23020,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/the-itchy-and-scratchy-game.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "The Itchy & Scratchy Game",
       "igdb": null
@@ -20197,6 +23057,11 @@
       }
     },
     "boxArt": "/snes/box/warlock.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Warlock (video game)",
       "igdb": null
@@ -20234,6 +23099,11 @@
       }
     },
     "boxArt": "/snes/box/fatal-fury-special.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Fatal Fury Special",
       "igdb": null
@@ -20280,6 +23150,11 @@
       }
     },
     "boxArt": "/snes/box/kirbys-avalanche.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Kirby's Avalanche",
       "igdb": null
@@ -20310,6 +23185,11 @@
       }
     },
     "boxArt": "/snes/box/kyle-pettys-no-fear-racing.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Kyle Petty's No Fear Racing",
       "igdb": null
@@ -20352,6 +23232,11 @@
       }
     },
     "boxArt": "/snes/box/metal-warriors.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Metal Warriors",
       "igdb": null
@@ -20389,6 +23274,11 @@
       }
     },
     "boxArt": "/snes/box/stargate.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Stargate (1995 console video game)",
       "igdb": null
@@ -20417,6 +23307,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/the-ren-and-stimpy-show-buckeroo.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": null,
       "igdb": null
@@ -20445,6 +23340,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/timecop.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Timecop (video game)",
       "igdb": null
@@ -20488,6 +23388,11 @@
       }
     },
     "boxArt": "/snes/box/ogre-battle-the-march-of-the-black-queen.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Ogre Battle: The March of the Black Queen",
       "igdb": null
@@ -20523,6 +23428,11 @@
       }
     },
     "boxArt": "/snes/box/air-cavalry.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Air Cavalry",
       "igdb": null
@@ -20555,6 +23465,11 @@
       }
     },
     "boxArt": "/snes/box/bass-masters-classic.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Bass Masters Classic",
       "igdb": null
@@ -20595,6 +23510,11 @@
       }
     },
     "boxArt": "/snes/box/dirt-trax-fx.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Dirt Trax FX",
       "igdb": null
@@ -20640,6 +23560,11 @@
       }
     },
     "boxArt": "/snes/box/hagane-the-final-conflict.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Hagane: The Final Conflict",
       "igdb": null
@@ -20686,6 +23611,11 @@
       }
     },
     "boxArt": "/snes/box/international-superstar-soccer.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "International Superstar Soccer (video game)",
       "igdb": null
@@ -20724,6 +23654,11 @@
       }
     },
     "boxArt": "/snes/box/jungle-strike.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Jungle Strike",
       "igdb": null
@@ -20755,6 +23690,11 @@
       }
     },
     "boxArt": "/snes/box/justice-league-task-force.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Justice League Task Force (video game)",
       "igdb": null
@@ -20783,6 +23723,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/packy-and-marlon.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Packy and Marlon",
       "igdb": null
@@ -20811,6 +23756,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/phantom-2040.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Phantom 2040 (video game)",
       "igdb": null
@@ -20843,6 +23793,11 @@
       }
     },
     "boxArt": "/snes/box/sid-meiers-civilization.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Civilization (video game)",
       "igdb": null
@@ -20871,6 +23826,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/super-r-b-i-baseball.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Super R.B.I. Baseball",
       "igdb": null
@@ -20899,6 +23859,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/the-sporting-news-power-baseball.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "The Sporting News: Power Baseball",
       "igdb": null
@@ -20935,6 +23900,11 @@
       }
     },
     "boxArt": "/snes/box/earthbound.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "EarthBound",
       "igdb": null
@@ -20968,6 +23938,11 @@
       }
     },
     "boxArt": "/snes/box/judge-dredd.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Judge Dredd (1995 video game)",
       "igdb": null
@@ -20994,6 +23969,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/dragon-the-bruce-lee-story.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Dragon: The Bruce Lee Story (video game)",
       "igdb": null
@@ -21027,6 +24007,11 @@
       }
     },
     "boxArt": "/snes/box/fifa-soccer-96.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "FIFA Soccer 96",
       "igdb": null
@@ -21062,6 +24047,11 @@
       }
     },
     "boxArt": "/snes/box/king-arthur-and-the-knights-of-justice.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "King Arthur & the Knights of Justice (video game)",
       "igdb": null
@@ -21090,6 +24080,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/mighty-morphin-power-rangers-the-movie.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": null,
       "igdb": null
@@ -21120,6 +24115,11 @@
       }
     },
     "boxArt": "/snes/box/romance-of-the-three-kingdoms-iv-wall-of-fire.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Romance of the Three Kingdoms IV: Wall of Fire",
       "igdb": null
@@ -21156,6 +24156,11 @@
       }
     },
     "boxArt": "/snes/box/secret-of-the-stars.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Secret of the Stars",
       "igdb": null
@@ -21196,6 +24201,11 @@
       }
     },
     "boxArt": "/snes/box/wild-guns.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Wild Guns",
       "igdb": null
@@ -21242,6 +24252,11 @@
       }
     },
     "boxArt": "/snes/box/aaahh-real-monsters.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Aaahh!!! Real Monsters (video game)",
       "igdb": null
@@ -21282,6 +24297,11 @@
       }
     },
     "boxArt": "/snes/box/captain-commando.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Captain Commando (video game)",
       "igdb": null
@@ -21322,6 +24342,11 @@
       }
     },
     "boxArt": "/snes/box/chrono-trigger.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Chrono Trigger",
       "igdb": null
@@ -21350,6 +24375,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/demolition-man.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Demolition Man (video game)",
       "igdb": null
@@ -21378,6 +24408,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/ninja-gaiden-trilogy.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Ninja Gaiden Trilogy",
       "igdb": null
@@ -21408,6 +24443,11 @@
       }
     },
     "boxArt": "/snes/box/speedy-gonzales-los-gatos-bandidos.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Speedy Gonzales: Los Gatos Bandidos",
       "igdb": null
@@ -21436,6 +24476,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/swat-kats-the-radical-squadron.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "SWAT Kats: The Radical Squadron (video game)",
       "igdb": null
@@ -21471,6 +24516,11 @@
       }
     },
     "boxArt": "/snes/box/primal-rage.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Primal Rage",
       "igdb": null
@@ -21514,6 +24564,11 @@
       }
     },
     "boxArt": "/snes/box/killer-instinct.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Killer Instinct (1994 video game)",
       "igdb": null
@@ -21542,6 +24597,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/bronkie-the-bronchiasaurus.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Bronkie the Bronchiasaurus",
       "igdb": null
@@ -21580,6 +24640,11 @@
       }
     },
     "boxArt": "/snes/box/castlevania-dracula-x.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Castlevania: Dracula X",
       "igdb": null
@@ -21608,6 +24673,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/doom.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Doom (1993 video game)",
       "igdb": null
@@ -21636,6 +24706,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/foreman-for-real.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Foreman For Real",
       "igdb": null
@@ -21677,6 +24752,11 @@
       }
     },
     "boxArt": "/snes/box/head-on-soccer.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Fever Pitch Soccer",
       "igdb": null
@@ -21718,6 +24798,11 @@
       }
     },
     "boxArt": "/snes/box/mega-man-7.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Mega Man 7",
       "igdb": null
@@ -21750,6 +24835,11 @@
       }
     },
     "boxArt": "/snes/box/mighty-morphin-power-rangers-the-fighting-edition.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Mighty Morphin Power Rangers: The Fighting Edition",
       "igdb": null
@@ -21784,6 +24874,11 @@
       }
     },
     "boxArt": "/snes/box/nhl-96.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "NHL 96",
       "igdb": null
@@ -21817,6 +24912,11 @@
       }
     },
     "boxArt": "/snes/box/star-trek-deep-space-nine-crossroads-of-time.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Star Trek: Deep Space Nine – Crossroads of Time",
       "igdb": null
@@ -21859,6 +24959,11 @@
       }
     },
     "boxArt": "/snes/box/weaponlord.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "WeaponLord",
       "igdb": null
@@ -21896,6 +25001,11 @@
       }
     },
     "boxArt": "/snes/box/zoop.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Zoop",
       "igdb": null
@@ -21927,6 +25037,11 @@
       }
     },
     "boxArt": "/snes/box/batman-forever.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Batman Forever (video game)",
       "igdb": null
@@ -21955,6 +25070,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/big-sky-trooper.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Big Sky Trooper",
       "igdb": null
@@ -21989,6 +25109,11 @@
       }
     },
     "boxArt": "/snes/box/mechwarrior-3050.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "MechWarrior 3050",
       "igdb": null
@@ -22019,6 +25144,11 @@
       }
     },
     "boxArt": "/snes/box/nba-live-96.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "NBA Live 96",
       "igdb": null
@@ -22062,6 +25192,11 @@
       }
     },
     "boxArt": "/snes/box/nosferatu.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Nosferatu (video game)",
       "igdb": null
@@ -22109,6 +25244,11 @@
       }
     },
     "boxArt": "/snes/box/porky-pigs-haunted-holiday.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Porky Pig's Haunted Holiday",
       "igdb": null
@@ -22152,6 +25292,11 @@
       }
     },
     "boxArt": "/snes/box/secret-of-evermore.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Secret of Evermore",
       "igdb": null
@@ -22188,6 +25333,11 @@
       }
     },
     "boxArt": "/snes/box/super-mario-world-2-yoshis-island.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Super Mario World 2: Yoshi's Island",
       "igdb": null
@@ -22216,6 +25366,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/tecmo-super-bowl-iii-final-edition.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Tecmo Super Bowl III: Final Edition",
       "igdb": null
@@ -22262,6 +25417,11 @@
       }
     },
     "boxArt": "/snes/box/the-mask.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "The Mask (video game)",
       "igdb": null
@@ -22308,6 +25468,11 @@
       }
     },
     "boxArt": "/snes/box/todd-mcfarlanes-spawn-the-video-game.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Todd McFarlane's Spawn: The Video Game",
       "igdb": null
@@ -22341,6 +25506,11 @@
       }
     },
     "boxArt": "/snes/box/mortal-kombat-3.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Mortal Kombat 3",
       "igdb": null
@@ -22369,6 +25539,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/nfl-quarterback-club-96.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "NFL Quarterback Club 96",
       "igdb": null
@@ -22397,6 +25572,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/doom-troopers.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Doom Troopers",
       "igdb": null
@@ -22425,6 +25605,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/emmitt-smith-football.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Emmitt Smith Football",
       "igdb": null
@@ -22460,6 +25645,11 @@
       }
     },
     "boxArt": "/snes/box/frank-thomas-big-hurt-baseball.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Frank Thomas' Big Hurt Baseball",
       "igdb": null
@@ -22492,6 +25682,11 @@
       }
     },
     "boxArt": "/snes/box/international-superstar-soccer-deluxe.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "International Superstar Soccer Deluxe",
       "igdb": null
@@ -22520,6 +25715,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/izzys-quest-for-the-olympic-rings.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Izzy's Quest for the Olympic Rings",
       "igdb": null
@@ -22548,6 +25748,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/jim-lees-wildc-a-t-s-covert-action-teams.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": null,
       "igdb": null
@@ -22576,6 +25781,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/jimmy-houstons-bass-tournament-u-s-a.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": null,
       "igdb": null
@@ -22604,6 +25814,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/madden-nfl-96.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Madden NFL '96",
       "igdb": null
@@ -22632,6 +25847,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/nba-give-n-go.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "NBA Give 'n Go",
       "igdb": null
@@ -22662,6 +25882,11 @@
       }
     },
     "boxArt": "/snes/box/scooby-doo-mystery.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Scooby-Doo Mystery",
       "igdb": null
@@ -22709,6 +25934,11 @@
       }
     },
     "boxArt": "/snes/box/super-turrican-2.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Super Turrican 2",
       "igdb": null
@@ -22750,6 +25980,11 @@
       }
     },
     "boxArt": "/snes/box/urban-strike.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Urban Strike",
       "igdb": null
@@ -22781,6 +26016,11 @@
       }
     },
     "boxArt": "/snes/box/venom-spider-man-separation-anxiety.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Venom/Spider-Man: Separation Anxiety",
       "igdb": null
@@ -22814,6 +26054,11 @@
       }
     },
     "boxArt": "/snes/box/wwf-wrestlemania-the-arcade-game.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "WWF WrestleMania: The Arcade Game",
       "igdb": null
@@ -22850,6 +26095,11 @@
       }
     },
     "boxArt": "/snes/box/earthworm-jim-2.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Earthworm Jim 2",
       "igdb": null
@@ -22888,6 +26138,11 @@
       }
     },
     "boxArt": "/snes/box/breath-of-fire-ii.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Breath of Fire II",
       "igdb": null
@@ -22935,6 +26190,11 @@
       }
     },
     "boxArt": "/snes/box/final-fight-3.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Final Fight 3",
       "igdb": null
@@ -22963,6 +26223,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/kawasaki-superbike-challenge.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Kawasaki Superbike Challenge",
       "igdb": null
@@ -22991,6 +26256,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/p-t-o-ii-pacific-theater-of-operations.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "P.T.O. II: Pacific Theater of Operations",
       "igdb": null
@@ -23025,6 +26295,11 @@
       }
     },
     "boxArt": "/snes/box/revolution-x.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Revolution X",
       "igdb": null
@@ -23055,6 +26330,11 @@
       }
     },
     "boxArt": "/snes/box/syndicate.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Syndicate (1993 video game)",
       "igdb": null
@@ -23101,6 +26381,11 @@
       }
     },
     "boxArt": "/snes/box/toy-story.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Toy Story (video game)",
       "igdb": null
@@ -23129,6 +26414,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/war-2410.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "War 2410",
       "igdb": null
@@ -23159,6 +26449,11 @@
       }
     },
     "boxArt": "/snes/box/wayne-gretzky-and-the-nhlpa-all-stars.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Wayne Gretzky and the NHLPA All-Stars",
       "igdb": null
@@ -23202,6 +26497,11 @@
       }
     },
     "boxArt": "/snes/box/donkey-kong-country-2-diddys-kong-quest.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Donkey Kong Country 2: Diddy's Kong Quest",
       "igdb": null
@@ -23240,6 +26540,11 @@
       }
     },
     "boxArt": "/snes/box/boogerman-a-pick-and-flick-adventure.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Boogerman: A Pick and Flick Adventure",
       "igdb": null
@@ -23268,6 +26573,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/college-slam.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "College Slam",
       "igdb": null
@@ -23310,6 +26620,11 @@
       }
     },
     "boxArt": "/snes/box/mega-man-x3.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Mega Man X3",
       "igdb": null
@@ -23340,6 +26655,11 @@
       }
     },
     "boxArt": "/snes/box/pga-tour-96.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "PGA Tour 96",
       "igdb": null
@@ -23375,6 +26695,11 @@
       }
     },
     "boxArt": "/snes/box/prehistorik-man.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Prehistorik Man",
       "igdb": null
@@ -23403,6 +26728,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/cutthroat-island.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Cutthroat Island (video game)",
       "igdb": null
@@ -23446,6 +26776,11 @@
       }
     },
     "boxArt": "/snes/box/frantic-flea.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Frantic Flea",
       "igdb": null
@@ -23479,6 +26814,11 @@
       }
     },
     "boxArt": "/snes/box/mark-davis-the-fishing-master.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Mark Davis' The Fishing Master",
       "igdb": null
@@ -23507,6 +26847,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/the-brainies.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "The Brainies",
       "igdb": null
@@ -23550,6 +26895,11 @@
       }
     },
     "boxArt": "/snes/box/power-piggs-of-the-dark-age.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Power Piggs of the Dark Age",
       "igdb": null
@@ -23599,6 +26949,11 @@
       }
     },
     "boxArt": "/snes/box/super-mario-rpg-legend-of-the-seven-stars.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Super Mario RPG: Legend of the Seven Stars",
       "igdb": null
@@ -23638,6 +26993,11 @@
       }
     },
     "boxArt": "/snes/box/ken-griffey-jr-s-winning-run.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Ken Griffey Jr.'s Winning Run",
       "igdb": null
@@ -23667,6 +27027,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/olympic-summer-games.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Olympic Summer Games (video game)",
       "igdb": null
@@ -23698,6 +27063,11 @@
       }
     },
     "boxArt": "/snes/box/bass-masters-classic-pro-edition.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Bass Masters Classic: Pro Edition",
       "igdb": null
@@ -23733,6 +27103,11 @@
       }
     },
     "boxArt": "/snes/box/lufia-ii-rise-of-the-sinistrals.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Lufia II: Rise of the Sinistrals",
       "igdb": null
@@ -23763,6 +27138,11 @@
       }
     },
     "boxArt": "/snes/box/magic-boy.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Magic Boy (video game)",
       "igdb": null
@@ -23804,6 +27184,11 @@
       }
     },
     "boxArt": "/snes/box/mohawk-and-headphone-jack.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Mohawk & Headphone Jack",
       "igdb": null
@@ -23838,6 +27223,11 @@
       }
     },
     "boxArt": "/snes/box/tetris-attack.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Tetris Attack",
       "igdb": null
@@ -23866,6 +27256,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/pga-european-tour.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "PGA European Tour (video game)",
       "igdb": null
@@ -23894,6 +27289,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/power-rangers-zeo-battle-racers.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Power Rangers Zeo: Battle Racers",
       "igdb": null
@@ -23941,6 +27341,11 @@
       }
     },
     "boxArt": "/snes/box/kirby-super-star.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Kirby Super Star",
       "igdb": null
@@ -23973,6 +27378,11 @@
       }
     },
     "boxArt": "/snes/box/madden-nfl-97.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Madden NFL 97",
       "igdb": null
@@ -24003,6 +27413,11 @@
       }
     },
     "boxArt": "/snes/box/oscar.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Oscar (video game)",
       "igdb": null
@@ -24031,6 +27446,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/prince-of-persia-2-the-shadow-and-the-flame.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Prince of Persia 2: The Shadow and the Flame",
       "igdb": null
@@ -24061,6 +27481,11 @@
       }
     },
     "boxArt": "/snes/box/war-3010-the-revolution.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "War 3010: The Revolution",
       "igdb": null
@@ -24092,6 +27517,11 @@
       }
     },
     "boxArt": "/snes/box/williams-arcades-greatest-hits.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Williams Arcade's Greatest Hits",
       "igdb": null
@@ -24125,6 +27555,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/ultimate-mortal-kombat-3.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Ultimate Mortal Kombat 3",
       "igdb": null
@@ -24153,6 +27588,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/nhl-97.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "NHL 97",
       "igdb": null
@@ -24183,6 +27623,11 @@
       }
     },
     "boxArt": "/snes/box/simcity-2000.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "SimCity 2000",
       "igdb": null
@@ -24225,6 +27670,11 @@
       }
     },
     "boxArt": "/snes/box/street-fighter-alpha-2.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Street Fighter Alpha 2",
       "igdb": null
@@ -24256,6 +27706,11 @@
       }
     },
     "boxArt": "/snes/box/fifa-97-gold-edition.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "FIFA 97",
       "igdb": null
@@ -24295,6 +27750,11 @@
       }
     },
     "boxArt": "/snes/box/marvel-super-heroes-war-of-the-gems.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Marvel Super Heroes: War of the Gems",
       "igdb": null
@@ -24323,6 +27783,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/sink-or-swim.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Sink or Swim (video game)",
       "igdb": null
@@ -24351,6 +27816,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/whizz.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Whizz (video game)",
       "igdb": null
@@ -24379,6 +27849,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/nba-hangtime.jpg",
+    "media": {
+      "video": false,
+      "logo": false,
+      "box3d": false
+    },
     "sources": {
       "wikipedia": "NBA Hangtime",
       "igdb": null
@@ -24407,6 +27882,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/ms-pac-man.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Ms. Pac-Man",
       "igdb": null
@@ -24435,6 +27915,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/pinocchio.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Pinocchio (video game)",
       "igdb": null
@@ -24478,6 +27963,11 @@
       }
     },
     "boxArt": "/snes/box/donkey-kong-country-3-dixie-kongs-double-trouble.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Donkey Kong Country 3: Dixie Kong's Double Trouble!",
       "igdb": null
@@ -24506,6 +27996,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/casper.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Casper (video game)",
       "igdb": null
@@ -24534,6 +28029,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/college-football-usa-97-the-road-to-new-orleans.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "College Football USA '97",
       "igdb": null
@@ -24573,6 +28073,11 @@
       }
     },
     "boxArt": "/snes/box/incantation.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Incantation (video game)",
       "igdb": null
@@ -24601,6 +28106,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/mr-do.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Mr. Do!",
       "igdb": null
@@ -24629,6 +28139,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/nba-live-97.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "NBA Live 97",
       "igdb": null
@@ -24669,6 +28184,11 @@
       }
     },
     "boxArt": "/snes/box/realm.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Realm (video game)",
       "igdb": null
@@ -24705,6 +28225,11 @@
       }
     },
     "boxArt": "/snes/box/maui-mallard-in-cold-shadow.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Maui Mallard in Cold Shadow",
       "igdb": null
@@ -24735,6 +28260,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/the-lost-vikings-2.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "The Lost Vikings 2",
       "igdb": null
@@ -24771,6 +28301,11 @@
       }
     },
     "boxArt": "/snes/box/harvest-moon.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Harvest Moon (video game)",
       "igdb": null
@@ -24799,6 +28334,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/brunswick-world-tournament-of-champions.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Brunswick World: Tournament of Champions",
       "igdb": null
@@ -24827,6 +28367,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/arcades-greatest-hits-the-atari-collection-1.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Arcade's Greatest Hits: The Atari Collection 1",
       "igdb": null
@@ -24859,6 +28404,11 @@
       }
     },
     "boxArt": "/snes/box/nhl-98.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "NHL 98",
       "igdb": null
@@ -24888,6 +28438,11 @@
       "other": {}
     },
     "boxArt": "/snes/box/nba-live-98.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "NBA Live 98",
       "igdb": null
@@ -24925,6 +28480,11 @@
       }
     },
     "boxArt": "/snes/box/arkanoid-doh-it-again.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Arkanoid: Doh It Again",
       "igdb": null
@@ -24963,6 +28523,11 @@
       }
     },
     "boxArt": "/snes/box/space-invaders.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Space Invaders DX",
       "igdb": null
@@ -24999,6 +28564,11 @@
       }
     },
     "boxArt": "/snes/box/kirbys-dream-land-3.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Kirby's Dream Land 3",
       "igdb": null
@@ -25032,6 +28602,11 @@
       }
     },
     "boxArt": "/snes/box/timon-and-pumbaas-jungle-games.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Timon & Pumbaa's Jungle Games",
       "igdb": null
@@ -25062,6 +28637,11 @@
       }
     },
     "boxArt": "/snes/box/madden-nfl-98.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Madden NFL 98",
       "igdb": null
@@ -25097,6 +28677,11 @@
       }
     },
     "boxArt": "/snes/box/frogger.jpg",
+    "media": {
+      "video": true,
+      "logo": true,
+      "box3d": true
+    },
     "sources": {
       "wikipedia": "Frogger",
       "igdb": null

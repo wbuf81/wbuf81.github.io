@@ -1,0 +1,2854 @@
+{
+  "f-zero": {
+    "base": "F-Zero (USA)",
+    "clipStart": 4
+  },
+  "gradius-iii": {
+    "base": "Gradius III (USA)",
+    "clipStart": 4
+  },
+  "pilotwings": {
+    "base": "Pilotwings (USA)",
+    "clipStart": 4
+  },
+  "simcity": {
+    "base": "SimCity (USA)",
+    "clipStart": 4
+  },
+  "super-mario-world": {
+    "base": "Super Mario World (USA)",
+    "clipStart": 4
+  },
+  "drakkhen": {
+    "base": "Drakkhen (USA)",
+    "clipStart": 4
+  },
+  "hals-hole-in-one-golf": {
+    "base": "HAL's Hole in One Golf (USA)",
+    "clipStart": 4
+  },
+  "hyperzone": {
+    "base": "HyperZone (USA)",
+    "clipStart": 4
+  },
+  "populous": {
+    "base": "Populous (USA)",
+    "clipStart": 4
+  },
+  "super-bases-loaded": {
+    "base": "Super Bases Loaded (USA)",
+    "clipStart": 4
+  },
+  "super-r-type": {
+    "base": "Super R-Type (USA)",
+    "clipStart": 4
+  },
+  "the-chessmaster": {
+    "base": "Chessmaster, The (USA)",
+    "clipStart": 4
+  },
+  "u-n-squadron": {
+    "base": "U.N. Squadron (USA)",
+    "clipStart": 4
+  },
+  "actraiser": {
+    "base": "ActRaiser (USA)",
+    "clipStart": 4
+  },
+  "darius-twin": {
+    "base": "Darius Twin (USA)",
+    "clipStart": 4
+  },
+  "final-fantasy-ii": {
+    "base": "Final Fantasy II (USA) (Rev 1)",
+    "clipStart": 4
+  },
+  "final-fight": {
+    "base": "Final Fight (USA)",
+    "clipStart": 4
+  },
+  "john-madden-football": {
+    "base": "John Madden Football (USA)",
+    "clipStart": 4
+  },
+  "paperboy-2": {
+    "base": "Paperboy 2 (USA)",
+    "clipStart": 4
+  },
+  "super-ghouls-n-ghosts": {
+    "base": "Super Ghouls'n Ghosts (USA)",
+    "clipStart": 4
+  },
+  "super-tennis": {
+    "base": "Super Tennis (USA)",
+    "clipStart": 4
+  },
+  "true-golf-classics-waialae-country-club": {
+    "base": "True Golf Classics - Waialae Country Club (USA)",
+    "clipStart": 4
+  },
+  "bill-laimbeers-combat-basketball": {
+    "base": "Bill Laimbeer's Combat Basketball (USA)",
+    "clipStart": 4
+  },
+  "d-force": {
+    "base": "D-Force (USA)",
+    "clipStart": 4
+  },
+  "home-alone": {
+    "base": "Home Alone (USA)",
+    "clipStart": 4
+  },
+  "lagoon": {
+    "base": "Lagoon (USA)",
+    "clipStart": 4
+  },
+  "super-baseball-simulator-1-000": {
+    "base": "Super Baseball Simulator 1.000 (USA)",
+    "clipStart": 4
+  },
+  "super-castlevania-iv": {
+    "base": "Super Castlevania IV (USA)",
+    "clipStart": 4
+  },
+  "super-off-road": {
+    "base": "Super Off Road (USA)",
+    "clipStart": 4
+  },
+  "earth-defense-force": {
+    "base": "Earth Defense Force (USA)",
+    "clipStart": 4
+  },
+  "joe-and-mac": {
+    "base": "Joe & Mac (USA)",
+    "clipStart": 4
+  },
+  "ys-iii-wanderers-from-ys": {
+    "base": "Ys III - Wanderers from Ys (USA)",
+    "clipStart": 4
+  },
+  "super-scope-6": {
+    "base": "Super Scope 6 (USA)",
+    "clipStart": 4
+  },
+  "the-legend-of-the-mystical-ninja": {
+    "base": "Legend of the Mystical Ninja, The (USA)",
+    "clipStart": 4
+  },
+  "nolan-ryans-baseball": {
+    "base": "Nolan Ryan's Baseball (USA)",
+    "clipStart": 4
+  },
+  "contra-iii-the-alien-wars": {
+    "base": "Contra III - The Alien Wars (USA)",
+    "clipStart": 4
+  },
+  "extra-innings": {
+    "base": "Extra Innings (USA)",
+    "clipStart": 4
+  },
+  "lemmings": {
+    "base": "Lemmings (USA) (Rev 1)",
+    "clipStart": 4
+  },
+  "pga-tour-golf": {
+    "base": "PGA Tour Golf (USA)",
+    "clipStart": 4
+  },
+  "pit-fighter": {
+    "base": "Pit-Fighter (USA)",
+    "clipStart": 4
+  },
+  "smart-ball": {
+    "base": "Smart Ball (USA)",
+    "clipStart": 4
+  },
+  "the-addams-family": {
+    "base": "Addams Family, The (USA)",
+    "clipStart": 4
+  },
+  "wwf-super-wrestlemania": {
+    "base": "WWF Super WrestleMania (USA)",
+    "clipStart": 4
+  },
+  "raiden-trad": {
+    "base": "Raiden Trad (USA)",
+    "clipStart": 4
+  },
+  "super-adventure-island": {
+    "base": "Super Adventure Island (USA)",
+    "clipStart": 4
+  },
+  "top-gear": {
+    "base": "Top Gear (USA)",
+    "clipStart": 4
+  },
+  "true-golf-classics-pebble-beach-golf-links": {
+    "base": "True Golf Classics - Pebble Beach Golf Links (USA)",
+    "clipStart": 4
+  },
+  "world-league-soccer": {
+    "base": "World League Soccer (USA)",
+    "clipStart": 4
+  },
+  "xardion": {
+    "base": "Xardion (USA)",
+    "clipStart": 4
+  },
+  "the-legend-of-zelda-a-link-to-the-past": {
+    "base": "Legend of Zelda, The - A Link to the Past (USA)",
+    "clipStart": 4
+  },
+  "arcana": {
+    "base": "Arcana (USA)",
+    "clipStart": 4
+  },
+  "jack-nicklaus-golf": {
+    "base": "Jack Nicklaus Golf (USA)",
+    "clipStart": 4
+  },
+  "romance-of-the-three-kingdoms-ii": {
+    "base": "Romance of the Three Kingdoms II (USA)",
+    "clipStart": 4
+  },
+  "super-soccer": {
+    "base": "Super Soccer (USA)",
+    "clipStart": 4
+  },
+  "the-rocketeer": {
+    "base": "Rocketeer, The (USA)",
+    "clipStart": 4
+  },
+  "garry-kitchens-super-battletank-war-in-the-gulf": {
+    "base": "Garry Kitchen's Super Battletank - War in the Gulf (USA) (Rev 1)",
+    "clipStart": 4
+  },
+  "krustys-super-fun-house": {
+    "base": "Krusty's Super Fun House (USA) (Rev 1)",
+    "clipStart": 4
+  },
+  "space-football-one-on-one": {
+    "base": "Space Football - One on One (USA)",
+    "clipStart": 4
+  },
+  "super-soccer-champ": {
+    "base": "Super Soccer Champ (USA)",
+    "clipStart": 4
+  },
+  "thunder-spirits": {
+    "base": "Thunder Spirits (USA)",
+    "clipStart": 4
+  },
+  "clue": {
+    "base": "Clue (USA)",
+    "clipStart": 4
+  },
+  "race-drivin": {
+    "base": "Race Drivin' (USA)",
+    "clipStart": 4
+  },
+  "spankys-quest": {
+    "base": "Spanky's Quest (USA)",
+    "clipStart": 4
+  },
+  "ka-blooey": {
+    "base": "Ka-blooey (USA)",
+    "clipStart": 4
+  },
+  "magic-sword": {
+    "base": "Magic Sword (USA)",
+    "clipStart": 4
+  },
+  "rampart": {
+    "base": "Rampart (USA)",
+    "clipStart": 4
+  },
+  "soul-blazer": {
+    "base": "Soul Blazer (USA)",
+    "clipStart": 4
+  },
+  "super-play-action-football": {
+    "base": "Super Play Action Football (USA)",
+    "clipStart": 4
+  },
+  "teenage-mutant-ninja-turtles-iv-turtles-in-time": {
+    "base": "Teenage Mutant Ninja Turtles IV - Turtles in Time (USA)",
+    "clipStart": 4
+  },
+  "mario-paint": {
+    "base": "Mario Paint (Japan, USA)",
+    "clipStart": 4
+  },
+  "axelay": {
+    "base": "Axelay (USA)",
+    "clipStart": 4
+  },
+  "dinocity": {
+    "base": "Dino City (USA)",
+    "clipStart": 4
+  },
+  "f1-roc-race-of-champions": {
+    "base": "F1 ROC - Race of Champions (USA)",
+    "clipStart": 4
+  },
+  "faceball-2000": {
+    "base": "Faceball 2000 (USA)",
+    "clipStart": 4
+  },
+  "george-foremans-ko-boxing": {
+    "base": "George Foreman's KO Boxing (USA) (Rev 1)",
+    "clipStart": 4
+  },
+  "monopoly": {
+    "base": "Monopoly (USA) (Rev 1)",
+    "clipStart": 4
+  },
+  "robocop-3": {
+    "base": "RoboCop 3 (USA)",
+    "clipStart": 4
+  },
+  "super-bowling": {
+    "base": "Super Bowling (USA)",
+    "clipStart": 4
+  },
+  "super-mario-kart": {
+    "base": "Super Mario Kart (USA)",
+    "clipStart": 4
+  },
+  "roger-clemens-mvp-baseball": {
+    "base": "Roger Clemens' MVP Baseball (USA) (Rev 1)",
+    "clipStart": 4
+  },
+  "battle-clash": {
+    "base": "Battle Clash (USA)",
+    "clipStart": 4
+  },
+  "blazeon-the-bio-cyborg-challenge": {
+    "base": "BlaZeon - The Bio-Cyborg Challenge (USA)",
+    "clipStart": 4
+  },
+  "desert-strike-return-to-the-gulf": {
+    "base": "Desert Strike - Return to the Gulf (USA)",
+    "clipStart": 4
+  },
+  "final-fantasy-mystic-quest": {
+    "base": "Final Fantasy - Mystic Quest (USA) (Rev 1)",
+    "clipStart": 4
+  },
+  "home-alone-2-lost-in-new-york": {
+    "base": "Home Alone 2 - Lost in New York (USA)",
+    "clipStart": 4
+  },
+  "hook": {
+    "base": "Hook (USA)",
+    "clipStart": 4
+  },
+  "james-bond-jr": {
+    "base": "James Bond Jr (USA)",
+    "clipStart": 4
+  },
+  "king-of-the-monsters": {
+    "base": "King of the Monsters (USA)",
+    "clipStart": 4
+  },
+  "ncaa-basketball": {
+    "base": "NCAA Basketball (USA) (Rev 1)",
+    "clipStart": 4
+  },
+  "phalanx": {
+    "base": "Phalanx (USA)",
+    "clipStart": 4
+  },
+  "q-bert-3": {
+    "base": "Q-bert 3 (USA)",
+    "clipStart": 4
+  },
+  "skuljagger-revolt-of-the-westicans": {
+    "base": "Skuljagger - Revolt of the Westicans (USA)",
+    "clipStart": 4
+  },
+  "space-megaforce": {
+    "base": "Space Megaforce (USA)",
+    "clipStart": 4
+  },
+  "strike-gunner-s-t-g": {
+    "base": "Strike Gunner S.T.G (USA)",
+    "clipStart": 4
+  },
+  "super-batter-up": {
+    "base": "Super Batter Up (USA)",
+    "clipStart": 4
+  },
+  "super-buster-bros": {
+    "base": "Super Buster Bros. (USA) (Rev 1)",
+    "clipStart": 4
+  },
+  "super-double-dragon": {
+    "base": "Super Double Dragon (USA)",
+    "clipStart": 4
+  },
+  "the-irem-skins-game": {
+    "base": "Irem Skins Game, The (USA)",
+    "clipStart": 4
+  },
+  "the-simpsons-barts-nightmare": {
+    "base": "Simpsons, The - Bart's Nightmare (USA)",
+    "clipStart": 4
+  },
+  "tko-super-championship-boxing": {
+    "base": "TKO Super Championship Boxing (USA)",
+    "clipStart": 4
+  },
+  "wings-2-aces-high": {
+    "base": "Wings 2 - Aces High (USA)",
+    "clipStart": 4
+  },
+  "captain-novolin": {
+    "base": "Captain Novolin (USA) (En,Fr,Es)",
+    "clipStart": 4
+  },
+  "chuck-rock": {
+    "base": "Chuck Rock (USA)",
+    "clipStart": 4
+  },
+  "cyber-spin": {
+    "base": "Cyber Spin (USA)",
+    "clipStart": 4
+  },
+  "david-cranes-amazing-tennis": {
+    "base": "David Crane's Amazing Tennis (USA)",
+    "clipStart": 4
+  },
+  "firepower-2000": {
+    "base": "Firepower 2000 (USA)",
+    "clipStart": 4
+  },
+  "gunforce": {
+    "base": "GunForce (USA)",
+    "clipStart": 4
+  },
+  "imperium": {
+    "base": "Imperium (USA)",
+    "clipStart": 4
+  },
+  "john-madden-football-93": {
+    "base": "John Madden Football '93 (USA) (Rev 1)",
+    "clipStart": 4
+  },
+  "on-the-ball": {
+    "base": "On the Ball (USA)",
+    "clipStart": 4
+  },
+  "out-of-this-world": {
+    "base": "Out of this World (USA)",
+    "clipStart": 4
+  },
+  "prince-of-persia": {
+    "base": "Prince of Persia (USA)",
+    "clipStart": 4
+  },
+  "road-riot-4wd": {
+    "base": "Road Riot 4WD (USA)",
+    "clipStart": 4
+  },
+  "road-runners-death-valley-rally": {
+    "base": "Road Runner's Death Valley Rally (USA)",
+    "clipStart": 4
+  },
+  "super-star-wars": {
+    "base": "Super Star Wars (USA) (Rev 1)",
+    "clipStart": 4
+  },
+  "wing-commander": {
+    "base": "Wing Commander (USA)",
+    "clipStart": 4
+  },
+  "wordtris": {
+    "base": "Wordtris (USA)",
+    "clipStart": 4
+  },
+  "x-zone": {
+    "base": "X Zone (Japan, USA)",
+    "clipStart": 4
+  },
+  "bazooka-blitzkrieg": {
+    "base": "Bazooka Blitzkrieg (USA)",
+    "clipStart": 4
+  },
+  "bulls-vs-blazers-and-the-nba-playoffs": {
+    "base": "Bulls vs Blazers and the NBA Playoffs (USA) (Rev 1)",
+    "clipStart": 4
+  },
+  "cal-ripken-jr-baseball": {
+    "base": "Cal Ripken Jr. Baseball (USA)",
+    "clipStart": 4
+  },
+  "chester-cheetah-too-cool-to-fool": {
+    "base": "Chester Cheetah - Too Cool to Fool (USA)",
+    "clipStart": 4
+  },
+  "gemfire": {
+    "base": "Gemfire (USA)",
+    "clipStart": 4
+  },
+  "goal": {
+    "base": "Goal! (USA)",
+    "clipStart": 4
+  },
+  "gods": {
+    "base": "Gods (USA)",
+    "clipStart": 4
+  },
+  "jeopardy": {
+    "base": "Jeopardy! (USA)",
+    "clipStart": 4
+  },
+  "jimmy-connors-pro-tennis-tour": {
+    "base": "Jimmy Connors Pro Tennis Tour (USA)",
+    "clipStart": 4
+  },
+  "lethal-weapon": {
+    "base": "Lethal Weapon (USA)",
+    "clipStart": 4
+  },
+  "nba-all-star-challenge": {
+    "base": "NBA All-Star Challenge (USA)",
+    "clipStart": 4
+  },
+  "nhlpa-hockey-93": {
+    "base": "NHLPA Hockey 93 (USA)",
+    "clipStart": 4
+  },
+  "pro-quarterback": {
+    "base": "Pro Quarterback (USA)",
+    "clipStart": 4
+  },
+  "push-over": {
+    "base": "Push-Over (USA)",
+    "clipStart": 4
+  },
+  "rival-turf": {
+    "base": "Rival Turf! (USA)",
+    "clipStart": 4
+  },
+  "the-duel-test-drive-ii": {
+    "base": "Duel, The - Test Drive II (USA)",
+    "clipStart": 4
+  },
+  "the-magical-quest-starring-mickey-mouse": {
+    "base": "Magical Quest Starring Mickey Mouse, The (USA)",
+    "clipStart": 4
+  },
+  "warpspeed": {
+    "base": "WarpSpeed (USA)",
+    "clipStart": 4
+  },
+  "california-games-ii": {
+    "base": "California Games II (USA)",
+    "clipStart": 4
+  },
+  "power-moves": {
+    "base": "Power Moves (USA)",
+    "clipStart": 4
+  },
+  "the-hunt-for-red-october": {
+    "base": "Hunt for Red October, The (USA)",
+    "clipStart": 4
+  },
+  "uncharted-waters": {
+    "base": "Uncharted Waters (USA)",
+    "clipStart": 4
+  },
+  "aerobiz": {
+    "base": "Aerobiz (USA)",
+    "clipStart": 4
+  },
+  "cool-world": {
+    "base": "Cool World (USA)",
+    "clipStart": 4
+  },
+  "dragons-lair": {
+    "base": "Dragon's Lair (USA)",
+    "clipStart": 4
+  },
+  "harleys-humongous-adventure": {
+    "base": "Harley's Humongous Adventure (USA)",
+    "clipStart": 4
+  },
+  "shanghai-ii-dragons-eye": {
+    "base": "Shanghai II - Dragon's Eye (USA)",
+    "clipStart": 4
+  },
+  "sonic-blast-man": {
+    "base": "Sonic Blast Man (USA)",
+    "clipStart": 4
+  },
+  "super-valis-iv": {
+    "base": "Super Valis IV (USA)",
+    "clipStart": 4
+  },
+  "the-addams-family-pugsleys-scavenger-hunt": {
+    "base": "Addams Family, The - Pugsley's Scavenger Hunt (USA)",
+    "clipStart": 4
+  },
+  "tiny-toon-adventures-buster-busts-loose": {
+    "base": "Tiny Toon Adventures - Buster Busts Loose! (USA)",
+    "clipStart": 4
+  },
+  "inindo-way-of-the-ninja": {
+    "base": "Inindo - Way of the Ninja (USA)",
+    "clipStart": 4
+  },
+  "spindizzy-worlds": {
+    "base": "Spindizzy Worlds (USA)",
+    "clipStart": 4
+  },
+  "super-conflict": {
+    "base": "Super Conflict (USA)",
+    "clipStart": 4
+  },
+  "super-strike-eagle": {
+    "base": "Super Strike Eagle (USA)",
+    "clipStart": 4
+  },
+  "tecmo-super-nba-basketball": {
+    "base": "Tecmo Super NBA Basketball (USA)",
+    "clipStart": 4
+  },
+  "the-combatribes": {
+    "base": "Combatribes, The (USA)",
+    "clipStart": 4
+  },
+  "star-fox": {
+    "base": "Star Fox (USA) (Rev 2)",
+    "clipStart": 4
+  },
+  "american-gladiators": {
+    "base": "American Gladiators (USA)",
+    "clipStart": 4
+  },
+  "battle-grand-prix": {
+    "base": "Battle Grand Prix (USA)",
+    "clipStart": 4
+  },
+  "brawl-brothers": {
+    "base": "Brawl Brothers (USA)",
+    "clipStart": 4
+  },
+  "cybernator": {
+    "base": "Cybernator (USA)",
+    "clipStart": 4
+  },
+  "doomsday-warrior": {
+    "base": "Doomsday Warrior (USA)",
+    "clipStart": 4
+  },
+  "fatal-fury": {
+    "base": "Fatal Fury (USA)",
+    "clipStart": 4
+  },
+  "outlander": {
+    "base": "Outlander (USA)",
+    "clipStart": 4
+  },
+  "street-combat": {
+    "base": "Street Combat (USA)",
+    "clipStart": 4
+  },
+  "super-ninja-boy": {
+    "base": "Super Ninja Boy (USA)",
+    "clipStart": 4
+  },
+  "the-lost-vikings": {
+    "base": "Lost Vikings, The (USA)",
+    "clipStart": 4
+  },
+  "the-terminator": {
+    "base": "Terminator, The (USA)",
+    "clipStart": 4
+  },
+  "tom-and-jerry": {
+    "base": "Tom and Jerry (USA)",
+    "clipStart": 4
+  },
+  "vegas-stakes": {
+    "base": "Vegas Stakes (USA)",
+    "clipStart": 4
+  },
+  "waynes-world": {
+    "base": "Wayne's World (USA)",
+    "clipStart": 4
+  },
+  "yoshis-cookie": {
+    "base": "Yoshi's Cookie (USA)",
+    "clipStart": 4
+  },
+  "alien-3": {
+    "base": "Alien 3 (USA)",
+    "clipStart": 4
+  },
+  "batman-returns": {
+    "base": "Batman Returns (USA)",
+    "clipStart": 4
+  },
+  "bubsy-in-claws-encounters-of-the-furred-kind": {
+    "base": "Bubsy in - Claws Encounters of the Furred Kind (USA)",
+    "clipStart": 4
+  },
+  "congos-caper": {
+    "base": "Congo's Caper (USA)",
+    "clipStart": 4
+  },
+  "mechwarrior": {
+    "base": "MechWarrior (USA)",
+    "clipStart": 4
+  },
+  "shadowrun": {
+    "base": "Shadowrun (USA)",
+    "clipStart": 4
+  },
+  "super-black-bass": {
+    "base": "Super Black Bass (USA)",
+    "clipStart": 4
+  },
+  "super-turrican": {
+    "base": "Super Turrican (USA)",
+    "clipStart": 4
+  },
+  "taz-mania": {
+    "base": "Taz-Mania (USA) (Rev 1)",
+    "clipStart": 4
+  },
+  "where-in-time-is-carmen-sandiego": {
+    "base": "Where in Time Is Carmen Sandiego (USA) (En,Fr,De,Es,It)",
+    "clipStart": 4
+  },
+  "b-o-b": {
+    "base": "B.O.B. (USA)",
+    "clipStart": 4
+  },
+  "battletoads-in-battlemaniacs": {
+    "base": "Battletoads in Battlemaniacs (USA)",
+    "clipStart": 4
+  },
+  "cacoma-knight-in-bizyland": {
+    "base": "Cacoma Knight in Bizyland (USA)",
+    "clipStart": 4
+  },
+  "dungeon-master": {
+    "base": "Dungeon Master (USA)",
+    "clipStart": 4
+  },
+  "family-dog": {
+    "base": "Family Dog (USA)",
+    "clipStart": 4
+  },
+  "kawasaki-caribbean-challenge": {
+    "base": "Kawasaki Caribbean Challenge (USA)",
+    "clipStart": 4
+  },
+  "mario-is-missing": {
+    "base": "Mario Is Missing! (USA)",
+    "clipStart": 4
+  },
+  "pocky-and-rocky": {
+    "base": "Pocky & Rocky (USA)",
+    "clipStart": 4
+  },
+  "rock-n-roll-racing": {
+    "base": "Rock n' Roll Racing (USA)",
+    "clipStart": 4
+  },
+  "run-saber": {
+    "base": "Run Saber (USA)",
+    "clipStart": 4
+  },
+  "super-high-impact": {
+    "base": "Super High Impact (USA)",
+    "clipStart": 4
+  },
+  "the-adventures-of-rocky-and-bullwinkle-and-friends": {
+    "base": "Adventures of Rocky and Bullwinkle and Friends, The (USA)",
+    "clipStart": 4
+  },
+  "the-blues-brothers": {
+    "base": "Blues Brothers, The (USA)",
+    "clipStart": 4
+  },
+  "the-great-waldo-search": {
+    "base": "Great Waldo Search, The (USA)",
+    "clipStart": 4
+  },
+  "where-in-the-world-is-carmen-sandiego": {
+    "base": "Where in the World Is Carmen Sandiego (USA) (En,Fr,De,Es,It)",
+    "clipStart": 4
+  },
+  "wolfchild": {
+    "base": "Wolfchild (USA)",
+    "clipStart": 4
+  },
+  "wwf-royal-rumble": {
+    "base": "WWF Royal Rumble (USA)",
+    "clipStart": 4
+  },
+  "e-v-o-search-for-eden": {
+    "base": "E.V.O. - Search for Eden (USA)",
+    "clipStart": 4
+  },
+  "first-samurai": {
+    "base": "First Samurai (USA)",
+    "clipStart": 4
+  },
+  "goof-troop": {
+    "base": "Goof Troop (USA)",
+    "clipStart": 4
+  },
+  "nfl-football": {
+    "base": "NFL Football (USA)",
+    "clipStart": 4
+  },
+  "nigel-mansells-world-championship-racing": {
+    "base": "Nigel Mansell's World Championship Racing (USA)",
+    "clipStart": 4
+  },
+  "super-baseball-2020": {
+    "base": "2020 Super Baseball (USA)",
+    "clipStart": 4
+  },
+  "super-james-pond": {
+    "base": "Super James Pond (USA)",
+    "clipStart": 4
+  },
+  "super-off-road-the-baja": {
+    "base": "Super Off Road - The Baja (USA)",
+    "clipStart": 4
+  },
+  "super-slam-dunk": {
+    "base": "Super Slam Dunk (USA)",
+    "clipStart": 4
+  },
+  "final-fight-2": {
+    "base": "Final Fight 2 (USA)",
+    "clipStart": 4
+  },
+  "super-caesars-palace": {
+    "base": "Super Caesars Palace (USA)",
+    "clipStart": 4
+  },
+  "super-mario-all-stars": {
+    "base": "Super Mario All-Stars (USA)",
+    "clipStart": 4
+  },
+  "super-slap-shot": {
+    "base": "Super Slap Shot (USA)",
+    "clipStart": 4
+  },
+  "top-gear-2": {
+    "base": "Top Gear 2 (USA)",
+    "clipStart": 4
+  },
+  "alien-vs-predator": {
+    "base": "Alien vs Predator (USA)",
+    "clipStart": 4
+  },
+  "bram-stokers-dracula": {
+    "base": "Bram Stoker's Dracula (USA)",
+    "clipStart": 4
+  },
+  "captain-america-and-the-avengers": {
+    "base": "Captain America and the Avengers (USA)",
+    "clipStart": 4
+  },
+  "cool-spot": {
+    "base": "Cool Spot (USA)",
+    "clipStart": 4
+  },
+  "f1-pole-position": {
+    "base": "F1 Pole Position (USA)",
+    "clipStart": 4
+  },
+  "family-feud": {
+    "base": "Family Feud (USA) (Rev 1)",
+    "clipStart": 4
+  },
+  "gp-1": {
+    "base": "GP-1 (USA)",
+    "clipStart": 4
+  },
+  "mecarobot-golf": {
+    "base": "Mecarobot Golf (USA)",
+    "clipStart": 4
+  },
+  "p-t-o-pacific-theater-of-operations": {
+    "base": "P.T.O. - Pacific Theater of Operations (USA)",
+    "clipStart": 4
+  },
+  "plok": {
+    "base": "Plok (USA)",
+    "clipStart": 4
+  },
+  "redline-f-1-racer": {
+    "base": "Redline F-1 Racer (USA)",
+    "clipStart": 4
+  },
+  "rocky-rodent": {
+    "base": "Rocky Rodent (USA)",
+    "clipStart": 4
+  },
+  "super-bomberman": {
+    "base": "Super Bomberman (USA)",
+    "clipStart": 4
+  },
+  "super-widget": {
+    "base": "Super Widget (USA)",
+    "clipStart": 4
+  },
+  "the-7th-saga": {
+    "base": "7th Saga, The (USA)",
+    "clipStart": 4
+  },
+  "thomas-the-tank-engine-and-friends": {
+    "base": "Thomas the Tank Engine & Friends (USA)",
+    "clipStart": 4
+  },
+  "tuff-e-nuff": {
+    "base": "Tuff E Nuff (USA)",
+    "clipStart": 4
+  },
+  "utopia-the-creation-of-a-nation": {
+    "base": "Utopia - The Creation of a Nation (USA)",
+    "clipStart": 4
+  },
+  "wing-commander-the-secret-missions": {
+    "base": "Wing Commander - The Secret Missions (USA)",
+    "clipStart": 4
+  },
+  "world-heroes": {
+    "base": "World Heroes (USA)",
+    "clipStart": 4
+  },
+  "yoshis-safari": {
+    "base": "Yoshi's Safari (USA)",
+    "clipStart": 4
+  },
+  "zombies-ate-my-neighbors": {
+    "base": "Zombies Ate My Neighbors (USA)",
+    "clipStart": 4
+  },
+  "mortal-kombat": {
+    "base": "Mortal Kombat (USA)",
+    "clipStart": 4
+  },
+  "boxing-legends-of-the-ring": {
+    "base": "Boxing Legends of the Ring (USA)",
+    "clipStart": 4
+  },
+  "capcoms-mvp-football": {
+    "base": "Capcom's MVP Football (USA)",
+    "clipStart": 4
+  },
+  "cliffhanger": {
+    "base": "Cliffhanger (USA)",
+    "clipStart": 4
+  },
+  "daffy-duck-the-marvin-missions": {
+    "base": "Daffy Duck - The Marvin Missions (USA)",
+    "clipStart": 4
+  },
+  "football-fury": {
+    "base": "Football Fury (USA)",
+    "clipStart": 4
+  },
+  "kendo-rage": {
+    "base": "Kendo Rage (USA)",
+    "clipStart": 4
+  },
+  "last-action-hero": {
+    "base": "Last Action Hero (USA)",
+    "clipStart": 4
+  },
+  "lock-on": {
+    "base": "Lock On (USA)",
+    "clipStart": 4
+  },
+  "nba-showdown": {
+    "base": "NBA Showdown (USA)",
+    "clipStart": 4
+  },
+  "nhl-94": {
+    "base": "NHL '94 (USA)",
+    "clipStart": 4
+  },
+  "pac-attack": {
+    "base": "Pac-Attack (USA)",
+    "clipStart": 4
+  },
+  "paladins-quest": {
+    "base": "Paladin's Quest (USA)",
+    "clipStart": 4
+  },
+  "secret-of-mana": {
+    "base": "Secret of Mana (USA)",
+    "clipStart": 4
+  },
+  "sunset-riders": {
+    "base": "Sunset Riders (USA)",
+    "clipStart": 4
+  },
+  "super-star-wars-the-empire-strikes-back": {
+    "base": "Super Star Wars - The Empire Strikes Back (USA) (Rev 1)",
+    "clipStart": 4
+  },
+  "the-incredible-crash-dummies": {
+    "base": "Incredible Crash Dummies, The (USA)",
+    "clipStart": 4
+  },
+  "the-ren-and-stimpy-show-veediots": {
+    "base": "Ren & Stimpy Show, The - Veediots! (USA)",
+    "clipStart": 4
+  },
+  "the-super-aquatic-games-starring-the-aquabats": {
+    "base": "Super Aquatic Games Starring the Aquabats, The (USA)",
+    "clipStart": 4
+  },
+  "the-wizard-of-oz": {
+    "base": "Wizard of Oz, The (USA)",
+    "clipStart": 4
+  },
+  "troddlers": {
+    "base": "Troddlers (USA)",
+    "clipStart": 4
+  },
+  "true-golf-classics-wicked-18": {
+    "base": "True Golf Classics - Wicked 18 (USA)",
+    "clipStart": 4
+  },
+  "aero-the-acro-bat": {
+    "base": "Aero the Acro-Bat (USA)",
+    "clipStart": 4
+  },
+  "actraiser-2": {
+    "base": "ActRaiser 2 (USA)",
+    "clipStart": 4
+  },
+  "best-of-the-best-championship-karate": {
+    "base": "Best of the Best - Championship Karate (USA)",
+    "clipStart": 4
+  },
+  "biometal": {
+    "base": "BioMetal (USA)",
+    "clipStart": 4
+  },
+  "championship-pool": {
+    "base": "Championship Pool (USA)",
+    "clipStart": 4
+  },
+  "international-tennis-tour": {
+    "base": "International Tennis Tour (USA)",
+    "clipStart": 4
+  },
+  "jurassic-park": {
+    "base": "Jurassic Park (USA) (Rev 1)",
+    "clipStart": 4
+  },
+  "lamborghini-american-challenge": {
+    "base": "Lamborghini American Challenge (USA)",
+    "clipStart": 4
+  },
+  "madden-nfl-94": {
+    "base": "Madden NFL '94 (USA)",
+    "clipStart": 4
+  },
+  "nhl-stanley-cup": {
+    "base": "NHL Stanley Cup (USA) (En,Fr)",
+    "clipStart": 4
+  },
+  "out-to-lunch": {
+    "base": "Out to Lunch (USA)",
+    "clipStart": 4
+  },
+  "pink-goes-to-hollywood": {
+    "base": "Pink Goes to Hollywood (USA)",
+    "clipStart": 4
+  },
+  "ranma-1-2-hard-battle": {
+    "base": "Ranma 1-2 - Hard Battle (USA)",
+    "clipStart": 4
+  },
+  "robocop-versus-the-terminator": {
+    "base": "RoboCop versus The Terminator (USA)",
+    "clipStart": 4
+  },
+  "steel-talons": {
+    "base": "Steel Talons (USA)",
+    "clipStart": 4
+  },
+  "super-battleship": {
+    "base": "Super Battleship (USA)",
+    "clipStart": 4
+  },
+  "super-putty": {
+    "base": "Super Putty (USA)",
+    "clipStart": 4
+  },
+  "tecmo-super-bowl": {
+    "base": "Tecmo Super Bowl (USA)",
+    "clipStart": 4
+  },
+  "terminator-2-judgment-day": {
+    "base": "Terminator 2 - Judgment Day (USA)",
+    "clipStart": 4
+  },
+  "the-lawnmower-man": {
+    "base": "Lawnmower Man, The (USA)",
+    "clipStart": 4
+  },
+  "time-slip": {
+    "base": "Time Slip (USA)",
+    "clipStart": 4
+  },
+  "tony-meolas-sidekicks-soccer": {
+    "base": "Tony Meola's Sidekicks Soccer (USA)",
+    "clipStart": 4
+  },
+  "total-carnage": {
+    "base": "Total Carnage (USA)",
+    "clipStart": 4
+  },
+  "were-back-a-dinosaurs-story": {
+    "base": "We're Back! - A Dinosaur's Story (USA)",
+    "clipStart": 4
+  },
+  "aladdin": {
+    "base": "Aladdin (USA)",
+    "clipStart": 4
+  },
+  "abc-monday-night-football": {
+    "base": "ABC Monday Night Football (USA)",
+    "clipStart": 4
+  },
+  "art-of-fighting": {
+    "base": "Art of Fighting (USA)",
+    "clipStart": 4
+  },
+  "barbie-super-model": {
+    "base": "Barbie Super Model (USA)",
+    "clipStart": 4
+  },
+  "battle-cars": {
+    "base": "Battle Cars (USA)",
+    "clipStart": 4
+  },
+  "beethoven-the-ultimate-canine-caper": {
+    "base": "Beethoven - The Ultimate Canine Caper! (USA)",
+    "clipStart": 4
+  },
+  "dennis-the-menace": {
+    "base": "Dennis the Menace (USA)",
+    "clipStart": 4
+  },
+  "dig-and-spike-volleyball": {
+    "base": "Dig & Spike Volleyball (USA)",
+    "clipStart": 4
+  },
+  "genghis-khan-ii-clan-of-the-gray-wolf": {
+    "base": "Genghis Khan II - Clan of the Gray Wolf (USA)",
+    "clipStart": 4
+  },
+  "inspector-gadget": {
+    "base": "Inspector Gadget (USA)",
+    "clipStart": 4
+  },
+  "lufia-and-the-fortress-of-doom": {
+    "base": "Lufia & the Fortress of Doom (USA)",
+    "clipStart": 4
+  },
+  "marios-time-machine": {
+    "base": "Mario's Time Machine (USA)",
+    "clipStart": 4
+  },
+  "metal-combat-falcons-revenge": {
+    "base": "Metal Combat - Falcon's Revenge (USA)",
+    "clipStart": 4
+  },
+  "metal-marines": {
+    "base": "Metal Marines (USA)",
+    "clipStart": 4
+  },
+  "nobunagas-ambition": {
+    "base": "Nobunaga's Ambition (USA)",
+    "clipStart": 4
+  },
+  "romance-of-the-three-kingdoms-iii-dragon-of-destiny": {
+    "base": "Romance of the Three Kingdoms III - Dragon of Destiny (USA)",
+    "clipStart": 4
+  },
+  "side-pocket": {
+    "base": "Side Pocket (USA)",
+    "clipStart": 4
+  },
+  "soldiers-of-fortune": {
+    "base": "Soldiers of Fortune (USA)",
+    "clipStart": 4
+  },
+  "super-chase-h-q": {
+    "base": "Super Chase H.Q. (USA)",
+    "clipStart": 4
+  },
+  "super-nova": {
+    "base": "Super Nova (USA)",
+    "clipStart": 4
+  },
+  "teenage-mutant-ninja-turtles-tournament-fighters": {
+    "base": "Teenage Mutant Ninja Turtles - Tournament Fighters (USA)",
+    "clipStart": 4
+  },
+  "the-adventures-of-dr-franken": {
+    "base": "Adventures of Dr. Franken, The (USA)",
+    "clipStart": 4
+  },
+  "world-soccer-94-road-to-glory": {
+    "base": "World Soccer 94 - Road to Glory (USA)",
+    "clipStart": 4
+  },
+  "battle-blaze": {
+    "base": "Battle Blaze (USA)",
+    "clipStart": 4
+  },
+  "brett-hull-hockey": {
+    "base": "Brett Hull Hockey (USA)",
+    "clipStart": 4
+  },
+  "lester-the-unlikely": {
+    "base": "Lester the Unlikely (USA)",
+    "clipStart": 4
+  },
+  "lethal-enforcers": {
+    "base": "Lethal Enforcers (USA)",
+    "clipStart": 4
+  },
+  "mega-man-x": {
+    "base": "Mega Man X (USA) (Rev 1)",
+    "clipStart": 4
+  },
+  "riddick-bowe-boxing": {
+    "base": "Riddick Bowe Boxing (USA)",
+    "clipStart": 4
+  },
+  "skyblazer": {
+    "base": "Skyblazer (USA)",
+    "clipStart": 4
+  },
+  "super-battletank-2": {
+    "base": "Super Battletank 2 (USA)",
+    "clipStart": 4
+  },
+  "super-solitaire": {
+    "base": "Super Solitaire (USA) (En,Fr,De,Es,It)",
+    "clipStart": 4
+  },
+  "zool-ninja-of-the-nth-dimension": {
+    "base": "Zool - Ninja of the 'Nth' Dimension (USA)",
+    "clipStart": 4
+  },
+  "ardy-lightfoot": {
+    "base": "Ardy Lightfoot (USA)",
+    "clipStart": 4
+  },
+  "bill-walsh-college-football": {
+    "base": "Bill Walsh College Football (USA)",
+    "clipStart": 4
+  },
+  "bugs-bunny-rabbit-rampage": {
+    "base": "Bugs Bunny - Rabbit Rampage (USA)",
+    "clipStart": 4
+  },
+  "mickeys-ultimate-challenge": {
+    "base": "Mickey's Ultimate Challenge (USA)",
+    "clipStart": 4
+  },
+  "pro-sport-hockey": {
+    "base": "Pro Sport Hockey (USA)",
+    "clipStart": 4
+  },
+  "sports-illustrated-championship-football-and-baseball": {
+    "base": "Sports Illustrated Championship Football & Baseball (USA)",
+    "clipStart": 4
+  },
+  "super-bases-loaded-2": {
+    "base": "Super Bases Loaded 2 (USA)",
+    "clipStart": 4
+  },
+  "super-troll-islands": {
+    "base": "Super Troll Islands (USA)",
+    "clipStart": 4
+  },
+  "t2-the-arcade-game": {
+    "base": "T2 - The Arcade Game (USA)",
+    "clipStart": 4
+  },
+  "turn-and-burn-no-fly-zone": {
+    "base": "Turn and Burn - No-Fly Zone (USA)",
+    "clipStart": 4
+  },
+  "winter-olympic-games-lillehammer-94": {
+    "base": "Winter Olympic Games - Lillehammer '94 (USA) (En,Fr,De,Es,It,Pt,Sv,No)",
+    "clipStart": 4
+  },
+  "x-kaliber-2097": {
+    "base": "X-Kaliber 2097 (USA)",
+    "clipStart": 4
+  },
+  "chester-cheetah-wild-wild-quest": {
+    "base": "Chester Cheetah - Wild Wild Quest (USA)",
+    "clipStart": 4
+  },
+  "claymates": {
+    "base": "Claymates (USA)",
+    "clipStart": 4
+  },
+  "equinox": {
+    "base": "Equinox (USA)",
+    "clipStart": 4
+  },
+  "ken-griffey-jr-presents-major-league-baseball": {
+    "base": "Ken Griffey Jr. Presents Major League Baseball (USA) (Rev 1)",
+    "clipStart": 4
+  },
+  "mlbpa-baseball": {
+    "base": "MLBPA Baseball (USA)",
+    "clipStart": 4
+  },
+  "star-trek-the-next-generation-futures-past": {
+    "base": "Star Trek - The Next Generation - Future's Past (USA)",
+    "clipStart": 4
+  },
+  "the-flintstones-the-treasure-of-sierra-madrock": {
+    "base": "Flintstones, The - The Treasure of Sierra Madrock (USA)",
+    "clipStart": 4
+  },
+  "the-peace-keepers": {
+    "base": "Peace Keepers, The (USA)",
+    "clipStart": 4
+  },
+  "young-merlin": {
+    "base": "Young Merlin (USA)",
+    "clipStart": 4
+  },
+  "nba-jam": {
+    "base": "NBA Jam (USA) (Rev 1)",
+    "clipStart": 4
+  },
+  "advanced-dungeons-and-dragons-eye-of-the-beholder": {
+    "base": "Advanced Dungeons & Dragons - Eye of the Beholder (USA)",
+    "clipStart": 4
+  },
+  "bebes-kids": {
+    "base": "Bebe's Kids (USA)",
+    "clipStart": 4
+  },
+  "champions-world-class-soccer": {
+    "base": "Champions - World Class Soccer (USA) (En,Fr,De,Es)",
+    "clipStart": 4
+  },
+  "fatal-fury-2": {
+    "base": "Fatal Fury 2 (USA)",
+    "clipStart": 4
+  },
+  "joe-and-mac-2-lost-in-the-tropics": {
+    "base": "Joe & Mac 2 - Lost in the Tropics (USA)",
+    "clipStart": 4
+  },
+  "knights-of-the-round": {
+    "base": "Knights of the Round (USA)",
+    "clipStart": 4
+  },
+  "legend": {
+    "base": "Legend (USA)",
+    "clipStart": 4
+  },
+  "liberty-or-death": {
+    "base": "Liberty or Death (USA)",
+    "clipStart": 4
+  },
+  "mega-man-soccer": {
+    "base": "Mega Man Soccer (USA)",
+    "clipStart": 4
+  },
+  "pinball-dreams": {
+    "base": "Pinball Dreams (USA)",
+    "clipStart": 4
+  },
+  "rockos-modern-life-spunkys-dangerous-day": {
+    "base": "Rocko's Modern Life - Spunky's Dangerous Day (USA)",
+    "clipStart": 4
+  },
+  "sos": {
+    "base": "SOS (USA)",
+    "clipStart": 4
+  },
+  "super-goal-2": {
+    "base": "Super Goal! 2 (USA)",
+    "clipStart": 4
+  },
+  "the-king-of-dragons": {
+    "base": "King of Dragons (USA)",
+    "clipStart": 4
+  },
+  "time-trax": {
+    "base": "Time Trax (USA)",
+    "clipStart": 4
+  },
+  "wizardry-v-heart-of-the-maelstrom": {
+    "base": "Wizardry V - Heart of the Maelstrom (USA)",
+    "clipStart": 4
+  },
+  "super-metroid": {
+    "base": "Super Metroid (Japan, USA) (En,Ja)",
+    "clipStart": 4
+  },
+  "espn-baseball-tonight": {
+    "base": "ESPN Baseball Tonight (USA)",
+    "clipStart": 4
+  },
+  "fifa-international-soccer": {
+    "base": "FIFA International Soccer (USA)",
+    "clipStart": 4
+  },
+  "jeopardy-sports-edition": {
+    "base": "Jeopardy! - Sports Edition (USA)",
+    "clipStart": 4
+  },
+  "relief-pitcher": {
+    "base": "Relief Pitcher (USA)",
+    "clipStart": 4
+  },
+  "rex-ronan-experimental-surgeon": {
+    "base": "Rex Ronan - Experimental Surgeon (USA) (En,Es)",
+    "clipStart": 4
+  },
+  "space-ace": {
+    "base": "Space Ace (USA)",
+    "clipStart": 4
+  },
+  "spectre": {
+    "base": "Spectre (USA)",
+    "clipStart": 4
+  },
+  "super-pinball-behind-the-mask": {
+    "base": "Super Pinball - Behind the Mask (USA) (Rev 1)",
+    "clipStart": 4
+  },
+  "suzuka-8-hours": {
+    "base": "Suzuka 8 Hours (USA)",
+    "clipStart": 4
+  },
+  "the-pirates-of-dark-water": {
+    "base": "Pirates of Dark Water, The (USA)",
+    "clipStart": 4
+  },
+  "andre-agassi-tennis": {
+    "base": "Andre Agassi Tennis (USA)",
+    "clipStart": 4
+  },
+  "3-ninjas-kick-back": {
+    "base": "3 Ninjas Kick Back (USA)",
+    "clipStart": 4
+  },
+  "breakthru": {
+    "base": "BreakThru! (USA)",
+    "clipStart": 4
+  },
+  "capcoms-soccer-shootout": {
+    "base": "Capcom's Soccer Shootout (USA)",
+    "clipStart": 4
+  },
+  "championship-soccer-94": {
+    "base": "Championship Soccer '94 (USA) (En,Fr,De,It)",
+    "clipStart": 4
+  },
+  "final-fight-guy": {
+    "base": "Final Fight Guy (USA)",
+    "clipStart": 4
+  },
+  "hardball-iii": {
+    "base": "HardBall III (USA)",
+    "clipStart": 4
+  },
+  "hyper-v-ball": {
+    "base": "Hyper V-Ball (USA)",
+    "clipStart": 4
+  },
+  "jeopardy-deluxe-edition": {
+    "base": "Jeopardy! - Deluxe Edition (USA)",
+    "clipStart": 4
+  },
+  "king-of-the-monsters-2": {
+    "base": "King of the Monsters 2 (USA)",
+    "clipStart": 4
+  },
+  "natsume-championship-wrestling": {
+    "base": "Natsume Championship Wrestling (USA)",
+    "clipStart": 4
+  },
+  "saturday-night-slam-masters": {
+    "base": "Saturday Night Slam Masters (USA)",
+    "clipStart": 4
+  },
+  "the-jetsons-invasion-of-the-planet-pirates": {
+    "base": "Jetsons, The - Invasion of the Planet Pirates (USA)",
+    "clipStart": 4
+  },
+  "the-ren-and-stimpy-show-fire-dogs": {
+    "base": "Ren & Stimpy Show, The - Fire Dogs (USA)",
+    "clipStart": 4
+  },
+  "the-twisted-tales-of-spike-mcfang": {
+    "base": "Twisted Tales of Spike McFang, The (USA)",
+    "clipStart": 4
+  },
+  "tommy-moes-winter-extreme-skiing-and-snowboarding": {
+    "base": "Tommy Moe's Winter Extreme - Skiing and Snowboarding (USA)",
+    "clipStart": 4
+  },
+  "ultimate-fighter": {
+    "base": "Ultimate Fighter (USA)",
+    "clipStart": 4
+  },
+  "world-cup-usa-94": {
+    "base": "World Cup USA 94 (USA) (En,Fr,De,Es,It,Nl,Pt,Sv)",
+    "clipStart": 4
+  },
+  "barkley-shut-up-and-jam": {
+    "base": "Barkley Shut Up and Jam! (USA)",
+    "clipStart": 4
+  },
+  "beauty-and-the-beast": {
+    "base": "Beauty and the Beast (USA)",
+    "clipStart": 4
+  },
+  "f1-roc-ii-race-of-champions": {
+    "base": "F1-ROC II - Race of Champions (USA)",
+    "clipStart": 4
+  },
+  "stunt-race-fx": {
+    "base": "Stunt Race FX (USA) (Rev 1)",
+    "clipStart": 4
+  },
+  "super-godzilla": {
+    "base": "Super Godzilla (USA)",
+    "clipStart": 4
+  },
+  "aerobiz-supersonic": {
+    "base": "Aerobiz Supersonic (USA)",
+    "clipStart": 4
+  },
+  "an-american-tail-fievel-goes-west": {
+    "base": "American Tail, An - Fievel Goes West (USA)",
+    "clipStart": 4
+  },
+  "breath-of-fire": {
+    "base": "Breath of Fire (USA)",
+    "clipStart": 4
+  },
+  "eek-the-cat": {
+    "base": "Eek! The Cat (USA)",
+    "clipStart": 4
+  },
+  "elite-soccer": {
+    "base": "Elite Soccer (USA)",
+    "clipStart": 4
+  },
+  "fighters-history": {
+    "base": "Fighter's History (USA) (Rev 1)",
+    "clipStart": 4
+  },
+  "fun-n-games": {
+    "base": "Fun 'n Games (USA)",
+    "clipStart": 4
+  },
+  "mr-nutz": {
+    "base": "Mr. Nutz (USA) (En,Fr)",
+    "clipStart": 4
+  },
+  "tetris-2": {
+    "base": "Tetris 2 (USA) (Rev 1)",
+    "clipStart": 4
+  },
+  "the-death-and-return-of-superman": {
+    "base": "Death and Return of Superman, The (USA) (Rev 1)",
+    "clipStart": 4
+  },
+  "the-incredible-hulk": {
+    "base": "Incredible Hulk, The (USA)",
+    "clipStart": 4
+  },
+  "the-jungle-book": {
+    "base": "Jungle Book, The (USA)",
+    "clipStart": 4
+  },
+  "the-untouchables": {
+    "base": "Untouchables, The (USA)",
+    "clipStart": 4
+  },
+  "troy-aikman-nfl-football": {
+    "base": "Troy Aikman NFL Football (USA)",
+    "clipStart": 4
+  },
+  "double-dragon-v-the-shadow-falls": {
+    "base": "Double Dragon V - The Shadow Falls (USA)",
+    "clipStart": 4
+  },
+  "blackthorne": {
+    "base": "Blackthorne (USA)",
+    "clipStart": 4
+  },
+  "kid-klown-in-crazy-chase": {
+    "base": "Kid Klown in Crazy Chase (USA)",
+    "clipStart": 4
+  },
+  "king-arthurs-world": {
+    "base": "King Arthur's World (USA)",
+    "clipStart": 4
+  },
+  "marios-early-years-fun-with-letters": {
+    "base": "Mario's Early Years - Fun with Letters (USA)",
+    "clipStart": 4
+  },
+  "michael-andrettis-indy-car-challenge": {
+    "base": "Michael Andretti's IndyCar Challenge (USA)",
+    "clipStart": 4
+  },
+  "mighty-morphin-power-rangers": {
+    "base": "Mighty Morphin Power Rangers (USA)",
+    "clipStart": 4
+  },
+  "obitus": {
+    "base": "Obitus (USA)",
+    "clipStart": 4
+  },
+  "pac-man-2-the-new-adventures": {
+    "base": "Pac-Man 2 - The New Adventures (USA)",
+    "clipStart": 4
+  },
+  "super-bomberman-2": {
+    "base": "Super Bomberman 2 (USA)",
+    "clipStart": 4
+  },
+  "tecmo-super-baseball": {
+    "base": "Tecmo Super Baseball (USA)",
+    "clipStart": 4
+  },
+  "virtual-bart": {
+    "base": "Virtual Bart (USA)",
+    "clipStart": 4
+  },
+  "vortex": {
+    "base": "Vortex (USA) (En,Es)",
+    "clipStart": 4
+  },
+  "world-heroes-2": {
+    "base": "World Heroes 2 (USA)",
+    "clipStart": 4
+  },
+  "mortal-kombat-ii": {
+    "base": "Mortal Kombat II (USA) (Rev 1)",
+    "clipStart": 4
+  },
+  "illusion-of-gaia": {
+    "base": "Illusion of Gaia (USA)",
+    "clipStart": 4
+  },
+  "adventures-of-yogi-bear": {
+    "base": "Adventures of Yogi Bear (USA)",
+    "clipStart": 4
+  },
+  "bonkers": {
+    "base": "Bonkers (USA)",
+    "clipStart": 4
+  },
+  "brain-lord": {
+    "base": "Brain Lord (USA)",
+    "clipStart": 4
+  },
+  "earthworm-jim": {
+    "base": "Earthworm Jim (USA)",
+    "clipStart": 4
+  },
+  "final-fantasy-iii": {
+    "base": "Final Fantasy III (USA) (Rev 1)",
+    "clipStart": 4
+  },
+  "firestriker": {
+    "base": "FireStriker (USA)",
+    "clipStart": 4
+  },
+  "indiana-jones-greatest-adventures": {
+    "base": "Indiana Jones' Greatest Adventures (USA)",
+    "clipStart": 4
+  },
+  "marios-early-years-fun-with-numbers": {
+    "base": "Mario's Early Years - Fun with Numbers (USA)",
+    "clipStart": 4
+  },
+  "math-blaster-episode-1": {
+    "base": "Math Blaster - Episode 1 (USA)",
+    "clipStart": 4
+  },
+  "nba-live-95": {
+    "base": "NBA Live 95 (USA)",
+    "clipStart": 4
+  },
+  "ncaa-football": {
+    "base": "NCAA Football (USA)",
+    "clipStart": 4
+  },
+  "nobunagas-ambition-lord-of-darkness": {
+    "base": "Lord of Darkness (USA)",
+    "clipStart": 4
+  },
+  "operation-thunderbolt": {
+    "base": "Operation Thunderbolt (USA)",
+    "clipStart": 4
+  },
+  "radical-rex": {
+    "base": "Radical Rex (USA)",
+    "clipStart": 4
+  },
+  "robotrek": {
+    "base": "Robotrek (USA)",
+    "clipStart": 4
+  },
+  "shiens-revenge": {
+    "base": "Shien's Revenge (USA)",
+    "clipStart": 4
+  },
+  "sparkster": {
+    "base": "Sparkster (USA)",
+    "clipStart": 4
+  },
+  "super-adventure-island-ii": {
+    "base": "Super Adventure Island II (USA)",
+    "clipStart": 4
+  },
+  "super-star-wars-return-of-the-jedi": {
+    "base": "Super Star Wars - Return of the Jedi (USA) (Rev 1)",
+    "clipStart": 4
+  },
+  "the-great-circus-mystery-starring-mickey-and-minnie": {
+    "base": "Great Circus Mystery Starring Mickey & Minnie, The (USA)",
+    "clipStart": 4
+  },
+  "uncharted-waters-new-horizons": {
+    "base": "New Horizons (USA)",
+    "clipStart": 4
+  },
+  "bubsy-ii": {
+    "base": "Bubsy II (USA)",
+    "clipStart": 4
+  },
+  "super-punch-out": {
+    "base": "Super Punch-Out!! (USA)",
+    "clipStart": 4
+  },
+  "shaq-fu": {
+    "base": "Shaq-Fu (USA)",
+    "clipStart": 4
+  },
+  "acme-animation-factory": {
+    "base": "ACME Animation Factory (USA)",
+    "clipStart": 4
+  },
+  "aero-fighters": {
+    "base": "Aero Fighters (USA)",
+    "clipStart": 4
+  },
+  "aero-the-acro-bat-2": {
+    "base": "Aero the Acro-Bat 2 (USA)",
+    "clipStart": 4
+  },
+  "al-unser-jr-s-road-to-the-top": {
+    "base": "Al Unser Jr.'s Road to the Top (USA)",
+    "clipStart": 4
+  },
+  "animaniacs": {
+    "base": "Animaniacs (USA)",
+    "clipStart": 4
+  },
+  "beavis-and-butt-head": {
+    "base": "Beavis and Butt-Head (USA)",
+    "clipStart": 4
+  },
+  "cannondale-cup": {
+    "base": "Cannondale Cup (USA)",
+    "clipStart": 4
+  },
+  "demons-crest": {
+    "base": "Demon's Crest (USA)",
+    "clipStart": 4
+  },
+  "dragon-view": {
+    "base": "Dragon View (USA)",
+    "clipStart": 4
+  },
+  "espn-speedworld": {
+    "base": "ESPN Speedworld (USA)",
+    "clipStart": 4
+  },
+  "espn-sunday-night-nfl": {
+    "base": "ESPN Sunday Night NFL (USA)",
+    "clipStart": 4
+  },
+  "ghoul-patrol": {
+    "base": "Ghoul Patrol (USA)",
+    "clipStart": 4
+  },
+  "home-improvement-power-tool-pursuit": {
+    "base": "Home Improvement - Power Tool Pursuit! (USA)",
+    "clipStart": 4
+  },
+  "lemmings-2-the-tribes": {
+    "base": "Lemmings 2 - The Tribes (USA)",
+    "clipStart": 4
+  },
+  "madden-nfl-95": {
+    "base": "Madden NFL 95 (USA)",
+    "clipStart": 4
+  },
+  "marios-early-years-preschool-fun": {
+    "base": "Mario's Early Years - Preschool Fun (USA)",
+    "clipStart": 4
+  },
+  "mary-shelleys-frankenstein": {
+    "base": "Mary Shelley's Frankenstein (USA)",
+    "clipStart": 4
+  },
+  "michael-jordan-chaos-in-the-windy-city": {
+    "base": "Michael Jordan - Chaos in the Windy City (USA)",
+    "clipStart": 4
+  },
+  "newman-haas-indycar-featuring-nigel-mansell": {
+    "base": "Newman-Haas IndyCar featuring Nigel Mansell (USA)",
+    "clipStart": 4
+  },
+  "nhl-95": {
+    "base": "NHL 95 (USA)",
+    "clipStart": 4
+  },
+  "nickelodeon-guts": {
+    "base": "Nickelodeon GUTS (USA)",
+    "clipStart": 4
+  },
+  "no-escape": {
+    "base": "No Escape (USA)",
+    "clipStart": 4
+  },
+  "pitfall-the-mayan-adventure": {
+    "base": "Pitfall - The Mayan Adventure (USA)",
+    "clipStart": 4
+  },
+  "pocky-and-rocky-2": {
+    "base": "Pocky & Rocky 2 (USA)",
+    "clipStart": 4
+  },
+  "samurai-shodown": {
+    "base": "Samurai Shodown (USA)",
+    "clipStart": 4
+  },
+  "sonic-blast-man-ii": {
+    "base": "Sonic Blast Man II (USA)",
+    "clipStart": 4
+  },
+  "speed-racer-in-my-most-dangerous-adventures": {
+    "base": "Speed Racer in My Most Dangerous Adventures (USA)",
+    "clipStart": 4
+  },
+  "stone-protectors": {
+    "base": "Stone Protectors (USA)",
+    "clipStart": 4
+  },
+  "super-bonk": {
+    "base": "Super Bonk (USA)",
+    "clipStart": 4
+  },
+  "the-pagemaster": {
+    "base": "Pagemaster, The (USA)",
+    "clipStart": 4
+  },
+  "the-ren-and-stimpy-show-time-warp": {
+    "base": "Ren & Stimpy Show, The - Time Warp (USA)",
+    "clipStart": 4
+  },
+  "tin-star": {
+    "base": "Tin Star (USA)",
+    "clipStart": 4
+  },
+  "tnn-bass-tournament-of-champions": {
+    "base": "TNN Bass Tournament of Champions (USA)",
+    "clipStart": 4
+  },
+  "ultima-runes-of-virtue-ii": {
+    "base": "Ultima - Runes of Virtue II (USA)",
+    "clipStart": 4
+  },
+  "wolverine-adamantium-rage": {
+    "base": "Wolverine - Adamantium Rage (USA)",
+    "clipStart": 4
+  },
+  "wwf-raw": {
+    "base": "WWF Raw (USA)",
+    "clipStart": 4
+  },
+  "x-men-mutant-apocalypse": {
+    "base": "X-Men - Mutant Apocalypse (USA)",
+    "clipStart": 4
+  },
+  "mickey-mania-the-timeless-adventures-of-mickey-mouse": {
+    "base": "Mickey Mania - The Timeless Adventures of Mickey Mouse (USA)",
+    "clipStart": 4
+  },
+  "zero-the-kamikaze-squirrel": {
+    "base": "Zero the Kamikaze Squirrel (USA)",
+    "clipStart": 4
+  },
+  "the-lion-king": {
+    "base": "Lion King, The (USA)",
+    "clipStart": 4
+  },
+  "donkey-kong-country": {
+    "base": "Donkey Kong Country (USA) (Rev 2)",
+    "clipStart": 4
+  },
+  "biker-mice-from-mars": {
+    "base": "Biker Mice from Mars (USA)",
+    "clipStart": 4
+  },
+  "brutal-paws-of-fury": {
+    "base": "Brutal - Paws of Fury (USA)",
+    "clipStart": 4
+  },
+  "espn-national-hockey-night": {
+    "base": "ESPN National Hockey Night (USA)",
+    "clipStart": 4
+  },
+  "gp-1-part-ii": {
+    "base": "GP-1 - Part II (USA)",
+    "clipStart": 4
+  },
+  "hurricanes": {
+    "base": "Hurricanes (USA)",
+    "clipStart": 4
+  },
+  "metal-morph": {
+    "base": "Metal Morph (USA)",
+    "clipStart": 4
+  },
+  "micro-machines": {
+    "base": "Micro Machines (USA)",
+    "clipStart": 4
+  },
+  "nfl-quarterback-club": {
+    "base": "NFL Quarterback Club (USA)",
+    "clipStart": 4
+  },
+  "pieces": {
+    "base": "Pieces (USA)",
+    "clipStart": 4
+  },
+  "power-instinct": {
+    "base": "Power Instinct (USA)",
+    "clipStart": 4
+  },
+  "rise-of-the-robots": {
+    "base": "Rise of the Robots (USA)",
+    "clipStart": 4
+  },
+  "star-trek-starfleet-academy-starship-bridge-simulator": {
+    "base": "Star Trek - Starfleet Academy - Starship Bridge Simulator (USA)",
+    "clipStart": 4
+  },
+  "street-racer": {
+    "base": "Street Racer (USA)",
+    "clipStart": 4
+  },
+  "super-mario-all-stars-super-mario-world": {
+    "base": "Super Mario All-Stars + Super Mario World (USA)",
+    "clipStart": 4
+  },
+  "tetris-and-dr-mario": {
+    "base": "Tetris & Dr. Mario (USA)",
+    "clipStart": 4
+  },
+  "the-adventures-of-batman-and-robin": {
+    "base": "Adventures of Batman & Robin, The (USA)",
+    "clipStart": 4
+  },
+  "the-tick": {
+    "base": "Tick, The (USA)",
+    "clipStart": 4
+  },
+  "tiny-toon-adventures-wacky-sports-challenge": {
+    "base": "Tiny Toon Adventures - Wacky Sports Challenge (USA)",
+    "clipStart": 4
+  },
+  "uniracers": {
+    "base": "Uniracers (USA)",
+    "clipStart": 4
+  },
+  "warios-woods": {
+    "base": "Wario's Woods (USA)",
+    "clipStart": 4
+  },
+  "a-s-p-air-strike-patrol": {
+    "base": "A.S.P. - Air Strike Patrol (USA)",
+    "clipStart": 4
+  },
+  "brett-hull-hockey-95": {
+    "base": "Brett Hull Hockey 95 (USA)",
+    "clipStart": 4
+  },
+  "carrier-aces": {
+    "base": "Carrier Aces (USA)",
+    "clipStart": 4
+  },
+  "full-throttle-all-american-racing": {
+    "base": "Full Throttle - All-American Racing (USA)",
+    "clipStart": 4
+  },
+  "mega-man-x2": {
+    "base": "Mega Man X2 (USA)",
+    "clipStart": 4
+  },
+  "might-and-magic-iii-isles-of-terra": {
+    "base": "Might and Magic III - Isles of Terra (USA)",
+    "clipStart": 4
+  },
+  "pac-in-time": {
+    "base": "Pac-In-Time (USA)",
+    "clipStart": 4
+  },
+  "rap-jam-volume-one": {
+    "base": "Rap Jam - Volume One (USA) (En,Fr,Es)",
+    "clipStart": 4
+  },
+  "seaquest-dsv": {
+    "base": "SeaQuest DSV (USA)",
+    "clipStart": 4
+  },
+  "tecmo-super-bowl-ii-special-edition": {
+    "base": "Tecmo Super Bowl II - Special Edition (USA)",
+    "clipStart": 4
+  },
+  "the-ignition-factor": {
+    "base": "Ignition Factor, The (USA)",
+    "clipStart": 4
+  },
+  "addams-family-values": {
+    "base": "Addams Family Values (USA) (En,Fr,De)",
+    "clipStart": 4
+  },
+  "brandish": {
+    "base": "Brandish (USA)",
+    "clipStart": 4
+  },
+  "kirbys-dream-course": {
+    "base": "Kirby's Dream Course (USA)",
+    "clipStart": 4
+  },
+  "looney-tunes-b-ball": {
+    "base": "Looney Tunes B-Ball (USA)",
+    "clipStart": 4
+  },
+  "ncaa-final-four-basketball": {
+    "base": "NCAA Final Four Basketball (USA)",
+    "clipStart": 4
+  },
+  "pinball-fantasies": {
+    "base": "Pinball Fantasies (USA)",
+    "clipStart": 4
+  },
+  "rise-of-the-phoenix": {
+    "base": "Rise of the Phoenix (USA)",
+    "clipStart": 4
+  },
+  "spider-man": {
+    "base": "Spider-Man (USA)",
+    "clipStart": 4
+  },
+  "super-bases-loaded-3-license-to-steal": {
+    "base": "Super Bases Loaded 3 - License to Steal (USA)",
+    "clipStart": 4
+  },
+  "the-flintstones": {
+    "base": "Flintstones, The (USA) (En,Fr,De,Es,It)",
+    "clipStart": 4
+  },
+  "top-gear-3000": {
+    "base": "Top Gear 3000 (USA)",
+    "clipStart": 4
+  },
+  "true-lies": {
+    "base": "True Lies (USA)",
+    "clipStart": 4
+  },
+  "nba-jam-tournament-edition": {
+    "base": "NBA Jam - Tournament Edition (USA)",
+    "clipStart": 4
+  },
+  "bust-a-move": {
+    "base": "Bust-A-Move (USA)",
+    "clipStart": 4
+  },
+  "sterling-sharpe-end-2-end": {
+    "base": "Sterling Sharpe - End 2 End (USA)",
+    "clipStart": 4
+  },
+  "the-itchy-and-scratchy-game": {
+    "base": "Itchy & Scratchy Game, The (USA)",
+    "clipStart": 4
+  },
+  "warlock": {
+    "base": "Warlock (USA)",
+    "clipStart": 4
+  },
+  "fatal-fury-special": {
+    "base": "Fatal Fury Special (USA)",
+    "clipStart": 4
+  },
+  "kirbys-avalanche": {
+    "base": "Kirby's Avalanche (USA)",
+    "clipStart": 4
+  },
+  "kyle-pettys-no-fear-racing": {
+    "base": "Kyle Petty's No Fear Racing (USA)",
+    "clipStart": 4
+  },
+  "metal-warriors": {
+    "base": "Metal Warriors (USA)",
+    "clipStart": 4
+  },
+  "stargate": {
+    "base": "Stargate (USA)",
+    "clipStart": 4
+  },
+  "the-ren-and-stimpy-show-buckeroo": {
+    "base": "Ren & Stimpy Show, The - Buckeroo$! (USA)",
+    "clipStart": 4
+  },
+  "timecop": {
+    "base": "Timecop (USA)",
+    "clipStart": 4
+  },
+  "ogre-battle-the-march-of-the-black-queen": {
+    "base": "Ogre Battle - The March of the Black Queen (USA)",
+    "clipStart": 4
+  },
+  "air-cavalry": {
+    "base": "Air Cavalry (USA)",
+    "clipStart": 4
+  },
+  "bass-masters-classic": {
+    "base": "Bass Masters Classic (USA)",
+    "clipStart": 4
+  },
+  "dirt-trax-fx": {
+    "base": "Dirt Trax FX (USA)",
+    "clipStart": 4
+  },
+  "hagane-the-final-conflict": {
+    "base": "Hagane - The Final Conflict (USA)",
+    "clipStart": 4
+  },
+  "international-superstar-soccer": {
+    "base": "International Superstar Soccer (USA)",
+    "clipStart": 4
+  },
+  "jungle-strike": {
+    "base": "Jungle Strike (USA)",
+    "clipStart": 4
+  },
+  "justice-league-task-force": {
+    "base": "Justice League Task Force (USA)",
+    "clipStart": 4
+  },
+  "packy-and-marlon": {
+    "base": "Packy & Marlon (USA) (En,Fr,Es)",
+    "clipStart": 4
+  },
+  "phantom-2040": {
+    "base": "Phantom 2040 (USA)",
+    "clipStart": 4
+  },
+  "sid-meiers-civilization": {
+    "base": "Sid Meier's Civilization (USA)",
+    "clipStart": 4
+  },
+  "super-r-b-i-baseball": {
+    "base": "Super R.B.I. Baseball (USA)",
+    "clipStart": 4
+  },
+  "earthbound": {
+    "base": "EarthBound (USA)",
+    "clipStart": 4
+  },
+  "judge-dredd": {
+    "base": "Judge Dredd (USA)",
+    "clipStart": 4
+  },
+  "dragon-the-bruce-lee-story": {
+    "base": "Dragon - The Bruce Lee Story (USA)",
+    "clipStart": 4
+  },
+  "fifa-soccer-96": {
+    "base": "FIFA Soccer 96 (USA) (En,Fr,De,Es,It,Sv)",
+    "clipStart": 4
+  },
+  "king-arthur-and-the-knights-of-justice": {
+    "base": "King Arthur & The Knights of Justice (USA)",
+    "clipStart": 4
+  },
+  "mighty-morphin-power-rangers-the-movie": {
+    "base": "Mighty Morphin Power Rangers - The Movie (USA)",
+    "clipStart": 4
+  },
+  "romance-of-the-three-kingdoms-iv-wall-of-fire": {
+    "base": "Romance of the Three Kingdoms IV - Wall of Fire (USA)",
+    "clipStart": 4
+  },
+  "wild-guns": {
+    "base": "Wild Guns (USA)",
+    "clipStart": 4
+  },
+  "aaahh-real-monsters": {
+    "base": "Aaahh!!! Real Monsters (USA)",
+    "clipStart": 4
+  },
+  "captain-commando": {
+    "base": "Captain Commando (USA)",
+    "clipStart": 4
+  },
+  "chrono-trigger": {
+    "base": "Chrono Trigger (USA)",
+    "clipStart": 4
+  },
+  "demolition-man": {
+    "base": "Demolition Man (USA)",
+    "clipStart": 4
+  },
+  "ninja-gaiden-trilogy": {
+    "base": "Ninja Gaiden Trilogy (USA)",
+    "clipStart": 4
+  },
+  "speedy-gonzales-los-gatos-bandidos": {
+    "base": "Speedy Gonzales - Los Gatos Bandidos (USA) (Rev 1)",
+    "clipStart": 4
+  },
+  "swat-kats-the-radical-squadron": {
+    "base": "SWAT Kats - The Radical Squadron (USA)",
+    "clipStart": 4
+  },
+  "primal-rage": {
+    "base": "Primal Rage (USA)",
+    "clipStart": 4
+  },
+  "killer-instinct": {
+    "base": "Killer Instinct (USA) (Rev 1)",
+    "clipStart": 4
+  },
+  "bronkie-the-bronchiasaurus": {
+    "base": "Bronkie the Bronchiasaurus (USA) (En,Es)",
+    "clipStart": 4
+  },
+  "castlevania-dracula-x": {
+    "base": "Castlevania - Dracula X (USA)",
+    "clipStart": 4
+  },
+  "doom": {
+    "base": "Doom (USA)",
+    "clipStart": 4
+  },
+  "foreman-for-real": {
+    "base": "Foreman for Real (USA)",
+    "clipStart": 4
+  },
+  "head-on-soccer": {
+    "base": "Head-On Soccer (USA)",
+    "clipStart": 4
+  },
+  "mega-man-7": {
+    "base": "Mega Man 7 (USA)",
+    "clipStart": 4
+  },
+  "mighty-morphin-power-rangers-the-fighting-edition": {
+    "base": "Mighty Morphin Power Rangers - The Fighting Edition (USA)",
+    "clipStart": 4
+  },
+  "nhl-96": {
+    "base": "NHL 96 (USA)",
+    "clipStart": 4
+  },
+  "star-trek-deep-space-nine-crossroads-of-time": {
+    "base": "Star Trek - Deep Space Nine - Crossroads of Time (USA)",
+    "clipStart": 4
+  },
+  "weaponlord": {
+    "base": "WeaponLord (USA)",
+    "clipStart": 4
+  },
+  "zoop": {
+    "base": "Zoop (USA)",
+    "clipStart": 4
+  },
+  "batman-forever": {
+    "base": "Batman Forever (USA)",
+    "clipStart": 4
+  },
+  "big-sky-trooper": {
+    "base": "Big Sky Trooper (USA)",
+    "clipStart": 4
+  },
+  "mechwarrior-3050": {
+    "base": "MechWarrior 3050 (USA)",
+    "clipStart": 4
+  },
+  "nba-live-96": {
+    "base": "NBA Live 96 (USA)",
+    "clipStart": 4
+  },
+  "nosferatu": {
+    "base": "Nosferatu (USA)",
+    "clipStart": 4
+  },
+  "porky-pigs-haunted-holiday": {
+    "base": "Porky Pig's Haunted Holiday (USA)",
+    "clipStart": 4
+  },
+  "secret-of-evermore": {
+    "base": "Secret of Evermore (USA)",
+    "clipStart": 4
+  },
+  "super-mario-world-2-yoshis-island": {
+    "base": "Super Mario World 2 - Yoshi's Island (USA) (Rev 1)",
+    "clipStart": 4
+  },
+  "tecmo-super-bowl-iii-final-edition": {
+    "base": "Tecmo Super Bowl III - Final Edition (USA)",
+    "clipStart": 4
+  },
+  "the-mask": {
+    "base": "Mask, The (USA)",
+    "clipStart": 4
+  },
+  "todd-mcfarlanes-spawn-the-video-game": {
+    "base": "Todd McFarlane's Spawn - The Video Game (USA)",
+    "clipStart": 4
+  },
+  "mortal-kombat-3": {
+    "base": "Mortal Kombat 3 (USA)",
+    "clipStart": 4
+  },
+  "nfl-quarterback-club-96": {
+    "base": "NFL Quarterback Club 96 (USA)",
+    "clipStart": 4
+  },
+  "doom-troopers": {
+    "base": "Doom Troopers - Mutant Chronicles (USA)",
+    "clipStart": 4
+  },
+  "emmitt-smith-football": {
+    "base": "Emmitt Smith Football (USA)",
+    "clipStart": 4
+  },
+  "frank-thomas-big-hurt-baseball": {
+    "base": "Frank Thomas Big Hurt Baseball (USA)",
+    "clipStart": 4
+  },
+  "international-superstar-soccer-deluxe": {
+    "base": "International Superstar Soccer Deluxe (USA)",
+    "clipStart": 4
+  },
+  "izzys-quest-for-the-olympic-rings": {
+    "base": "Izzy's Quest for the Olympic Rings (USA)",
+    "clipStart": 4
+  },
+  "jim-lees-wildc-a-t-s-covert-action-teams": {
+    "base": "Jim Lee's WildC.A.T.S - Covert-Action-Teams (USA)",
+    "clipStart": 4
+  },
+  "jimmy-houstons-bass-tournament-u-s-a": {
+    "base": "Jimmy Houston's Bass Tournament U.S.A. (USA)",
+    "clipStart": 4
+  },
+  "madden-nfl-96": {
+    "base": "Madden NFL 96 (USA)",
+    "clipStart": 4
+  },
+  "nba-give-n-go": {
+    "base": "NBA Give 'n Go (USA)",
+    "clipStart": 4
+  },
+  "scooby-doo-mystery": {
+    "base": "Scooby-Doo Mystery (USA)",
+    "clipStart": 4
+  },
+  "super-turrican-2": {
+    "base": "Super Turrican 2 (USA)",
+    "clipStart": 4
+  },
+  "urban-strike": {
+    "base": "Urban Strike (USA)",
+    "clipStart": 4
+  },
+  "venom-spider-man-separation-anxiety": {
+    "base": "Venom - Spider-Man - Separation Anxiety (USA)",
+    "clipStart": 4
+  },
+  "wwf-wrestlemania-the-arcade-game": {
+    "base": "WWF WrestleMania - The Arcade Game (USA)",
+    "clipStart": 4
+  },
+  "earthworm-jim-2": {
+    "base": "Earthworm Jim 2 (USA)",
+    "clipStart": 4
+  },
+  "breath-of-fire-ii": {
+    "base": "Breath of Fire II (USA)",
+    "clipStart": 4
+  },
+  "final-fight-3": {
+    "base": "Final Fight 3 (USA)",
+    "clipStart": 4
+  },
+  "kawasaki-superbike-challenge": {
+    "base": "Kawasaki Superbike Challenge (USA)",
+    "clipStart": 4
+  },
+  "p-t-o-ii-pacific-theater-of-operations": {
+    "base": "P.T.O. II - Pacific Theater of Operations (USA)",
+    "clipStart": 4
+  },
+  "revolution-x": {
+    "base": "Revolution X (USA)",
+    "clipStart": 4
+  },
+  "syndicate": {
+    "base": "Syndicate (USA)",
+    "clipStart": 4
+  },
+  "toy-story": {
+    "base": "Toy Story (USA)",
+    "clipStart": 4
+  },
+  "war-2410": {
+    "base": "War 2410 (USA)",
+    "clipStart": 4
+  },
+  "wayne-gretzky-and-the-nhlpa-all-stars": {
+    "base": "Wayne Gretzky and the NHLPA All-Stars (USA)",
+    "clipStart": 4
+  },
+  "donkey-kong-country-2-diddys-kong-quest": {
+    "base": "Donkey Kong Country 2 - Diddy's Kong Quest (USA) (En,Fr) (Rev 1)",
+    "clipStart": 4
+  },
+  "boogerman-a-pick-and-flick-adventure": {
+    "base": "Boogerman - A Pick and Flick Adventure (USA)",
+    "clipStart": 4
+  },
+  "college-slam": {
+    "base": "College Slam (USA)",
+    "clipStart": 4
+  },
+  "mega-man-x3": {
+    "base": "Mega Man X3 (USA)",
+    "clipStart": 4
+  },
+  "pga-tour-96": {
+    "base": "PGA Tour 96 (USA) (Rev 1)",
+    "clipStart": 4
+  },
+  "prehistorik-man": {
+    "base": "Prehistorik Man (USA) (En,Fr,Es)",
+    "clipStart": 4
+  },
+  "cutthroat-island": {
+    "base": "Cutthroat Island (USA)",
+    "clipStart": 4
+  },
+  "frantic-flea": {
+    "base": "Frantic Flea (USA)",
+    "clipStart": 4
+  },
+  "mark-davis-the-fishing-master": {
+    "base": "Mark Davis' The Fishing Master (USA)",
+    "clipStart": 4
+  },
+  "the-brainies": {
+    "base": "Brainies, The (USA)",
+    "clipStart": 4
+  },
+  "power-piggs-of-the-dark-age": {
+    "base": "Power Piggs of the Dark Age (USA)",
+    "clipStart": 4
+  },
+  "super-mario-rpg-legend-of-the-seven-stars": {
+    "base": "Super Mario RPG - Legend of the Seven Stars (USA)",
+    "clipStart": 4
+  },
+  "ken-griffey-jr-s-winning-run": {
+    "base": "Ken Griffey Jr.'s Winning Run (USA)",
+    "clipStart": 4
+  },
+  "olympic-summer-games": {
+    "base": "Olympic Summer Games (USA)",
+    "clipStart": 4
+  },
+  "bass-masters-classic-pro-edition": {
+    "base": "Bass Masters Classic - Pro Edition (USA)",
+    "clipStart": 4
+  },
+  "lufia-ii-rise-of-the-sinistrals": {
+    "base": "Lufia II - Rise of the Sinistrals (USA)",
+    "clipStart": 4
+  },
+  "magic-boy": {
+    "base": "Magic Boy (USA)",
+    "clipStart": 4
+  },
+  "mohawk-and-headphone-jack": {
+    "base": "Mohawk & Headphone Jack (USA)",
+    "clipStart": 4
+  },
+  "tetris-attack": {
+    "base": "Tetris Attack (USA) (En,Ja)",
+    "clipStart": 4
+  },
+  "pga-european-tour": {
+    "base": "PGA European Tour (USA)",
+    "clipStart": 4
+  },
+  "power-rangers-zeo-battle-racers": {
+    "base": "Power Rangers Zeo - Battle Racers (USA)",
+    "clipStart": 4
+  },
+  "kirby-super-star": {
+    "base": "Kirby Super Star (USA)",
+    "clipStart": 4
+  },
+  "madden-nfl-97": {
+    "base": "Madden NFL 97 (USA)",
+    "clipStart": 4
+  },
+  "oscar": {
+    "base": "Oscar (USA)",
+    "clipStart": 4
+  },
+  "war-3010-the-revolution": {
+    "base": "War 3010 - The Revolution (USA)",
+    "clipStart": 4
+  },
+  "williams-arcades-greatest-hits": {
+    "base": "Williams Arcade's Greatest Hits (USA)",
+    "clipStart": 4
+  },
+  "ultimate-mortal-kombat-3": {
+    "base": "Ultimate Mortal Kombat 3 (USA)",
+    "clipStart": 4
+  },
+  "nhl-97": {
+    "base": "NHL 97 (USA) (Rev 1)",
+    "clipStart": 4
+  },
+  "street-fighter-alpha-2": {
+    "base": "Street Fighter Alpha 2 (USA)",
+    "clipStart": 4
+  },
+  "whizz": {
+    "base": "Whizz (USA)",
+    "clipStart": 4
+  },
+  "ms-pac-man": {
+    "base": "Ms. Pac-Man (USA)",
+    "clipStart": 4
+  },
+  "pinocchio": {
+    "base": "Pinocchio (USA)",
+    "clipStart": 4
+  },
+  "donkey-kong-country-3-dixie-kongs-double-trouble": {
+    "base": "Donkey Kong Country 3 - Dixie Kong's Double Trouble! (USA) (En,Fr)",
+    "clipStart": 4
+  },
+  "casper": {
+    "base": "Casper (USA)",
+    "clipStart": 4
+  },
+  "incantation": {
+    "base": "Incantation (USA)",
+    "clipStart": 4
+  },
+  "mr-do": {
+    "base": "Mr. Do! (USA)",
+    "clipStart": 4
+  },
+  "nba-live-97": {
+    "base": "NBA Live 97 (USA)",
+    "clipStart": 4
+  },
+  "realm": {
+    "base": "Realm (USA)",
+    "clipStart": 4
+  },
+  "maui-mallard-in-cold-shadow": {
+    "base": "Maui Mallard in Cold Shadow (USA)",
+    "clipStart": 4
+  },
+  "the-lost-vikings-2": {
+    "base": "Lost Vikings 2 (USA)",
+    "clipStart": 4
+  },
+  "harvest-moon": {
+    "base": "Harvest Moon (USA)",
+    "clipStart": 4
+  },
+  "brunswick-world-tournament-of-champions": {
+    "base": "Brunswick World Tournament of Champions (USA)",
+    "clipStart": 4
+  },
+  "arcades-greatest-hits-the-atari-collection-1": {
+    "base": "Arcade's Greatest Hits - The Atari Collection 1 (USA)",
+    "clipStart": 4
+  },
+  "nhl-98": {
+    "base": "NHL 98 (USA)",
+    "clipStart": 4
+  },
+  "nba-live-98": {
+    "base": "NBA Live 98 (USA)",
+    "clipStart": 4
+  },
+  "arkanoid-doh-it-again": {
+    "base": "Arkanoid - Doh It Again (USA)",
+    "clipStart": 4
+  },
+  "space-invaders": {
+    "base": "Space Invaders (USA)",
+    "clipStart": 4
+  },
+  "kirbys-dream-land-3": {
+    "base": "Kirby's Dream Land 3 (USA)",
+    "clipStart": 4
+  },
+  "timon-and-pumbaas-jungle-games": {
+    "base": "Timon & Pumbaa's Jungle Games (USA)",
+    "clipStart": 4
+  },
+  "madden-nfl-98": {
+    "base": "Madden NFL 98 (USA)",
+    "clipStart": 4
+  },
+  "frogger": {
+    "base": "Frogger (USA)",
+    "clipStart": 4
+  },
+  "ultraman-towards-the-future": {
+    "base": "Ultraman (USA)",
+    "clipStart": 4
+  },
+  "miracle-piano": {
+    "base": "Miracle Piano Teaching System, The (USA)",
+    "clipStart": 4
+  },
+  "super-smash-tv": {
+    "base": "Super Smash T.V. (USA)",
+    "clipStart": 4
+  },
+  "street-fighter-ii-the-world-warrior": {
+    "base": "Street Fighter II (USA)",
+    "clipStart": 4
+  },
+  "wheel-of-fortune-featuring-vanna-white": {
+    "base": "Wheel of Fortune (USA)",
+    "clipStart": 4
+  },
+  "spider-man-and-the-x-men-in-arcades-revenge": {
+    "base": "Spider-Man - X-Men - Arcade's Revenge (USA)",
+    "clipStart": 4
+  },
+  "musya": {
+    "base": "Musya - The Classic Japanese Tale of Horror (USA)",
+    "clipStart": 4
+  },
+  "hit-the-ice": {
+    "base": "Hit the Ice - VHL - The Official Video Hockey League (USA)",
+    "clipStart": 4
+  },
+  "simearth": {
+    "base": "SimEarth - The Living Planet (USA)",
+    "clipStart": 4
+  },
+  "toys": {
+    "base": "Toys - Let the Toy Wars begin! (USA)",
+    "clipStart": 4
+  },
+  "street-fighter-ii-turbo-hyper-fighting": {
+    "base": "Street Fighter II Turbo (USA) (Rev 1)",
+    "clipStart": 4
+  },
+  "operation-logic-bomb": {
+    "base": "Operation Logic Bomb - The Ultimate Search & Destroy (USA)",
+    "clipStart": 4
+  },
+  "simant": {
+    "base": "SimAnt - The Electronic Ant Colony (USA)",
+    "clipStart": 4
+  },
+  "clayfighter": {
+    "base": "Clay Fighter (USA)",
+    "clipStart": 4
+  },
+  "battletoads-and-double-dragon-the-ultimate-team": {
+    "base": "Battletoads-Double Dragon (USA)",
+    "clipStart": 4
+  },
+  "jim-power-the-lost-dimension-in-3-d": {
+    "base": "Jim Power - The Lost Dimension in 3D (USA)",
+    "clipStart": 4
+  },
+  "choplifter-iii": {
+    "base": "Choplifter III - Rescue-Survive (USA)",
+    "clipStart": 4
+  },
+  "flashback": {
+    "base": "Flashback - The Quest for Identity (USA) (En,Fr,De)",
+    "clipStart": 4
+  },
+  "ninja-warriors": {
+    "base": "Ninjawarriors (USA)",
+    "clipStart": 4
+  },
+  "wolfenstein-3d": {
+    "base": "Wolfenstein 3-D (USA)",
+    "clipStart": 4
+  },
+  "dream-tv": {
+    "base": "Dream T.V. (USA)",
+    "clipStart": 4
+  },
+  "ultima-vi-the-false-prophet": {
+    "base": "Ultima - The False Prophet (USA)",
+    "clipStart": 4
+  },
+  "wheel-of-fortune-deluxe": {
+    "base": "Wheel of Fortune - Deluxe Edition (USA)",
+    "clipStart": 4
+  },
+  "clayfighter-tournament-edition": {
+    "base": "Clay Fighter - Tournament Edition (USA)",
+    "clipStart": 4
+  },
+  "operation-europe-path-to-victory-1939-1945": {
+    "base": "Operation Europe - Path to Victory 1939-45 (USA)",
+    "clipStart": 4
+  },
+  "super-street-fighter-ii-the-new-challengers": {
+    "base": "Super Street Fighter II (USA)",
+    "clipStart": 4
+  },
+  "wildsnake": {
+    "base": "Wild Snake (USA)",
+    "clipStart": 4
+  },
+  "spider-man-and-venom-maximum-carnage": {
+    "base": "Spider-Man - Venom - Maximum Carnage (USA)",
+    "clipStart": 4
+  },
+  "hammerlock-wrestling": {
+    "base": "Hammer Lock Wrestling (USA)",
+    "clipStart": 4
+  },
+  "j-r-r-tolkiens-the-lord-of-the-rings-vol-i": {
+    "base": "J.R.R. Tolkien's The Lord of the Rings - Volume 1 (USA)",
+    "clipStart": 4
+  },
+  "mountain-bike-rally": {
+    "base": "Exertainment Mountain Bike Rally (USA)",
+    "clipStart": 4
+  },
+  "r-type-iii-the-third-lightning": {
+    "base": "R-Type III (USA)",
+    "clipStart": 4
+  },
+  "snow-white-happily-ever-after": {
+    "base": "Snow White in Happily Ever After (USA)",
+    "clipStart": 4
+  },
+  "bassins-black-bass-with-hank-parker": {
+    "base": "Bassin's Black Bass (USA)",
+    "clipStart": 4
+  },
+  "jammit": {
+    "base": "Street Sports - Jammit (USA)",
+    "clipStart": 4
+  },
+  "jurassic-park-2-the-chaos-continues": {
+    "base": "Jurassic Park Part 2 - The Chaos Continues (USA) (En,Fr,De,It)",
+    "clipStart": 4
+  },
+  "street-hockey-95": {
+    "base": "Street Sports - Street Hockey '95 (USA)",
+    "clipStart": 4
+  },
+  "ultima-vii-the-black-gate": {
+    "base": "Ultima - The Black Gate (USA)",
+    "clipStart": 4
+  },
+  "wcw-superbrawl-wrestling": {
+    "base": "WCW Super Brawl Wrestling (USA)",
+    "clipStart": 4
+  },
+  "ballz": {
+    "base": "Ballz 3D - Fighting at Its Ballziest (USA)",
+    "clipStart": 4
+  },
+  "clayfighter-2-judgment-clay": {
+    "base": "Clay Fighter 2 - Judgment Clay (USA)",
+    "clipStart": 4
+  },
+  "the-adventures-of-mighty-max": {
+    "base": "Mighty Max (USA)",
+    "clipStart": 4
+  },
+  "the-sporting-news-power-baseball": {
+    "base": "Sporting News Baseball, The (USA)",
+    "clipStart": 4
+  },
+  "secret-of-the-stars": {
+    "base": "Tecmo Secret of the Stars (USA)",
+    "clipStart": 4
+  },
+  "prince-of-persia-2-the-shadow-and-the-flame": {
+    "base": "Prince of Persia 2 (USA)",
+    "clipStart": 4
+  },
+  "simcity-2000": {
+    "base": "SimCity 2000 - The Ultimate City Simulator (USA)",
+    "clipStart": 4
+  },
+  "fifa-97-gold-edition": {
+    "base": "FIFA Soccer 97 (USA) (En,Fr,De,Es,It,Sv)",
+    "clipStart": 4
+  },
+  "marvel-super-heroes-war-of-the-gems": {
+    "base": "Marvel Super Heroes in War of the Gems (USA)",
+    "clipStart": 4
+  },
+  "sink-or-swim": {
+    "base": "S.O.S - Sink or Swim (USA)",
+    "clipStart": 4
+  },
+  "college-football-usa-97-the-road-to-new-orleans": {
+    "base": "College Football USA 97 (USA)",
+    "clipStart": 4
+  }
+}
