@@ -42,6 +42,10 @@ export interface Game {
   summary: string | null;
   scores: Scores;
   boxArt: string | null;
+  /** Which of Wes's media exist for this game: public/snes/video|logo|box3d/<slug>.* */
+  media: { video: boolean; logo: boolean; box3d: boolean };
+  /** Second the 12-second clip starts at (default 4). */
+  clipStart?: number;
   sources: { wikipedia: string | null; igdb: number | null };
 }
 
@@ -105,6 +109,8 @@ export interface Aliases {
   slugs: Record<string, string>;
   /** Slugs deliberately dropped from games.json. Any other slug that disappears fails the build. */
   retiredSlugs?: string[];
+  /** slug → base name in Wes's media set, for titles the matcher can't pair. */
+  media?: Record<string, string>;
 }
 
 export type Override = {

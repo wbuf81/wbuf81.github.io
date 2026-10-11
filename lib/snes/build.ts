@@ -24,6 +24,8 @@ export interface BuildInputs {
   overrides: Overrides;
   previous: Game[];
   hasBoxArt: (slug: string) => boolean;
+  /** Whether a generated media file exists for a game (the import script writes them). */
+  hasMedia?: (slug: string, kind: 'video' | 'logo' | 'box3d') => boolean;
   countRange?: [number, number];
   /** Rows of the Wikipedia list parseSoftwareList skipped as unreadable (its `skipped`). */
   unreadableRows?: number;
@@ -31,7 +33,7 @@ export interface BuildInputs {
 
 const OVERRIDE_FIELDS = new Set([
   'title', 'releasedUS', 'datePrecision', 'developers', 'publisher', 'genres', 'players', 'chip', 'launchTitle',
-  'esrb', 'summary', 'boxArt', 'scores', 'note',
+  'esrb', 'summary', 'boxArt', 'scores', 'note', 'clipStart',
 ]);
 const SCORE_FIELDS = new Set(['aggregate', 'aggregateCount', 'egm', 'nintendoPower', 'other']);
 
@@ -116,6 +118,11 @@ export function buildDataset(input: BuildInputs) {
       summary: facts?.summary ?? null,
       scores: { aggregate: facts?.aggregate ?? null, aggregateCount: facts?.aggregateCount ?? 0, ...reviewScores(box ? reviewFields(box) : {}) },
       boxArt: input.hasBoxArt(slug) ? `/snes/box/${slug}.jpg` : null,
+      media: {
+        video: input.hasMedia?.(slug, 'video') ?? false,
+        logo: input.hasMedia?.(slug, 'logo') ?? false,
+        box3d: input.hasMedia?.(slug, 'box3d') ?? false,
+      },
       sources: { wikipedia: row.article, igdb: igdbRaw?.id ?? null },
     });
   }
@@ -156,8 +163,8 @@ export function buildDataset(input: BuildInputs) {
       if (!igdbById.has(id)) errors.push(`aliases.json "igdb" pins "${slug}" to IGDB id ${id}, which isn't in the IGDB data`);
     }
   }
-  for (const kind of ['igdb', 'boxart'] as const) {
-    for (const slug of Object.keys(aliases[kind])) {
+  for (const kind of ['igdb', 'boxart', 'media'] as const) {
+    for (const slug of Object.keys(aliases[kind] ?? {})) {
       if (!bySlug.has(slug)) errors.push(`aliases.json "${kind}" names "${slug}", which is not a game`);
     }
   }

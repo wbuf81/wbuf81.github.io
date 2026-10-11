@@ -31,6 +31,8 @@ const { games, companies, report, errors } = buildDataset({
   overrides: readJson(path.join(DATA_DIR, 'overrides.json'), {}),
   previous: readJson(path.join(DATA_DIR, 'games.json'), []),
   hasBoxArt: (slug) => fs.existsSync(path.join(BOX_DIR, `${slug}.jpg`)),
+  hasMedia: (slug, kind) =>
+    fs.existsSync(path.join(BOX_DIR, '..', kind, `${slug}.${kind === 'video' ? 'mp4' : 'png'}`)),
 });
 
 if (errors.length) {

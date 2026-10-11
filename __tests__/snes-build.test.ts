@@ -157,3 +157,17 @@ test('companyKey ignores corporate suffixes', () => {
   expect(companyKey('SETA Corporation')).toBe(companyKey('SETA'));
   expect(companyKey('Konami')).not.toBe(companyKey('Kemco'));
 });
+
+test('media flags come from the files on disk, and clipStart is an allowed override', () => {
+  const have = new Set(['f-zero:video', 'f-zero:logo']);
+  const { games, errors } = buildDataset(inputs({
+    hasMedia: (slug, kind) => have.has(`${slug}:${kind}`),
+    overrides: { 'f-zero': { clipStart: 9 } },
+  }));
+  expect(errors).toEqual([]);
+  const fz = games.find((g) => g.slug === 'f-zero')!;
+  expect(fz.media).toEqual({ video: true, logo: true, box3d: false });
+  expect(fz.clipStart).toBe(9);
+  expect(games.find((g) => g.slug === 'super-metroid')!.media).toEqual({ video: false, logo: false, box3d: false });
+  expect(buildDataset(inputs({ aliases: { igdb: {}, boxart: {}, companies: {}, slugs: {}, media: { ghost: 'X (USA)' } } })).errors[0]).toMatch(/"media".*ghost/);
+});
