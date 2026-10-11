@@ -38,3 +38,6 @@ FEATURE_PLAN_*.md
 
 # Weekly share cards — generated posts, not site assets
 .weekly/
+
+# SNES dataset: raw source responses, rebuilt by npm run snes:fetch
+.snes-cache/
