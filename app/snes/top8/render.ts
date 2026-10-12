@@ -36,9 +36,9 @@ export type Theme = {
 
 export function fitText(ctx: CanvasRenderingContext2D, text: string, maxW: number): string {
   if (ctx.measureText(text).width <= maxW) return text;
-  let t = text;
-  while (t.length > 1 && ctx.measureText(t + '…').width > maxW) t = t.slice(0, -1);
-  return t + '…';
+  const chars = Array.from(text);
+  while (chars.length > 1 && ctx.measureText(chars.join('') + '…').width > maxW) chars.pop();
+  return chars.join('') + '…';
 }
 
 /** Sets ctx.font to the largest size in [minPx, maxPx] at which the text fits maxW and returns it; only below minPx does it fall back to an ellipsis. */

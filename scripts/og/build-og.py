@@ -518,7 +518,7 @@ def top8_picture():
     x, y = pos(0)
     out = chrome + (
         f'<div class="t8title" style="left:{x}px;top:{y}px;width:{cw}px;height:{cell}px">'
-        f'<b class="mys">myspace</b><b class="ttl" style="top:78px">My</b><b class="ttl" style="top:118px">Top 8</b>'
+        f'<b class="mys">snesspace</b><b class="ttl" style="top:78px">My</b><b class="ttl" style="top:118px">Top 8</b>'
         f'<span class="fr">{TOP8_FRIENDS}</span><b class="url">wesleybard.com/videogames</b></div>'
     )
     for i, slug in enumerate(TOP8_EXAMPLE, start=1):

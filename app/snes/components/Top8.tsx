@@ -25,6 +25,7 @@ const MAX_RESULTS = 12;
 const LINK_KEYS = ['g', 'skin', 'n'];
 const SHARE_DEBOUNCE = 300;
 const REVOKE_AFTER = 4000;
+const IMAGE_WAIT = 3000;
 const PICTURE_FAILED = 'Couldn’t make the picture — try Save again';
 const SHARE_FAILED = 'Couldn’t open the share sheet — try Save instead';
 const box = (slug: string) => `/snes/box/${slug}.jpg`;
@@ -301,6 +302,7 @@ export default function Top8({ games }: { games: Top8Game[] }) {
   const frame = useRef(0);
   const latest = useRef(state);
   const shareFile = useRef<File | null>(null);
+  const shareGen = useRef(0);
   const shareTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   const ensureFonts = useCallback((theme: ThemeId) => {
@@ -316,11 +318,13 @@ export default function Top8({ games }: { games: Top8Game[] }) {
   // Keeps a ready-made PNG for Share, so navigator.share runs straight from the click (browsers want a user gesture).
   const prepareShare = useCallback(() => {
     shareFile.current = null;
+    const gen = ++shareGen.current;
     clearTimeout(shareTimer.current);
     if (!canShareRef.current) return;
     shareTimer.current = setTimeout(async () => {
       const cv = canvasRef.current;
       const blob = cv ? await toBlobAsync(cv) : null;
+      if (gen !== shareGen.current) return; // an edit or newer draw happened while this encoded
       shareFile.current = blob ? new File([blob], FILE, { type: 'image/png' }) : null;
     }, SHARE_DEBOUNCE);
   }, []);
@@ -328,8 +332,20 @@ export default function Top8({ games }: { games: Top8Game[] }) {
   // Any edit makes the cached picture stale; it is re-prepared after the next completed draw.
   useEffect(() => {
     shareFile.current = null;
+    shareGen.current++;
     clearTimeout(shareTimer.current);
   }, [state]);
+
+  const imageFor = useCallback((slug: string): HTMLImageElement => {
+    let img = images.current.get(slug);
+    if (!img) {
+      img = new Image();
+      img.onload = img.onerror = () => scheduleRef.current();
+      img.src = box(slug);
+      images.current.set(slug, img);
+    }
+    return img;
+  }, []);
 
   /** Draws the latest state; skipped (returns false) while that theme's fonts are still loading. */
   const draw = useCallback((): boolean => {
@@ -338,21 +354,11 @@ export default function Top8({ games }: { games: Top8Game[] }) {
     const ctx = canvasRef.current?.getContext('2d');
     if (!ctx) return false;
     const imgs: Record<string, HTMLImageElement> = {};
-    for (const slug of s.slots) {
-      if (!slug) continue;
-      let img = images.current.get(slug);
-      if (!img) {
-        img = new Image();
-        img.onload = img.onerror = () => scheduleRef.current();
-        img.src = box(slug);
-        images.current.set(slug, img);
-      }
-      imgs[slug] = img;
-    }
+    for (const slug of s.slots) if (slug) imgs[slug] = imageFor(slug);
     drawTop8({ ctx, slots: s.slots, titles, name: s.name, images: imgs, fonts: fonts.current }, THEMES[s.theme]);
     prepareShare();
     return true;
-  }, [titles, prepareShare]);
+  }, [titles, prepareShare, imageFor]);
   const schedule = useCallback(() => {
     cancelAnimationFrame(frame.current);
     frame.current = requestAnimationFrame(() => { draw(); });
@@ -376,11 +382,30 @@ export default function Top8({ games }: { games: Top8Game[] }) {
     return () => cancelAnimationFrame(frame.current);
   }, [state, fontsFor, schedule]);
 
+  /** Waits (at most IMAGE_WAIT ms in all) for the covers in these slots to load, so a quick Save doesn't print placeholders. */
+  const coversReady = async (slots: (string | null)[]): Promise<void> => {
+    const waits: Promise<void>[] = [];
+    for (const slug of new Set(slots)) {
+      if (!slug) continue;
+      const img = imageFor(slug);
+      if (img.complete && img.naturalWidth > 0) continue;
+      waits.push(new Promise<void>((resolve) => {
+        img.addEventListener('load', () => resolve(), { once: true });
+        img.addEventListener('error', () => resolve(), { once: true });
+      }));
+    }
+    if (!waits.length) return;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    await Promise.race([Promise.all(waits), new Promise<void>((r) => { timer = setTimeout(r, IMAGE_WAIT); })]);
+    clearTimeout(timer);
+  };
+
   /** The current picture as a PNG: waits for the theme's fonts, draws, then encodes. */
   const picture = async (): Promise<Blob | null> => {
     const cv = canvasRef.current;
     if (!cv) return null;
     await ensureFonts(latest.current.theme);
+    await coversReady(latest.current.slots);
     if (!draw()) return null;
     return toBlobAsync(cv);
   };
@@ -533,7 +558,7 @@ export default function Top8({ games }: { games: Top8Game[] }) {
                   );
                 })}
               </ul>
-            ) : <p className="s-t8-note">Deny fewer games and more will show up.</p>}
+            ) : <p className="s-t8-note">{state.denied.length > 0 ? 'Deny fewer games and more will show up.' : 'No more suggestions right now.'}</p>}
           </div>
         </section>
       </div>

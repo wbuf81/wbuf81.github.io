@@ -63,6 +63,10 @@ const realCreate = URL.createObjectURL, realRevoke = URL.revokeObjectURL;
 const realClipboard = Object.getOwnPropertyDescriptor(navigator, 'clipboard');
 const realShare = Object.getOwnPropertyDescriptor(navigator, 'share');
 
+// jsdom never loads images; treat covers as already loaded unless a test swaps in its own Image.
+Object.defineProperty(HTMLImageElement.prototype, 'complete', { get: () => true, configurable: true });
+Object.defineProperty(HTMLImageElement.prototype, 'naturalWidth', { get: () => 300, configurable: true });
+
 beforeEach(() => {
   calls.length = 0;
   drawSpy.mockClear().mockImplementation(actualRender.drawTop8);
@@ -430,4 +434,84 @@ it('the page is noindex, titled, and renders the maker with the credit', async (
   expect(screen.getByRole('heading', { level: 1, name: 'My SNES Top 8' })).toBeInTheDocument();
   expect(screen.getByRole('link', { name: /Super Nintendo in America/ })).toHaveAttribute('href', '/videogames/snes-history');
   expect(screen.getByText(/Data: IGDB/)).toBeInTheDocument();
+});
+
+describe('final fixes', () => {
+  it('shows the deny hint only after something was denied, else a neutral message', async () => {
+    window.history.replaceState(null, '', '?g=a');
+    const { unmount } = render(<Top8 games={[g('a', 'Alpha Quest')]} />);
+    await act(async () => {});
+    expect(screen.queryByText('Deny fewer games and more will show up.')).not.toBeInTheDocument();
+    expect(screen.getByText('No more suggestions right now.')).toBeInTheDocument();
+    unmount();
+    render(<Top8 games={[g('a', 'Alpha Quest'), g('b', 'Bravo Racer', { score: 9 })]} />);
+    await act(async () => {});
+    expect(screen.queryByText('No more suggestions right now.')).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Deny Bravo Racer' }));
+    expect(screen.getByText('Deny fewer games and more will show up.')).toBeInTheDocument();
+  });
+
+  it('an in-flight encode that resolves after an edit does not repopulate the share cache', async () => {
+    const share = jest.fn(() => Promise.resolve());
+    Object.defineProperty(navigator, 'canShare', { value: () => true, configurable: true });
+    Object.defineProperty(navigator, 'share', { value: share, configurable: true });
+    const pending: BlobCallback[] = [];
+    HTMLCanvasElement.prototype.toBlob = jest.fn(function (cb: BlobCallback) { pending.push(cb); });
+    window.history.replaceState(null, '', '?g=a,b');
+    await mount();
+    await frames();
+    await act(async () => { await new Promise((r) => setTimeout(r, 350)); });
+    expect(pending.length).toBeGreaterThan(0); // an encode is in flight
+    fireEvent.click(screen.getAllByRole('button', { name: /^Remove / })[0]); // edit: cache cleared
+    await act(async () => { pending.forEach((cb) => cb(new Blob(['old'], { type: 'image/png' }))); });
+    fireEvent.click(screen.getByRole('button', { name: 'Share' }));
+    expect(share).not.toHaveBeenCalled(); // the stale file was not written back
+  });
+
+  it('Save waits (up to a cap) for slot covers that load late', async () => {
+    const realImage = window.Image;
+    const made: (EventTarget & { complete: boolean; naturalWidth: number; onload: (() => void) | null; onerror: (() => void) | null })[] = [];
+    class LateImage extends EventTarget {
+      complete = false; naturalWidth = 0; onload: (() => void) | null = null; onerror: (() => void) | null = null; src = '';
+      constructor() { super(); made.push(this); }
+    }
+    (window as unknown as { Image: unknown }).Image = LateImage;
+    try {
+      Object.assign(URL, { createObjectURL: jest.fn(() => 'blob:x'), revokeObjectURL: jest.fn() });
+      jest.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {});
+      window.history.replaceState(null, '', '?g=a');
+      await mount();
+      await frames();
+      const toBlob = HTMLCanvasElement.prototype.toBlob as jest.Mock;
+      await act(async () => { fireEvent.click(screen.getByRole('button', { name: 'Save picture' })); });
+      expect(toBlob).not.toHaveBeenCalled(); // still waiting on the cover
+      await act(async () => {
+        made.forEach((i) => { i.complete = true; i.naturalWidth = 300; i.dispatchEvent(new Event('load')); });
+      });
+      expect(toBlob).toHaveBeenCalled();
+    } finally {
+      (window as unknown as { Image: unknown }).Image = realImage;
+    }
+  });
+
+  it('Save gives up waiting on covers after about 3 seconds', async () => {
+    const realImage = window.Image;
+    class NeverImage extends EventTarget { complete = false; naturalWidth = 0; onload = null; onerror = null; src = ''; }
+    (window as unknown as { Image: unknown }).Image = NeverImage;
+    try {
+      Object.assign(URL, { createObjectURL: jest.fn(() => 'blob:x'), revokeObjectURL: jest.fn() });
+      jest.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {});
+      window.history.replaceState(null, '', '?g=a');
+      await mount();
+      await frames();
+      jest.useFakeTimers();
+      const toBlob = HTMLCanvasElement.prototype.toBlob as jest.Mock;
+      await act(async () => { fireEvent.click(screen.getByRole('button', { name: 'Save picture' })); });
+      expect(toBlob).not.toHaveBeenCalled();
+      await act(async () => { jest.advanceTimersByTime(3100); });
+      expect(toBlob).toHaveBeenCalled();
+    } finally {
+      (window as unknown as { Image: unknown }).Image = realImage;
+    }
+  });
 });

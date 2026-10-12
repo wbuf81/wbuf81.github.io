@@ -40,7 +40,7 @@ export const myspace: Theme = {
     const verd = 'Verdana, Arial, sans-serif';
     ctx.fillStyle = '#003399';
     ctx.font = `bold 34px ${verd}`;
-    ctx.fillText('myspace', x + 18, y + 50);
+    ctx.fillText('snesspace', x + 18, y + 50);
     ctx.fillStyle = '#ff6600';
     const [a, b] = titleLines(name);
     ctx.fillText(fitFont(ctx, a, w - 36, (px) => `bold ${px}px ${verd}`, 34, 16), x + 18, y + 120);
@@ -48,7 +48,7 @@ export const myspace: Theme = {
     ctx.fillText(b, x + 18, y + 160);
     ctx.fillStyle = '#000';
     ctx.font = `19px ${verd}`;
-    const friends = wrapLines(ctx, `${name || 'This person'} has ${count(d)} SNES friends.`, w - 36, 2);
+    const friends = wrapLines(ctx, `${name || 'This person'} has ${count(d)} SNES ${count(d) === 1 ? 'friend' : 'friends'}.`, w - 36, 2);
     friends.forEach((l, i) => ctx.fillText(l, x + 18, y + h - 78 + (2 - friends.length) * 24 + i * 24));
     ctx.fillStyle = '#003399';
     ctx.font = `bold 17px ${verd}`;

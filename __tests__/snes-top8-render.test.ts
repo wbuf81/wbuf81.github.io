@@ -64,6 +64,13 @@ describe('text helpers', () => {
     expect(t.endsWith('…')).toBe(true);
     expect(t.length * 10).toBeLessThanOrEqual(100);
   });
+  it('fitText never ends on a lone surrogate', () => {
+    const { ctx } = mockCtx();
+    for (let w = 20; w < 200; w += 7) {
+      const t = fitText(ctx, '\u{1D4D0}'.repeat(30), w);
+      expect(t).toMatch(/^(?:\u{1D4D0})*…$/u);
+    }
+  });
 });
 
 describe('fitFont', () => {
@@ -184,12 +191,25 @@ describe('themes', () => {
 
   it('draws no trademarked game names to the canvas', () => {
     const dir = path.join(process.cwd(), 'app/snes/top8/themes');
-    const banned = /F-Zero|Final Fantasy|Star Fox|Nintendo/i;
+    const banned = /F-Zero|Final Fantasy|Star Fox|Nintendo|MySpace/i;
     for (const f of fs.readdirSync(dir)) {
       const src = fs.readFileSync(path.join(dir, f), 'utf8');
       for (const m of src.matchAll(/fillText\(([^;]*)\)/g)) {
         expect(m[1]).not.toMatch(banned);
       }
     }
+  });
+});
+
+describe('myspace friend count', () => {
+  const friendsLine = (slots: (string | null)[]) => {
+    const { d, calls } = make(slots, 'Wes');
+    drawTop8(d, THEMES.myspace);
+    return calls.filter((c) => c.name === 'fillText').map((c) => String(c.args[0])).find((t) => /SNES friend/.test(t));
+  };
+  it('says "friend" for one and "friends" otherwise', () => {
+    expect(friendsLine(['a', ...Array(7).fill(null)])).toContain('has 1 SNES friend.');
+    expect(friendsLine(['a', 'b', ...Array(6).fill(null)])).toContain('has 2 SNES friends.');
+    expect(friendsLine(Array(8).fill(null))).toContain('has 0 SNES friends.');
   });
 });

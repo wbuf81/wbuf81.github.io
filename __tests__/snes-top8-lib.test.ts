@@ -8,11 +8,22 @@ const games = [
   G('megaman7', { genres: ['Platform'], series: 'Mega Man', score: 7.4 }),
   G('golf', { genres: ['Sport'], score: 9.0 }),
   G('puzzle', { genres: ['Puzzle'], score: 8.9 }),
-  ...['super-mario-world', 'the-legend-of-zelda-a-link-to-the-past', 'super-metroid', 'chrono-trigger', 'donkey-kong-country', 'super-mario-kart'].map((s) => G(s)),
+  ...['super-mario-world', 'the-legend-of-zelda-a-link-to-the-past', 'super-metroid', 'chrono-trigger', 'donkey-kong-country', 'super-mario-kart', 'final-fantasy-iii', 'street-fighter-ii-the-world-warrior'].map((s) => G(s)),
 ];
 const st = (slots: (string | null)[], extra: Partial<Top8State> = {}): Top8State => ({ ...EMPTY_STATE, slots: [...slots, ...Array(8 - slots.length).fill(null)], ...extra });
 
 describe('recommend', () => {
+  it('starts with the spec\'s eight slugs in order and shows five rows', () => {
+    expect(STARTERS).toEqual(['super-mario-world', 'the-legend-of-zelda-a-link-to-the-past', 'super-metroid', 'chrono-trigger', 'donkey-kong-country', 'super-mario-kart', 'final-fantasy-iii', 'street-fighter-ii-the-world-warrior']);
+    const r = recommend(st([]), games);
+    expect(r).toHaveLength(5);
+    expect(r[0].slug).toBe('super-mario-world');
+  });
+  it('adds +1 per shared genre', () => {
+    const gs = [G('p', { genres: ['A', 'B'], similar: ['x', 'y'] }), G('x', { genres: ['A', 'B'], score: 7 }), G('y', { genres: ['A'], score: 7 })];
+    const r = recommend(st(['p']), gs);
+    expect(r.map((e) => e.slug)).toEqual(['x', 'y']); // same score and similar weight; x shares two genres
+  });
   it('suggests the starters when nothing is picked, skipping denied ones', () => {
     const r = recommend(st([], { denied: ['super-mario-world'] }), games);
     expect(r[0]).toEqual({ slug: 'the-legend-of-zelda-a-link-to-the-past', reason: 'a classic to start with' });

@@ -19,12 +19,14 @@ export type Top8State = { slots: (string | null)[]; theme: ThemeId; name: string
 export const EMPTY_STATE: Top8State = { slots: Array(8).fill(null), theme: 'myspace', name: '', denied: [] };
 
 export const STARTERS: string[] = [
-  'the-legend-of-zelda-a-link-to-the-past',
   'super-mario-world',
+  'the-legend-of-zelda-a-link-to-the-past',
   'super-metroid',
   'chrono-trigger',
   'donkey-kong-country',
   'super-mario-kart',
+  'final-fantasy-iii',
+  'street-fighter-ii-the-world-warrior',
 ];
 
 /** EGM average to 1 decimal, else aggregate/10, else users/10, else null. */
@@ -131,7 +133,7 @@ export function recommend(state: Top8State, games: Top8Game[], n = 5): { slug: s
     const hits = genreHit(g);
     if (!hits.length) continue;
     if (!cand.has(g.slug) && !(underfilled && (g.score ?? 0) >= 8)) continue;
-    add(g.slug, 1, 1, `you like ${hits[0].toLowerCase()} games`);
+    add(g.slug, hits.length, 1, `you like ${hits[0].toLowerCase()} games`);
   }
 
   return [...cand.entries()]
