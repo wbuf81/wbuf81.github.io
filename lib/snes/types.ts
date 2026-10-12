@@ -179,3 +179,5 @@ export type Week = {
   news: { date: string; text: string }[];
   near: { date: string; text: string } | null;
 };
+
+export type Price = { usd: number; date: string; note?: string; source: string };

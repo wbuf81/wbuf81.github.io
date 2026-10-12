@@ -1,0 +1,274 @@
+{
+  "hardware": [
+    {
+      "item": "Super NES Control Set",
+      "usd": 199.99,
+      "date": "1991-08",
+      "note": "Launch package price (console, one controller, Super Mario World, cables). The New York Times reported $199.95 for the Sept. 9, 1991 nationwide launch.",
+      "source": "Usenet post of Aug. 26, 1991 ('The package price is $199.99'), quoted at SNES Central, 'Release of the Super NES': https://snescentral.com/article.php?id=0945 (also cites New York Times, Sept. 10, 1991, $199.95)"
+    },
+    {
+      "item": "Super NES Control Set",
+      "usd": 99.99,
+      "date": "1993-10",
+      "note": "Price cut; retailer catalog price.",
+      "source": "Electronics Boutique October 1993 catalog, p. 9 (retailer list price). https://archive.org/details/electronics-boutique-october-1993-catalog"
+    },
+    {
+      "item": "Super NES with Mario (Super Set)",
+      "usd": 139.99,
+      "date": "1993-03",
+      "note": "Console with Super Mario World and two controllers; retailer catalog price.",
+      "source": "Electronics Boutique March 1993 catalog, p. 10 (retailer list price). https://archive.org/details/electronics-boutique-march-1993-catalog"
+    },
+    {
+      "item": "Super Scope 6",
+      "usd": 54.99,
+      "date": "1993-03",
+      "note": "Retailer catalog price.",
+      "source": "Electronics Boutique March 1993 catalog, p. 15 (retailer list price). https://archive.org/details/electronics-boutique-march-1993-catalog"
+    },
+    {
+      "item": "Super NES Controller",
+      "usd": 17.99,
+      "date": "1993-03",
+      "note": "Retailer catalog price.",
+      "source": "Electronics Boutique March 1993 catalog, p. 15 (retailer list price). https://archive.org/details/electronics-boutique-march-1993-catalog"
+    },
+    {
+      "item": "Super NES Cleaning Kit",
+      "usd": 12.99,
+      "date": "1993-03",
+      "note": "Retailer catalog price.",
+      "source": "Electronics Boutique March 1993 catalog, p. 15 (retailer list price). https://archive.org/details/electronics-boutique-march-1993-catalog"
+    }
+  ],
+  "games": {
+    "f-zero": {
+      "usd": 49.99,
+      "date": "1993-03",
+      "source": "Electronics Boutique March 1993 catalog, p. 10 (retailer list price). https://archive.org/details/electronics-boutique-march-1993-catalog"
+    },
+    "the-legend-of-zelda-a-link-to-the-past": {
+      "usd": 49.99,
+      "date": "1993-03",
+      "source": "Electronics Boutique March 1993 catalog, p. 10 (retailer list price). https://archive.org/details/electronics-boutique-march-1993-catalog"
+    },
+    "harleys-humongous-adventure": {
+      "usd": 57.99,
+      "date": "1993-03",
+      "source": "Electronics Boutique March 1993 catalog, p. 10 (retailer list price). https://archive.org/details/electronics-boutique-march-1993-catalog"
+    },
+    "the-hunt-for-red-october": {
+      "usd": 57.99,
+      "date": "1993-03",
+      "source": "Electronics Boutique March 1993 catalog, p. 10 (retailer list price). https://archive.org/details/electronics-boutique-march-1993-catalog"
+    },
+    "super-mario-kart": {
+      "usd": 54.99,
+      "date": "1993-03",
+      "source": "Electronics Boutique March 1993 catalog, p. 11 (retailer list price). https://archive.org/details/electronics-boutique-march-1993-catalog",
+      "note": "Retailer catalog price, not Nintendo's MSRP."
+    },
+    "ncaa-basketball": {
+      "usd": 54.99,
+      "date": "1993-03",
+      "source": "Electronics Boutique March 1993 catalog, p. 11 (retailer list price). https://archive.org/details/electronics-boutique-march-1993-catalog"
+    },
+    "battle-clash": {
+      "usd": 39.99,
+      "date": "1993-03",
+      "source": "Electronics Boutique March 1993 catalog, p. 11 (retailer list price). https://archive.org/details/electronics-boutique-march-1993-catalog"
+    },
+    "simcity": {
+      "usd": 49.99,
+      "date": "1993-03",
+      "source": "Electronics Boutique March 1993 catalog, p. 11 (retailer list price). https://archive.org/details/electronics-boutique-march-1993-catalog"
+    },
+    "mario-paint": {
+      "usd": 59.95,
+      "date": "1993-03",
+      "source": "Electronics Boutique March 1993 catalog, p. 11 (retailer list price). https://archive.org/details/electronics-boutique-march-1993-catalog"
+    },
+    "super-play-action-football": {
+      "usd": 49.99,
+      "date": "1993-03",
+      "source": "Electronics Boutique March 1993 catalog, p. 11 (retailer list price). https://archive.org/details/electronics-boutique-march-1993-catalog"
+    },
+    "lethal-weapon": {
+      "usd": 63.99,
+      "date": "1993-03",
+      "source": "Electronics Boutique March 1993 catalog, p. 12 (retailer list price). https://archive.org/details/electronics-boutique-march-1993-catalog"
+    },
+    "cool-world": {
+      "usd": 63.99,
+      "date": "1993-03",
+      "source": "Electronics Boutique March 1993 catalog, p. 12 (retailer list price). https://archive.org/details/electronics-boutique-march-1993-catalog"
+    },
+    "the-addams-family-pugsleys-scavenger-hunt": {
+      "usd": 63.99,
+      "date": "1993-03",
+      "source": "Electronics Boutique March 1993 catalog, p. 12 (retailer list price). https://archive.org/details/electronics-boutique-march-1993-catalog"
+    },
+    "robocop-3": {
+      "usd": 49.99,
+      "date": "1993-03",
+      "source": "Electronics Boutique March 1993 catalog, p. 12 (retailer list price). https://archive.org/details/electronics-boutique-march-1993-catalog"
+    },
+    "the-addams-family": {
+      "usd": 41.99,
+      "date": "1993-03",
+      "source": "Electronics Boutique March 1993 catalog, p. 12 (retailer list price). https://archive.org/details/electronics-boutique-march-1993-catalog"
+    },
+    "push-over": {
+      "usd": 49.99,
+      "date": "1993-03",
+      "source": "Electronics Boutique March 1993 catalog, p. 12 (retailer list price). https://archive.org/details/electronics-boutique-march-1993-catalog"
+    },
+    "teenage-mutant-ninja-turtles-iv-turtles-in-time": {
+      "usd": 59.99,
+      "date": "1993-03",
+      "source": "Electronics Boutique March 1993 catalog, p. 13 (retailer list price). https://archive.org/details/electronics-boutique-march-1993-catalog"
+    },
+    "prince-of-persia": {
+      "usd": 59.99,
+      "date": "1993-03",
+      "source": "Electronics Boutique March 1993 catalog, p. 13 (retailer list price). https://archive.org/details/electronics-boutique-march-1993-catalog"
+    },
+    "super-star-wars": {
+      "usd": 59.99,
+      "date": "1993-03",
+      "source": "Electronics Boutique March 1993 catalog, p. 13 (retailer list price). https://archive.org/details/electronics-boutique-march-1993-catalog"
+    },
+    "faceball-2000": {
+      "usd": 59.99,
+      "date": "1993-03",
+      "source": "Electronics Boutique March 1993 catalog, p. 13 (retailer list price). https://archive.org/details/electronics-boutique-march-1993-catalog"
+    },
+    "magic-sword": {
+      "usd": 59.99,
+      "date": "1993-03",
+      "source": "Electronics Boutique March 1993 catalog, p. 13 (retailer list price). https://archive.org/details/electronics-boutique-march-1993-catalog"
+    },
+    "the-magical-quest-starring-mickey-mouse": {
+      "usd": 64.99,
+      "date": "1993-03",
+      "source": "Electronics Boutique March 1993 catalog, p. 13 (retailer list price). https://archive.org/details/electronics-boutique-march-1993-catalog"
+    },
+    "super-strike-eagle": {
+      "usd": 57.99,
+      "date": "1993-03",
+      "source": "Electronics Boutique March 1993 catalog, p. 13 (retailer list price). https://archive.org/details/electronics-boutique-march-1993-catalog"
+    },
+    "wing-commander": {
+      "usd": 64.99,
+      "date": "1993-03",
+      "source": "Electronics Boutique March 1993 catalog, p. 14 (retailer list price). https://archive.org/details/electronics-boutique-march-1993-catalog"
+    },
+    "cal-ripken-jr-baseball": {
+      "usd": 59.99,
+      "date": "1993-03",
+      "source": "Electronics Boutique March 1993 catalog, p. 14 (retailer list price). https://archive.org/details/electronics-boutique-march-1993-catalog"
+    },
+    "super-conflict": {
+      "usd": 59.99,
+      "date": "1993-03",
+      "source": "Electronics Boutique March 1993 catalog, p. 14 (retailer list price). https://archive.org/details/electronics-boutique-march-1993-catalog"
+    },
+    "simearth": {
+      "usd": 69.99,
+      "date": "1993-03",
+      "source": "Electronics Boutique March 1993 catalog, p. 14 (retailer list price). https://archive.org/details/electronics-boutique-march-1993-catalog"
+    },
+    "super-bases-loaded": {
+      "usd": 49.99,
+      "date": "1993-03",
+      "source": "Electronics Boutique March 1993 catalog, p. 14 (retailer list price). https://archive.org/details/electronics-boutique-march-1993-catalog"
+    },
+    "goal": {
+      "usd": 59.99,
+      "date": "1993-03",
+      "source": "Electronics Boutique March 1993 catalog, p. 14 (retailer list price). https://archive.org/details/electronics-boutique-march-1993-catalog"
+    },
+    "the-combatribes": {
+      "usd": 64.99,
+      "date": "1993-03",
+      "source": "Electronics Boutique March 1993 catalog, p. 14 (retailer list price). https://archive.org/details/electronics-boutique-march-1993-catalog"
+    },
+    "star-fox": {
+      "usd": 59.99,
+      "date": "1993-10",
+      "source": "Electronics Boutique October 1993 catalog, p. 10 (retailer list price). https://archive.org/details/electronics-boutique-october-1993-catalog"
+    },
+    "vegas-stakes": {
+      "usd": 54.99,
+      "date": "1993-10",
+      "source": "Electronics Boutique October 1993 catalog, p. 10 (retailer list price). https://archive.org/details/electronics-boutique-october-1993-catalog"
+    },
+    "yoshis-safari": {
+      "usd": 39.99,
+      "date": "1993-10",
+      "source": "Electronics Boutique October 1993 catalog, p. 10 (retailer list price). https://archive.org/details/electronics-boutique-october-1993-catalog"
+    },
+    "super-mario-all-stars": {
+      "usd": 59.99,
+      "date": "1993-10",
+      "source": "Electronics Boutique October 1993 catalog, p. 10 (retailer list price). https://archive.org/details/electronics-boutique-october-1993-catalog"
+    },
+    "lock-on": {
+      "usd": 57.99,
+      "date": "1993-10",
+      "source": "Electronics Boutique October 1993 catalog, p. 11 (retailer list price). https://archive.org/details/electronics-boutique-october-1993-catalog"
+    },
+    "wing-commander-the-secret-missions": {
+      "usd": 57.99,
+      "date": "1993-10",
+      "source": "Electronics Boutique October 1993 catalog, p. 11 (retailer list price). https://archive.org/details/electronics-boutique-october-1993-catalog"
+    },
+    "tuff-e-nuff": {
+      "usd": 64.99,
+      "date": "1993-10",
+      "source": "Electronics Boutique October 1993 catalog, p. 11 (retailer list price). https://archive.org/details/electronics-boutique-october-1993-catalog"
+    },
+    "world-heroes": {
+      "usd": 69.99,
+      "date": "1993-10",
+      "source": "Electronics Boutique October 1993 catalog, p. 11 (retailer list price). https://archive.org/details/electronics-boutique-october-1993-catalog"
+    },
+    "madden-nfl-94": {
+      "usd": 59.99,
+      "date": "1993-10",
+      "source": "Electronics Boutique October 1993 catalog, p. 11 (retailer list price). https://archive.org/details/electronics-boutique-october-1993-catalog"
+    },
+    "cool-spot": {
+      "usd": 59.99,
+      "date": "1993-10",
+      "source": "Electronics Boutique October 1993 catalog, p. 11 (retailer list price). https://archive.org/details/electronics-boutique-october-1993-catalog"
+    },
+    "clayfighter": {
+      "usd": 67.99,
+      "date": "1993-10",
+      "source": "Electronics Boutique October 1993 catalog, p. 12 (retailer list price). https://archive.org/details/electronics-boutique-october-1993-catalog"
+    },
+    "plok": {
+      "usd": 59.99,
+      "date": "1993-10",
+      "source": "Electronics Boutique October 1993 catalog, p. 12 (retailer list price). https://archive.org/details/electronics-boutique-october-1993-catalog"
+    },
+    "nigel-mansells-world-championship-racing": {
+      "usd": 59.99,
+      "date": "1993-10",
+      "source": "Electronics Boutique October 1993 catalog, p. 12 (retailer list price). https://archive.org/details/electronics-boutique-october-1993-catalog"
+    },
+    "boxing-legends-of-the-ring": {
+      "usd": 61.99,
+      "date": "1993-10",
+      "source": "Electronics Boutique October 1993 catalog, p. 12 (retailer list price). https://archive.org/details/electronics-boutique-october-1993-catalog"
+    },
+    "jurassic-park": {
+      "usd": 63.99,
+      "date": "1993-10",
+      "source": "Electronics Boutique October 1993 catalog, p. 12 (retailer list price). https://archive.org/details/electronics-boutique-october-1993-catalog"
+    }
+  }
+}
