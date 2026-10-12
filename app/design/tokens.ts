@@ -54,6 +54,14 @@ export const TOKENS: { name: string; job: string; group: TokenGroup }[] = [
   { name: '--snes-f-sports', job: 'Score scatter dots: sports and racing', group: 'SNES' },
   { name: '--snes-f-puzzle', job: 'Score scatter dots: puzzle, strategy and sims', group: 'SNES' },
   { name: '--snes-f-other', job: 'Score scatter dots: everything else', group: 'SNES' },
+  { name: '--tm-led', job: 'Time Machine: the amber LED date readout', group: 'SNES' },
+  { name: '--tm-paper', job: 'Time Machine: the newspaper clipping paper, light edge', group: 'SNES' },
+  { name: '--tm-paper-2', job: 'Time Machine: the newspaper clipping paper, shaded edge', group: 'SNES' },
+  { name: '--tm-paper-ink', job: 'Time Machine: ink on the newspaper clipping', group: 'SNES' },
+  { name: '--tm-kicker', job: 'Time Machine: the red dateline above the lead story', group: 'SNES' },
+  { name: '--tm-cass', job: 'Time Machine: cassette shell for the song tape', group: 'SNES' },
+  { name: '--tm-ticket', job: 'Time Machine: movie ticket stub paper', group: 'SNES' },
+  { name: '--tm-ticket-ink', job: 'Time Machine: ink on the movie ticket stub', group: 'SNES' },
 ];
 
 function declarations(css: string, selector: string): Record<string, string> {
