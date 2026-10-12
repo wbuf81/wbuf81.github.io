@@ -1,9 +1,10 @@
 'use client';
 
 import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from 'react';
+import { createPortal } from 'react-dom';
 import { addPick, isPicked, removePick, replacePick } from '../../../lib/snes/top8.ts';
 import { useTop8 } from '../top8/store';
-import { useToast } from './toast';
+import { ensureToastRegion, showToast } from './toast';
 
 type Props = {
   slug: string;
@@ -23,8 +24,9 @@ export function Top8Star({ slug, title, variant, onToast, titles }: Props) {
   const [pos, setPos] = useState<CSSProperties>({});
   const btn = useRef<HTMLButtonElement>(null);
   const pop = useRef<HTMLDivElement>(null);
-  const own = useToast();
-  const say = onToast ?? own.show;
+  const say = onToast ?? showToast;
+  const mounted = state !== null;
+  useEffect(() => { if (mounted && !onToast) ensureToastRegion(); }, [mounted, onToast]);
 
   useEffect(() => {
     if (!open) return;
@@ -35,9 +37,24 @@ export function Top8Star({ slug, title, variant, onToast, titles }: Props) {
       if (pop.current?.contains(t) || btn.current?.contains(t)) return;
       setOpen(false);
     };
+    const shut = () => setOpen(false);
+    const onFocusOut = (e: FocusEvent) => {
+      const to = e.relatedTarget as Node | null;
+      if (to && !pop.current?.contains(to) && !btn.current?.contains(to)) setOpen(false);
+    };
+    const el = pop.current;
     document.addEventListener('keydown', onKey);
     document.addEventListener('pointerdown', onDown);
-    return () => { document.removeEventListener('keydown', onKey); document.removeEventListener('pointerdown', onDown); };
+    window.addEventListener('scroll', shut, true);
+    window.addEventListener('resize', shut);
+    el?.addEventListener('focusout', onFocusOut);
+    return () => {
+      document.removeEventListener('keydown', onKey);
+      document.removeEventListener('pointerdown', onDown);
+      window.removeEventListener('scroll', shut, true);
+      window.removeEventListener('resize', shut);
+      el?.removeEventListener('focusout', onFocusOut);
+    };
   }, [open]);
 
   // Keep the popover inside the viewport: fixed at the star, nudged back on screen.
@@ -59,6 +76,7 @@ export function Top8Star({ slug, title, variant, onToast, titles }: Props) {
 
   if (!state) return null;
   const picked = isPicked(state, slug);
+  const full = state.slots.every(Boolean);
   const nameOf = (s: string) => titles?.[s] ?? fromSlug(s);
 
   const click = () => {
@@ -67,7 +85,7 @@ export function Top8Star({ slug, title, variant, onToast, titles }: Props) {
       say(`Removed ${title} from your Top 8`);
       return;
     }
-    if (state.slots.every(Boolean)) { setOpen((o) => !o); return; }
+    if (full) { setOpen((o) => !o); return; }
     update((s) => addPick(s, slug).state);
     say(`Added ${title} to your Top 8`);
   };
@@ -84,23 +102,23 @@ export function Top8Star({ slug, title, variant, onToast, titles }: Props) {
   return (
     <span className={`s-star s-star-${variant}${picked ? ' is-on' : ''}`}>
       <button ref={btn} type="button" className="s-star-btn" aria-pressed={picked} aria-label={label}
-        aria-haspopup={picked ? undefined : 'dialog'} aria-expanded={open || undefined} onClick={click}>
+        aria-haspopup={!picked && full ? 'dialog' : undefined} aria-expanded={open || undefined} onClick={click}>
         {variant === 'page' ? (picked ? '★ In your Top 8' : '☆ Add to my Top 8') : <span aria-hidden="true">{picked ? '★' : '☆'}</span>}
       </button>
-      {open && (
-        <div ref={pop} className="s-star-pop" role="dialog" aria-label="Your Top 8 is full. Replace which?" style={pos}>
+      {open && createPortal(
+        <div ref={pop} className="wb s-star-pop" role="dialog" aria-label="Your Top 8 is full. Replace which?" style={pos}>
           <p className="s-star-pop-t" aria-hidden="true">Top 8 is full. Replace which?</p>
           <div className="s-star-pop-grid">
             {state.slots.map((s, i) => s && (
               <button key={s} type="button" className="s-star-pick" aria-label={`Replace ${nameOf(s)}`} onClick={() => replace(i)}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={`/snes/thumb/${s}.jpg`} alt="" width={48} height={34} loading="lazy" />
+                <img src={`/snes/thumb/${s}.jpg`} alt="" width={96} height={67} loading="lazy" />
               </button>
             ))}
           </div>
-        </div>
+        </div>,
+        document.body,
       )}
-      {onToast ? null : own.node}
     </span>
   );
 }

@@ -28,6 +28,25 @@ it('page variant shows its text', () => {
   expect(screen.getByRole('button')).toHaveTextContent('★ In your Top 8');
 });
 
+it('has no popup hint while the list has room', () => {
+  render(<Top8Star slug="x" title="X" variant="tile" />);
+  expect(screen.getByRole('button')).not.toHaveAttribute('aria-haspopup');
+});
+
+it('keeps one live region on body, present before the first toast, and only its text changes', () => {
+  render(<Top8Star slug="x" title="X" variant="tile" />);
+  const regions = document.body.querySelectorAll('[role="status"]');
+  expect(regions).toHaveLength(1);
+  const region = regions[0];
+  expect(region.parentElement).toBe(document.body);
+  expect(region).toHaveAttribute('aria-live', 'polite');
+  expect(region.textContent).toBe('');
+  fireEvent.click(screen.getByRole('button'));
+  expect(document.body.querySelectorAll('[role="status"]')).toHaveLength(1);
+  expect(document.body.querySelector('[role="status"]')).toBe(region);
+  expect(region.textContent).toContain('X');
+});
+
 it('announces through a toast', () => {
   const onToast = jest.fn();
   render(<Top8Star slug="x" title="X" variant="tile" onToast={onToast} />);
@@ -45,6 +64,26 @@ describe('when full', () => {
     expect(dlg.querySelectorAll('button')).toHaveLength(8);
     fireEvent.click(screen.getByRole('button', { name: 'Replace Game C' }));
     expect(readTop8().slots[2]).toBe('new-game');
+    expect(screen.queryByRole('dialog')).toBeNull();
+  });
+
+  it('portals the dialog to body and moves focus into it', () => {
+    const { container } = render(<Top8Star slug="new-game" title="New Game" variant="tile" titles={titles} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Add New Game to your Top 8' }));
+    const dlg = screen.getByRole('dialog');
+    expect(dlg.parentElement).toBe(document.body);
+    expect(container.contains(dlg)).toBe(false);
+    expect(dlg).toContainElement(document.activeElement as HTMLElement);
+    expect(screen.getByRole('button', { name: 'Add New Game to your Top 8' })).toHaveAttribute('aria-haspopup', 'dialog');
+  });
+
+  it('closes on scroll and resize', () => {
+    render(<Top8Star slug="new-game" title="New Game" variant="tile" />);
+    fireEvent.click(screen.getByRole('button'));
+    fireEvent.scroll(window);
+    expect(screen.queryByRole('dialog')).toBeNull();
+    fireEvent.click(screen.getByRole('button'));
+    fireEvent(window, new Event('resize'));
     expect(screen.queryByRole('dialog')).toBeNull();
   });
 
