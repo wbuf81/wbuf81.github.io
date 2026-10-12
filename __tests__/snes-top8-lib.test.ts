@@ -1,4 +1,4 @@
-import { EMPTY_STATE, STARTERS, cleanName, parseQuery, recommend, toQuery, type Top8Game, type Top8State } from '@/lib/snes/top8';
+import { EMPTY_STATE, STARTERS, addPick, cleanName, isPicked, removePick, replacePick, parseQuery, recommend, toQuery, type Top8Game, type Top8State } from '@/lib/snes/top8';
 
 const G = (slug: string, o: Partial<Top8Game> = {}): Top8Game => ({ slug, title: slug.toUpperCase(), year: '1993', genres: [], series: null, similar: [], score: 7, ...o });
 const games = [
@@ -89,5 +89,49 @@ describe('name robustness', () => {
   it('is idempotent', () => {
     for (const raw of ['a'.repeat(23) + ' b', '  <b>Wes</b> & Co!  ', 'x'.repeat(40)]) expect(cleanName(cleanName(raw))).toBe(cleanName(raw));
     expect(cleanName('a'.repeat(23) + ' b')).toBe('a'.repeat(23));
+  });
+});
+
+describe('pick helpers', () => {
+  it('isPicked', () => {
+    expect(isPicked(st(['a', null, 'b']), 'b')).toBe(true);
+    expect(isPicked(st(['a']), 'z')).toBe(false);
+  });
+  it('addPick fills the first empty slot, including a gap', () => {
+    const r = addPick(st(['a', null, 'c']), 'b');
+    expect(r.full).toBe(false);
+    expect(r.state.slots.slice(0, 3)).toEqual(['a', 'b', 'c']);
+  });
+  it('addPick of an already-picked slug returns the same state, not full', () => {
+    const s = st(['a']);
+    const r = addPick(s, 'a');
+    expect(r.state).toBe(s);
+    expect(r.full).toBe(false);
+  });
+  it('addPick with no empty slot returns the same state, full', () => {
+    const s = st(['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']);
+    const r = addPick(s, 'z');
+    expect(r.state).toBe(s);
+    expect(r.full).toBe(true);
+  });
+  it('addPick of an already-picked slug on a full list is not full', () => {
+    expect(addPick(st(['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']), 'c').full).toBe(false);
+  });
+  it('removePick nulls the slot and keeps the others in place; unknown slug is a no-op', () => {
+    const s = st(['a', 'b', 'c']);
+    expect(removePick(s, 'b').slots.slice(0, 3)).toEqual(['a', null, 'c']);
+    expect(removePick(s, 'zz')).toBe(s);
+  });
+  it('replacePick overwrites, and empties the slug\'s other slot', () => {
+    const r = replacePick(st(['a', 'b', 'c']), 0, 'c');
+    expect(r.slots.slice(0, 3)).toEqual(['c', 'b', null]);
+    expect(replacePick(st(['a', 'b']), 1, 'b').slots.slice(0, 2)).toEqual(['a', 'b']);
+    expect(replacePick(st(['a']), 5, 'x').slots[5]).toBe('x');
+  });
+  it('does not mutate its input', () => {
+    const s = st(['a', 'b']);
+    const copy = JSON.stringify(s);
+    addPick(s, 'q'); removePick(s, 'a'); replacePick(s, 0, 'b');
+    expect(JSON.stringify(s)).toBe(copy);
   });
 });

@@ -142,3 +142,28 @@ export function recommend(state: Top8State, games: Top8Game[], n = 5): { slug: s
     .slice(0, n)
     .map(({ slug, reason }) => ({ slug, reason }));
 }
+
+export const isPicked = (state: Top8State, slug: string): boolean => state.slots.includes(slug);
+
+/** Fills the first empty slot. Already picked: same state, full false. No empty slot: same state, full true. */
+export function addPick(state: Top8State, slug: string): { state: Top8State; full: boolean } {
+  if (isPicked(state, slug)) return { state, full: false };
+  const i = state.slots.indexOf(null);
+  if (i < 0) return { state, full: true };
+  const slots = state.slots.slice();
+  slots[i] = slug;
+  return { state: { ...state, slots }, full: false };
+}
+
+/** Empties the slot holding slug; the others stay where they are. */
+export function removePick(state: Top8State, slug: string): Top8State {
+  if (!isPicked(state, slug)) return state;
+  return { ...state, slots: state.slots.map((s) => (s === slug ? null : s)) };
+}
+
+/** Puts slug at index; if it sat in another slot, that slot becomes empty. */
+export function replacePick(state: Top8State, index: number, slug: string): Top8State {
+  if (index < 0 || index >= state.slots.length) return state;
+  const slots = state.slots.map((s, i) => (i === index ? slug : s === slug ? null : s));
+  return { ...state, slots };
+}
