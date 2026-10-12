@@ -33,7 +33,7 @@ test('the SNES kit shows every SNES piece, after the building blocks and before 
   const pieces = [
     'The SNES menu', 'Game tiles', 'Covers and the no-art placeholder', 'The ★ Top 8 button', 'The toast', 'The Top 8 tray',
     'Filter chips and toggles', 'Heatmap cells', 'Instruction booklet bits', 'The Omaha World-Pixel', 'Be Kind, Rewind',
-    'Time Machine cards', 'MySpace boxes', 'Hub cards and On this day', 'The credit line',
+    'Time Machine cards', 'MySpace boxes', 'The hub and On this day', 'The credit line',
   ];
   for (const name of pieces) expect(within(section).getByRole('heading', { level: 3, name })).toBeInTheDocument();
   expect(within(section).getByRole('navigation', { name: 'SNES' })).toBeInTheDocument();

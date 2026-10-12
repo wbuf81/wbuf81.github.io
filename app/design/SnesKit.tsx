@@ -4,7 +4,7 @@ import { formatRelease, gameCount, MONTHS, playersLabel, ratingLabel } from '@/l
 import { panelWeekFor } from '@/lib/snes/weeks';
 import { slimWeeks } from '@/lib/snes/onThisDay';
 import { consolePrice, gamePrice } from '@/lib/snes/prices';
-import { SNES_BASE, TIME_MACHINE, timeMachinePath } from '@/lib/snes/routes';
+import { timeMachinePath } from '@/lib/snes/routes';
 import { THEME_IDS, titleList } from '@/lib/snes/top8';
 import { THEMES } from '../snes/top8/themes';
 import SnesNav from '../snes/components/SnesNav';
@@ -67,7 +67,10 @@ export default function SnesKit() {
 
       <h3>The SNES menu</h3>
       <p>
-        <code>SnesNav</code> is the first thing in <code>&lt;main&gt;</code> on every SNES page, stuck to the top. Pass{' '}
+        <code>SnesNav</code> is the first thing in <code>&lt;main&gt;</code> on every SNES page, stuck to the top: a
+        lavender band, a level below the white site header, where the current tab is a raised white key. Each tab fills
+        the band&apos;s 44px height, so it&apos;s easy to tap. On a phone the labels shorten to Games, Time Machine and
+        Top 8. Pass{' '}
         <code>current</code> (games, time or top8); game and company pages count as games. The n/8 badge on My Top 8
         comes from the saved list, so it appears only in the browser. Anything else that sticks to the top sits below it
         with <code>top: var(--s-nav-h)</code>. Here it doesn&apos;t stick.
@@ -287,10 +290,11 @@ export default function SnesKit() {
         </div>
       </div>
 
-      <h3>Hub cards and On this day</h3>
+      <h3>The hub and On this day</h3>
       <p>
-        The <code>/videogames</code> hub links each project with an <code>.s-hub-card</code>, the tile&apos;s dark card
-        grown up. Above them, &ldquo;On this day&rdquo; picks the visitor&apos;s date in their own browser, so the static
+        The <code>/videogames</code> hub wears the homepage&apos;s look: SNES History is the featured build (with its
+        own picture), and the other SNES projects are tiles whose 2:1 prints match the homepage&apos;s, both shown
+        under Building blocks above. Under the featured build, &ldquo;On this day&rdquo; picks the visitor&apos;s date in their own browser, so the static
         page holds only a same-height placeholder. This is a still of it.
       </p>
       <div className="ds-still-otd">
@@ -311,20 +315,6 @@ export default function SnesKit() {
             <a className="s-otd-go" href={timeMachinePath(week.start)}>Open this week in the Time Machine →</a>
           </div>
         </section>
-      </div>
-      <div className="s-hub">
-        <a className="s-hub-card" href={SNES_BASE}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/snes/box/super-mario-world.jpg" alt="" width={300} height={209} loading="lazy" />
-          <span className="s-hub-t">Super Nintendo history</span>
-          <span className="s-hub-p">{games.length} games, 1991–1998 — timeline, cover wall, shelf and more</span>
-        </a>
-        <a className="s-hub-card" href={TIME_MACHINE}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/snes/pop/unforgettable-with-love.webp" alt="" width={300} height={209} loading="lazy" />
-          <span className="s-hub-t">SNES Time Machine</span>
-          <span className="s-hub-p">Every week, 1991–1998: the #1 song, album and movie, the news, and the new games</span>
-        </a>
       </div>
 
       <h3>The credit line</h3>
