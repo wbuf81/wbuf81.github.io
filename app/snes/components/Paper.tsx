@@ -6,7 +6,9 @@ import { MONTHS, SHORT_MONTHS } from '@/lib/snes/display';
 const day = (iso: string) => { const [, m, d] = iso.split('-').map(Number); return `${SHORT_MONTHS[m - 1]}. ${d}`; };
 const long = (iso: string) => { const [y, m, d] = iso.split('-').map(Number); return `${MONTHS[m - 1]} ${d}, ${y}`; };
 
-export default function Paper({ week, weekNumber, compact = false }: { week: Week; weekNumber: number; compact?: boolean }) {
+/** `headline` is the lead's heading level: h2 on SNES pages (under the page's h1), h4 where the paper sits under an h3
+ * (the specimen on /design), so a page's heading order never skips or jumps back. */
+export default function Paper({ week, weekNumber, compact = false, headline: Headline = 'h2' }: { week: Week; weekNumber: number; compact?: boolean; headline?: 'h2' | 'h4' }) {
   const items = week.news.length ? week.news : week.near ? [week.near] : [{ date: week.start, text: 'A quiet week in the news' }];
   const [lead, ...rest] = items;
   const showSide = rest.length > 0 && !compact;
@@ -19,7 +21,7 @@ export default function Paper({ week, weekNumber, compact = false }: { week: Wee
       <div className={`s-tm-pbody${showSide ? '' : ' is-solo'}`}>
         <div>
           <div className="s-tm-pkick">{day(lead.date)}</div>
-          <h2>{lead.text}</h2>
+          <Headline>{lead.text}</Headline>
         </div>
         {showSide ? <div className="s-tm-pmore">{rest.map((r) => <p key={r.date + r.text}><b>{day(r.date)}</b> {r.text}</p>)}</div> : null}
       </div>
