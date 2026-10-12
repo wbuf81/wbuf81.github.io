@@ -22,6 +22,11 @@ describe('Shelf', () => {
     expect(spine.getAttribute('style')).toContain('url(/snes/thumb/a.jpg)');
     expect(spine).toHaveTextContent('SUPER NINTENDO');
   });
+  test('year headings are h2, so the page goes h1 then h2', () => {
+    render(<Shelf games={GAMES} byYear />);
+    expect(screen.getAllByRole('heading', { level: 2 }).map((h) => h.textContent)).toEqual(['1991', '1994', '1995']);
+    expect(screen.queryByRole('heading', { level: 3 })).toBeNull();
+  });
   test('sorted any other way it is one shelf with no year jumps', () => {
     const { container } = render(<Shelf games={GAMES} byYear={false} />);
     expect(container.querySelectorAll('.s-shelf-year')).toHaveLength(1);

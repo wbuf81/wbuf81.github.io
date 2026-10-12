@@ -98,3 +98,19 @@ it('lets the year be typed digit by digit and tidies an invalid entry on blur', 
   fireEvent.blur(input);
   expect(input.value).toBe('1987');
 });
+it('the price card shows the console price always, and a same-year catalog price on weeks with no priced game', () => {
+  const g2 = [...games, { slug: 'late', title: 'Late Game', releasedUS: '1991-12-01', datePrecision: 'day', boxArt: null }];
+  render(<TimeMachine {...props} games={g2} prices={{ console: { usd: 199.99, year: 1991 }, games: { late: { usd: 59.99, year: 1992 } } }} />);
+  fireEvent.click(screen.getByRole('button', { name: 'Next week' }));
+  expect(screen.getByText(/A Super NES: \$199\.99/)).toBeInTheDocument();
+  expect(screen.getByText(/Also in 1991: Late Game: \$59\.99 in a 1992 catalog · about \$\d+ today/)).toBeInTheDocument();
+  expect(screen.queryByText(/then/)).toBeNull();
+});
+it('with no priced game in the year, the price card explains where cart prices show up', () => {
+  render(<TimeMachine {...props} />);
+  expect(screen.getByText(/Cart prices from period catalogs appear on weeks with a priced game/)).toBeInTheDocument();
+});
+it('milestone chips use "about to start" in summer, like the story', () => {
+  render(<TimeMachine {...props} />);
+  expect(screen.getByRole('button', { name: /you were 10, about to start 5th grade/ })).toBeInTheDocument();
+});

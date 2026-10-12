@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { ageAt, gradeName, schoolGrade, story, WES_BIRTH_YEAR } from '@/lib/snes/years';
+import { milestoneWho, story, WES_BIRTH_YEAR } from '@/lib/snes/years';
 import { SHORT_MONTHS } from '@/lib/snes/display';
 
 // "Your SNES years": a birth year turns the era into a personal story (Wes's 1981 version by default). The year is
@@ -45,8 +45,7 @@ export default function YearsStory({ milestones, onJump }: { milestones: Milesto
       <div className="s-tm-ms">
         {milestones.map((m) => {
           const [y, mo] = m.date.split('-').map(Number);
-          const age = ageAt(year, m.date);
-          const who = age < 0 ? 'before you were born' : `you were ${age}, ${gradeName(schoolGrade(year, m.date))}`;
+          const who = milestoneWho(year, m.date);
           return (
             <button key={m.slug} type="button" onClick={() => onJump(m.date)}>
               <b>{SHORT_MONTHS[mo - 1]} {y}</b> · {m.text}: {who}

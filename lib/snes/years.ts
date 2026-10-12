@@ -37,12 +37,28 @@ export function gradeName(n: number): string {
   if (n <= 16) return 'in college';
   return 'out of school';
 }
+/** Who you were at a milestone. In summer the school year is about to start, so it reads "about to start Nth grade", as the story does. */
+export function milestoneWho(birthYear: number, iso: string): string {
+  const age = ageAt(birthYear, iso);
+  if (age < 0) return 'before you were born';
+  const [y, m] = parts(iso);
+  if (m >= 6 && m <= 8) {
+    const next = schoolGrade(birthYear, `${y}-09-15`);
+    if (next >= 1 && next <= 12) return `you were ${age}, about to start ${ordinal(next)} grade`;
+  }
+  return `you were ${age}, ${gradeName(schoolGrade(birthYear, iso))}`;
+}
 export function story(birthYear: number): { lead: string; wes: string | null; close: string } {
   const a = ageAt(birthYear, LAUNCH);
   const nextGrade = schoolGrade(birthYear, '1991-09-15');
   const [ly, lm] = parts(LAST_GAME);
-  const close = `You were ${Math.max(0, ageAt(birthYear, LAST_GAME))} when the last US SNES game shipped in ${MONTHS[lm - 1]} ${ly}.`;
+  const last = ageAt(birthYear, LAST_GAME);
+  const lastWhen = `${MONTHS[lm - 1]} ${ly}`;
+  const close = last < 0 ? `You weren't born yet when the last US SNES game shipped in ${lastWhen}.`
+    : last === 0 ? `You were born the year the last US SNES game shipped, in ${lastWhen}.`
+    : `You were ${last} when the last US SNES game shipped in ${lastWhen}.`;
   if (a < 0) return { lead: `You weren't born yet when the SNES launched in August 1991; you arrived in ${birthYear}, in the middle of the 16-bit years.`, wes: null, close };
+  if (a === 0) return { lead: 'You were born the year the Super Nintendo launched.', wes: null, close };
   const school = nextGrade >= 1 && nextGrade <= 12 ? `, about to start ${ordinal(nextGrade)} grade` : '';
   return { lead: `You were ${a} when the Super Nintendo launched on August 23, 1991${school}.`, wes: birthYear === WES_BIRTH_YEAR ? WES_LINE : null, close };
 }

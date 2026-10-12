@@ -32,3 +32,8 @@ it('prints a researched game price in today’s money and links into the Time Ma
   expect(screen.getByText(/\$59\.99 in a 1991 catalog · about \$\d+ today/)).toBeInTheDocument();
   expect(screen.getByRole('link', { name: /Open this week in the Time Machine/ })).toHaveAttribute('href', '/videogames/snes-history/time-machine?w=1991-08-23');
 });
+it('a year-only game says "Sometime in 1995" on the sticker', () => {
+  render(<BeKindRewind week={week} weekNumber={1} label="month" monthName="1995" price={{ usd: 199.99, year: 1991, what: 'console' }} />);
+  expect(screen.getByText('Sometime in 1995')).toBeInTheDocument();
+  expect(screen.queryByText('1995')).toBeNull();
+});

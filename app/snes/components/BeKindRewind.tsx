@@ -28,7 +28,7 @@ export default function BeKindRewind({ week, weekNumber, label, monthName, price
     <section className="s-bkr" aria-label="Be Kind, Rewind: what else was going on">
       <div className="s-bkr-tape">
         <span className="s-bkr-label">BE KIND, REWIND</span>
-        <span className="s-bkr-sticker">{label === 'week' ? 'The week it came out' : monthName}</span>
+        <span className="s-bkr-sticker">{label === 'week' ? 'The week it came out' : /^\d{4}$/.test(monthName) ? `Sometime in ${monthName}` : monthName}</span>
       </div>
       <div className="s-bkr-objs">
         <Obj kind="cass" label="#1 song" item={week.song} sub={week.song.by} />

@@ -17,7 +17,7 @@ it('prints the masthead, edition line, lead story and side column', () => {
   expect(screen.getByText('The Omaha World-Pixel')).toBeInTheDocument();
   expect(screen.getByText(/Vol\. 1 · No\. 1/)).toBeInTheDocument();
   expect(screen.getByText(/Omaha, Nebraska · Late edition/)).toBeInTheDocument();
-  expect(screen.getByRole('heading', { name: /first released in the United States/ })).toBeInTheDocument();
+  expect(screen.getByRole('heading', { level: 2, name: /first released in the United States/ })).toBeInTheDocument();
   expect(screen.getByText(/SummerSlam/)).toBeInTheDocument();
   expect(screen.queryByText(/World-Herald/)).toBeNull();
 });
@@ -30,4 +30,8 @@ it('falls back to the near story, then to a quiet week', () => {
 it('compact drops the side column', () => {
   render(<Paper week={base} weekNumber={1} compact />);
   expect(screen.queryByText(/SummerSlam/)).toBeNull();
+});
+it('the lead headline is an h2, so the page keeps its heading order under the h1', () => {
+  render(<Paper week={base} weekNumber={1} />);
+  expect(screen.queryByRole('heading', { level: 3 })).toBeNull();
 });

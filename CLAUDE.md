@@ -207,7 +207,7 @@ python3 scripts/og/build-og.py health    # after importing a week
 python3 scripts/og/build-og.py snes videogames   # SNES history + hub cards; also rewrites public/projects/snes-history.jpg
 ```
 
-- **PNG, never SVG.** iMessage, Teams, Slack, LinkedIn and WhatsApp all silently ignore SVG previews and fall back to a bare text card. The site shipped a `.svg` card for months for exactly this reason; don't reintroduce one.
+- **PNG or JPEG, never SVG.** iMessage, Teams, Slack, LinkedIn and WhatsApp all silently ignore SVG previews and fall back to a bare text card. The site shipped a `.svg` card for months for exactly this reason; don't reintroduce one.
 - `/health` must declare its own `openGraph.images`. Declaring `openGraph` on a child route **replaces** the parent's images rather than merging, so omitting them means no card at all.
 - `twitter.card` is `summary_large_image` on both. `summary` is the small square layout and crops a 1200x630 card badly.
 - The homepage card is a fixed design; the health card is **derived from `data/health.json`**.

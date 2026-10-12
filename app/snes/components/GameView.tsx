@@ -11,10 +11,11 @@ import { SoundProvider } from './sound';
 
 const STRIP = 8;
 
-export default function GameView({ game, names, prev, next, sameMonth, seriesGames, similarGames, rewind }: {
+export default function GameView({ game, names, prev, next, sameMonth, seriesGames, similarGames, rewind, logoSize }: {
   game: Game; names: Record<string, string>; prev: IndexGame | null; next: IndexGame | null; sameMonth: IndexGame[];
   seriesGames: IndexGame[]; similarGames: IndexGame[];
   rewind?: React.ComponentProps<typeof BeKindRewind>;
+  logoSize?: [number, number];
 }) {
   const [year, month] = game.releasedUS.split('-').map(Number);
   const monthName = month ? `${MONTHS[month - 1]} ${year}` : String(year);
@@ -48,7 +49,7 @@ export default function GameView({ game, names, prev, next, sameMonth, seriesGam
             Played? Beaten? 100%? Rating, tier and a Pocket log line will live here.
           </div>
         </div>
-        <Booklet game={game} names={names} />
+        <Booklet game={game} names={names} logoSize={logoSize} />
       </div>
       {rewind ? <BeKindRewind {...rewind} /> : null}
       {similarGames.length ? strip(`If you like ${game.title}, try…`, similarGames) : null}

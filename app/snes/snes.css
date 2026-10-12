@@ -36,8 +36,8 @@
 .wb .s-when { padding-right: 14px; border-right: 2px solid var(--rule); text-align: right; }
 .wb .s-m { font: 600 24px/1.1 var(--serif); color: var(--ink); }
 .wb .s-y { font: 500 11px var(--mono); letter-spacing: .08em; color: var(--ink-3); }
-.wb .s-n { margin-top: 6px; font: 500 10.5px var(--mono); color: var(--ink-2); }
-.wb .s-lbl { margin: 0 0 12px; font: 500 10.5px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); }
+.wb .s-n { margin-top: 6px; font: 500 11px var(--mono); color: var(--ink-2); }
+.wb .s-lbl { margin: 0 0 12px; font: 500 11px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); }
 .wb .s-row { display: flex; flex-wrap: wrap; gap: 16px; }
 .wb .s-anchor { display: block; grid-column: 1 / -1; height: 0; scroll-margin-top: 70px; }
 
@@ -50,13 +50,13 @@
   background: repeating-linear-gradient(0deg, rgba(0, 0, 0, .28) 0 1px, transparent 1px 3px), radial-gradient(ellipse at center, transparent 60%, rgba(0, 0, 0, .28)); }
 .wb .s-tile:hover .s-art::after, .wb .s-tile:focus-visible .s-art::after, .wb .s-art.is-on::after { opacity: 1; }
 .wb .s-tile:hover .s-art img, .wb .s-tile:hover .s-art video, .wb .s-tile:focus-visible .s-art img { filter: saturate(1.12) contrast(1.05); }
-.wb .s-tap { position: absolute; left: 6px; bottom: 6px; z-index: 3; padding: 2px 6px; border-radius: 3px; background: color-mix(in srgb, var(--screen) 78%, transparent); color: var(--screen-ink); font: 500 9.5px var(--mono); pointer-events: none; }
+.wb .s-tap { position: absolute; left: 6px; bottom: 6px; z-index: 3; padding: 2px 6px; border-radius: 3px; background: color-mix(in srgb, var(--screen) 78%, transparent); color: var(--screen-ink); font: 500 11px var(--mono); pointer-events: none; }
 .wb .s-noart { position: absolute; inset: 0; display: grid; place-items: center; padding: 8px; text-align: center; font: 600 13px/1.2 var(--serif); color: var(--screen-ink-2); }
 .wb .s-tb { display: block; padding: 7px 8px 9px; }
 .wb .s-tt { display: block; font: 600 13px/1.2 var(--serif); color: var(--screen-ink); }
-.wb .s-tp { display: block; margin-top: 2px; font: 400 10px var(--mono); color: var(--screen-ink-2); }
+.wb .s-tp { display: block; margin-top: 2px; font: 400 11px var(--mono); color: var(--screen-ink-2); }
 .wb .s-chips { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 5px; }
-.wb .s-chips span { padding: 1px 5px; border-radius: 3px; background: var(--screen-rule); color: var(--screen-ink-2); font: 500 9.5px var(--mono); }
+.wb .s-chips span { padding: 1px 5px; border-radius: 3px; background: var(--screen-rule); color: var(--screen-ink); font: 500 11px var(--mono); }
 .wb .s-chips b { font-weight: 500; color: var(--screen-ink); }
 .wb .s-chips .s-day { background: color-mix(in srgb, var(--snes-glow) 40%, var(--screen-2)); color: var(--screen-ink); text-transform: uppercase; letter-spacing: .06em; }
 .wb .s-empty { padding: 40px 0; text-align: center; color: var(--ink-2); }
@@ -66,8 +66,8 @@
 .wb .s-heat { display: grid; gap: 4px; max-width: 900px; }
 .wb .s-heat-row { display: grid; grid-template-columns: 44px repeat(12, 1fr); align-items: center; gap: 4px; }
 .wb .s-heat-row > span { font: 500 11px var(--mono); color: var(--ink-2); }
-.wb .s-heat-row > em { font: 500 10px var(--mono); font-style: normal; text-align: center; color: var(--ink-3); }
-.wb .s-heat-cell { display: grid; place-items: center; aspect-ratio: 1.6; border: 0; border-radius: 4px; background: var(--rule-soft); color: var(--ink-3); font: 500 10px var(--mono); cursor: pointer; }
+.wb .s-heat-row > em { font: 500 11px var(--mono); font-style: normal; text-align: center; color: var(--ink-3); }
+.wb .s-heat-cell { display: grid; place-items: center; aspect-ratio: 1.6; border: 0; border-radius: 4px; background: var(--rule-soft); color: var(--ink-3); font: 500 11px var(--mono); cursor: pointer; }
 .wb .s-heat-cell.l1 { background: var(--snes-h1); color: var(--ink); }
 .wb .s-heat-cell.l2 { background: var(--snes-h2); color: var(--ink); }
 .wb .s-heat-cell.l3 { background: var(--snes-h3); color: var(--paper); }
@@ -87,7 +87,7 @@
 
 /* game shelf: drawn spines, each a slice of its own cover */
 .wb .s-shelf-year { margin: 16px 0 26px; scroll-margin-top: 70px; }
-.wb .s-shelf-year h3 { margin: 0 0 8px; font: 600 20px var(--serif); color: var(--ink); }
+.wb .s-shelf-year h2 { margin: 0 0 8px; font: 600 20px var(--serif); color: var(--ink); }
 .wb .s-shelf { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 14px 2px; padding: 0 12px 14px; border-radius: 6px; background: repeating-linear-gradient(to bottom, var(--shelf) 0 210px, var(--plank) 210px 224px); }
 .wb .s-spine { position: relative; flex: none; display: flex; flex-direction: column; align-items: center; width: 32px; height: 210px; border-radius: 2px 2px 0 0; color: var(--screen-ink); text-decoration: none;
   background-color: var(--screen-2); background-image: var(--art, none); background-position: center; background-size: auto 100%; background-repeat: no-repeat; box-shadow: inset -3px 0 0 rgba(0, 0, 0, .22); transition: transform .2s; }
@@ -124,8 +124,8 @@
 .wb .s-dot.f-other, .wb .s-key-btn.f-other i { background: var(--snes-f-other); }
 .wb .s-dot-label { position: absolute; left: 12px; top: -7px; white-space: nowrap; pointer-events: none; font: 600 11.5px var(--mono); color: var(--ink); text-shadow: 0 0 3px var(--bg), 0 0 3px var(--bg), 0 0 6px var(--bg); }
 .wb .s-dot-label.is-left { left: auto; right: 12px; }
-.wb .s-tick-x { position: absolute; bottom: -22px; transform: translateX(-50%); font: 500 10px var(--mono); color: var(--ink-3); }
-.wb .s-tick-y { position: absolute; left: -28px; transform: translateY(50%); font: 500 10px var(--mono); color: var(--ink-3); }
+.wb .s-tick-x { position: absolute; bottom: -22px; transform: translateX(-50%); font: 500 11px var(--mono); color: var(--ink-3); }
+.wb .s-tick-y { position: absolute; left: -28px; transform: translateY(50%); font: 500 11px var(--mono); color: var(--ink-3); }
 .wb .s-key { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 4px; }
 .wb .s-key-btn { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border: 1px solid var(--rule); border-radius: 14px; background: var(--paper); color: var(--ink-2); font: 500 11px var(--mono); cursor: pointer; }
 .wb .s-key-btn i { width: 9px; height: 9px; border-radius: 50%; }
@@ -136,10 +136,10 @@
 .wb .s-card-art > img, .wb .s-card-art > video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .wb .s-card-art .s-noart { display: grid; place-items: center; height: 100%; padding: 6px; font: 600 12px var(--serif); color: var(--screen-ink); text-align: center; }
 .wb .s-card-t { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font: 600 13px/1.25 var(--serif); }
-.wb .s-card-m { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font: 500 10px/1.5 var(--mono); color: var(--ink-3); }
-.wb .s-card-s { font: 500 10.5px/1.5 var(--mono); color: var(--ink-2); }
+.wb .s-card-m { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font: 500 11px/1.5 var(--mono); color: var(--ink-3); }
+.wb .s-card-s { font: 500 11px/1.5 var(--mono); color: var(--ink-2); }
 .wb .s-card-s b { color: var(--snes); }
-.wb .s-card-hint { margin-top: auto; font: 600 10px var(--mono); color: var(--snes); }
+.wb .s-card-hint { margin-top: auto; font: 600 11px var(--mono); color: var(--snes); }
 /* Too narrow for the labels to sit beside their dots without colliding: the cards name the games instead. */
 @media (max-width: 560px) {
   .wb .s-dot-label { display: none; }
@@ -163,7 +163,7 @@
 .wb .s-wes b { display: block; font: 600 15px var(--serif); }
 .wb .s-booklet { position: relative; padding: 24px 26px 26px; background: var(--booklet); border: 1px solid var(--rule); border-radius: 6px; }
 .wb .s-booklet::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 6px; opacity: .6; background: repeating-linear-gradient(180deg, var(--rule) 0 2px, transparent 2px 9px); }
-.wb .s-logo { width: 100%; max-width: 420px; margin: 6px 0 10px; }
+.wb .s-logo { display: block; width: 100%; max-width: 420px; height: auto; margin: 6px 0 10px; }
 .wb .s-title { margin: 6px 0 10px; font: 600 clamp(30px, 3.6vw, 42px)/1.05 var(--serif); color: var(--ink); }
 .wb .s-bchips { display: flex; flex-wrap: wrap; gap: 6px; }
 .wb .s-bchip { padding: 2px 8px; border-radius: 3px; background: var(--rule-soft); color: var(--ink-2); font: 500 11px var(--mono); }
@@ -172,13 +172,13 @@
 .wb .s-sect h2 { margin: 0 0 8px; font: 600 11.5px var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--ink); }
 .wb .s-sect p { margin: 0; max-width: 64ch; color: var(--ink-2); }
 .wb .s-spec { display: grid; grid-template-columns: 120px 1fr; gap: 5px 14px; margin: 0; font-size: 14px; }
-.wb .s-spec dt { padding-top: 3px; font: 500 10.5px var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); }
+.wb .s-spec dt { padding-top: 3px; font: 500 11px var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); }
 .wb .s-spec dd { margin: 0; color: var(--ink); }
 .wb .s-none { margin: 4px 0 10px; font: 500 11.5px var(--mono); color: var(--ink-3); }
 .wb .s-bars { display: flex; align-items: flex-end; gap: 7px; height: 100px; margin: 22px 0 14px; }
 .wb .s-bar4 { position: relative; width: 26px; border-radius: 3px 3px 0 0; background: var(--snes); }
 .wb .s-bar4 i { position: absolute; top: -19px; left: -6px; right: -6px; text-align: center; font: 600 13px var(--serif); font-style: normal; color: var(--ink); }
-.wb .s-bars-label { align-self: center; margin-left: 8px; font: 500 10.5px var(--mono); color: var(--ink-3); }
+.wb .s-bars-label { align-self: center; margin-left: 8px; font: 500 11px var(--mono); color: var(--ink-3); }
 .wb .s-crs { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 2px 22px; margin: 0; }
 .wb .s-cr { display: flex; justify-content: space-between; gap: 10px; padding: 5px 0; border-bottom: 1px solid var(--rule-soft); font-size: 13.5px; color: var(--ink-2); }
 .wb .s-cr dd { margin: 0; white-space: nowrap; font: 500 12.5px var(--mono); color: var(--ink); }
@@ -205,8 +205,7 @@
   .wb .s-views { margin-left: 0; }
   .wb .s-spec { grid-template-columns: 96px 1fr; }
   .wb .s-heat-row { grid-template-columns: 30px repeat(12, 1fr); gap: 2px; }
-  .wb .s-heat-cell { font-size: 8px; border-radius: 3px; }
-  .wb .s-heat-row > span { font-size: 9.5px; }
+  .wb .s-heat-cell { border-radius: 3px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .wb .s-art::after, .wb .s-tile, .wb .s-wall-item, .wb .s-spine, .wb .s-spine-tip { transition: none; }
@@ -231,7 +230,7 @@
 .wb .s-tm-pbody { position: relative; display: grid; grid-template-columns: 1.6fr 1fr; gap: 16px; padding-top: 10px; }
 .wb .s-tm-pbody.is-solo { grid-template-columns: 1fr; }
 .wb .s-tm-pkick { font: 700 11px/1.2 var(--serif); letter-spacing: .14em; text-transform: uppercase; color: var(--tm-kicker); margin-bottom: 4px; }
-.wb .s-tm-pbody h3 { margin: 0; font: 700 clamp(20px, 3.4vw, 28px)/1.12 var(--serif); text-wrap: balance; color: var(--tm-paper-ink); }
+.wb .s-tm-pbody h2 { margin: 0; font: 700 clamp(20px, 3.4vw, 28px)/1.12 var(--serif); text-wrap: balance; color: var(--tm-paper-ink); }
 .wb .s-tm-pmore { border-left: 1px solid color-mix(in srgb, var(--tm-paper-ink) 33%, transparent); padding-left: 14px; }
 .wb .s-tm-pmore p { margin: 0 0 8px; font: 400 14px/1.3 var(--serif); }
 .wb .s-tm-pmore p b { font-variant: small-caps; font-weight: 700; }
@@ -260,7 +259,7 @@
 .wb .s-bkr-obj { display: flex; flex-direction: column; gap: 4px; padding: 10px; border-radius: 6px; text-decoration: none; font: 400 13px/1.3 var(--serif); box-shadow: 0 8px 18px rgba(0, 0, 0, .5); min-width: 0; overflow-wrap: anywhere; }
 .wb .s-bkr-obj b { font: 700 15px/1.2 var(--serif); }
 .wb .s-bkr-obj img { width: 100%; height: auto; border-radius: 3px; display: block; }
-.wb .s-bkr-k { font: 600 10.5px/1.2 var(--mono); letter-spacing: .1em; text-transform: uppercase; }
+.wb .s-bkr-k { font: 600 11px/1.2 var(--mono); letter-spacing: .1em; text-transform: uppercase; }
 .wb .s-bkr-obj:focus-visible, .wb .s-bkr-go:focus-visible { outline: 3px solid var(--snes-glow); outline-offset: 3px; }
 .wb .s-bkr-obj.is-cass { background: var(--tm-cass); color: var(--tm-cass-ink); border-top: 10px solid var(--tm-cass-stripe); }
 .wb .s-bkr-obj.is-cd { background: linear-gradient(135deg, var(--tm-cd), var(--tm-cd-2)); color: var(--tm-cd-ink); }
@@ -286,7 +285,7 @@
 .wb .s-tm-born { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font: 400 15px/1.4 var(--serif); }
 .wb .s-tm-born input { width: 5.2em; height: 34px; padding: 0 8px; border: 2px solid var(--snes); border-radius: 6px; background: var(--paper); color: var(--ink); font: 600 16px var(--mono); }
 .wb .s-tm-born input:focus-visible { outline: 3px solid var(--snes-glow); outline-offset: 2px; }
-.wb .s-tm-hint { font: 500 11px var(--mono); color: var(--ink-3); }
+.wb .s-tm-hint { font: 500 11px var(--mono); color: var(--ink-2); }
 .wb .s-tm-years p { margin: 10px 0 12px; max-width: 75ch; font: 400 15px/1.5 var(--serif); color: var(--ink-2); }
 .wb .s-tm-ms { display: flex; flex-wrap: wrap; gap: 6px; }
 .wb .s-tm-ms button { padding: 5px 10px; border: 1px solid var(--rule); border-radius: 999px; background: var(--paper); color: var(--ink-2); font: 400 12.5px/1.3 var(--sans); text-align: left; cursor: pointer; }
@@ -307,10 +306,12 @@
 .wb .s-tm-art.is-poster { aspect-ratio: 2 / 3; }
 .wb .s-tm-art img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .wb .s-tm-noart { position: absolute; inset: 0; display: grid; place-items: center; padding: 6px; text-align: center; font: 600 12px/1.2 var(--serif); color: var(--screen-ink-2); }
-.wb .s-tm-k { font: 600 10.5px var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--screen-ink-2); }
+.wb .s-tm-k { font: 600 11px var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--screen-ink-2); }
 .wb .s-tm-t { font: 700 15px/1.2 var(--serif); color: var(--screen-ink); }
 .wb .s-tm-by { font: 400 12.5px/1.3 var(--sans); color: var(--screen-ink-2); }
+.wb .s-tm-card.s-tm-price { align-self: stretch; }
 .wb .s-tm-price p { margin: 6px 0 0; font: 400 14px/1.4 var(--serif); color: var(--screen-ink); }
+.wb .s-tm-price .s-tm-price-hint { color: var(--screen-ink-2); font-style: italic; }
 .wb .s-tm-shelf { display: grid; gap: 10px; }
 .wb .s-tm-sh { margin: 0; font: 600 11px var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--screen-ink-2); }
 .wb .s-tm-covers { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 12px; }
@@ -346,8 +347,8 @@
 .wb .s-hero .s-hero-links { margin-top: 10px; font: 500 14px var(--mono); }
 .wb .s-hero-links a { color: var(--accent); }
 
-/* hub: "on this day" strip. The placeholder and the filled strip share min-heights, so nothing shifts on mount. */
-.wb .s-otd { margin-top: 22px; padding: 14px 16px; min-height: 176px; background: var(--screen); border: 1px solid var(--screen-rule); border-radius: 6px; color: var(--screen-ink); }
+/* hub: "on this day" strip. The placeholder and the filled strip share min-heights (measured per breakpoint), so nothing shifts on mount. */
+.wb .s-otd { margin-top: 22px; padding: 14px 16px; min-height: 215px; background: var(--screen); border: 1px solid var(--screen-rule); border-radius: 6px; color: var(--screen-ink); }
 .wb .s-otd-h { font: 500 11px var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--screen-ink-2); }
 .wb .s-otd-body { margin-top: 8px; }
 .wb .s-otd-year { display: flex; align-items: center; gap: 12px; }
@@ -356,11 +357,63 @@
 .wb .s-otd-led { font: 400 clamp(26px, 6vw, 34px)/1 var(--font-vt323), ui-monospace, Menlo, monospace; letter-spacing: .04em; color: var(--tm-led); text-shadow: 0 0 8px color-mix(in srgb, var(--tm-led) 55%, transparent); }
 .wb .s-otd-list { list-style: none; margin: 10px 0 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px 22px; font-size: 14px; }
 .wb .s-otd-list li { min-width: 0; overflow-wrap: anywhere; }
-.wb .s-otd-list b { display: block; font: 500 10.5px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--screen-ink-2); }
+.wb .s-otd-list b { display: block; font: 500 11px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--screen-ink-2); }
 .wb a.s-otd-go { display: inline-block; margin-top: 12px; color: var(--screen-ink); font: 500 13px var(--mono); }
 .wb a.s-otd-go:hover, .wb a.s-otd-go:focus-visible { color: var(--tm-led); }
-.wb .s-hub-soon { opacity: .55; border-style: dashed; }
+.wb .s-hub-soon { border-style: dashed; cursor: default; }
+/* Heights measured on the filled strip (a one-line lead), so the empty placeholder takes the space the strip will. */
+@media (max-width: 1100px) {
+  .wb .s-otd { min-height: 236px; }
+}
+@media (max-width: 760px) {
+  .wb .s-otd { min-height: 258px; }
+}
 @media (max-width: 600px) {
-  .wb .s-otd { min-height: 300px; }
+  .wb .s-otd { min-height: 320px; }
   .wb .s-otd-list { grid-template-columns: 1fr; }
+}
+
+/* Touch and narrow screens: 44px hit areas. Looks on desktop are unchanged. Controls get real height; dense marks
+   (scatter dots, heatmap cells) get an invisible enlarged area that cannot swallow its neighbours. */
+@media (max-width: 760px), (pointer: coarse) {
+  .wb .s-dd > summary, .wb .s-select, .wb .s-toggle, .wb .s-sound, .wb .s-search { height: auto; min-height: 44px; }
+  .wb .s-views button, .wb .s-seg button { min-height: 44px; }
+  .wb .s-toggle { min-width: 44px; justify-content: center; }
+  .wb .s-key-btn, .wb .s-years button { min-height: 44px; }
+  .wb .s-crumb { padding: 6px 0; }
+  .wb .s-crumb > span { display: flex; flex-wrap: wrap; align-items: center; column-gap: 2px; }
+  .wb .s-crumb a, .wb .s-steps a { display: inline-flex; align-items: center; min-height: 44px; min-width: 44px; padding: 0 6px; }
+  .wb .s-steps { align-items: center; }
+  .wb .s-hero .eyebrow a, .wb .s-hero-links a, .wb a.s-otd-go, .wb .s-bkr-go, .wb .s-also .eyebrow a { display: inline-flex; align-items: center; min-height: 44px; }
+  .wb .s-bkr-go { margin-bottom: 6px; }
+  .wb .s-tm-deck button, .wb .s-tm-scrub input[type="range"], .wb .s-tm-born input { min-height: 44px; }
+  .wb .s-company .eyebrow { display: flex; flex-wrap: wrap; align-items: center; column-gap: .4em; }
+  .wb .s-company .eyebrow a { display: inline-flex; align-items: center; min-height: 44px; min-width: 44px; }
+  .wb .s-spec dd:has(a) { display: flex; flex-wrap: wrap; align-items: center; min-height: 44px; }
+  .wb .s-spec dt:has(+ dd a) { display: flex; align-items: center; min-height: 44px; padding-top: 0; }
+  .wb .s-spec dd a { display: inline-flex; align-items: center; min-height: 44px; min-width: 44px; }
+  /* Dots: a 24px area (8px dot + 8px each way), painted beneath every dot, so a dot always wins its own centre and the
+     padding only catches taps that would have missed. */
+  .wb .s-scatter { isolation: isolate; }
+  /* Opacity would make every dot its own stacking context and let one dot's pad cover another's centre, so the dim is
+     done in the colour instead. */
+  .wb .s-dot { --da: 85%; z-index: auto; opacity: 1; background: color-mix(in srgb, var(--snes-f-other) var(--da), transparent); }
+  .wb .s-dot.f-action { --dc: var(--snes-f-action); background: color-mix(in srgb, var(--dc) var(--da), transparent); }
+  .wb .s-dot.f-fighting { --dc: var(--snes-f-fighting); background: color-mix(in srgb, var(--dc) var(--da), transparent); }
+  .wb .s-dot.f-shooter { --dc: var(--snes-f-shooter); background: color-mix(in srgb, var(--dc) var(--da), transparent); }
+  .wb .s-dot.f-rpg { --dc: var(--snes-f-rpg); background: color-mix(in srgb, var(--dc) var(--da), transparent); }
+  .wb .s-dot.f-sports { --dc: var(--snes-f-sports); background: color-mix(in srgb, var(--dc) var(--da), transparent); }
+  .wb .s-dot.f-puzzle { --dc: var(--snes-f-puzzle); background: color-mix(in srgb, var(--dc) var(--da), transparent); }
+  .wb .s-dot.f-other { --dc: var(--snes-f-other); background: color-mix(in srgb, var(--dc) var(--da), transparent); }
+  .wb .s-dot.is-star { --da: 100%; }
+  .wb .s-dot.is-faded { --da: 20%; opacity: 1; }
+  .wb .s-dot:hover, .wb .s-dot:focus-visible, .wb .s-dot.is-open { --da: 100%; }
+  .wb .s-dot::before { content: ''; position: absolute; z-index: -1; inset: -8px; border-radius: 50%; }
+  .wb .s-dot.is-star::before { inset: -7px; }
+  /* Heatmap: rows are 44px tall and the colour is clipped to the middle, so the padding is the hit area. */
+  .wb .s-heat { gap: 0; }
+  .wb .s-heat-cell { position: relative; aspect-ratio: auto; height: 44px; padding: 14px 0; }
+  .wb .s-heat-cell[class] { background-clip: content-box; }
+  .wb .s-heat-cell.is-pre { border: 0; }
+  .wb .s-heat-cell.is-pre::after { content: ''; position: absolute; inset: 14px 0; border: 1px dashed var(--rule); border-radius: 3px; }
 }

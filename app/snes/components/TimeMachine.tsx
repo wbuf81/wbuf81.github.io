@@ -59,6 +59,13 @@ function Screen({ weeks, i, games, bySlug, prices }: { weeks: Week[]; i: number;
   const month = shelf.month.map((s) => bySlug.get(s)!);
   const priced = [...shelf.exact, ...shelf.month].find((s) => prices.games[s]);
   const gp = priced ? prices.games[priced] : null;
+  // No priced game this week: offer the closest priced one from the same year, else say where cart prices turn up.
+  const year = week.start.slice(0, 4);
+  const at = (d: string) => Date.parse(`${d}${d.length === 4 ? '-07-01' : d.length === 7 ? '-15' : ''}T00:00:00Z`);
+  const near = priced ? null : Object.keys(prices.games)
+    .map((s) => bySlug.get(s)).filter((g): g is TmGame => Boolean(g) && g!.releasedUS.startsWith(year))
+    .sort((a, b) => Math.abs(at(a.releasedUS) - at(week.start)) - Math.abs(at(b.releasedUS) - at(week.start)))[0];
+  const np = near ? prices.games[near.slug] : null;
   const monthName = MONTHS[Number(week.start.slice(5, 7)) - 1];
   return (
     <>
@@ -78,7 +85,11 @@ function Screen({ weeks, i, games, bySlug, prices }: { weeks: Week[]; i: number;
           <p>💵 A Super NES: {money(prices.console.usd)} · about ${toToday(prices.console.usd, prices.console.year)} in today&rsquo;s money</p>
           {gp && priced ? (
             <p>🎮 {bySlug.get(priced)!.title}: {money(gp.usd)} in a {gp.year} catalog · about ${toToday(gp.usd, gp.year)} today</p>
-          ) : null}
+          ) : near && np ? (
+            <p>🎮 Also in {year}: {near.title}: {money(np.usd)} in a {np.year} catalog · about ${toToday(np.usd, np.year)} today</p>
+          ) : (
+            <p className="s-tm-price-hint">Cart prices from period catalogs appear on weeks with a priced game.</p>
+          )}
         </div>
       </div>
       <Paper week={week} weekNumber={i + 1} />

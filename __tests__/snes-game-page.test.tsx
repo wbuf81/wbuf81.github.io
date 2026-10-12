@@ -127,3 +127,10 @@ test('a game page is kept out of search engines', async () => {
   const meta = await generateMetadata({ params: Promise.resolve({ slug: 'f-zero' }) });
   expect(meta.robots).toEqual({ index: false, follow: false });
 });
+
+test('the logo reserves its space: width and height come from the file, so nothing shifts when it loads', () => {
+  render(<GameView game={full} names={NAMES} prev={null} next={null} sameMonth={[]} seriesGames={[]} similarGames={[]} logoSize={[400, 175]} />);
+  const img = screen.getByRole('img', { name: 'F-Zero' });
+  expect(img).toHaveAttribute('width', '400');
+  expect(img).toHaveAttribute('height', '175');
+});

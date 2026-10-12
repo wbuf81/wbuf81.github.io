@@ -16,7 +16,7 @@ export default function Shelf({ games, byYear }: { games: IndexGame[]; byYear: b
     <div>
       {groups.map((group) => (
         <section key={group.year || 'all'} className="s-shelf-year" id={group.year ? `y-${group.year}` : undefined}>
-          {group.year ? <h3>{group.year}</h3> : null}
+          {group.year ? <h2>{group.year}</h2> : null}
           <div className="s-shelf">
             {group.games.map((g) => (
               <Link

@@ -19,7 +19,7 @@ export default function Paper({ week, weekNumber, compact = false }: { week: Wee
       <div className={`s-tm-pbody${showSide ? '' : ' is-solo'}`}>
         <div>
           <div className="s-tm-pkick">{day(lead.date)}</div>
-          <h3>{lead.text}</h3>
+          <h2>{lead.text}</h2>
         </div>
         {showSide ? <div className="s-tm-pmore">{rest.map((r) => <p key={r.date + r.text}><b>{day(r.date)}</b> {r.text}</p>)}</div> : null}
       </div>

@@ -18,7 +18,7 @@ function Bars({ scores, label }: { scores: number[]; label: string }) {
 }
 
 // The right-hand column of a game page, laid out like the game's instruction booklet.
-export default function Booklet({ game, names }: { game: Game; names: Record<string, string> }) {
+export default function Booklet({ game, names, logoSize }: { game: Game; names: Record<string, string>; logoSize?: [number, number] }) {
   const when = formatRelease(game.releasedUS, game.datePrecision);
   const { egm, nintendoPower, other } = game.scores;
   const fam = reviewerScores(other.Fam);
@@ -35,7 +35,7 @@ export default function Booklet({ game, names }: { game: Game; names: Record<str
       {game.media.logo ? (
         <>
           <h1 className="vh">{game.title}</h1>
-          <img className="s-logo" src={`/snes/logo/${game.slug}.webp`} alt={game.title} />
+          <img className="s-logo" src={`/snes/logo/${game.slug}.webp`} alt={game.title} width={logoSize?.[0] ?? 400} height={logoSize?.[1] ?? 175} decoding="async" />
         </>
       ) : (
         <h1 className="s-title">{game.title}</h1>
