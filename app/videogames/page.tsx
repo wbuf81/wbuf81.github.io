@@ -3,7 +3,7 @@ import { Nav } from '../components/Nav';
 import Footer from '../components/Footer';
 import { getGames, getWeeks } from '@/lib/snes/data';
 import { slimWeeks } from '@/lib/snes/onThisDay';
-import { SNES_BASE, TIME_MACHINE } from '@/lib/snes/routes';
+import { SNES_BASE, TIME_MACHINE, TOP8 } from '@/lib/snes/routes';
 import OnThisDay from '../snes/components/OnThisDay';
 import SnesCredit from '../snes/components/SnesCredit';
 import { vt323 } from '../snes/fonts';
@@ -47,6 +47,12 @@ export default function VideoGamesPage() {
               <img src="/snes/pop/unforgettable-with-love.webp" alt="" width={300} height={209} />
               <span className="s-hub-t">SNES Time Machine</span>
               <span className="s-hub-p">Every week, 1991–1998: the #1 song, album and movie, the news, and the new games</span>
+            </a>
+            <a className="s-hub-card" href={TOP8}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img className="s-hub-example" src="/snes/top8-example.jpg" alt="An example Top 8 picture: eight SNES covers in a three-by-three grid" width={600} height={600} />
+              <span className="s-hub-t">My SNES Top 8</span>
+              <span className="s-hub-p">Pick your 8 favorites, drag them into order, pick a theme and save the picture</span>
             </a>
             <div className="s-hub-card s-hub-soon">
               <span className="s-hub-t">Coming soon: Wes&apos;s Analogue Pocket run</span>

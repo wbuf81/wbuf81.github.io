@@ -217,6 +217,7 @@
 .wb .s-hub-card:hover, .wb .s-hub-card:focus-visible { outline: none; box-shadow: 0 0 0 2px var(--snes-glow), 0 0 20px color-mix(in srgb, var(--snes-glow) 50%, transparent); }
 .wb .s-hub-soon:hover, .wb .s-hub-soon:focus-visible { box-shadow: none; }
 .wb .s-hub-card img { width: 100%; aspect-ratio: 300 / 209; object-fit: cover; }
+.wb .s-hub-card img.s-hub-example { aspect-ratio: 1; }
 .wb .s-hub-t { display: block; padding: 10px 12px 0; font: 600 18px/1.2 var(--serif); }
 .wb .s-hub-p { display: block; padding: 4px 12px 12px; font: 400 11.5px var(--mono); color: var(--screen-ink-2); }
 

@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { metadata as library } from '../app/videogames/snes-history/page';
 import { metadata as hub } from '../app/videogames/page';
+import { metadata as top8 } from '../app/videogames/snes-history/top-8/page';
 import { metadata as timeMachine } from '../app/videogames/snes-history/time-machine/page';
 
 const PUBLIC = path.join(__dirname, '..', 'public');
@@ -21,7 +22,7 @@ function jpegSize(file: string) {
 }
 
 describe('share card images', () => {
-  it.each(['og-snes.jpg', 'og-videogames.jpg'])('%s is a 1200x630 JPEG within the 300 KB WhatsApp limit', (file) => {
+  it.each(['og-snes.jpg', 'og-videogames.jpg', 'og-top8.jpg'])('%s is a 1200x630 JPEG within the 300 KB WhatsApp limit', (file) => {
     expect(jpegSize(file)).toEqual({ w: 1200, h: 630 });
     expect(fs.statSync(path.join(PUBLIC, file)).size).toBeLessThanOrEqual(300 * 1024);
   });
@@ -30,6 +31,13 @@ describe('share card images', () => {
     expect(jpegSize('projects/snes-history.jpg')).toEqual({ w: 1200, h: 600 });
     expect(fs.statSync(path.join(PUBLIC, 'projects', 'snes-history.jpg')).size).toBeLessThanOrEqual(300 * 1024);
   });
+});
+
+it('the hub example picture is a 600px-wide JPEG within 80 KB', () => {
+  const { w, h } = jpegSize('snes/top8-example.jpg');
+  expect(w).toBe(600);
+  expect(h).toBe(600);
+  expect(fs.statSync(path.join(PUBLIC, 'snes', 'top8-example.jpg')).size).toBeLessThanOrEqual(80 * 1024);
 });
 
 describe('robots.txt', () => {
@@ -46,6 +54,7 @@ describe.each([
   ['the library', library, '/og-snes.jpg'],
   ['the Time Machine', timeMachine, '/og-snes.jpg'],
   ['the hub', hub, '/og-videogames.jpg'],
+  ['the Top 8', top8, '/og-top8.jpg'],
 ])('%s metadata', (_name, meta, image) => {
   it('has a large-image card and stays noindex', () => {
     const images = (meta.openGraph as { images: { url: string; width: number; height: number }[] }).images;
@@ -72,4 +81,8 @@ describe.each([
     expect(meta.twitter).toMatchObject({ card: 'summary_large_image', title: og.title, images: ['/og-snes.jpg'] });
     expect(meta.robots).toEqual({ index: false, follow: false });
   });
+});
+
+test('the Top 8 metadata carries its own url', () => {
+  expect((top8.openGraph as { url: string }).url).toBe('/videogames/snes-history/top-8');
 });

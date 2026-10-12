@@ -200,3 +200,10 @@ test('the library page hero links to the Time Machine', async () => {
   render(<SnesPage />);
   expect(screen.getByRole('link', { name: /Open the Time Machine/ })).toHaveAttribute('href', '/videogames/snes-history/time-machine');
 });
+
+test('the library page hero links to the Top 8', async () => {
+  jest.doMock('next/navigation', () => ({ usePathname: () => '/videogames/snes-history' }));
+  const { default: SnesPage } = await import('@/app/videogames/snes-history/page');
+  render(<SnesPage />);
+  expect(screen.getByRole('link', { name: /Make your SNES Top 8/ })).toHaveAttribute('href', '/videogames/snes-history/top-8');
+});

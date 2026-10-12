@@ -4,6 +4,7 @@
     python3 scripts/og/build-og.py            # every card
     python3 scripts/og/build-og.py health     # just the health card
     python3 scripts/og/build-og.py snes videogames   # the /videogames share cards
+    python3 scripts/og/build-og.py top8              # the Top 8 share card and public/snes/top8-example.jpg
 
 Why a script and not `opengraph-image.tsx`: the health card is built from the
 real numbers in data/health.json, so it has to be regenerated when a week is
@@ -486,12 +487,119 @@ def featured_jpeg(card):
     save_under_limit(im, out, start=85)
     return out
 
+# ---- /videogames/snes-history/top-8 share card and hub image -----------------------------------
+# The Python script cannot run the page's TypeScript canvas renderer, so the MySpace Classic example
+# is re-drawn here in HTML at the picture's own 1080 size (geometry from layout() in
+# app/snes/top8/render.ts: margin 22, gap 14, label band 40). Colours come from themes/myspace.ts.
+
+TOP8_EXAMPLE = ['super-metroid', 'chrono-trigger', 'the-legend-of-zelda-a-link-to-the-past', 'super-mario-world',
+                'f-zero', 'star-fox', 'final-fantasy-iii', 'earthbound']
+TOP8_FRIENDS = 'This person has 8 SNES friends.'
+
+
+def top8_picture():
+    """The example Top 8 as a 1080x1080 HTML block (MySpace Classic, 3x3, title tile first)."""
+    titles = {g['slug']: g['title'] for g in json.loads((REPO / 'data/snes/games.json').read_text())}
+    size, m, gap, lbl = 1080, 22, 14, 40
+    cw = (size - m * 2 - gap * 2) / 3
+    ch = round(cw * 209 / 300)
+    cell = ch + lbl
+    top = round((size - (cell * 3 + gap * 2)) / 2)
+    pos = lambda i: (m + (i % 3) * (cw + gap), top + (i // 3) * (cell + gap))
+    chrome = (
+        f'<div style="position:absolute;left:0;top:0;width:{size}px;height:{top - 8}px;background:#003399"></div>'
+        f'<div style="position:absolute;left:0;top:{top - 52}px;width:{size}px;height:44px;background:#336699"></div>'
+        f'<div style="position:absolute;left:0;top:{top - 8}px;width:{size}px;height:4px;background:#ff6600"></div>'
+        + ''.join(f'<div style="position:absolute;left:{24 + i * 120}px;top:{top - 40}px;width:90px;height:20px;background:rgba(255,255,255,.85)"></div>' for i in range(7))
+        + f'<div style="position:absolute;left:0;top:{size - top + 8}px;width:{size}px;height:{top}px;background:#e5e5e5;border-top:3px solid #b9c4d6"></div>'
+        + ''.join(f'<div style="position:absolute;left:{40 + i * 110}px;top:{size - top + 44}px;width:70px;height:8px;background:#6699cc"></div>'
+                  f'<div style="position:absolute;left:{40 + i * 110}px;top:{size - top + 66}px;width:50px;height:6px;background:#c9c9c9"></div>' for i in range(9))
+    )
+    x, y = pos(0)
+    out = chrome + (
+        f'<div class="t8title" style="left:{x}px;top:{y}px;width:{cw}px;height:{cell}px">'
+        f'<b class="mys">myspace</b><b class="ttl" style="top:78px">My</b><b class="ttl" style="top:118px">Top 8</b>'
+        f'<span class="fr">{TOP8_FRIENDS}</span><b class="url">wesleybard.com/videogames</b></div>'
+    )
+    for i, slug in enumerate(TOP8_EXAMPLE, start=1):
+        x, y = pos(i)
+        out += (
+            f'<div class="t8cell" style="left:{x}px;top:{y}px;width:{cw}px">'
+            f'<div class="fr8" style="width:{cw + 8}px;height:{ch + 8}px"><img src="{cover_uri(slug)}" alt="" style="width:{cw}px;height:{ch}px"></div>'
+            f'<div class="lb" style="top:{ch + 4}px;height:{lbl}px"><u>{titles[slug]}</u></div></div>'
+        )
+    return f'<div class="pic">{out}</div>'
+
+
+TOP8_CSS = """
+:root { --ver: Verdana, Arial, sans-serif; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { overflow: hidden; background: #fff; }
+.pic { position: absolute; left: 0; top: 0; width: 1080px; height: 1080px; background: #fff; overflow: hidden; font-family: var(--ver);
+  transform-origin: 0 0; }
+.pic .t8title { position: absolute; background: #ffcc99; border: 3px solid #6699cc; }
+.pic .t8title b, .pic .t8title span { position: absolute; left: 18px; white-space: nowrap; }
+.pic .mys { top: 18px; font-size: 34px; color: #003399; }
+.pic .ttl { font-size: 34px; color: #ff6600; }
+.pic .fr { bottom: 52px; font-size: 19px; color: #000; }
+.pic .url { bottom: 14px; font-size: 17px; color: #003399; }
+.pic .t8cell { position: absolute; height: 274px; }
+.pic .fr8 { position: absolute; left: -4px; top: -4px; background: #dfe7f2; padding: 4px; }
+.pic .fr8 img { display: block; }
+.pic .lb { position: absolute; left: 0; width: 100%; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: bold; color: #003399; }
+.pic .lb u { max-width: 312px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+"""
+
+
+def top8_card():
+    """Share card: the example picture at 600x600 on the left, the pitch on the right."""
+    return f"""<style>{SNES_FONTS}{TOP8_CSS}
+html, body {{ width: 1200px; height: 630px; background: #0e1117; }}
+.card {{ position: absolute; inset: 0; background: linear-gradient(135deg, #0e1117 0%, #1b2440 100%); color: #fff; font-family: 'IBM Plex Sans', Arial, sans-serif; }}
+.card .shot {{ position: absolute; left: 15px; top: 15px; width: 600px; height: 600px; overflow: hidden; border: 0; box-shadow: 0 0 0 3px #ff6600, 0 10px 40px rgba(0,0,0,.5); }}
+.card .shot .pic {{ transform: scale({600 / 1080}); }}
+.card .txt {{ position: absolute; left: 660px; right: 50px; top: 150px; }}
+.card .eyebrow {{ font: 500 18px 'IBM Plex Mono', monospace; letter-spacing: .16em; text-transform: uppercase; color: #8fb3e8; }}
+.card h3 {{ margin-top: 16px; font: 600 74px/1.04 'Source Serif 4', Georgia, serif; }}
+.card .meta {{ margin-top: 26px; font: 400 26px/1.35 'IBM Plex Sans', Arial, sans-serif; color: #c9d3e6; }}
+.card .u {{ position: absolute; left: 660px; bottom: 44px; font: 500 24px 'IBM Plex Mono', monospace; color: #ff9d4d; }}
+</style>
+<div class="card">
+  <div class="shot">{top8_picture()}</div>
+  <div class="txt"><div class="eyebrow">The Super Nintendo in America</div>
+    <h3>Make your<br>SNES Top 8</h3>
+    <div class="meta">Pick 8 · drag to rank · six themes · save &amp; share</div></div>
+  <span class="u">wesleybard.com/videogames</span>
+</div>"""
+
+
+def top8_hub_image():
+    """public/snes/top8-example.jpg: the same example rendered at 1080 and saved 600 wide for the hub card."""
+    src = HERE / '.top8-hub.html'
+    shot = PUBLIC / 'snes' / '.top8-hub.png'
+    src.write_text(f'<!doctype html><meta charset="utf-8"><style>{TOP8_CSS}html,body{{width:1080px;height:1080px}}</style>{top8_picture()}')
+    try:
+        subprocess.run(
+            [find_chrome(), '--headless', '--disable-gpu', '--hide-scrollbars', '--no-sandbox',
+             '--force-device-scale-factor=1', '--window-size=1080,1080', f'--screenshot={shot}', f'file://{src}'],
+            capture_output=True, check=True,
+        )
+    finally:
+        src.unlink(missing_ok=True)
+    from PIL import Image
+    im = Image.open(shot).convert('RGB').resize((600, 600), Image.LANCZOS)
+    shot.unlink(missing_ok=True)
+    out = PUBLIC / 'snes' / 'top8-example.jpg'
+    save_under_limit(im, out, limit=80 * 1024)
+    return out
+
 
 CARDS = {
     'main': ('og-image.png', main_card),
     'health': ('og-health.png', health_card),
     'snes': ('og-snes.jpg', snes_card),
     'videogames': ('og-videogames.jpg', videogames_card),
+    'top8': ('og-top8.jpg', top8_card),
 }
 
 
@@ -525,6 +633,8 @@ def render(name):
         im.save(out, optimize=True)
     if name == 'videogames':
         featured_jpeg(im)
+    if name == 'top8':
+        print(f'top8    -> {top8_hub_image().relative_to(REPO)}')
     return out
 
 
