@@ -169,3 +169,13 @@ export interface CoverageReport {
   noArticle: string[];
   possibleDuplicateCompanies: string[][];
 }
+
+export type PopItem = { title: string; by: string | null; article: string | null; art: string | null };
+export type Week = {
+  start: string; // Friday, ISO
+  song: PopItem;
+  album: PopItem;
+  film: PopItem & { gross: string | null };
+  news: { date: string; text: string }[];
+  near: { date: string; text: string } | null;
+};
