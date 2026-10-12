@@ -32,7 +32,7 @@ These show up in three places:
 | Prices | Hardware plus 30–50 well-known carts, researched from period ads and catalogs, each with a source. Prices are converted with CPI-U. Games with no researched price show no price. |
 | Your SNES years | Narrated story from a birth year. The default is Wes's 1981 version with the ShopKo / F-Zero line. The Omaha ZIP code never appears. |
 | Artwork | Album covers and movie posters are shown (Wes asked for them). |
-| Look | T1: a dark CRT "screen" with an LED date, four cards (song, album, movie, price check), **The 16-Bit Times** newspaper clipping for the news, the games on the shelf, and a VCR deck (◀◀ ▶▶, scrubber, ⏏ random). |
+| Look | T1: a dark CRT "screen" with an LED date, four cards (song, album, movie, price check), **The Omaha World-Pixel** newspaper clipping for the news, the games on the shelf, and a VCR deck (◀◀ ▶▶, scrubber, ⏏ random). |
 | Game page section | **"Be Kind, Rewind"**, style P2 "coffee table": a cassette (song), a CD case (album), a movie ticket (film) and a newspaper clipping (headline), then a price line and "Open this week in the Time Machine →". |
 
 ## Data
@@ -145,8 +145,8 @@ The server page renders week 0 (launch week) in full HTML. A client `TimeMachine
 - **Screen (T1):**
   - LED date and "Week N of 373".
   - Four cards: song, album and film, each with art and linking to Wikipedia, and a price check showing the console and, when that week has a researched cart price, that cart.
-  - The 16-Bit Times clipping:
-    - masthead "Vol. (year − 1990) · No. (week number) · Late edition · 25¢"
+  - The Omaha World-Pixel clipping (a riff on the Omaha World-Herald, since Wes lived in Omaha; never the real paper's name):
+    - masthead "The Omaha World-Pixel", top line "Vol. (year − 1990) · No. (week number) · Omaha, Nebraska · Late edition · 25¢"
     - lead story as the headline, with its date as a red kicker
     - other stories in a side column (stacked under the lead on phones)
     - slight tilt, fold line and coffee ring; no tilt under reduced motion.
