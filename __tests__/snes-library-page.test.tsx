@@ -187,7 +187,7 @@ test('series, theme, camera and multiplayer controls appear when the data has th
 });
 
 test('/videogames is kept out of search engines', () => {
-  expect(fs.readFileSync(path.join(process.cwd(), 'public/robots.txt'), 'utf8')).toMatch(/^Disallow: \/videogames$/m);
+  expect(fs.readFileSync(path.join(process.cwd(), 'public/robots.txt'), 'utf8')).not.toMatch(/^Disallow: \/videogames/m); // crawlable for link previews; the noindex meta does the work
   expect(fs.readFileSync(path.join(process.cwd(), 'public/sitemap.xml'), 'utf8')).not.toMatch(/\/videogames/);
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const { metadata } = require('@/app/videogames/snes-history/page');

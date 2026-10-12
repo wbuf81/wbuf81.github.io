@@ -15,6 +15,13 @@ import '../../../snes/snes.css';
 export const metadata: Metadata = {
   title: 'SNES Time Machine',
   description: 'Every week of the Super Nintendo era: the #1 song, album and movie, the news, and the games on the shelf.',
+  openGraph: {
+    title: 'SNES Time Machine',
+    description: 'Every week of the Super Nintendo era: the #1 song, album and movie, the news, and the games on the shelf.',
+    url: '/videogames/snes-history/time-machine',
+    images: [{ url: '/og-snes.png', width: 1200, height: 630, alt: 'Every US SNES game, 1991–1998: a wall of box art beside the title' }],
+  },
+  twitter: { card: 'summary_large_image', title: 'SNES Time Machine', description: 'Every week of the Super Nintendo era: the #1 song, album and movie, the news, and the games on the shelf.', images: ['/og-snes.png'] },
   robots: { index: false, follow: false },
 };
 

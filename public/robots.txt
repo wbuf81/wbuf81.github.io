@@ -4,7 +4,9 @@ Allow: /
 
 # Personal tracker page — unlinked and not for indexing
 Disallow: /health
-Disallow: /videogames
+
+# /videogames is deliberately crawlable: X and LinkedIn obey robots.txt and would show a bare link.
+# Those pages carry a noindex meta tag, which is what keeps them out of Google.
 
 # Sitemap location
 Sitemap: https://wesleybard.com/sitemap.xml

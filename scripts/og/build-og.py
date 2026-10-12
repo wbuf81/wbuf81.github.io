@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Render the link-preview (OpenGraph) cards into public/.
 
-    python3 scripts/og/build-og.py            # both cards
+    python3 scripts/og/build-og.py            # every card
     python3 scripts/og/build-og.py health     # just the health card
+    python3 scripts/og/build-og.py snes videogames   # the /videogames share cards
 
 Why a script and not `opengraph-image.tsx`: the health card is built from the
 real numbers in data/health.json, so it has to be regenerated when a week is
@@ -317,10 +318,175 @@ def health_card():
 </div>
 """
 
+# ---- /videogames share cards -------------------------------------------------------------------
+# Built from data/snes/games.json, data/snes/weeks.json and public/snes/box/, so they rebuild
+# deterministically: covers are the 48 highest EGM averages that have box art (score desc, then slug).
+
+VT323 = b64(HERE / 'vt323.woff2')
+FRAKTUR = b64(HERE / 'unifraktur-maguntia.woff2')
+FZ_FRAME = b64(HERE / 'assets' / 'f-zero-frame.png')
+
+# The Source Serif file is the one SemiBold cut, so 700 renders at 600 (the card's own weight steps are
+# not worth a second font file). Likewise IBM Plex Mono 500 stands in for 600.
+SNES_FONTS = (
+    f"@font-face {{ font-family: 'Source Serif 4'; src: url(data:font/woff2;base64,{SERIF}) format('woff2'); font-weight: 600 700; }}\n"
+    f"@font-face {{ font-family: 'IBM Plex Sans'; src: url(data:font/woff2;base64,{SANS_400}) format('woff2'); font-weight: 400; }}\n"
+    f"@font-face {{ font-family: 'IBM Plex Mono'; src: url(data:font/woff2;base64,{MONO}) format('woff2'); font-weight: 500 600; }}\n"
+    f"@font-face {{ font-family: 'VT323'; src: url(data:font/woff2;base64,{VT323}) format('woff2'); }}\n"
+    f"@font-face {{ font-family: 'UnifrakturMaguntia'; src: url(data:font/woff2;base64,{FRAKTUR}) format('woff2'); }}\n"
+)
+
+SNES_CSS = """
+:root { --led: #ff5a3c; --serif: 'Source Serif 4', Georgia, serif; --sans: 'IBM Plex Sans', Arial, sans-serif;
+  --mono: 'IBM Plex Mono', Menlo, monospace; --vt: 'VT323', monospace; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { width: 1200px; height: 630px; overflow: hidden; background: #0e1117; }
+body { -webkit-font-smoothing: antialiased; }
+.card { position: absolute; top: 0; left: 0; width: 1200px; height: 630px; overflow: hidden; color: #fff; background: #0e1117; }
+.u { font-family: var(--mono); font-size: 22px; letter-spacing: .04em; }
+.eyebrow { font: 600 20px var(--mono); letter-spacing: .14em; color: #b3a6ea; text-transform: uppercase; }
+
+.s1 .wall { position: absolute; inset: -60px -40px -60px 380px; display: grid; grid-template-columns: repeat(6, 1fr); gap: 14px; transform: rotate(-8deg); }
+.s1 .wall img { width: 100%; border-radius: 6px; box-shadow: 0 6px 16px #000a; }
+.s1 .shade { position: absolute; inset: 0; background: linear-gradient(90deg, #0e1117 0 34%, #0e1117e6 46%, #0e111700 72%); }
+.s1 .txt { position: absolute; left: 64px; top: 70px; width: 560px; }
+.s1 h3 { font: 700 76px/1.02 var(--serif); margin: 18px 0 22px; letter-spacing: -.01em; }
+.s1 .meta { font: 400 26px/1.4 var(--sans); color: #c9c6dc; }
+.s1 .foot { position: absolute; left: 64px; bottom: 56px; display: flex; gap: 18px; align-items: center; }
+.s1 .led { font: 400 44px var(--vt); color: var(--led); text-shadow: 0 0 12px #ff5a3c88; }
+
+.v3 .wall { position: absolute; inset: -80px -60px; display: grid; grid-template-columns: repeat(9, 1fr); gap: 12px; transform: rotate(-8deg); opacity: .42; }
+.v3 .wall img { width: 100%; border-radius: 5px; }
+.v3 .shade { position: absolute; inset: 0; background: linear-gradient(90deg, #0e1117 0 30%, #0e1117cc 48%, #0e111740 100%); }
+.v3 .txt { position: absolute; left: 60px; top: 66px; width: 440px; }
+.v3 h3 { font: 700 96px/1 var(--serif); margin: 14px 0 18px; }
+.v3 .meta { font: 400 25px/1.4 var(--sans); color: #c9c6dc; }
+.v3 .u { position: absolute; left: 60px; bottom: 50px; color: #8f8aa8; }
+.win { position: absolute; background: #141a22; border: 1px solid #2e3846; border-radius: 12px; box-shadow: 0 18px 40px #000c; overflow: hidden; }
+.win .bar { height: 28px; display: flex; align-items: center; gap: 7px; padding: 0 12px; background: #1d2530; font: 600 14px var(--mono); color: #a39fc2; letter-spacing: .08em; text-transform: uppercase; }
+.win .bar i { width: 9px; height: 9px; border-radius: 50%; background: #3a4656; }
+.w-crt { left: 560px; top: 58px; width: 330px; transform: rotate(-2deg); }
+.w-crt img { display: block; width: 100%; height: 210px; object-fit: cover; }
+.w-crt .sl { position: absolute; inset: 28px 0 0; background: repeating-linear-gradient(0deg, #0000 0 3px, #0004 3px 5px); }
+.w-paper { left: 850px; top: 120px; width: 300px; transform: rotate(3deg); background: #f4efdf; color: #26211a; border: 0; padding: 12px 14px 14px; }
+.w-paper .m { font: 400 30px/1 'UnifrakturMaguntia', Georgia, serif; text-align: center; border-bottom: 3px double #26211a; padding-bottom: 4px; }
+.w-paper .d { text-align: center; font: italic 13px Georgia; border-bottom: 1px solid #26211a; padding: 3px 0; margin-bottom: 8px; }
+.w-paper .h { font: 700 21px/1.12 Georgia, serif; }
+.w-paper .led { font: 400 26px var(--vt); color: var(--led); margin-top: 6px; }
+.w-scatter { left: 610px; top: 330px; width: 380px; transform: rotate(1.5deg); }
+.w-scatter .plot { position: relative; height: 200px; margin: 0 10px 10px; border-left: 1px solid #3a4656; border-bottom: 1px solid #3a4656; }
+.w-scatter .hof { position: absolute; left: 0; right: 0; top: 0; height: 24%; background: #f0c85a22; }
+.w-scatter .hof span { position: absolute; right: 4px; top: 3px; font: 700 11px var(--mono); color: #e9d18a; letter-spacing: .06em; }
+.w-scatter b { position: absolute; width: 7px; height: 7px; margin: -3px; border-radius: 50%; }
+.w-shelf { left: 1010px; top: 390px; width: 170px; transform: rotate(-3deg); }
+.w-shelf .sp { display: flex; gap: 3px; height: 170px; padding: 8px; align-items: flex-end; background: #2a241d; }
+.w-shelf .sp div { flex: 1; height: 100%; background-size: auto 100%; background-position: center; border-radius: 2px; }
+"""
+
+DOT_COLOURS = ['#f08a3c', '#e57aa8', '#4aa3e0', '#34c08f', '#e8c04a', '#8fd0f0']
+FIRST_YEAR, LAST_YEAR = 1991, 1998
+WALL_COUNT = 48
+
+
+def x_for_date(released):
+    """Port of xForDate in lib/snes/library.ts: a release date as 0-100% across Aug 1991 to Dec 1998."""
+    parts = [int(p) for p in released.split('-')]
+    y = parts[0]
+    m = parts[1] if len(parts) > 1 else 0
+    d = parts[2] if len(parts) > 2 else 0
+    month = m - 1 if m else 6
+    within = (d - 1) / 31 if d else (0.5 if m else 0)
+    start = FIRST_YEAR * 12 + 7
+    end = LAST_YEAR * 12 + 12
+    return min(100, max(0, ((y * 12 + month + within - start) / (end - start)) * 100))
+
+
+def snes_data():
+    games = json.loads((REPO / 'data/snes/games.json').read_text())
+    boxed = []
+    points = []
+    for g in games:
+        egm = (g.get('scores') or {}).get('egm')
+        if not egm:
+            continue
+        avg = sum(egm) / len(egm)
+        points.append((g['releasedUS'], g['slug'], avg))
+        if (PUBLIC / 'snes/box' / f"{g['slug']}.jpg").exists():
+            boxed.append((avg, g['slug']))
+    boxed.sort(key=lambda t: (-t[0], t[1]))
+    covers = [slug for _, slug in boxed[:WALL_COUNT]]
+    points.sort()
+    pts = [(x_for_date(date), avg) for date, _, avg in points]
+    return len(games), covers, pts
+
+
+def cover_uri(slug):
+    return f"data:image/jpeg;base64,{b64(PUBLIC / 'snes/box' / f'{slug}.jpg')}"
+
+
+def snes_page(card_html):
+    return f'<style>{SNES_FONTS}{SNES_CSS}</style>{card_html}'
+
+
+def snes_card():
+    """S1 'Cover wall': the 48 best-rated covers tilted behind the title, launch date in LED red."""
+    count, covers, _ = snes_data()
+    wall = ''.join(f'<img src="{cover_uri(s)}" alt="">' for s in covers)
+    return snes_page(f"""
+<div class="card s1">
+  <div class="wall">{wall}</div><div class="shade"></div>
+  <div class="txt"><div class="eyebrow">The Super Nintendo in America</div>
+    <h3>Every US SNES game, <span style="white-space:nowrap">1991–1998</span></h3>
+    <div class="meta">{count} games · timeline, cover wall, game shelf, score scatter and a week-by-week time machine</div></div>
+  <div class="foot"><span class="led">AUG·23·1991</span><span class="u" style="color:#8f8aa8">wesleybard.com</span></div>
+</div>""")
+
+
+def videogames_card():
+    """V3 'Wall + windows': the dimmed cover wall with little app windows over it (a clip, the
+    Omaha World-Pixel, the Hall of Fame scatter, the shelf)."""
+    _, covers, pts = snes_data()
+    weeks = json.loads((REPO / 'data/snes/weeks.json').read_text())
+    week = weeks[0]
+    headline = 'The Super Nintendo is released in the United States'
+    by = week['song']['by'].upper()
+    wall = ''.join(f'<img src="{cover_uri(s)}" alt="">' for s in (covers * 2)[:81])
+    shelf = ''.join(f'<div style="background-image:url({cover_uri(s)})"></div>' for s in covers[10:22])
+    lo = 3.5
+    dots = ''.join(
+        f'<b style="left:{x:.2f}%;top:{100 - (y - lo) / (10 - lo) * 100:.2f}%;background:{DOT_COLOURS[i % 6]}"></b>'
+        for i, (x, y) in enumerate(pts) if y >= lo
+    )
+    return snes_page(f"""
+<div class="card v3">
+  <div class="wall">{wall}</div><div class="shade"></div>
+  <div class="txt"><div class="eyebrow">Wesley Bard</div><h3>Video games</h3><div class="meta">Every US Super Nintendo game, gameplay clips, and a week-by-week time machine.</div></div>
+  <div class="win w-crt"><div class="bar"><i></i><i></i><i></i>&nbsp;Gameplay clips</div><img src="data:image/png;base64,{FZ_FRAME}" alt=""><div class="sl"></div></div>
+  <div class="win w-paper"><div class="m">The Omaha World-Pixel</div><div class="d">Week of August 23, 1991</div><div class="h">{headline}</div><div class="led">#1: {by}</div></div>
+  <div class="win w-scatter"><div class="bar"><i></i><i></i><i></i>&nbsp;Score scatter</div><div class="plot">{dots}<div class="hof"><span>HALL OF FAME</span></div></div></div>
+  <div class="win w-shelf"><div class="bar"><i></i><i></i><i></i>&nbsp;Shelf</div><div class="sp">{shelf}</div></div>
+  <span class="u">wesleybard.com/videogames</span>
+</div>""")
+
+
+def featured_jpeg(png_path):
+    """The homepage's featured Print crops `fit: 'shot'` images to 2:1, so the V3 render is cut to 1200x600
+    (15px off the top and bottom, which holds nothing but wall)."""
+    from PIL import Image
+    im = Image.open(png_path).convert('RGB').crop((0, 15, W, H - 15))
+    out = PUBLIC / 'projects' / 'snes-history.jpg'
+    for q in (85, 80, 75, 70):
+        im.save(out, quality=q, optimize=True, progressive=True)
+        if out.stat().st_size <= 300 * 1024:
+            break
+    return out
+
 
 CARDS = {
     'main': ('og-image.png', main_card),
     'health': ('og-health.png', health_card),
+    'snes': ('og-snes.png', snes_card),
+    'videogames': ('og-videogames.png', videogames_card),
 }
 
 
@@ -345,6 +511,8 @@ def render(name):
     if im.size != (W, H):
         im = im.resize((W, H), Image.LANCZOS)
     im.convert('RGB').save(out, optimize=True)
+    if name == 'videogames':
+        featured_jpeg(out)
     return out
 
 
