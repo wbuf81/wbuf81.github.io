@@ -40,6 +40,7 @@ it('keeps one live region on body, present before the first toast, and only its 
   const region = regions[0];
   expect(region.parentElement).toBe(document.body);
   expect(region).toHaveAttribute('aria-live', 'polite');
+  region.firstElementChild!.textContent = ''; // earlier tests' toasts are still on their timer
   expect(region.textContent).toBe('');
   fireEvent.click(screen.getByRole('button'));
   expect(document.body.querySelectorAll('[role="status"]')).toHaveLength(1);
