@@ -223,13 +223,6 @@
 }
 
 /* /videogames hub */
-.wb .s-hub { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 18px; margin-top: 22px; }
-.wb .s-hub-card { display: block; overflow: hidden; background: var(--screen-2); border: 1px solid var(--screen-rule); border-radius: 6px; color: var(--screen-ink); text-decoration: none; transition: box-shadow .25s; }
-.wb .s-hub-card:hover, .wb .s-hub-card:focus-visible { outline: none; box-shadow: 0 0 0 2px var(--snes-glow), 0 0 20px color-mix(in srgb, var(--snes-glow) 50%, transparent); }
-.wb .s-hub-soon:hover, .wb .s-hub-soon:focus-visible { box-shadow: none; }
-.wb .s-hub-card img { width: 100%; height: auto; aspect-ratio: 300 / 209; object-fit: cover; }
-.wb .s-hub-t { display: block; padding: 10px 12px 0; font: 600 18px/1.2 var(--serif); }
-.wb .s-hub-p { display: block; padding: 4px 12px 12px; font: 400 11.5px var(--mono); color: var(--screen-ink-2); }
 
 /* Time Machine: the shared newspaper clipping ("The Omaha World-Pixel") */
 .wb .s-tm-paper { position: relative; overflow: hidden; background: linear-gradient(180deg, var(--tm-paper), var(--tm-paper-2)); color: var(--tm-paper-ink); border-radius: 3px; padding: 12px 16px 14px; box-shadow: 0 10px 24px rgba(0, 0, 0, .6), 0 2px 0 color-mix(in srgb, var(--tm-paper-2) 85%, var(--tm-paper-ink)); font-family: var(--serif); }
@@ -373,7 +366,6 @@
 .wb .s-otd-list b { display: block; font: 500 11px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--screen-ink-2); }
 .wb a.s-otd-go { display: inline-block; margin-top: 12px; color: var(--screen-ink); font: 500 13px var(--mono); }
 .wb a.s-otd-go:hover, .wb a.s-otd-go:focus-visible { color: var(--tm-led); }
-.wb .s-hub-soon { border-style: dashed; cursor: default; }
 /* Heights measured on the filled strip (a one-line lead), so the empty placeholder takes the space the strip will. */
 @media (max-width: 1100px) {
   .wb .s-otd { min-height: 236px; }
@@ -593,25 +585,42 @@
   .wb .s-tray-fold { grid-area: fold; align-self: center; }
 }
 
-/* ---- SNES menu: a sticky row of tabs under the site header on every SNES page (SnesNav.tsx) ---- */
-.wb.wb-page { --s-nav-h: 53px; }
-.wb .s-nav { position: sticky; top: 0; z-index: 16; height: var(--s-nav-h); box-sizing: border-box; background: var(--paper); border-bottom: 1px solid var(--rule); }
-.wb .s-nav-in { max-width: 1380px; height: 100%; margin: 0 auto; padding: 0 clamp(16px, 3vw, 40px); box-sizing: border-box; display: flex; align-items: center; gap: 4px; overflow-x: auto; scrollbar-width: none; }
+/* ---- SNES menu: a lavender band of tabs under the site header on every SNES page (SnesNav.tsx). Its own colour,
+   a level below the header; the current tab is a raised white key. Links fill the band's 44px height (touch target),
+   and the key is drawn behind the label. ---- */
+.wb.wb-page { --s-nav-h: 44px; }
+.wb .s-nav { position: sticky; top: 0; z-index: 16; height: var(--s-nav-h); background: var(--snes-soft); }
+.wb .s-nav-in { max-width: 1380px; height: 100%; margin: 0 auto; padding: 0 clamp(16px, 3vw, 40px); box-sizing: border-box; display: flex; align-items: center; gap: 2px; overflow-x: auto; scrollbar-width: none; }
 .wb .s-nav-in::-webkit-scrollbar { display: none; }
-.wb .s-nav-k { flex: none; margin-right: 6px; font: 600 12px/1 var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-2); }
-.wb .s-nav-a { flex: none; display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 12px; box-sizing: border-box; border: 1px solid transparent; border-radius: 999px; color: var(--ink); font: 600 14px/1 var(--sans); text-decoration: none; white-space: nowrap; }
-.wb .s-nav-a:focus-visible { outline: 2px solid var(--snes-glow); outline-offset: 2px; }
-.wb .s-nav-a[aria-current="page"] { background: var(--snes-soft); border-color: var(--snes); }
+.wb .s-nav-k { flex: none; margin-right: 10px; font: 600 11px/1 var(--mono); letter-spacing: .1em; color: var(--snes); }
+.wb .s-nav-a { position: relative; isolation: isolate; flex: none; display: inline-flex; align-items: center; gap: 6px; height: var(--s-nav-h); padding: 0 12px; color: var(--snes); font: 600 13px/1 var(--sans); text-decoration: none; white-space: nowrap; }
+.wb .s-nav-a::before { content: ''; position: absolute; inset: 7px 0; z-index: -1; border-radius: 6px; }
+.wb .s-nav-a[aria-current="page"] { color: var(--ink); }
+.wb .s-nav-a[aria-current="page"]::before { background: var(--paper); box-shadow: 0 1px 0 var(--rule), 0 0 0 1px var(--rule-soft); }
+.wb .s-nav-a:focus-visible { outline: none; }
+.wb .s-nav-a:focus-visible::before { outline: 2px solid var(--snes-glow); outline-offset: 0; }
 .wb .s-nav-s { display: none; }
-.wb .s-nav-n { padding: 3px 7px; border-radius: 999px; background: var(--snes-soft); color: var(--ink); border: 1px solid var(--snes); font: 600 12px/1 var(--mono); }
+.wb .s-nav-n { padding: 2px 6px; border-radius: 999px; border: 1px solid currentColor; font: 600 11px/1 var(--mono); }
 @media (hover: hover) {
-  .wb .s-nav-a:hover { background: var(--rule-soft); }
-  .wb .s-nav-a[aria-current="page"]:hover { background: var(--snes-soft); }
+  .wb .s-nav-a:not([aria-current="page"]):hover::before { background: color-mix(in srgb, var(--paper) 55%, transparent); }
 }
 @media (max-width: 480px) {
   .wb .s-nav-k { display: none; }
-  .wb .s-nav-in { gap: 2px; padding: 0 10px; }
-  .wb .s-nav-a { padding: 0 9px; font-size: 13px; gap: 5px; }
+  .wb .s-nav-in { padding: 0 8px; gap: 0; }
+  .wb .s-nav-a { padding: 0 9px; font-size: 12.5px; gap: 5px; }
   .wb .s-nav-l { display: none; }
   .wb .s-nav-s { display: inline; }
 }
+
+/* ---- /videogames: the homepage's featured build and tiles (design-system.css) with the hub's own pictures ---- */
+.wb .s-vg .feat { margin: 8px 0 34px; }
+.wb .s-vg .feat > .print .ph { aspect-ratio: 652 / 560; }
+.wb .s-vg-more { margin-top: 46px; }
+.wb .s-vg-more h2 { margin: 4px 0 4px; font: 600 26px/1.15 var(--serif); color: var(--ink); }
+.wb .s-vg-more > p { max-width: 60ch; margin: 0 0 26px; color: var(--ink-2); }
+.wb .s-vg .tiles { margin-bottom: 30px; }
+.wb .s-vg .tf > .fine { color: var(--ink-2); font-size: 12.5px; }
+.wb .s-vg .tf > a { color: var(--accent); }
+.wb .print .s-vg-soon { display: grid; place-content: center; gap: 6px; background: var(--screen); text-align: center; }
+.wb .s-vg-soon b { font: 400 30px/1 var(--font-vt323, var(--mono)); letter-spacing: .04em; color: var(--tm-led); }
+.wb .s-vg-soon small { font: 500 10px var(--mono); letter-spacing: .12em; color: var(--screen-ink-2); }
