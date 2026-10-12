@@ -1693,7 +1693,7 @@ Added 11 Oct 2026 at Wes's request: "yes add the header link homepage tile and n
   - `href: '/videogames/snes-history'`
 - **Badge:** the badge union gains `'Live on this site'`; this project uses it. Update the projects test rule: Private repo → no href; Open source → GitHub href; Live on this site → href starts with `/`.
 - **FeaturedBuild and Print:** an internal href (starting with `/`) opens in the same tab (no `target`/`rel`). The print's label reads `Open SNES History`, and the button reads "Explore it →" instead of "View on GitHub →". GitHub projects keep today's behaviour.
-- **The collage** `public/projects/snes-history.jpg`: build it once with a small throwaway Python/Pillow snippet (not committed) from 12 iconic covers in `public/snes/box/`: super-mario-world, the-legend-of-zelda-a-link-to-the-past, super-metroid, f-zero, chrono-trigger, donkey-kong-country, street-fighter-ii-the-world-warrior, star-fox, super-mario-kart, final-fantasy-iii, earthbound, mega-man-x. Skip any that are missing and substitute others with box art. Lay them out as a 4×3 grid, about 1200×840, JPEG q≈82, under 250 KB. Print sizes the image itself; check how other `fit: 'shot'` images look and match their aspect.
+- **The collage** `public/projects/snes-history.jpg` (Task 9c later replaces this with the V3 share-card render; build this placeholder so 9b stands alone): build it once with a small throwaway Python/Pillow snippet (not committed) from 12 iconic covers in `public/snes/box/`: super-mario-world, the-legend-of-zelda-a-link-to-the-past, super-metroid, f-zero, chrono-trigger, donkey-kong-country, street-fighter-ii-the-world-warrior, star-fox, super-mario-kart, final-fantasy-iii, earthbound, mega-man-x. Skip any that are missing and substitute others with box art. Lay them out as a 4×3 grid, about 1200×840, JPEG q≈82, under 250 KB. Print sizes the image itself; check how other `fit: 'shot'` images look and match their aspect.
 - Neo returns to its group automatically. Update any test that pins `FEATURED === 'neo'` or the group contents.
 
 **3. The /videogames hub.**
@@ -1714,6 +1714,50 @@ Added 11 Oct 2026 at Wes's request: "yes add the header link homepage tile and n
 - [ ] Implement 1–3.
 - [ ] `npx jest` passes; `npm test` builds.
 - [ ] Commit `feat(snes): link Games from the header, feature SNES History on the homepage, richer /videogames hub` (with Co-Authored-By line).
+
+---
+
+### Task 9c: Share cards for /videogames/snes-history and /videogames, plus robots.txt
+
+Added 11 Oct 2026 at Wes's request: "i need a cool social share card for the snes-history too and also for videogames". He picked the designs in https://claude.ai/artifact/5e3MLNeC4V1Qpg3hbTr7hj:
+- **S1 "Cover wall"** for `/videogames/snes-history`
+- **V3 "Wall + windows"** for `/videogames`
+
+He also approved a robots.txt change: remove `Disallow: /videogames` and keep the `noindex` meta on every page. X and LinkedIn obey robots.txt, so the block would leave a bare link; noindex alone keeps Google out.
+
+**Reference:** the exact HTML/CSS of both cards is in `.superpowers/sdd/2026-10-11-snes-time-machine/share-card-reference.html` (sections `.s1` and `.v3`). Its F-Zero frame is `.superpowers/sdd/2026-10-11-snes-time-machine/fz-frame.png`. Copy that into the repo as `scripts/og/assets/f-zero-frame.png`, which is the input for the card script.
+
+**Files:**
+- Modify: `scripts/og/build-og.py` (two new cards in `CARDS`), `public/robots.txt`, `app/videogames/snes-history/page.tsx` (metadata), `app/videogames/page.tsx` (metadata), `app/videogames/snes-history/time-machine/page.tsx` (metadata: reuse the SNES card), `CLAUDE.md` (the rebuild command)
+- Create (generated, committed): `public/og-snes.png`, `public/og-videogames.png` (both 1200×630), `scripts/og/assets/f-zero-frame.png`
+- Modify (from Task 9b): `public/projects/snes-history.jpg`, which becomes a JPEG of the V3 card render instead of the plain 12-cover grid
+- Test: `__tests__/snes-og.test.ts`
+
+**1. `build-og.py`.**
+- Add `'snes': ('og-snes.png', snes_card)` and `'videogames': ('og-videogames.png', videogames_card)`. Follow the existing pattern: HTML laid out at 1200×630, rendered by headless Chrome at 2x, then downsampled, with fonts inlined from `scripts/og/*.woff2`.
+- **Fonts:** the site's Source Serif 4 and IBM Plex. VT323 and UnifrakturMaguntia aren't in `scripts/og/` yet; add their woff2 files from Google Fonts (OFL-licensed) the same way the others were added.
+- **Covers:** read them from `public/snes/box/<slug>.jpg`, choosing the 48 highest EGM-average games with box art from `data/snes/games.json`. This makes the cards rebuildable and deterministic (sort by score desc, then slug).
+- **Scatter windows:** use the real EGM points (the same x mapping as `xForDate`, y range 3.5–10).
+- **Copy:**
+  - S1: eyebrow "The Super Nintendo in America", title "Every US SNES game, 1991–1998" with the years kept together, the line "717 games · timeline, cover wall, game shelf, score scatter and a week-by-week time machine", and the LED date "AUG·23·1991" plus "wesleybard.com". The game count comes from games.json.
+  - V3: eyebrow "Wesley Bard", title "Video games", the line "Every US Super Nintendo game, gameplay clips, and a week-by-week time machine." The windows are the gameplay clip (F-Zero frame), The Omaha World-Pixel (launch-week headline plus "#1: BRYAN ADAMS", read from `data/snes/weeks.json` week 0), the score scatter with its Hall of Fame band, and the shelf (12 cover spines). Footer "wesleybard.com/videogames".
+- **Featured homepage image:** after rendering V3, also save `public/projects/snes-history.jpg` (JPEG q≈85) from the same render, cropped or resized to the aspect the featured Print uses. Check `app/components/home/Print.tsx` and the existing `fit: 'shot'` images. Keep it under 300 KB.
+
+**2. Metadata.**
+- `/videogames/snes-history`, its Time Machine page and `/videogames` each set `openGraph` (title, description, url, `images: [{ url, width: 1200, height: 630, alt }]`) and `twitter: { card: 'summary_large_image', ... }`. The library and the Time Machine use `/og-snes.png`; the hub uses `/og-videogames.png`. Relative URLs resolve against `metadataBase` in `app/layout.tsx`.
+- `robots: { index: false, follow: false }` stays on all three. Game pages and company pages keep their current metadata and can inherit the site card; per-game cards are not in scope.
+
+**3. robots.txt.** Remove only the `Disallow: /videogames` line and adjust the comment. `/health` stays disallowed.
+
+**4. Tests (`__tests__/snes-og.test.ts`).**
+- Both PNGs exist and are exactly 1200×630 (read the IHDR bytes; no new dependencies).
+- `public/robots.txt` no longer disallows `/videogames` but still disallows `/health`.
+- The three pages' exported `metadata` contain the right `openGraph.images[0].url`, `twitter.card === 'summary_large_image'`, and `robots.index === false`.
+
+- [ ] Write the failing tests; run them and see them fail.
+- [ ] Implement, then run `python3 scripts/og/build-og.py snes videogames`. Look at both PNGs, and report their sizes and that they match the reference.
+- [ ] `npx jest` passes; `npm test` builds.
+- [ ] Commit `feat(snes): share cards for the SNES history and the video games hub` (with the Co-Authored-By line).
 
 ---
 
