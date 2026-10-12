@@ -1,8 +1,12 @@
 import type { Metadata } from 'next';
 import { Nav } from '../../../components/Nav';
 import Footer from '../../../components/Footer';
-import { getCompanyNames, getGame, getGames } from '@/lib/snes/data';
+import { getCompanyNames, getGame, getGames, getPrices, getWeeks } from '@/lib/snes/data';
 import { buildIndex, neighbours } from '@/lib/snes/library';
+import { formatRelease } from '@/lib/snes/display';
+import { panelWeekFor } from '@/lib/snes/weeks';
+import { consolePrice, gamePrice } from '@/lib/snes/prices';
+import { fraktur, vt323 } from '../../../snes/fonts';
 import GameView from '../../../snes/components/GameView';
 import '../../../snes/snes.css';
 
@@ -28,12 +32,22 @@ export default async function GamePage({ params }: Params) {
   const bySlug = new Map(index.map((g) => [g.slug, g]));
   const seriesGames = game.series ? index.filter((g) => g.slug !== slug && g.series === game.series).slice(0, 8) : [];
   const similarGames = game.similar.map((s) => bySlug.get(s)).filter((g): g is NonNullable<typeof g> => Boolean(g));
+  const weeks = getWeeks();
+  const { index: wi, label } = panelWeekFor(weeks, game);
+  const prices = getPrices();
+  const gp = gamePrice(prices, game.slug);
+  const cp = consolePrice(prices);
+  const rewind = {
+    week: weeks[wi], weekNumber: wi + 1, label,
+    monthName: formatRelease(game.releasedUS, 'month'),
+    price: gp ? { usd: gp.usd, year: Number(gp.date.slice(0, 4)), what: 'game' as const } : { usd: cp.usd, year: Number(cp.date.slice(0, 4)), what: 'console' as const },
+  };
   return (
     <>
       <Nav theme />
-      <main className="wb wb-page">
+      <main className={`wb wb-page ${vt323.variable} ${fraktur.variable}`}>
         <div className="s-wrap">
-          <GameView game={game} names={getCompanyNames()} prev={prev} next={next} sameMonth={sameMonth} seriesGames={seriesGames} similarGames={similarGames} />
+          <GameView game={game} names={getCompanyNames()} prev={prev} next={next} sameMonth={sameMonth} seriesGames={seriesGames} similarGames={similarGames} rewind={rewind} />
         </div>
       </main>
       <Footer />

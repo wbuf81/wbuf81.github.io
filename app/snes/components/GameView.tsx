@@ -3,6 +3,7 @@ import type { Game } from '@/lib/snes/types';
 import type { IndexGame } from '@/lib/snes/library';
 import { MONTHS } from '@/lib/snes/display';
 import { SNES_BASE, gamePath } from '@/lib/snes/routes';
+import BeKindRewind from './BeKindRewind';
 import Booklet from './Booklet';
 import MediaFrame from './MediaFrame';
 import { GameTile } from './GameTile';
@@ -10,9 +11,10 @@ import { SoundProvider } from './sound';
 
 const STRIP = 8;
 
-export default function GameView({ game, names, prev, next, sameMonth, seriesGames, similarGames }: {
+export default function GameView({ game, names, prev, next, sameMonth, seriesGames, similarGames, rewind }: {
   game: Game; names: Record<string, string>; prev: IndexGame | null; next: IndexGame | null; sameMonth: IndexGame[];
   seriesGames: IndexGame[]; similarGames: IndexGame[];
+  rewind?: React.ComponentProps<typeof BeKindRewind>;
 }) {
   const [year, month] = game.releasedUS.split('-').map(Number);
   const monthName = month ? `${MONTHS[month - 1]} ${year}` : String(year);
@@ -48,6 +50,7 @@ export default function GameView({ game, names, prev, next, sameMonth, seriesGam
         </div>
         <Booklet game={game} names={names} />
       </div>
+      {rewind ? <BeKindRewind {...rewind} /> : null}
       {similarGames.length ? strip(`If you like ${game.title}, try…`, similarGames) : null}
       {game.series && seriesGames.length ? strip(`More in the ${game.series} series`, seriesGames) : null}
       {sameMonth.length ? (

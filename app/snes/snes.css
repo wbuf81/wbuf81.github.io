@@ -241,3 +241,30 @@
   .wb .s-tm-pbody { grid-template-columns: 1fr; }
   .wb .s-tm-pmore { border-left: 0; padding-left: 0; border-top: 1px solid color-mix(in srgb, var(--tm-paper-ink) 33%, transparent); padding-top: 8px; }
 }
+
+/* Be Kind, Rewind: the game's week as objects on a 90s coffee table. */
+.wb .s-bkr { margin: 28px 0; border: 1px solid var(--screen-rule); border-radius: 10px; overflow: hidden; background: var(--screen-2); }
+.wb .s-bkr-tape { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding: 12px 16px; background: var(--screen); border-bottom: 1px solid var(--screen-rule); }
+.wb .s-bkr-label { font: 400 26px/1 var(--font-vt323), ui-monospace, Menlo, monospace; letter-spacing: .08em; background: var(--tm-paper); color: var(--tm-paper-ink); padding: 4px 12px; border-radius: 3px; }
+.wb .s-bkr-sticker { font: 600 12px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; background: var(--tm-led); color: var(--tm-paper-ink); padding: 7px 12px; border-radius: 999px; }
+@media (prefers-reduced-motion: no-preference) {
+  .wb .s-bkr-label { transform: rotate(-1.5deg); }
+  .wb .s-bkr-sticker { transform: rotate(2deg); }
+}
+.wb .s-bkr-objs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; padding: 18px 16px; align-items: start; }
+.wb .s-bkr-objs .s-tm-paper { grid-column: 1 / -1; }
+@media (min-width: 760px) {
+  .wb .s-bkr-objs { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .wb .s-bkr-objs .s-tm-paper { grid-column: auto; }
+}
+.wb .s-bkr-obj { display: flex; flex-direction: column; gap: 4px; padding: 10px; border-radius: 6px; text-decoration: none; font: 400 13px/1.3 var(--serif); box-shadow: 0 8px 18px rgba(0, 0, 0, .5); min-width: 0; overflow-wrap: anywhere; }
+.wb .s-bkr-obj b { font: 700 15px/1.2 var(--serif); }
+.wb .s-bkr-obj img { width: 100%; height: auto; border-radius: 3px; display: block; }
+.wb .s-bkr-k { font: 600 10.5px/1.2 var(--mono); letter-spacing: .1em; text-transform: uppercase; }
+.wb .s-bkr-obj:focus-visible, .wb .s-bkr-go:focus-visible { outline: 3px solid var(--snes-glow); outline-offset: 3px; }
+.wb .s-bkr-obj.is-cass { background: var(--tm-cass); color: var(--tm-cass-ink); border-top: 10px solid var(--tm-cass-stripe); }
+.wb .s-bkr-obj.is-cd { background: linear-gradient(135deg, var(--tm-cd), var(--tm-cd-2)); color: var(--tm-cd-ink); }
+.wb .s-bkr-obj.is-tix { background: var(--tm-ticket); color: var(--tm-ticket-ink); border: 2px dashed var(--tm-ticket-ink); }
+.wb .s-bkr-obj.is-tix img { aspect-ratio: 2 / 3; object-fit: cover; }
+.wb .s-bkr-price { margin: 0; padding: 0 16px 10px; font: 400 14px/1.4 var(--serif); color: var(--screen-ink); }
+.wb .s-bkr-go { display: inline-block; margin: 0 16px 16px; color: var(--screen-ink); text-decoration: underline; font: 600 14px/1.4 var(--serif); }
