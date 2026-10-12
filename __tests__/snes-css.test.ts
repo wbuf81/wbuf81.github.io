@@ -51,3 +51,10 @@ test('the data credit is readable: at least 11px, in a body-text token that pass
   expect(rule![1]).toMatch(/color: var\(--ink-2\)/);
   expect(css).not.toMatch(/\.s-tm-credit/);
 });
+
+test('hub card images keep the card shape: height follows the 300 / 209 aspect ratio, not the img height attribute', () => {
+  const rule = css.match(/\.wb \.s-hub-card img\s*\{([^}]*)\}/);
+  expect(rule).not.toBeNull();
+  expect(rule![1]).toMatch(/height: auto/);
+  expect(rule![1]).toMatch(/aspect-ratio: 300 \/ 209/);
+});
