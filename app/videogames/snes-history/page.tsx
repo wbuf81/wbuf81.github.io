@@ -18,9 +18,9 @@ export const metadata: Metadata = {
     title: TITLE,
     description: DESCRIPTION,
     url: '/videogames/snes-history',
-    images: [{ url: '/og-snes.png', width: 1200, height: 630, alt: 'Every US SNES game, 1991–1998: a wall of box art beside the title' }],
+    images: [{ url: '/og-snes.jpg', width: 1200, height: 630, alt: 'Every US SNES game, 1991–1998: a wall of box art beside the title' }],
   },
-  twitter: { card: 'summary_large_image', title: TITLE, description: DESCRIPTION, images: ['/og-snes.png'] },
+  twitter: { card: 'summary_large_image', title: TITLE, description: DESCRIPTION, images: ['/og-snes.jpg'] },
   // Unlinked and kept out of search until Wes's played-games layer (piece 3) ships.
   robots: { index: false, follow: false },
 };

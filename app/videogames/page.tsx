@@ -14,9 +14,9 @@ export const metadata: Metadata = {
     title: 'Video games',
     description: "Wes's video game projects.",
     url: '/videogames',
-    images: [{ url: '/og-videogames.png', width: 1200, height: 630, alt: 'Video games: gameplay clips, the Omaha World-Pixel, a score scatter and a shelf of SNES covers' }],
+    images: [{ url: '/og-videogames.jpg', width: 1200, height: 630, alt: 'Video games: gameplay clips, the Omaha World-Pixel, a score scatter and a shelf of SNES covers' }],
   },
-  twitter: { card: 'summary_large_image', title: 'Video games', description: "Wes's video game projects.", images: ['/og-videogames.png'] },
+  twitter: { card: 'summary_large_image', title: 'Video games', description: "Wes's video game projects.", images: ['/og-videogames.jpg'] },
   robots: { index: false, follow: false },
 };
 

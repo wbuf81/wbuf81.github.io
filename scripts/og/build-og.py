@@ -349,9 +349,9 @@ body { -webkit-font-smoothing: antialiased; }
 .s1 .wall { position: absolute; inset: -60px -40px -60px 380px; display: grid; grid-template-columns: repeat(6, 1fr); gap: 14px; transform: rotate(-8deg); }
 .s1 .wall img { width: 100%; border-radius: 6px; box-shadow: 0 6px 16px #000a; }
 .s1 .shade { position: absolute; inset: 0; background: linear-gradient(90deg, #0e1117 0 34%, #0e1117e6 46%, #0e111700 72%); }
-.s1 .txt { position: absolute; left: 64px; top: 70px; width: 560px; }
-.s1 h3 { font: 700 76px/1.02 var(--serif); margin: 18px 0 22px; letter-spacing: -.01em; }
-.s1 .meta { font: 400 26px/1.4 var(--sans); color: #c9c6dc; }
+.s1 .txt { position: absolute; left: 64px; top: 70px; width: 700px; }
+.s1 h3 { font: 700 68px/1.04 var(--serif); margin: 18px 0 22px; letter-spacing: -.01em; }
+.s1 .meta { font: 400 26px/1.4 var(--sans); max-width: 580px; color: #c9c6dc; }
 .s1 .foot { position: absolute; left: 64px; bottom: 56px; display: flex; gap: 18px; align-items: center; }
 .s1 .led { font: 400 44px var(--vt); color: var(--led); text-shadow: 0 0 12px #ff5a3c88; }
 
@@ -369,7 +369,7 @@ body { -webkit-font-smoothing: antialiased; }
 .w-crt img { display: block; width: 100%; height: 210px; object-fit: cover; }
 .w-crt .sl { position: absolute; inset: 28px 0 0; background: repeating-linear-gradient(0deg, #0000 0 3px, #0004 3px 5px); }
 .w-paper { left: 850px; top: 120px; width: 300px; transform: rotate(3deg); background: #f4efdf; color: #26211a; border: 0; padding: 12px 14px 14px; }
-.w-paper .m { font: 400 30px/1 'UnifrakturMaguntia', Georgia, serif; text-align: center; border-bottom: 3px double #26211a; padding-bottom: 4px; }
+.w-paper .m { font: 400 27px/1 'UnifrakturMaguntia', Georgia, serif; text-align: center; border-bottom: 3px double #26211a; padding-bottom: 4px; }
 .w-paper .d { text-align: center; font: italic 13px Georgia; border-bottom: 1px solid #26211a; padding: 3px 0; margin-bottom: 8px; }
 .w-paper .h { font: 700 21px/1.12 Georgia, serif; }
 .w-paper .led { font: 400 26px var(--vt); color: var(--led); margin-top: 6px; }
@@ -436,7 +436,7 @@ def snes_card():
 <div class="card s1">
   <div class="wall">{wall}</div><div class="shade"></div>
   <div class="txt"><div class="eyebrow">The Super Nintendo in America</div>
-    <h3>Every US SNES game, <span style="white-space:nowrap">1991–1998</span></h3>
+    <h3>Every US SNES game,<br><span style="white-space:nowrap">1991–1998</span></h3>
     <div class="meta">{count} games · timeline, cover wall, game shelf, score scatter and a week-by-week time machine</div></div>
   <div class="foot"><span class="led">AUG·23·1991</span><span class="u" style="color:#8f8aa8">wesleybard.com</span></div>
 </div>""")
@@ -448,7 +448,7 @@ def videogames_card():
     _, covers, pts = snes_data()
     weeks = json.loads((REPO / 'data/snes/weeks.json').read_text())
     week = weeks[0]
-    headline = 'The Super Nintendo is released in the United States'
+    headline = week['news'][0]['text'].rstrip('.').replace(' Entertainment System', '').replace('is first released', 'is released')
     by = week['song']['by'].upper()
     wall = ''.join(f'<img src="{cover_uri(s)}" alt="">' for s in (covers * 2)[:81])
     shelf = ''.join(f'<div style="background-image:url({cover_uri(s)})"></div>' for s in covers[10:22])
@@ -462,31 +462,36 @@ def videogames_card():
   <div class="wall">{wall}</div><div class="shade"></div>
   <div class="txt"><div class="eyebrow">Wesley Bard</div><h3>Video games</h3><div class="meta">Every US Super Nintendo game, gameplay clips, and a week-by-week time machine.</div></div>
   <div class="win w-crt"><div class="bar"><i></i><i></i><i></i>&nbsp;Gameplay clips</div><img src="data:image/png;base64,{FZ_FRAME}" alt=""><div class="sl"></div></div>
-  <div class="win w-paper"><div class="m">The Omaha World-Pixel</div><div class="d">Week of August 23, 1991</div><div class="h">{headline}</div><div class="led">#1: {by}</div></div>
+  <div class="win w-paper"><div class="m">The Omaha <span style="white-space:nowrap">World-Pixel</span></div><div class="d">Week of August 23, 1991</div><div class="h">{headline}</div><div class="led">#1: {by}</div></div>
   <div class="win w-scatter"><div class="bar"><i></i><i></i><i></i>&nbsp;Score scatter</div><div class="plot">{dots}<div class="hof"><span>HALL OF FAME</span></div></div></div>
   <div class="win w-shelf"><div class="bar"><i></i><i></i><i></i>&nbsp;Shelf</div><div class="sp">{shelf}</div></div>
   <span class="u">wesleybard.com/videogames</span>
 </div>""")
 
 
-def featured_jpeg(png_path):
+def save_under_limit(im, out, start=88, limit=300 * 1024):
+    """Save as a progressive JPEG, stepping the quality down from `start` until it fits `limit`."""
+    for q in range(start, 40, -3):
+        im.save(out, quality=q, optimize=True, progressive=True)
+        if out.stat().st_size <= limit:
+            return q
+    raise SystemExit(f'{out.name} will not fit in {limit // 1024} KB')
+
+
+def featured_jpeg(card):
     """The homepage's featured Print crops `fit: 'shot'` images to 2:1, so the V3 render is cut to 1200x600
     (15px off the top and bottom, which holds nothing but wall)."""
-    from PIL import Image
-    im = Image.open(png_path).convert('RGB').crop((0, 15, W, H - 15))
+    im = card.crop((0, 15, W, H - 15))
     out = PUBLIC / 'projects' / 'snes-history.jpg'
-    for q in (85, 80, 75, 70):
-        im.save(out, quality=q, optimize=True, progressive=True)
-        if out.stat().st_size <= 300 * 1024:
-            break
+    save_under_limit(im, out, start=85)
     return out
 
 
 CARDS = {
     'main': ('og-image.png', main_card),
     'health': ('og-health.png', health_card),
-    'snes': ('og-snes.png', snes_card),
-    'videogames': ('og-videogames.png', videogames_card),
+    'snes': ('og-snes.jpg', snes_card),
+    'videogames': ('og-videogames.jpg', videogames_card),
 }
 
 
@@ -495,24 +500,31 @@ def render(name):
     src = HERE / f'.{name}.html'
     src.write_text(f'<!doctype html><meta charset="utf-8">{builder()}')
     out = PUBLIC / filename
+    shot = out.with_suffix('.png') if out.suffix == '.jpg' else out
     try:
         subprocess.run(
             [find_chrome(), '--headless', '--disable-gpu', '--hide-scrollbars',
              '--no-sandbox',  # required when the runner executes as root
              f'--force-device-scale-factor={SCALE}', f'--window-size={W},{H}',
-             f'--screenshot={out}', f'file://{src}'],
+             f'--screenshot={shot}', f'file://{src}'],
             capture_output=True, check=True,
         )
     finally:
         src.unlink(missing_ok=True)
 
     from PIL import Image
-    im = Image.open(out)
+    im = Image.open(shot)
     if im.size != (W, H):
         im = im.resize((W, H), Image.LANCZOS)
-    im.convert('RGB').save(out, optimize=True)
+    im = im.convert('RGB')
+    if out.suffix == '.jpg':
+        # WhatsApp and similar clients drop previews over ~300 KB, so these cards are JPEGs.
+        save_under_limit(im, out)
+        shot.unlink(missing_ok=True)
+    else:
+        im.save(out, optimize=True)
     if name == 'videogames':
-        featured_jpeg(out)
+        featured_jpeg(im)
     return out
 
 

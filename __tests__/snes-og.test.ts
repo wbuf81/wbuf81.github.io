@@ -6,20 +6,29 @@ import { metadata as timeMachine } from '../app/videogames/snes-history/time-mac
 
 const PUBLIC = path.join(__dirname, '..', 'public');
 
-function pngSize(file: string) {
+/** Width and height from the JPEG's SOF0/SOF2 marker. */
+function jpegSize(file: string) {
   const b = fs.readFileSync(path.join(PUBLIC, file));
-  return { w: b.readUInt32BE(16), h: b.readUInt32BE(20) };
+  expect(b.subarray(0, 2).toString('hex')).toBe('ffd8');
+  let i = 2;
+  while (i < b.length) {
+    const marker = b[i + 1];
+    const len = b.readUInt16BE(i + 2);
+    if (marker === 0xc0 || marker === 0xc2) return { w: b.readUInt16BE(i + 7), h: b.readUInt16BE(i + 5) };
+    i += 2 + len;
+  }
+  throw new Error('no SOF marker');
 }
 
 describe('share card images', () => {
-  it.each(['og-snes.png', 'og-videogames.png'])('%s is a 1200x630 PNG', (file) => {
-    expect(pngSize(file)).toEqual({ w: 1200, h: 630 });
+  it.each(['og-snes.jpg', 'og-videogames.jpg'])('%s is a 1200x630 JPEG within the 300 KB WhatsApp limit', (file) => {
+    expect(jpegSize(file)).toEqual({ w: 1200, h: 630 });
+    expect(fs.statSync(path.join(PUBLIC, file)).size).toBeLessThanOrEqual(300 * 1024);
   });
 
-  it('the featured homepage image is a JPEG under 300 KB', () => {
-    const file = path.join(PUBLIC, 'projects', 'snes-history.jpg');
-    expect(fs.statSync(file).size).toBeLessThan(300 * 1024);
-    expect(fs.readFileSync(file).subarray(0, 2).toString('hex')).toBe('ffd8');
+  it('the featured homepage image is a 2:1 JPEG under 300 KB', () => {
+    expect(jpegSize('projects/snes-history.jpg')).toEqual({ w: 1200, h: 600 });
+    expect(fs.statSync(path.join(PUBLIC, 'projects', 'snes-history.jpg')).size).toBeLessThanOrEqual(300 * 1024);
   });
 });
 
@@ -34,9 +43,9 @@ describe('robots.txt', () => {
 });
 
 describe.each([
-  ['the library', library, '/og-snes.png'],
-  ['the Time Machine', timeMachine, '/og-snes.png'],
-  ['the hub', hub, '/og-videogames.png'],
+  ['the library', library, '/og-snes.jpg'],
+  ['the Time Machine', timeMachine, '/og-snes.jpg'],
+  ['the hub', hub, '/og-videogames.jpg'],
 ])('%s metadata', (_name, meta, image) => {
   it('has a large-image card and stays noindex', () => {
     const images = (meta.openGraph as { images: { url: string; width: number; height: number }[] }).images;
