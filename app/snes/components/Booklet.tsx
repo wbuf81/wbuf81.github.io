@@ -35,7 +35,7 @@ export default function Booklet({ game, names, logoSize }: { game: Game; names: 
       {game.media.logo ? (
         <>
           <h1 className="vh">{game.title}</h1>
-          <img className="s-logo" src={`/snes/logo/${game.slug}.webp`} alt={game.title} width={logoSize?.[0] ?? 400} height={logoSize?.[1] ?? 175} decoding="async" />
+          <img className="s-logo" src={`/snes/logo/${game.slug}.webp`} alt={game.title} width={logoSize?.[0]} height={logoSize?.[1]} decoding="async" />
         </>
       ) : (
         <h1 className="s-title">{game.title}</h1>

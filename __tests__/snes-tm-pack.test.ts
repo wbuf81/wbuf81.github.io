@@ -1,5 +1,6 @@
 import zlib from 'zlib';
 import { getGames, getPrices, getWeeks } from '@/lib/snes/data';
+import { buildTimeMachineProps } from '@/lib/snes/tmProps';
 import { packGames, packWeeks, unpackGames, unpackWeeks } from '@/lib/snes/pack';
 import type { Week } from '@/lib/snes/types';
 
@@ -24,14 +25,9 @@ test('packing makes the client payload meaningfully smaller', () => {
   expect(JSON.stringify(packWeeks(getWeeks())).length).toBeLessThan(JSON.stringify(getWeeks()).length * 0.75);
 });
 test('the Time Machine client payload stays inside its gzip budget', () => {
-  // What page.tsx hands to the client component: packed weeks and games, the prices and the milestones. It ships twice
+  // Exactly what page.tsx hands to the client component (the same builder): packed weeks and games, milestones, prices. It ships twice
   // (HTML and RSC), so the 150 KB page budget has about double this to spare for markup.
-  const prices = getPrices();
-  const year = (d: string) => Number(d.slice(0, 4));
-  const payload = {
-    weeks: packWeeks(getWeeks()), games: packGames(slim),
-    prices: { console: { usd: prices.hardware[0].usd, year: year(prices.hardware[0].date) }, games: Object.fromEntries(Object.entries(prices.games).map(([s, p]) => [s, { usd: p.usd, year: year(p.date) }])) },
-  };
+  const payload = buildTimeMachineProps({ games: getGames(), weeks: getWeeks(), prices: getPrices() });
   const json = JSON.stringify(payload);
   const gz = zlib.gzipSync(json, { level: 9 }).length;
   expect(gz).toBeLessThanOrEqual(70 * 1024);

@@ -1,3 +1,5 @@
+import fs from 'fs';
+import path from 'path';
 import type { Metadata } from 'next';
 import { Nav } from '../../../components/Nav';
 import Footer from '../../../components/Footer';
@@ -6,8 +8,6 @@ import { buildIndex, neighbours } from '@/lib/snes/library';
 import { formatRelease } from '@/lib/snes/display';
 import { panelWeekFor } from '@/lib/snes/weeks';
 import { consolePrice, gamePrice } from '@/lib/snes/prices';
-import fs from 'fs';
-import path from 'path';
 import { webpSize } from '@/lib/snes/webpSize';
 import { fraktur, vt323 } from '../../../snes/fonts';
 import GameView from '../../../snes/components/GameView';
@@ -46,7 +46,11 @@ export default async function GamePage({ params }: Params) {
     price: gp ? { usd: gp.usd, year: Number(gp.date.slice(0, 4)), what: 'game' as const } : { usd: cp.usd, year: Number(cp.date.slice(0, 4)), what: 'console' as const },
   };
   // The logo's own pixel size, read at build time, so the <img> reserves its space and the page doesn't shift.
-  const logoSize = game.media.logo ? webpSize(fs.readFileSync(path.join(process.cwd(), 'public/snes/logo', `${slug}.webp`))) ?? undefined : undefined;
+  let logoSize: [number, number] | undefined;
+  if (game.media.logo) {
+    logoSize = webpSize(fs.readFileSync(path.join(process.cwd(), 'public/snes/logo', `${slug}.webp`))) ?? undefined;
+    if (!logoSize) throw new Error(`Cannot read the size of the logo for ${slug}`);
+  }
   return (
     <>
       <Nav theme />

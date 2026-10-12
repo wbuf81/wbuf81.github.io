@@ -15,6 +15,7 @@ export default function GameView({ game, names, prev, next, sameMonth, seriesGam
   game: Game; names: Record<string, string>; prev: IndexGame | null; next: IndexGame | null; sameMonth: IndexGame[];
   seriesGames: IndexGame[]; similarGames: IndexGame[];
   rewind?: React.ComponentProps<typeof BeKindRewind>;
+  /** Pixel size of the logo file; the page supplies it whenever media.logo is set. */
   logoSize?: [number, number];
 }) {
   const [year, month] = game.releasedUS.split('-').map(Number);

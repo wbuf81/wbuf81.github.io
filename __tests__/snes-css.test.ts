@@ -32,3 +32,13 @@ test('the filter bar is sticky on desktop only, and panel selects never overflow
   expect(css).toMatch(/@media \(min-width: 761px\)\s*\{[^}]*\.wb \.s-bar\s*\{[^}]*position: sticky/);
   expect(css).toMatch(/\.wb \.s-select\s*\{[^}]*max-width: 100%|\.wb \.s-panel \.s-select[^{]*\{[^}]*max-width: 100%/);
 });
+
+test('on touch the scatter dots never lift into a stacking context, so enlarged hit pads stay beneath every dot', () => {
+  const touch = css.slice(css.indexOf('@media (max-width: 760px), (pointer: coarse)'));
+  expect(touch).toMatch(/\.s-dot:hover[^{]*\{[^}]*transform: none[^}]*z-index: auto|\.s-dot:hover[^{]*\{[^}]*z-index: auto[^}]*transform: none/);
+  expect(touch).toMatch(/\.s-dot \{[^}]*opacity: 1/);
+  expect(touch).toMatch(/\.s-dot::before \{[^}]*z-index: -1/);
+});
+test('the coming-soon hub card has no link glow', () => {
+  expect(css).toMatch(/\.s-hub-soon:hover[^{]*\{[^}]*box-shadow: none/);
+});

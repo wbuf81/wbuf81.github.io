@@ -215,6 +215,7 @@
 .wb .s-hub { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 18px; margin-top: 22px; }
 .wb .s-hub-card { display: block; overflow: hidden; background: var(--screen-2); border: 1px solid var(--screen-rule); border-radius: 6px; color: var(--screen-ink); text-decoration: none; transition: box-shadow .25s; }
 .wb .s-hub-card:hover, .wb .s-hub-card:focus-visible { outline: none; box-shadow: 0 0 0 2px var(--snes-glow), 0 0 20px color-mix(in srgb, var(--snes-glow) 50%, transparent); }
+.wb .s-hub-soon:hover, .wb .s-hub-soon:focus-visible { box-shadow: none; }
 .wb .s-hub-card img { width: 100%; aspect-ratio: 300 / 209; object-fit: cover; }
 .wb .s-hub-t { display: block; padding: 10px 12px 0; font: 600 18px/1.2 var(--serif); }
 .wb .s-hub-p { display: block; padding: 4px 12px 12px; font: 400 11.5px var(--mono); color: var(--screen-ink-2); }
@@ -407,7 +408,9 @@
   .wb .s-dot.f-other { --dc: var(--snes-f-other); background: color-mix(in srgb, var(--dc) var(--da), transparent); }
   .wb .s-dot.is-star { --da: 100%; }
   .wb .s-dot.is-faded { --da: 20%; opacity: 1; }
-  .wb .s-dot:hover, .wb .s-dot:focus-visible, .wb .s-dot.is-open { --da: 100%; }
+  .wb .s-dot.is-star { z-index: auto; }
+  /* No scale or z-index here: either would make the dot a stacking context and lift its pad over its neighbours. */
+  .wb .s-dot:hover, .wb .s-dot:focus-visible, .wb .s-dot.is-open { --da: 100%; z-index: auto; transform: none; box-shadow: 0 0 0 2px var(--paper), 0 0 0 4px var(--snes-glow); }
   .wb .s-dot::before { content: ''; position: absolute; z-index: -1; inset: -8px; border-radius: 50%; }
   .wb .s-dot.is-star::before { inset: -7px; }
   /* Heatmap: rows are 44px tall and the colour is clipped to the middle, so the padding is the hit area. */
