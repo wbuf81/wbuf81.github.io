@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Nav } from '../../../components/Nav';
+import SnesNav from '../../../snes/components/SnesNav';
 import Footer from '../../../components/Footer';
 import { getGames } from '@/lib/snes/data';
 import { SNES_BASE, TOP8 } from '@/lib/snes/routes';
@@ -30,6 +31,7 @@ export default function Top8Page() {
     <>
       <Nav theme />
       <main className={`wb wb-page ${pressStart.variable} ${orbitron.variable} ${vt323.variable}`}>
+        <SnesNav current="top8" />
         <div className="s-wrap">
           <header className="s-hero">
             <div className="eyebrow"><Link href={SNES_BASE}>The Super Nintendo in America</Link></div>

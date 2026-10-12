@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import type { Metadata } from 'next';
 import { Nav } from '../../../components/Nav';
+import SnesNav from '../../../snes/components/SnesNav';
 import Footer from '../../../components/Footer';
 import { getCompanyNames, getGame, getGames, getPrices, getWeeks } from '@/lib/snes/data';
 import { buildIndex, neighbours } from '@/lib/snes/library';
@@ -69,6 +70,7 @@ export default async function GamePage({ params }: Params) {
     <>
       <Nav theme />
       <main className={`wb wb-page ${vt323.variable} ${fraktur.variable}`}>
+        <SnesNav current="games" />
         <div className="s-wrap">
           <Top8Scope titles={titleList(getGames())}>
             <GameView game={game} names={getCompanyNames()} prev={prev} next={next} sameMonth={sameMonth} seriesGames={seriesGames} similarGames={similarGames} rewind={rewind} logoSize={logoSize} />

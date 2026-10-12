@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Nav } from '../../components/Nav';
+import SnesNav from '../../snes/components/SnesNav';
 import Footer from '../../components/Footer';
 import { getCompanyNames, getGames } from '@/lib/snes/data';
 import { buildIndex, facets } from '@/lib/snes/library';
@@ -33,6 +34,7 @@ export default function SnesPage() {
     <>
       <Nav theme />
       <main className="wb wb-page">
+        <SnesNav current="games" />
         <div className="s-wrap">
           <header className="s-hero">
             <div className="eyebrow">The Super Nintendo in America</div>
