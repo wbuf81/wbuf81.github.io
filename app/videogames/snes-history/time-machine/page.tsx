@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Nav } from '../../../components/Nav';
+import SnesNav from '../../../snes/components/SnesNav';
 import Footer from '../../../components/Footer';
 import { getGames, getPrices, getWeeks } from '@/lib/snes/data';
 import { SNES_BASE } from '@/lib/snes/routes';
@@ -29,6 +30,7 @@ export default function TimeMachinePage() {
     <>
       <Nav theme />
       <main className={`wb wb-page ${vt323.variable} ${fraktur.variable}`}>
+        <SnesNav current="time" />
         <div className="s-wrap">
           <header className="s-hero">
             <div className="eyebrow"><Link href={SNES_BASE}>The Super Nintendo in America</Link></div>

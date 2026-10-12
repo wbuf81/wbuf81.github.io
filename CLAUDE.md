@@ -286,4 +286,5 @@ npm run snes:pop         # all three
   - the library filter `mine=1`
   - the builder's "Browse all games" panel (`Top8Browse`)
   - Lists use `Top8Provider` (one subscription per page). Game and company pages pass a slug→title map. No-art games render `Cover`'s initials placeholder.
+- **SNES menu:** `SnesNav` (`current="games"|"time"|"top8"`) sits first in `<main>` on every SNES page (game and company pages count as games), sticky at the top, height `--s-nav-h` (53px). Anything else sticky at the top (the library filter bar, the Top 8 preview) offsets by `var(--s-nav-h)`. The Top 8 n/8 badge comes from the store (client only).
 - **Popover focus:** it opens `visibility: hidden` until positioned. Focus only after it's visible (browsers refuse focus on hidden elements; jsdom doesn't notice).

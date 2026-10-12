@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Nav } from '../../../../components/Nav';
+import SnesNav from '../../../../snes/components/SnesNav';
 import Footer from '../../../../components/Footer';
 import { getCompanies, getCompanyNames, getGames } from '@/lib/snes/data';
 import { buildIndex } from '@/lib/snes/library';
@@ -42,6 +43,7 @@ export default async function CompanyPage({ params }: Params) {
     <>
       <Nav theme />
       <main className="wb wb-page">
+        <SnesNav current="games" />
         <div className="s-wrap">
           <Top8Scope titles={titleList(all)}>
             <CompanyView company={company} games={games} names={getCompanyNames()} />
