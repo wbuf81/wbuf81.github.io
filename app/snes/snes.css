@@ -279,3 +279,65 @@
 .wb .s-tm-paper.is-compact .s-tm-ptop { white-space: nowrap; font-size: 11px; }
 .wb .s-tm-paper.is-compact .s-tm-ptop span:nth-child(2) { display: none; }
 .wb .s-tm-paper.is-compact .s-tm-pmast { font-size: clamp(18px, 5.4vw, 22px); white-space: nowrap; }
+
+/* the Time Machine: "Your SNES years" on the light page, then a CRT screen and a VCR deck */
+.wb .s-tm { margin: 22px 0 18px; }
+.wb .s-tm-years { margin: 0 0 18px; padding: 16px 18px; background: var(--snes-soft); border-radius: 14px; color: var(--ink); }
+.wb .s-tm-born { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font: 400 15px/1.4 var(--serif); }
+.wb .s-tm-born input { width: 5.2em; height: 34px; padding: 0 8px; border: 2px solid var(--snes); border-radius: 6px; background: var(--paper); color: var(--ink); font: 600 16px var(--mono); }
+.wb .s-tm-born input:focus-visible { outline: 3px solid var(--snes-glow); outline-offset: 2px; }
+.wb .s-tm-hint { font: 500 11px var(--mono); color: var(--ink-3); }
+.wb .s-tm-years p { margin: 10px 0 12px; max-width: 75ch; font: 400 15px/1.5 var(--serif); color: var(--ink-2); }
+.wb .s-tm-ms { display: flex; flex-wrap: wrap; gap: 6px; }
+.wb .s-tm-ms button { padding: 5px 10px; border: 1px solid var(--rule); border-radius: 999px; background: var(--paper); color: var(--ink-2); font: 400 12.5px/1.3 var(--sans); text-align: left; cursor: pointer; }
+.wb .s-tm-ms button b { color: var(--snes); font: 600 11.5px var(--mono); }
+.wb .s-tm-ms button:hover, .wb .s-tm-ms button:focus-visible { border-color: var(--snes); outline: none; box-shadow: 0 0 0 2px var(--snes-glow); }
+
+.wb .s-tm-tv { position: relative; }
+.wb .s-tm-screen { position: relative; display: grid; gap: 18px; padding: clamp(14px, 3vw, 26px); background: var(--screen); color: var(--screen-ink); border-radius: 20px; box-shadow: inset 0 0 0 1px var(--screen-rule), inset 0 0 60px rgba(0, 0, 0, .55); scroll-margin-top: 70px; overflow: hidden; }
+.wb .s-tm-screen::after { content: ''; position: absolute; inset: 0; pointer-events: none; border-radius: inherit; background: repeating-linear-gradient(0deg, rgba(0, 0, 0, .18) 0 1px, transparent 1px 3px); }
+.wb .s-tm-top { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 6px 16px; }
+.wb .s-tm-wo { display: block; font: 600 11px var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--screen-ink-2); }
+.wb .s-tm-led { display: block; font: 400 clamp(40px, 9vw, 64px)/1 var(--font-vt323), ui-monospace, Menlo, monospace; letter-spacing: .04em; color: var(--tm-led); text-shadow: 0 0 6px color-mix(in srgb, var(--tm-led) 70%, transparent), 0 0 18px color-mix(in srgb, var(--tm-led) 45%, transparent); }
+.wb .s-tm-n { font: 500 12px var(--mono); color: var(--screen-ink-2); }
+.wb .s-tm-cards { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; align-items: start; }
+.wb .s-tm-card { display: flex; flex-direction: column; gap: 3px; min-width: 0; padding: 10px; background: var(--screen-2); border: 1px solid var(--screen-rule); border-radius: 12px; color: var(--screen-ink); text-decoration: none; overflow-wrap: anywhere; transition: box-shadow .25s; }
+.wb a.s-tm-card:hover, .wb a.s-tm-card:focus-visible { outline: none; box-shadow: 0 0 0 2px var(--snes-glow), 0 0 20px color-mix(in srgb, var(--snes-glow) 50%, transparent); }
+.wb .s-tm-art { position: relative; display: block; aspect-ratio: 1; margin-bottom: 6px; overflow: hidden; border-radius: 6px; background: var(--screen); }
+.wb .s-tm-art.is-poster { aspect-ratio: 2 / 3; }
+.wb .s-tm-art img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.wb .s-tm-noart { position: absolute; inset: 0; display: grid; place-items: center; padding: 6px; text-align: center; font: 600 12px/1.2 var(--serif); color: var(--screen-ink-2); }
+.wb .s-tm-k { font: 600 10.5px var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--screen-ink-2); }
+.wb .s-tm-t { font: 700 15px/1.2 var(--serif); color: var(--screen-ink); }
+.wb .s-tm-by { font: 400 12.5px/1.3 var(--sans); color: var(--screen-ink-2); }
+.wb .s-tm-price p { margin: 6px 0 0; font: 400 14px/1.4 var(--serif); color: var(--screen-ink); }
+.wb .s-tm-shelf { display: grid; gap: 10px; }
+.wb .s-tm-sh { margin: 0; font: 600 11px var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--screen-ink-2); }
+.wb .s-tm-covers { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 12px; }
+.wb .s-tm-cover { display: block; width: 96px; color: var(--screen-ink); text-decoration: none; }
+.wb .s-tm-box { position: relative; display: block; aspect-ratio: 96 / 67; overflow: hidden; border-radius: 4px; background: var(--screen-2); border: 1px solid var(--screen-rule); transition: box-shadow .25s; }
+.wb .s-tm-box img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.wb .s-tm-box .s-tm-noart { font-size: 10px; }
+.wb .s-tm-cover:hover .s-tm-box, .wb .s-tm-cover:focus-visible .s-tm-box { box-shadow: 0 0 0 2px var(--snes-glow), 0 0 16px color-mix(in srgb, var(--snes-glow) 50%, transparent); }
+.wb .s-tm-cover:focus-visible { outline: none; }
+.wb .s-tm-ct { display: block; margin-top: 4px; font: 600 11.5px/1.2 var(--serif); }
+.wb .s-tm-more { align-self: center; font: 600 12px var(--mono); color: var(--screen-ink-2); }
+
+.wb .s-tm-deck { position: relative; z-index: 5; display: grid; grid-template-columns: auto minmax(0, 1fr) auto auto; align-items: start; gap: 10px; margin-top: 12px; padding: 10px 14px 6px; background: var(--screen); border: 1px solid var(--screen-rule); border-radius: 12px; box-shadow: 0 8px 20px -10px rgba(0, 0, 0, .6); }
+.wb .s-tm-deck button { min-width: 44px; height: 38px; padding: 0 10px; border: 1px solid var(--screen-rule); border-radius: 6px; background: var(--screen-2); color: var(--screen-ink); font: 400 22px/1 var(--font-vt323), ui-monospace, Menlo, monospace; cursor: pointer; }
+.wb .s-tm-deck button:hover:not(:disabled), .wb .s-tm-deck button:focus-visible { outline: none; border-color: var(--snes-glow); box-shadow: 0 0 0 2px var(--snes-glow); }
+.wb .s-tm-deck button:disabled { opacity: .4; cursor: default; }
+.wb .s-tm-scrub { min-width: 0; }
+.wb .s-tm-scrub input[type="range"] { display: block; width: 100%; height: 38px; margin: 0; accent-color: var(--snes-glow); }
+.wb .s-tm-ticks { position: relative; height: 16px; margin: 0 8px; font: 400 14px/16px var(--font-vt323), ui-monospace, Menlo, monospace; color: var(--screen-ink-2); }
+.wb .s-tm-ticks span { position: absolute; top: 0; transform: translateX(-50%); }
+.wb .s-tm-credit { margin: 14px 0 0; max-width: 90ch; font: 400 12px/1.5 var(--sans); color: var(--ink-3); }
+@media (max-width: 760px) {
+  .wb .s-tm-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .wb .s-tm-deck { position: sticky; bottom: env(safe-area-inset-bottom); grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px 8px; padding: 6px 10px 10px; }
+  .wb .s-tm-scrub { grid-column: 1 / -1; order: -1; }
+}
+@media (max-width: 480px) {
+  .wb .s-tm-paper:not(.is-compact) .s-tm-ptop { white-space: nowrap; font-size: 11px; }
+  .wb .s-tm-paper:not(.is-compact) .s-tm-ptop span:nth-child(2) { display: none; }
+}
