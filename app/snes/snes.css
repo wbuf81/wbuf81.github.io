@@ -104,9 +104,9 @@
 /* score scatter */
 .wb .s-scatter-wrap { max-width: 1000px; }
 .wb .s-axis-pick { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 14px; }
-.wb .s-scatter { position: relative; height: 320px; margin: 18px 0 34px 30px; border-left: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
+.wb .s-scatter { position: relative; height: 380px; margin: 18px 0 34px 30px; border-left: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
 .wb .s-zone { position: absolute; left: 0; right: 0; pointer-events: none; }
-.wb .s-zone span { position: absolute; right: 6px; font: 600 9.5px var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); }
+.wb .s-zone span { position: absolute; right: 6px; font: 700 11px var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-2); }
 .wb .s-zone-hof { background: var(--snes-hof); }
 .wb .s-zone-hof span { top: 4px; }
 .wb .s-zone-bin { background: var(--snes-bin); }
@@ -122,7 +122,7 @@
 .wb .s-dot.f-sports, .wb .s-key-btn.f-sports i { background: var(--snes-f-sports); }
 .wb .s-dot.f-puzzle, .wb .s-key-btn.f-puzzle i { background: var(--snes-f-puzzle); }
 .wb .s-dot.f-other, .wb .s-key-btn.f-other i { background: var(--snes-f-other); }
-.wb .s-dot-label { position: absolute; left: 12px; top: -7px; white-space: nowrap; pointer-events: none; font: 500 10.5px var(--mono); color: var(--ink); }
+.wb .s-dot-label { position: absolute; left: 12px; top: -7px; white-space: nowrap; pointer-events: none; font: 600 11.5px var(--mono); color: var(--ink); text-shadow: 0 0 3px var(--bg), 0 0 3px var(--bg), 0 0 6px var(--bg); }
 .wb .s-dot-label.is-left { left: auto; right: 12px; }
 .wb .s-tick-x { position: absolute; bottom: -22px; transform: translateX(-50%); font: 500 10px var(--mono); color: var(--ink-3); }
 .wb .s-tick-y { position: absolute; left: -28px; transform: translateY(50%); font: 500 10px var(--mono); color: var(--ink-3); }
