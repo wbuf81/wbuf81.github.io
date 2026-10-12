@@ -43,7 +43,6 @@ export default function SnesPage() {
             </p>
             <p className="s-hero-links">
               <Link href={TIME_MACHINE}>📼 Open the Time Machine →</Link>
-              {' · '}
               <Link href={TOP8}>🏆 Make your SNES Top 8 →</Link>
             </p>
           </header>

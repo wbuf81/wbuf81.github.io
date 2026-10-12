@@ -356,7 +356,8 @@
 }
 
 /* library hero: the Time Machine link under the paragraph */
-.wb .s-hero .s-hero-links { margin-top: 10px; font: 500 14px var(--mono); }
+/* a wrapping row with a gap, no literal separator, so nothing dangles when the links wrap on a phone */
+.wb .s-hero .s-hero-links { display: flex; flex-wrap: wrap; gap: 4px 24px; margin-top: 10px; font: 500 14px var(--mono); }
 .wb .s-hero-links a { color: var(--accent); }
 
 /* hub: "on this day" strip. The placeholder and the filled strip share min-heights (measured per breakpoint), so nothing shifts on mount. */
@@ -530,7 +531,7 @@
 .wb .s-wall-cell .s-star-btn { width: 22px; height: 22px; font-size: 13px; line-height: 22px; }
 .wb .s-wall-cell .s-star-btn::before { inset: -11px; }
 /* shelf, desktop: in the hover tip's bottom row (the tip leaves room), shown while the spine is lifted. Its hit area
-   reaches down to the lifted spine so the pointer never crosses a gap. */
+   reaches down to the lifted spine so the pointer never crosses a gap. Not shown on touch (below). */
 .wb .s-spine-w > .s-star-tile { top: auto; right: auto; left: calc(50% + 41px); bottom: calc(100% + 30px); z-index: 6; }
 .wb .s-spine-w > .s-star-tile.is-on { opacity: 0; pointer-events: none; }
 .wb .s-spine-w:hover > .s-star-tile, .wb .s-spine-w:focus-within > .s-star-tile { opacity: 1; pointer-events: auto; }
@@ -538,10 +539,10 @@
 @media (hover: hover) {
   .wb .s-spine-tip { padding-bottom: 40px; }
 }
-/* shelf, touch: on the spine's black top band, always shown */
+/* touch: no star on the wall or the shelf. Their covers and 32px spines are too small for 44px targets that don't
+   swallow the cover itself; phones add from the timeline, the scatter card and game pages instead. */
 @media (hover: none) {
-  .wb .s-spine-w > .s-star-tile, .wb .s-spine-w > .s-star-tile.is-on { top: 14px; bottom: auto; left: 2px; opacity: 1; pointer-events: auto; }
-  .wb .s-spine-w .s-star-btn::before { inset: -8px; }
+  .wb .s-wall-cell > .s-star-tile, .wb .s-spine-w > .s-star-tile { display: none; }
 }
 .wb .s-btitle-star { margin: 0 0 12px; }
 

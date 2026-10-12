@@ -1,7 +1,9 @@
 /** @jest-environment jsdom */
+import { Profiler } from 'react';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import { EMPTY_STATE } from '@/lib/snes/top8';
-import { readTop8, resetTop8Memory, writeTop8 } from '../app/snes/top8/store';
+import { TOP8_EVENT, readTop8, resetTop8Memory, writeTop8 } from '../app/snes/top8/store';
+import { Top8Scope } from '../app/snes/components/Top8Tray';
 import { Top8Star, Top8Titles } from '../app/snes/components/Top8Star';
 
 const full = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
@@ -45,14 +47,17 @@ it('keeps one live region on body, present before the first toast, and only its 
   fireEvent.click(screen.getByRole('button'));
   expect(document.body.querySelectorAll('[role="status"]')).toHaveLength(1);
   expect(document.body.querySelector('[role="status"]')).toBe(region);
-  expect(region.textContent).toContain('X');
+  expect(region.textContent).toBe('Added to your Top 8 · 1/8');
 });
 
-it('announces through a toast', () => {
+it('announces adds with the new count, and removals, in the exact words', () => {
+  writeTop8({ ...EMPTY_STATE, slots: ['a', 'b', null, null, null, null, null, null] });
   const onToast = jest.fn();
   render(<Top8Star slug="x" title="X" variant="tile" onToast={onToast} />);
   fireEvent.click(screen.getByRole('button'));
-  expect(onToast).toHaveBeenCalledWith(expect.stringContaining('X'));
+  expect(onToast).toHaveBeenLastCalledWith('Added to your Top 8 · 3/8');
+  fireEvent.click(screen.getByRole('button'));
+  expect(onToast).toHaveBeenLastCalledWith('Removed from your Top 8');
 });
 
 describe('when full', () => {
@@ -176,5 +181,41 @@ describe('popover containment', () => {
     render(<Top8Titles titles={titles}><Top8Star slug="new-game" title="New Game" variant="tile" /></Top8Titles>);
     fireEvent.click(screen.getByRole('button'));
     expect(screen.getByRole('button', { name: 'Replace Game H' })).toBeInTheDocument();
+  });
+});
+
+describe('one store subscription per page', () => {
+  const slugs = Array.from({ length: 20 }, (_, i) => `game-${i}`);
+  it('stars under a Top8Scope share one subscription, and a pick re-renders only the star that changed', () => {
+    const add = jest.spyOn(window, 'addEventListener');
+    const renders: Record<string, number> = {};
+    const onRender = (id: string) => { renders[id] = (renders[id] ?? 0) + 1; };
+    render(
+      <Top8Scope titles={{}}>
+        {slugs.map((s) => (
+          <Profiler key={s} id={s} onRender={onRender}><Top8Star slug={s} title={s} variant="tile" /></Profiler>
+        ))}
+      </Top8Scope>,
+    );
+    expect(add.mock.calls.filter(([type]) => type === TOP8_EVENT)).toHaveLength(1);
+    add.mockRestore();
+    for (const k of Object.keys(renders)) delete renders[k];
+    fireEvent.click(screen.getByRole('button', { name: 'Add game-3 to your Top 8' }));
+    expect(Object.keys(renders)).toEqual(['game-3']);
+  });
+  it('filling the last slot re-renders every star (they all become "full")', () => {
+    writeTop8({ ...EMPTY_STATE, slots: ['a', 'b', 'c', 'd', 'e', 'f', 'g', null] });
+    const renders = new Set<string>();
+    render(
+      <Top8Scope titles={{}}>
+        {slugs.slice(0, 3).map((s) => (
+          <Profiler key={s} id={s} onRender={(id) => renders.add(id)}><Top8Star slug={s} title={s} variant="tile" /></Profiler>
+        ))}
+      </Top8Scope>,
+    );
+    renders.clear();
+    fireEvent.click(screen.getByRole('button', { name: 'Add game-0 to your Top 8' }));
+    expect([...renders].sort()).toEqual(['game-0', 'game-1', 'game-2']);
+    expect(screen.getByRole('button', { name: 'Add game-1 to your Top 8' })).toHaveAttribute('aria-haspopup', 'dialog');
   });
 });

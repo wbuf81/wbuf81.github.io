@@ -101,6 +101,17 @@ test('labels fall back to the slug when a title is missing', () => {
   expect(screen.getByRole('link', { name: 'Super Metroid' })).toBeInTheDocument();
 });
 
+test('collapsing and expanding keep the body class in place (no remove and re-add)', () => {
+  render(<Top8Tray titles={TITLES} />);
+  pick('f-zero');
+  const remove = jest.spyOn(DOMTokenList.prototype, 'remove');
+  fireEvent.click(screen.getByRole('button', { name: 'Collapse your Top 8' }));
+  fireEvent.click(screen.getByRole('button', { name: 'Show your Top 8 (1/8)' }));
+  expect(remove.mock.calls.filter(([c]) => c === 't8-tray-open')).toHaveLength(0);
+  expect(document.body).toHaveClass('t8-tray-open');
+  remove.mockRestore();
+});
+
 describe('styles', () => {
   const css = fs.readFileSync(path.join(process.cwd(), 'app/snes/snes.css'), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '');
   const rule = (sel: string) => css.match(new RegExp(`${sel.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\s*\\{([^}]*)\\}`))?.[1] ?? '';
@@ -110,6 +121,11 @@ describe('styles', () => {
     expect(r).toMatch(/bottom: 0/);
     expect(r).toMatch(/padding-bottom: env\(safe-area-inset-bottom/);
     expect(css.match(/\.s-tray[^{]*\{[^}]*\}/g)!.join('')).not.toMatch(/transition|animation/);
+  });
+  test('touch screens get no ★ on the cover wall or the shelf (cells and spines are too small for 44px targets)', () => {
+    const touch = [...css.matchAll(/@media \(hover: none\)\s*\{([\s\S]*?)\n\}/g)].map((m) => m[1]).join('\n');
+    expect(touch).toMatch(/\.wb \.s-wall-cell > \.s-star-tile[^{]*\{[^}]*display: none/);
+    expect(touch).toMatch(/\.wb \.s-spine-w > \.s-star-tile[^{]*\{[^}]*display: none/);
   });
   test('the body class reserves the tray height at the end of the page', () => {
     expect(css).toMatch(/body\.t8-tray-open[^{]*\{[^}]*padding-bottom: var\(--t8-tray-h/);

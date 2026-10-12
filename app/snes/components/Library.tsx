@@ -2,7 +2,7 @@
 
 import { lazy, Suspense, useEffect, useMemo, useState, useSyncExternalStore } from 'react';
 import {
-  DEFAULT_FILTERS, FIRST_YEAR, LAST_YEAR, filterGames, isFiltered, parseQuery, queryContext, sortGames, toQuery,
+  DEFAULT_FILTERS, FIRST_YEAR, LAST_YEAR, filterGames, isFiltered, mergeQuery, parseQuery, queryContext, sortGames,
   type Facets, type Filters, type IndexGame,
 } from '@/lib/snes/library';
 import FilterBar from './FilterBar';
@@ -45,7 +45,7 @@ export default function Library({ games, names, facets }: { games: IndexGame[]; 
     setReady(true);
   }, [ctx]);
   useEffect(() => {
-    if (ready) window.history.replaceState(null, '', `${window.location.pathname}${toQuery(filters)}${window.location.hash}`);
+    if (ready) window.history.replaceState(null, '', `${window.location.pathname}${mergeQuery(window.location.search, filters)}${window.location.hash}`);
   }, [filters, ready]);
   useEffect(() => {
     if (!scrollTo) return;

@@ -293,6 +293,23 @@ export function toQuery(f: Filters): string {
   return s ? `?${s}` : '';
 }
 
+/** Every URL key toQuery can write. */
+export const QUERY_KEYS = ['q', 'year', 'publisher', 'developer', 'chip', 'scores', 'launch', 'genre', 'players', 'series', 'theme', 'camera', 'mp', 'mine', 'sort', 'view', 'y'] as const;
+
+/** The current search string with the filter keys replaced by the filters' own (in place where they already were),
+ * leaving every other param (utm tags and the like) untouched. */
+export function mergeQuery(search: string, f: Filters): string {
+  const p = new URLSearchParams(search);
+  const next = new URLSearchParams(toQuery(f));
+  for (const k of QUERY_KEYS) {
+    const v = next.get(k);
+    if (v === null) p.delete(k);
+    else p.set(k, v);
+  }
+  const s = p.toString();
+  return s ? `?${s}` : '';
+}
+
 export interface MonthGroup {
   key: string;
   year: number;

@@ -1,6 +1,6 @@
 import {
   AXES, buildIndex, compareRelease, DEFAULT_FILTERS, facets, filterGames, genreFamily, groupByMonth, heatmapCounts, isFiltered,
-  labelBox, labelPoints, matches, neighbours, parseQuery, queryContext, scatterPoints, scoreDomain, sortGames, toQuery, xForDate,
+  labelBox, labelPoints, matches, mergeQuery, neighbours, parseQuery, queryContext, scatterPoints, scoreDomain, sortGames, toQuery, xForDate,
   yForScore, yTicks, type Filters, type IndexGame, type ScatterPoint,
 } from '@/lib/snes/library';
 import { getGames } from '@/lib/snes/data';
@@ -255,5 +255,14 @@ describe('the "In my Top 8" filter (mine)', () => {
   });
   test('without mine the picks change nothing', () => {
     expect(filterGames(INDEX, f(), new Set(['dkc']))).toHaveLength(INDEX.length);
+  });
+});
+
+describe('mergeQuery', () => {
+  test('replaces only the filter keys, keeping other params (and their order) as they were', () => {
+    expect(mergeQuery('?mine=1&utm_source=x&view=wall', f({ q: 'mario', mine: false }))).toBe('?utm_source=x&q=mario');
+    expect(mergeQuery('?utm_source=x', f())).toBe('?utm_source=x');
+    expect(mergeQuery('', f({ mine: true }))).toBe('?mine=1');
+    expect(mergeQuery('?year=1994', f())).toBe('');
   });
 });

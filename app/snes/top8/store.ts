@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useSyncExternalStore } from 'react';
+import { createContext, createElement, useCallback, useContext, useLayoutEffect, useMemo, useRef, useSyncExternalStore, type ReactNode } from 'react';
 import { EMPTY_STATE, THEME_IDS, cleanName, type ThemeId, type Top8State } from '../../../lib/snes/top8.ts';
 
 // The one saved Top 8, shared by the Top 8 page, the star and the tray. Every storage access is guarded;
@@ -85,3 +85,42 @@ export function useTop8(): [Top8State | null, (fn: (s: Top8State) => Top8State) 
   }, []);
   return [state, update];
 }
+
+/** What a list's stars and tray read instead of each subscribing to the window: the latest state (null until mounted),
+ * a subscription that fires when it changes, and the update function. */
+export type Top8Hub = {
+  get: () => Top8State | null;
+  subscribe: (cb: () => void) => () => void;
+  update: (fn: (s: Top8State) => Top8State) => void;
+};
+
+// Outside a provider (a star on its own, tests) each reader subscribes to the store directly.
+const directHub: Top8Hub = {
+  get: () => getSnapshot(),
+  subscribe: subscribeTop8,
+  update: (fn) => writeTop8(fn(getSnapshot())),
+};
+
+const HubContext = createContext<Top8Hub | null>(null);
+
+/** One store subscription for everything under it (a page's ~717 stars and its tray). Readers subscribe to an
+ * in-memory listener set and select just what they show, so a pick re-renders only the stars it changes. */
+export function Top8Provider({ children }: { children: ReactNode }) {
+  const [state, update] = useTop8();
+  const current = useRef<Top8State | null>(state);
+  current.current = state; // children rendering in this same pass already see the new state
+  const listeners = useRef(new Set<() => void>());
+  const hub = useMemo<Top8Hub>(() => ({
+    get: () => current.current,
+    subscribe: (cb) => { listeners.current.add(cb); return () => { listeners.current.delete(cb); }; },
+    update,
+  }), [update]);
+  useLayoutEffect(() => { for (const cb of listeners.current) cb(); }, [state]);
+  return createElement(HubContext.Provider, { value: hub }, children);
+}
+
+/** The nearest provider's hub, or the store itself when there is none. */
+export const useTop8Hub = (): Top8Hub => useContext(HubContext) ?? directHub;
+
+/** Whether a Top8Provider is above (it then owns the shared toast region set-up). */
+export const useInTop8Provider = (): boolean => useContext(HubContext) !== null;

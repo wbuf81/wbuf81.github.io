@@ -1,9 +1,9 @@
 'use client';
 
-import { createContext, useContext, useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react';
+import { createContext, memo, useContext, useEffect, useLayoutEffect, useRef, useState, useSyncExternalStore, type CSSProperties, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import { addPick, isPicked, removePick, replacePick } from '../../../lib/snes/top8.ts';
-import { useTop8 } from '../top8/store';
+import { useInTop8Provider, useTop8Hub } from '../top8/store';
 import { ensureToastRegion, showToast } from './toast';
 
 type Props = {
@@ -24,16 +24,28 @@ export function Top8Titles({ titles, children }: { titles: Record<string, string
 }
 
 // The add-to-Top-8 star. A sibling of the tile's link (never inside it). Renders nothing until mounted.
-export function Top8Star({ slug, title, variant, onToast, titles }: Props) {
-  const [state, update] = useTop8();
+// Under a Top8Provider it reads the shared hub and selects only "picked / full" (plus the slots while its popover is
+// open), so a pick re-renders just the stars it changes; memo keeps parent re-renders out too.
+export const Top8Star = memo(function Top8Star({ slug, title, variant, onToast, titles }: Props) {
+  const hub = useTop8Hub();
+  const inProvider = useInTop8Provider();
   const shared = useContext(TitlesContext);
   const [open, setOpen] = useState(false);
+  const key = useSyncExternalStore(hub.subscribe, () => {
+    const s = hub.get();
+    if (!s) return 'x';
+    const flags = `${isPicked(s, slug) ? 1 : 0}${s.slots.every(Boolean) ? 1 : 0}`;
+    return open ? `${flags}${s.slots.join(',')}` : flags;
+  }, () => 'x');
+  const state = key === 'x' ? null : hub.get();
+  const update = hub.update;
   const [pos, setPos] = useState<CSSProperties>({});
   const btn = useRef<HTMLButtonElement>(null);
   const pop = useRef<HTMLDivElement>(null);
   const say = onToast ?? showToast;
   const mounted = state !== null;
-  useEffect(() => { if (mounted && !onToast) ensureToastRegion(); }, [mounted, onToast]);
+  // A provider sets up the shared toast region once for its whole page; a star on its own does it itself.
+  useEffect(() => { if (mounted && !onToast && !inProvider) ensureToastRegion(); }, [mounted, onToast, inProvider]);
 
   useEffect(() => {
     if (!open) return;
@@ -91,12 +103,17 @@ export function Top8Star({ slug, title, variant, onToast, titles }: Props) {
   const click = () => {
     if (picked) {
       update((s) => removePick(s, slug));
-      say(`Removed ${title} from your Top 8`);
+      say('Removed from your Top 8');
       return;
     }
     if (full) { setOpen((o) => !o); return; }
-    update((s) => addPick(s, slug).state);
-    say(`Added ${title} to your Top 8`);
+    let count = 0;
+    update((s) => {
+      const next = addPick(s, slug).state;
+      count = next.slots.filter(Boolean).length;
+      return next;
+    });
+    say(`Added to your Top 8 · ${count}/8`);
   };
 
   const replace = (i: number) => {
@@ -137,4 +154,4 @@ export function Top8Star({ slug, title, variant, onToast, titles }: Props) {
       )}
     </span>
   );
-}
+});

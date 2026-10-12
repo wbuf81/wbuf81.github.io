@@ -199,6 +199,8 @@ test('the library page hero links to the Time Machine', async () => {
   const { default: SnesPage } = await import('@/app/videogames/snes-history/page');
   render(<SnesPage />);
   expect(screen.getByRole('link', { name: /Open the Time Machine/ })).toHaveAttribute('href', '/videogames/snes-history/time-machine');
+  // no literal separator to dangle when the links wrap on a phone
+  expect(screen.getByRole('link', { name: /Open the Time Machine/ }).parentElement!.textContent).not.toContain('·');
 });
 
 test('the library page hero links to the Top 8', async () => {
@@ -229,6 +231,15 @@ describe('Top 8 in the library', () => {
     expect(screen.getByText('Showing 1 of 3')).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /^Super Metroid,/ })).toBeInTheDocument();
     expect(screen.queryByRole('link', { name: /^F-Zero,/ })).toBeNull();
+  });
+
+  test('a filter change keeps unknown URL params and the hash', () => {
+    window.history.replaceState(null, '', '/videogames/snes-history?mine=1&utm_source=x#y');
+    render(<Library games={INDEX} names={NAMES} facets={facets(INDEX, NAMES)} />);
+    expect(window.location.search).toBe('?mine=1&utm_source=x');
+    fireEvent.change(screen.getByRole('searchbox', { name: 'Search games' }), { target: { value: 'gr' } });
+    expect(window.location.search).toBe('?mine=1&utm_source=x&q=gr');
+    expect(window.location.hash).toBe('#y');
   });
 
   test('mine=1 from a link follows picks made on the page; with none picked it is the empty state', () => {
