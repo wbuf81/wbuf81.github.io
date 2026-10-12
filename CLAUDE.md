@@ -249,3 +249,17 @@ Mascot sources are in `~/Downloads/{name}-header.jpg` (LegCom keeps colour copie
 
 ## Smart quotes
 Some files contain Unicode smart quotes (e.g. `’`). Use Python string replacement when `Edit` tool fails on apostrophes — don't rely on exact quote matching.
+
+## /snes time machine
+Weekly charts, box office, news and cover art for every week from the SNES launch (1991-08-23) to the last US game, in `data/snes/weeks.json`.
+
+```
+npm run snes:pop:fetch   # Wikipedia wikitext (Hot 100, Billboard 200, box office, "YEAR in the United States") → .snes-cache/pop/
+npm run snes:pop:art     # album/single/poster page images → public/snes/pop/<artId>.webp (≤240 px) + SOURCES.md
+npm run snes:pop:build   # offline: weeks.json + coverage report (--json for machine-readable); exits 1 and writes nothing on errors
+npm run snes:pop         # all three
+```
+  - `.snes-cache/pop/` is the (gitignored) cache; re-runs skip anything already cached unless `--refresh`.
+  - `data/snes/pop-overrides.json` is `{ "weeks": { "YYYY-MM-DD": … }, "art": { "<artId>": "/snes/pop/x.webp" | null } }`; week keys must be real week starts.
+  - Politeness: one request at a time, 2.5 s apart; HTTP 429 backs off 15 s × attempt.
+  - `NOW_CPI` (lib/snes) must be updated each January.

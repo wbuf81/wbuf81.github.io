@@ -22,6 +22,10 @@
     "snes:media": "node scripts/snes/import-media.mjs",
     "snes:fetch:boxart": "node scripts/snes/fetch-boxart.mjs",
     "snes:fetch": "npm run snes:fetch:list && npm run snes:fetch:reviews && npm run snes:fetch:igdb",
+    "snes:pop:fetch": "node scripts/snes/fetch-pop.mjs",
+    "snes:pop:art": "node scripts/snes/fetch-pop-art.mjs",
+    "snes:pop:build": "node scripts/snes/build-weeks.mjs",
+    "snes:pop": "npm run snes:pop:fetch && npm run snes:pop:art && npm run snes:pop:build",
     "snes": "npm run snes:fetch && npm run snes:build && npm run snes:fetch:boxart && npm run snes:build"
   },
   "keywords": [],
