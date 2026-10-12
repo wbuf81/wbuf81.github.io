@@ -356,14 +356,83 @@ export function scatterPoints(games: IndexGame[], axis: ScoreAxis): ScatterPoint
     .filter((p): p is ScatterPoint => p !== null);
 }
 
-/** The best-scoring points that can carry a label without two labels touching. */
-export function labelPoints(points: ScatterPoint[], max = 8): string[] {
-  const chosen: ScatterPoint[] = [];
+/** The score range the chart shows: half a point under the lowest whole score (never below 0), up to 10. */
+export function scoreDomain(points: ScatterPoint[]): [number, number] {
+  if (!points.length) return [0, 10];
+  return [Math.max(0, Math.floor(Math.min(...points.map((p) => p.y))) - 0.5), 10];
+}
+
+/** A score's height on the chart, 0–100. */
+export const yForScore = (y: number, [lo, hi]: [number, number]) => ((y - lo) / (hi - lo)) * 100;
+
+/** Whole-number ticks inside the domain, counting down from 10; every other one when the domain is tall. */
+export function yTicks([lo, hi]: [number, number]): number[] {
+  const step = hi - lo > 6 ? 2 : 1;
+  const out: number[] = [];
+  for (let v = hi; v >= Math.ceil(lo); v -= step) out.unshift(v);
+  return out;
+}
+
+// Label sizes in % of the chart: about one mono character's width each, one line's height, and the gap to the dot.
+export const CHAR_PCT = 0.75;
+const LABEL_H = 6;
+const LABEL_GAP = 1.5;
+
+export type LabelSide = 'right' | 'left';
+export interface LabelBox { left: number; right: number; bottom: number; top: number }
+
+/** The box a label takes up beside its dot, dot included, in % of the chart. */
+export function labelBox(p: ScatterPoint, side: LabelSide, domain: [number, number]): LabelBox {
+  const w = LABEL_GAP + p.title.length * CHAR_PCT;
+  const y = yForScore(p.y, domain);
+  return { left: side === 'right' ? p.x : p.x - w, right: side === 'right' ? p.x + w : p.x, bottom: y - LABEL_H / 2, top: y + LABEL_H / 2 };
+}
+
+const collide = (a: LabelBox, b: LabelBox) => a.left < b.right && b.left < a.right && a.bottom < b.top && b.bottom < a.top;
+
+/** The best-scoring points that can carry a label without two labels touching: right of the dot, else left, else none. */
+export function labelPoints(points: ScatterPoint[], max = 8, domain = scoreDomain(points)): { slug: string; side: LabelSide }[] {
+  const chosen: { slug: string; side: LabelSide; box: LabelBox }[] = [];
   for (const p of [...points].sort((a, b) => b.y - a.y || a.x - b.x)) {
     if (chosen.length >= max) break;
-    if (chosen.every((c) => Math.abs(c.x - p.x) >= 9 || Math.abs(c.y - p.y) >= 0.9)) chosen.push(p);
+    for (const side of ['right', 'left'] as const) {
+      const box = labelBox(p, side, domain);
+      if (box.left < 0 || box.right > 100 || chosen.some((c) => collide(c.box, box))) continue;
+      chosen.push({ slug: p.slug, side, box });
+      break;
+    }
   }
-  return chosen.map((p) => p.slug);
+  return chosen.map(({ slug, side }) => ({ slug, side }));
+}
+
+export type GenreFamily = 'action' | 'fighting' | 'shooter' | 'rpg' | 'sports' | 'puzzle' | 'other';
+export const GENRE_FAMILIES: { key: GenreFamily; label: string }[] = [
+  { key: 'action', label: 'Action/Platform' },
+  { key: 'fighting', label: 'Fighting' },
+  { key: 'shooter', label: 'Shooter' },
+  { key: 'rpg', label: 'RPG/Adventure' },
+  { key: 'sports', label: 'Sports/Racing' },
+  { key: 'puzzle', label: 'Puzzle/Strategy/Sim' },
+  { key: 'other', label: 'Other' },
+];
+
+// IGDB genres by family, checked in this order so a mixed game lands where it reads best: an RPG with puzzles is an
+// RPG, a boxing game (Fighting + Sport) is sports, a run-and-gun (Shooter + Platform) is a shooter, and Adventure
+// counts as RPG/Adventure only when nothing more specific claims the game. Music (Mario Paint and co.) is Other.
+const FAMILY_ORDER: [GenreFamily, string[]][] = [
+  ['rpg', ['Role-playing (RPG)']],
+  ['sports', ['Sport', 'Racing']],
+  ['fighting', ['Fighting']],
+  ['shooter', ['Shooter']],
+  ['action', ['Platform', "Hack and slash/Beat 'em up"]],
+  ['puzzle', ['Puzzle', 'Strategy', 'Real Time Strategy (RTS)', 'Turn-based strategy (TBS)', 'Tactical', 'Simulator', 'Card & Board Game', 'Quiz/Trivia']],
+  ['rpg', ['Adventure', 'Point-and-click']],
+  ['action', ['Arcade', 'Pinball']],
+];
+
+export function genreFamily(genres: string[]): GenreFamily {
+  for (const [family, names] of FAMILY_ORDER) if (genres.some((g) => names.includes(g))) return family;
+  return 'other';
 }
 
 export function neighbours(sorted: IndexGame[], slug: string): { prev: IndexGame | null; next: IndexGame | null } {

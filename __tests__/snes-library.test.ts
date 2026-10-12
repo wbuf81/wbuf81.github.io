@@ -1,7 +1,9 @@
 import {
-  buildIndex, compareRelease, DEFAULT_FILTERS, facets, filterGames, groupByMonth, heatmapCounts, isFiltered, labelPoints,
-  matches, neighbours, parseQuery, queryContext, scatterPoints, sortGames, toQuery, xForDate, type Filters, type IndexGame,
+  AXES, buildIndex, compareRelease, DEFAULT_FILTERS, facets, filterGames, genreFamily, groupByMonth, heatmapCounts, isFiltered,
+  labelBox, labelPoints, matches, neighbours, parseQuery, queryContext, scatterPoints, scoreDomain, sortGames, toQuery, xForDate,
+  yForScore, yTicks, type Filters, type IndexGame, type ScatterPoint,
 } from '@/lib/snes/library';
+import { getGames } from '@/lib/snes/data';
 import type { Game } from '@/lib/snes/types';
 
 const game = (slug: string, over: Partial<Game> = {}): Game => ({
@@ -154,9 +156,76 @@ describe('scatter', () => {
     expect(xForDate('1991-08-01')).toBe(0);
     expect(xForDate('1998-12-31')).toBeCloseTo(100, 0);
   });
-  test('labels never collide', () => {
-    const pts = [{ slug: 'a', title: 'A', x: 50, y: 9.5 }, { slug: 'b', title: 'B', x: 52, y: 9.4 }, { slug: 'c', title: 'C', x: 80, y: 9.4 }];
-    expect(labelPoints(pts, 8)).toEqual(['a', 'c']);
+  test('labels never collide: a label as wide as its title blocks a neighbour on either side', () => {
+    const pts = [{ slug: 'a', title: 'Alpha Centauri', x: 50, y: 9.5 }, { slug: 'b', title: 'Beta', x: 52, y: 9.5 }, { slug: 'c', title: 'C', x: 80, y: 9.4 }];
+    expect(labelPoints(pts, 8).map((l) => l.slug)).toEqual(['a', 'c']);
+  });
+  test('Donkey Kong Country and Chrono Trigger, tied on EGM, do not both get a label', () => {
+    const pts = [
+      { slug: 'chrono-trigger', title: 'Chrono Trigger', x: xForDate('1995-08'), y: 9.25 },
+      { slug: 'dkc', title: 'Donkey Kong Country', x: xForDate('1994-11-21'), y: 9.25 },
+    ];
+    expect(labelPoints(pts)).toEqual([{ slug: 'dkc', side: 'right' }]);
+  });
+  test('a label that would run off the right edge flips left; one that fits nowhere is skipped', () => {
+    const pts = [{ slug: 'smw', title: 'Super Mario World', x: 95, y: 9 }, { slug: 'long', title: 'x'.repeat(200), x: 50, y: 8 }];
+    expect(labelPoints(pts)).toEqual([{ slug: 'smw', side: 'left' }]);
+  });
+  test('the y axis fills the chart: half a point under the lowest whole score, up to 10', () => {
+    const at = (...ys: number[]): ScatterPoint[] => ys.map((y, i) => ({ slug: String(i), title: String(i), x: 0, y }));
+    expect(scoreDomain(at(9.3, 7.8, 9))).toEqual([6.5, 10]);
+    expect(scoreDomain(at(3.9, 8))).toEqual([2.5, 10]);
+    expect(scoreDomain(at(0.2))).toEqual([0, 10]);
+    expect(scoreDomain([])).toEqual([0, 10]);
+    expect(yForScore(9, [8, 10])).toBe(50);
+    expect(yForScore(10, [6.5, 10])).toBe(100);
+  });
+  test('y ticks are whole numbers inside the domain, every other one on a tall domain', () => {
+    expect(yTicks([8.5, 10])).toEqual([9, 10]);
+    expect(yTicks([4.5, 10])).toEqual([5, 6, 7, 8, 9, 10]);
+    expect(yTicks([2.5, 10])).toEqual([4, 6, 8, 10]);
+    expect(yTicks([0, 10])).toEqual([0, 2, 4, 6, 8, 10]);
+  });
+});
+
+describe('scatter on the real data', () => {
+  const real = buildIndex(getGames());
+  const overlap = (a: ReturnType<typeof labelBox>, b: ReturnType<typeof labelBox>) =>
+    a.left < b.right && b.left < a.right && a.bottom < b.top && b.bottom < a.top;
+  test.each(AXES)('no two label boxes intersect and none leaves the chart (%s)', (axis) => {
+    const points = scatterPoints(real, axis);
+    const domain = scoreDomain(points);
+    const bySlug = new Map(points.map((p) => [p.slug, p]));
+    const boxes = labelPoints(points, 8, domain).map((l) => labelBox(bySlug.get(l.slug)!, l.side, domain));
+    expect(boxes.length).toBeGreaterThan(0);
+    expect(boxes.length).toBeLessThanOrEqual(8);
+    for (const b of boxes) expect(b.left >= 0 && b.right <= 100).toBe(true);
+    for (let i = 0; i < boxes.length; i++) for (let j = i + 1; j < boxes.length; j++) expect(overlap(boxes[i], boxes[j])).toBe(false);
+  });
+  test('every genre in the dataset has a family; only Music is left as Other', () => {
+    const genres = [...new Set(real.flatMap((g) => g.genres))].sort();
+    expect(genres.filter((g) => genreFamily([g]) === 'other')).toEqual(['Music']);
+  });
+});
+
+describe('genreFamily', () => {
+  test.each([
+    [['Platform', 'Adventure'], 'action'],
+    [["Hack and slash/Beat 'em up", 'Arcade'], 'action'],
+    [['Shooter', 'Platform'], 'shooter'],
+    [['Fighting', 'Arcade'], 'fighting'],
+    [['Fighting', 'Sport'], 'sports'],
+    [['Racing'], 'sports'],
+    [['Role-playing (RPG)', 'Adventure'], 'rpg'],
+    [['Puzzle', 'Role-playing (RPG)'], 'rpg'],
+    [['Adventure'], 'rpg'],
+    [['Simulator', 'Strategy'], 'puzzle'],
+    [['Puzzle', 'Adventure'], 'puzzle'],
+    [['Quiz/Trivia'], 'puzzle'],
+    [['Music'], 'other'],
+    [[], 'other'],
+  ])('%j is %s', (genres, family) => {
+    expect(genreFamily(genres as string[])).toBe(family);
   });
 });
 

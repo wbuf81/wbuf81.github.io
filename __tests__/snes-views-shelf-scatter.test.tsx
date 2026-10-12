@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, within } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import type { IndexGame } from '@/lib/snes/library';
 import Shelf from '@/app/snes/components/views/Shelf';
@@ -40,7 +40,7 @@ describe('Scatter', () => {
   test('switching the axis asks the library', () => {
     const onAxis = jest.fn();
     render(<Scatter games={scored} axis="egm" onAxis={onAxis} />);
-    expect(screen.getAllByRole('button').map((b) => b.textContent)).toEqual(['EGM', 'Nintendo Power', 'Aggregate', 'Player score']);
+    expect(within(screen.getByRole('group', { name: 'Score' })).getAllByRole('button').map((b) => b.textContent)).toEqual(['EGM', 'Nintendo Power', 'Aggregate', 'Player score']);
     fireEvent.click(screen.getByRole('button', { name: 'Nintendo Power' }));
     expect(onAxis).toHaveBeenCalledWith('np');
     expect(screen.getByRole('button', { name: 'Aggregate' })).toBeDisabled();

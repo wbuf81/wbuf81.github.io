@@ -100,7 +100,7 @@ export default function Library({ games, names, facets }: { games: IndexGame[]; 
             </>
           ) : null}
           {view === 'shelf' ? (matched.length ? <Shelf games={sortGames(matched, filters.sort)} byYear={filters.sort === 'date'} /> : <Empty onClear={clear} />) : null}
-          {view === 'scatter' ? <Scatter games={matched} axis={filters.y} onAxis={(y) => update({ y })} /> : null}
+          {view === 'scatter' ? <Scatter games={matched} axis={filters.y} onAxis={(y) => update({ y })} names={names} /> : null}
         </Suspense>
       </div>
     </SoundProvider>

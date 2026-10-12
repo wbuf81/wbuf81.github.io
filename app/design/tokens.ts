@@ -45,6 +45,15 @@ export const TOKENS: { name: string; job: string; group: TokenGroup }[] = [
   { name: '--booklet', job: 'The instruction-booklet paper on game pages', group: 'SNES' },
   { name: '--shelf', job: 'Back of the game shelf', group: 'SNES' },
   { name: '--plank', job: 'Shelf planks under the spines', group: 'SNES' },
+  { name: '--snes-hof', job: 'Score scatter: the Hall of Fame band, 9 and up', group: 'SNES' },
+  { name: '--snes-bin', job: 'Score scatter: the Bargain Bin band, under 5', group: 'SNES' },
+  { name: '--snes-f-action', job: 'Score scatter dots: action and platform games', group: 'SNES' },
+  { name: '--snes-f-fighting', job: 'Score scatter dots: fighting games', group: 'SNES' },
+  { name: '--snes-f-shooter', job: 'Score scatter dots: shooters', group: 'SNES' },
+  { name: '--snes-f-rpg', job: 'Score scatter dots: RPGs and adventures', group: 'SNES' },
+  { name: '--snes-f-sports', job: 'Score scatter dots: sports and racing', group: 'SNES' },
+  { name: '--snes-f-puzzle', job: 'Score scatter dots: puzzle, strategy and sims', group: 'SNES' },
+  { name: '--snes-f-other', job: 'Score scatter dots: everything else', group: 'SNES' },
 ];
 
 function declarations(css: string, selector: string): Record<string, string> {

@@ -7,29 +7,7 @@ import type { IndexGame } from '@/lib/snes/library';
 import { gamePath } from '@/lib/snes/routes';
 import { formatRelease } from '@/lib/snes/display';
 import { useSound } from './sound';
-
-// One clip at a time across the whole page: starting a tile stops whichever tile was playing.
-let stopPlaying: (() => void) | null = null;
-const canPreview = () => typeof window !== 'undefined' && window.matchMedia('(hover: hover) and (prefers-reduced-motion: no-preference)').matches;
-// Phones have no hover: there the first tap on a tile plays its clip and a second tap opens the game.
-const isTouch = () => typeof window !== 'undefined' && window.matchMedia('(hover: none)').matches;
-
-// Plays with sound if allowed; a browser that refuses unmuted playback gets the clip muted instead.
-const playClip = (v: HTMLVideoElement, sound: boolean) => {
-  v.muted = !sound;
-  v.play().catch(() => {
-    v.muted = true;
-    v.play().catch(() => {});
-  });
-};
-
-// A clip must not keep playing behind another tab or window: stop it when the page is hidden or loses focus.
-if (typeof window !== 'undefined') {
-  document.addEventListener('visibilitychange', () => {
-    if (document.visibilityState === 'hidden') stopPlaying?.();
-  });
-  window.addEventListener('blur', () => stopPlaying?.());
-}
+import { canPreview, claimClip, isTouch, playClip } from './clip';
 
 export function GameTile({ game, publisherName, genre }: { game: IndexGame; publisherName: string; genre?: string }) {
   const [playing, setPlaying] = useState(false);
@@ -39,8 +17,7 @@ export function GameTile({ game, publisherName, genre }: { game: IndexGame; publ
   const sound = useSound();
 
   const begin = (byTap: boolean) => {
-    stopPlaying?.();
-    stopPlaying = () => setPlaying(false);
+    claimClip(() => setPlaying(false));
     setTapped(byTap);
     setPlaying(true);
   };

@@ -105,12 +105,45 @@
 .wb .s-scatter-wrap { max-width: 1000px; }
 .wb .s-axis-pick { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 14px; }
 .wb .s-scatter { position: relative; height: 320px; margin: 18px 0 34px 30px; border-left: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
-.wb .s-dot { position: absolute; width: 8px; height: 8px; margin: 0 0 -4px -4px; border-radius: 50%; background: var(--snes-glow); opacity: .6; }
-.wb .s-dot:hover, .wb .s-dot:focus-visible { z-index: 3; transform: scale(1.8); background: var(--snes); opacity: 1; outline: none; }
-.wb .s-dot.is-star { width: 10px; height: 10px; margin: 0 0 -5px -5px; background: var(--snes); opacity: 1; }
+.wb .s-zone { position: absolute; left: 0; right: 0; pointer-events: none; }
+.wb .s-zone span { position: absolute; right: 6px; font: 600 9.5px var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); }
+.wb .s-zone-hof { background: var(--snes-hof); }
+.wb .s-zone-hof span { top: 4px; }
+.wb .s-zone-bin { background: var(--snes-bin); }
+.wb .s-zone-bin span { bottom: 4px; }
+.wb .s-dot { position: absolute; z-index: 1; width: 8px; height: 8px; margin: 0 0 -4px -4px; border-radius: 50%; background: var(--snes-f-other); opacity: .85; transition: opacity .2s, transform .15s; }
+.wb .s-dot:hover, .wb .s-dot:focus-visible, .wb .s-dot.is-open { z-index: 3; transform: scale(1.8); opacity: 1; outline: none; box-shadow: 0 0 0 1.5px var(--paper); }
+.wb .s-dot.is-star { z-index: 2; width: 10px; height: 10px; margin: 0 0 -5px -5px; opacity: 1; box-shadow: 0 0 0 1.5px var(--paper); }
+.wb .s-dot.is-faded { opacity: .2; }
+.wb .s-dot.f-action, .wb .s-key-btn.f-action i { background: var(--snes-f-action); }
+.wb .s-dot.f-fighting, .wb .s-key-btn.f-fighting i { background: var(--snes-f-fighting); }
+.wb .s-dot.f-shooter, .wb .s-key-btn.f-shooter i { background: var(--snes-f-shooter); }
+.wb .s-dot.f-rpg, .wb .s-key-btn.f-rpg i { background: var(--snes-f-rpg); }
+.wb .s-dot.f-sports, .wb .s-key-btn.f-sports i { background: var(--snes-f-sports); }
+.wb .s-dot.f-puzzle, .wb .s-key-btn.f-puzzle i { background: var(--snes-f-puzzle); }
+.wb .s-dot.f-other, .wb .s-key-btn.f-other i { background: var(--snes-f-other); }
 .wb .s-dot-label { position: absolute; left: 12px; top: -7px; white-space: nowrap; pointer-events: none; font: 500 10.5px var(--mono); color: var(--ink); }
+.wb .s-dot-label.is-left { left: auto; right: 12px; }
 .wb .s-tick-x { position: absolute; bottom: -22px; transform: translateX(-50%); font: 500 10px var(--mono); color: var(--ink-3); }
 .wb .s-tick-y { position: absolute; left: -28px; transform: translateY(50%); font: 500 10px var(--mono); color: var(--ink-3); }
+.wb .s-key { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 4px; }
+.wb .s-key-btn { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border: 1px solid var(--rule); border-radius: 14px; background: var(--paper); color: var(--ink-2); font: 500 11px var(--mono); cursor: pointer; }
+.wb .s-key-btn i { width: 9px; height: 9px; border-radius: 50%; }
+.wb .s-key-btn[aria-pressed="true"] { border-color: var(--ink-2); background: var(--rule-soft); color: var(--ink); }
+.wb .s-card { --card-h: 196px; position: absolute; z-index: 6; display: flex; flex-direction: column; width: min(190px, calc(48% - 14px)); height: var(--card-h); overflow: hidden; padding: 6px; background: var(--paper); border: 1px solid var(--rule); border-radius: 6px; box-shadow: 0 0 0 2px var(--snes-glow), 0 6px 18px rgba(0, 0, 0, .25); color: var(--ink); pointer-events: none; text-decoration: none; }
+.wb a.s-card { pointer-events: auto; }
+.wb .s-card-art { position: relative; flex: none; aspect-ratio: 300 / 209; overflow: hidden; margin-bottom: 6px; background: var(--screen-2); border-radius: 3px; }
+.wb .s-card-art > img, .wb .s-card-art > video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.wb .s-card-art .s-noart { display: grid; place-items: center; height: 100%; padding: 6px; font: 600 12px var(--serif); color: var(--screen-ink); text-align: center; }
+.wb .s-card-t { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font: 600 13px/1.25 var(--serif); }
+.wb .s-card-m { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font: 500 10px/1.5 var(--mono); color: var(--ink-3); }
+.wb .s-card-s { font: 500 10.5px/1.5 var(--mono); color: var(--ink-2); }
+.wb .s-card-s b { color: var(--snes); }
+.wb .s-card-hint { margin-top: auto; font: 600 10px var(--mono); color: var(--snes); }
+/* Too narrow for the labels to sit beside their dots without colliding: the cards name the games instead. */
+@media (max-width: 560px) {
+  .wb .s-dot-label { display: none; }
+}
 
 /* game page: cover/3D box/clip on the left, the instruction booklet on the right */
 .wb .s-crumb { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; padding: 20px 0 16px; font: 500 11px var(--mono); letter-spacing: .03em; color: var(--ink-3); }
