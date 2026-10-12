@@ -1,6 +1,6 @@
 import {
   AXES, buildIndex, compareRelease, DEFAULT_FILTERS, facets, filterGames, genreFamily, groupByMonth, heatmapCounts, isFiltered,
-  labelBox, labelPoints, matches, neighbours, parseQuery, queryContext, scatterPoints, scoreDomain, sortGames, toQuery, xForDate,
+  labelBox, labelPoints, matches, mergeQuery, neighbours, parseQuery, queryContext, scatterPoints, scoreDomain, sortGames, toQuery, xForDate,
   yForScore, yTicks, type Filters, type IndexGame, type ScatterPoint,
 } from '@/lib/snes/library';
 import { getGames } from '@/lib/snes/data';
@@ -232,4 +232,37 @@ describe('genreFamily', () => {
 test('neighbours step through release order and stop at the ends', () => {
   expect(neighbours(INDEX, 'f-zero')).toEqual({ prev: null, next: INDEX[1] });
   expect(neighbours(INDEX, 'mystery')).toEqual({ prev: INDEX[4], next: null });
+});
+
+describe('the "In my Top 8" filter (mine)', () => {
+  const ctx = queryContext(facets(INDEX, NAMES));
+  test('mine=1 round-trips through the URL and counts as a filter', () => {
+    expect(DEFAULT_FILTERS.mine).toBe(false);
+    const state = f({ mine: true, view: 'wall' });
+    expect(toQuery(state)).toBe('?mine=1&view=wall');
+    expect(parseQuery(toQuery(state), ctx)).toEqual(state);
+    expect(parseQuery('?mine=yes', ctx).mine).toBe(false);
+    expect(isFiltered(f({ mine: true }))).toBe(true);
+  });
+  test('keeps only picked games, and none when nothing is picked', () => {
+    expect(slugs(filterGames(INDEX, f({ mine: true }), new Set(['dkc', 'f-zero'])))).toEqual(['f-zero', 'dkc']);
+    expect(filterGames(INDEX, f({ mine: true }), new Set())).toEqual([]);
+    expect(matches(INDEX[0], f({ mine: true, q: 'zzz' }), new Set(['f-zero']))).toBe(false);
+  });
+  test('before the picks are known (server, first render) it is not applied yet', () => {
+    expect(filterGames(INDEX, f({ mine: true }), null)).toHaveLength(INDEX.length);
+    expect(filterGames(INDEX, f({ mine: true }))).toHaveLength(INDEX.length);
+  });
+  test('without mine the picks change nothing', () => {
+    expect(filterGames(INDEX, f(), new Set(['dkc']))).toHaveLength(INDEX.length);
+  });
+});
+
+describe('mergeQuery', () => {
+  test('replaces only the filter keys, keeping other params (and their order) as they were', () => {
+    expect(mergeQuery('?mine=1&utm_source=x&view=wall', f({ q: 'mario', mine: false }))).toBe('?utm_source=x&q=mario');
+    expect(mergeQuery('?utm_source=x', f())).toBe('?utm_source=x');
+    expect(mergeQuery('', f({ mine: true }))).toBe('?mine=1');
+    expect(mergeQuery('?year=1994', f())).toBe('');
+  });
 });

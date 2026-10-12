@@ -1,12 +1,14 @@
 'use client';
 
-import { lazy, Suspense, useEffect, useMemo, useState } from 'react';
+import { lazy, Suspense, useEffect, useMemo, useState, useSyncExternalStore } from 'react';
 import {
-  DEFAULT_FILTERS, FIRST_YEAR, LAST_YEAR, filterGames, isFiltered, parseQuery, queryContext, sortGames, toQuery,
+  DEFAULT_FILTERS, FIRST_YEAR, LAST_YEAR, filterGames, isFiltered, mergeQuery, parseQuery, queryContext, sortGames,
   type Facets, type Filters, type IndexGame,
 } from '@/lib/snes/library';
 import FilterBar from './FilterBar';
 import { SoundProvider } from './sound';
+import { Top8Scope } from './Top8Tray';
+import { readTop8, subscribeTop8 } from '../top8/store';
 import Timeline from './views/Timeline';
 
 const Heatmap = lazy(() => import('./views/Heatmap'));
@@ -43,7 +45,7 @@ export default function Library({ games, names, facets }: { games: IndexGame[]; 
     setReady(true);
   }, [ctx]);
   useEffect(() => {
-    if (ready) window.history.replaceState(null, '', `${window.location.pathname}${toQuery(filters)}${window.location.hash}`);
+    if (ready) window.history.replaceState(null, '', `${window.location.pathname}${mergeQuery(window.location.search, filters)}${window.location.hash}`);
   }, [filters, ready]);
   useEffect(() => {
     if (!scrollTo) return;
@@ -64,7 +66,17 @@ export default function Library({ games, names, facets }: { games: IndexGame[]; 
 
   const update = (patch: Partial<Filters>) => setFilters((f) => ({ ...f, ...patch }));
   const clear = () => setFilters((f) => ({ ...DEFAULT_FILTERS, view: f.view, y: f.y, sort: f.sort }));
-  const matched = useMemo(() => filterGames(games, filters), [games, filters]);
+  // The "In my Top 8" filter needs the picks, which only the browser knows: until the store is read (server, first
+  // render) mine is not applied. The snapshot is a string, so the library re-renders only when mine is on and the
+  // picks really changed, never for a ★ click while mine is off.
+  const picksKey = useSyncExternalStore(
+    subscribeTop8,
+    () => (filters.mine ? readTop8().slots.filter(Boolean).join(',') : ''),
+    () => null,
+  );
+  const picks = useMemo(() => (filters.mine && picksKey !== null ? new Set(picksKey.split(',').filter(Boolean)) : null), [filters.mine, picksKey]);
+  const titles = useMemo(() => Object.fromEntries(games.map((g) => [g.slug, g.title])), [games]);
+  const matched = useMemo(() => filterGames(games, filters, picks), [games, filters, picks]);
   const matchedSet = useMemo(() => new Set(matched.map((g) => g.slug)), [matched]);
   const years = useMemo(() => new Set(matched.map((g) => Number(g.releasedUS.slice(0, 4)))), [matched]);
   const hasMultiplayer = useMemo(() => games.some((g) => g.coop || g.versus), [games]);
@@ -73,36 +85,38 @@ export default function Library({ games, names, facets }: { games: IndexGame[]; 
 
   return (
     <SoundProvider>
-      <FilterBar filters={filters} facets={facets} onChange={update} onClear={clear} hasMultiplayer={hasMultiplayer} />
-      {ready && isFiltered(filters) ? (
-        <p className="s-count">
-          Showing {matched.length} of {games.length}
-          <button type="button" className="s-clear" onClick={clear}>Clear filters</button>
-        </p>
-      ) : null}
-      {showYears ? (
-        <nav className="s-years" aria-label="Jump to year">
-          {YEARS.map((y) => (
-            <button key={y} type="button" disabled={!years.has(y)} onClick={() => setScrollTo(`y-${y}`)}>{y}</button>
-          ))}
-        </nav>
-      ) : null}
-      <div role="tabpanel">
-        <Suspense fallback={<p className="s-none">Loading…</p>}>
-          {view === 'timeline' ? (matched.length ? <Timeline games={matched} names={names} /> : <Empty onClear={clear} />) : null}
-          {view === 'heatmap' ? (
-            <Heatmap games={matched} onPick={(key) => { update({ view: 'timeline' }); setScrollTo(`m-${key}`); }} />
-          ) : null}
-          {view === 'wall' ? (
-            <>
-              {matched.length ? null : <Empty onClear={clear} />}
-              <CoverWall games={sortGames(games, filters.sort)} matched={matchedSet} />
-            </>
-          ) : null}
-          {view === 'shelf' ? (matched.length ? <Shelf games={sortGames(matched, filters.sort)} byYear={filters.sort === 'date'} /> : <Empty onClear={clear} />) : null}
-          {view === 'scatter' ? <Scatter games={matched} axis={filters.y} onAxis={(y) => update({ y })} names={names} /> : null}
-        </Suspense>
-      </div>
+      <Top8Scope titles={titles}>
+        <FilterBar filters={filters} facets={facets} onChange={update} onClear={clear} hasMultiplayer={hasMultiplayer} />
+        {ready && isFiltered(filters) ? (
+          <p className="s-count">
+            Showing {matched.length} of {games.length}
+            <button type="button" className="s-clear" onClick={clear}>Clear filters</button>
+          </p>
+        ) : null}
+        {showYears ? (
+          <nav className="s-years" aria-label="Jump to year">
+            {YEARS.map((y) => (
+              <button key={y} type="button" disabled={!years.has(y)} onClick={() => setScrollTo(`y-${y}`)}>{y}</button>
+            ))}
+          </nav>
+        ) : null}
+        <div role="tabpanel">
+          <Suspense fallback={<p className="s-none">Loading…</p>}>
+            {view === 'timeline' ? (matched.length ? <Timeline games={matched} names={names} /> : <Empty onClear={clear} />) : null}
+            {view === 'heatmap' ? (
+              <Heatmap games={matched} onPick={(key) => { update({ view: 'timeline' }); setScrollTo(`m-${key}`); }} />
+            ) : null}
+            {view === 'wall' ? (
+              <>
+                {matched.length ? null : <Empty onClear={clear} />}
+                <CoverWall games={sortGames(games, filters.sort)} matched={matchedSet} />
+              </>
+            ) : null}
+            {view === 'shelf' ? (matched.length ? <Shelf games={sortGames(matched, filters.sort)} byYear={filters.sort === 'date'} /> : <Empty onClear={clear} />) : null}
+            {view === 'scatter' ? <Scatter games={matched} axis={filters.y} onAxis={(y) => update({ y })} names={names} /> : null}
+          </Suspense>
+        </div>
+      </Top8Scope>
     </SoundProvider>
   );
 }

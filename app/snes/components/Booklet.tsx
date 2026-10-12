@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import type { ReactNode } from 'react';
 import type { Game } from '@/lib/snes/types';
 import { companyPath } from '@/lib/snes/routes';
 import { displayedMagazines, formatRelease, npLabel, playersLabel, ratingLabel, reviewerScores } from '@/lib/snes/display';
@@ -18,7 +19,11 @@ function Bars({ scores, label }: { scores: number[]; label: string }) {
 }
 
 // The right-hand column of a game page, laid out like the game's instruction booklet.
-export default function Booklet({ game, names, logoSize }: { game: Game; names: Record<string, string>; logoSize?: [number, number] }) {
+export default function Booklet({ game, names, logoSize, star }: {
+  game: Game; names: Record<string, string>; logoSize?: [number, number];
+  /** The Top 8 button, shown right after the title. */
+  star?: ReactNode;
+}) {
   const when = formatRelease(game.releasedUS, game.datePrecision);
   const { egm, nintendoPower, other } = game.scores;
   const fam = reviewerScores(other.Fam);
@@ -40,6 +45,7 @@ export default function Booklet({ game, names, logoSize }: { game: Game; names: 
       ) : (
         <h1 className="s-title">{game.title}</h1>
       )}
+      {star ? <div className="s-btitle-star">{star}</div> : null}
       <div className="s-bchips">
         {game.genres.map((g) => <span key={g} className="s-bchip">{g}</span>)}
         {game.players ? <span className="s-bchip">{playersLabel(game.players)}</span> : null}

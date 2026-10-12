@@ -13,6 +13,8 @@ import { fraktur, vt323 } from '../../../snes/fonts';
 import GameView from '../../../snes/components/GameView';
 import SnesCredit from '../../../snes/components/SnesCredit';
 import { gamePath } from '@/lib/snes/routes';
+import { titleList } from '@/lib/snes/top8';
+import { Top8Scope } from '../../../snes/components/Top8Tray';
 import '../../../snes/snes.css';
 
 type Params = { params: Promise<{ slug: string }> };
@@ -68,7 +70,9 @@ export default async function GamePage({ params }: Params) {
       <Nav theme />
       <main className={`wb wb-page ${vt323.variable} ${fraktur.variable}`}>
         <div className="s-wrap">
-          <GameView game={game} names={getCompanyNames()} prev={prev} next={next} sameMonth={sameMonth} seriesGames={seriesGames} similarGames={similarGames} rewind={rewind} logoSize={logoSize} />
+          <Top8Scope titles={titleList(getGames())}>
+            <GameView game={game} names={getCompanyNames()} prev={prev} next={next} sameMonth={sameMonth} seriesGames={seriesGames} similarGames={similarGames} rewind={rewind} logoSize={logoSize} />
+          </Top8Scope>
           <SnesCredit pop cpi />
         </div>
       </main>

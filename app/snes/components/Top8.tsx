@@ -8,18 +8,21 @@ import {
 import { SortableContext, arrayMove, rectSortingStrategy, sortableKeyboardCoordinates, useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import {
-  EMPTY_STATE, THEME_IDS, cleanName, parseQuery, recommend, toQuery,
+  EMPTY_STATE, THEME_IDS, cleanName, norm, parseQuery, recommend, addPick, removePick, toQuery,
   type ThemeId, type Top8Game, type Top8State,
 } from '@/lib/snes/top8';
+import { readTop8, subscribeTop8, writeTop8 } from '../top8/store';
+import Top8Browse from './Top8Browse';
+import { Cover } from './Cover';
 import { SIZE, drawTop8, loadThemeFonts, type Fonts } from '../top8/render';
 import { THEMES } from '../top8/themes';
 import { orbitron, pressStart, vt323 } from '../fonts';
 
 // The SNES Top 8 maker: MySpace boxes for the profile, the 8 slots and friend requests, beside a live 1080x1080
 // canvas that is also the saved picture. The first render is EMPTY_STATE on server and client alike; the link or
-// storage is read after mount. Every change is saved, and the URL follows once the visitor has edited.
+// storage is read after mount. Every change is saved through the shared store, and the URL follows once the visitor
+// has edited. A change from another tab (the library's star) shows here too, except on a shared link not yet edited.
 
-const STORE = 'snes-top8';
 const FILE = 'my-snes-top-8.png';
 const MAX_RESULTS = 12;
 const LINK_KEYS = ['g', 'skin', 'n'];
@@ -29,7 +32,6 @@ const IMAGE_WAIT = 3000;
 const PICTURE_FAILED = 'Couldn’t make the picture — try Save again';
 const SHARE_FAILED = 'Couldn’t open the share sheet — try Save instead';
 const box = (slug: string) => `/snes/box/${slug}.jpg`;
-const norm = (s: string) => s.toLowerCase().normalize('NFKD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, ' ').trim();
 
 /** The page URL for a state: our params replaced, any others (utm_…) and the hash kept. */
 export function urlFor(state: Top8State, search: string, hash: string): string {
@@ -48,25 +50,12 @@ export function moveSlot(slots: (string | null)[], from: number, to: number): (s
   return arrayMove(slots, from, to);
 }
 
-function readStored(known: Set<string>): Top8State | null {
-  try {
-    const raw = JSON.parse(localStorage.getItem(STORE) || 'null');
-    if (!raw || !Array.isArray(raw.slots)) return null;
-    const seen = new Set<string>();
-    const slots = Array.from({ length: 8 }, (_, i) => {
-      const s = raw.slots[i];
-      if (typeof s !== 'string' || !known.has(s) || seen.has(s)) return null;
-      seen.add(s);
-      return s;
-    });
-    const theme: ThemeId = (THEME_IDS as readonly string[]).includes(raw.theme) ? raw.theme : EMPTY_STATE.theme;
-    const name = typeof raw.name === 'string' ? cleanName(raw.name) : '';
-    const denied = Array.isArray(raw.denied) ? raw.denied.filter((s: unknown): s is string => typeof s === 'string' && known.has(s)) : [];
-    return { slots, theme, name, denied };
-  } catch {
-    return null;
-  }
+/** The stored Top 8 (already validated by the store), keeping only games this page knows. */
+function readStored(known: Set<string>): Top8State {
+  const s = readTop8();
+  return { ...s, slots: s.slots.map((x) => (x && known.has(x) ? x : null)), denied: s.denied.filter((x) => known.has(x)) };
 }
+const same = (a: Top8State, b: Top8State) => JSON.stringify(a) === JSON.stringify(b);
 
 function siteFonts(): Fonts {
   let sans = '', mono = '';
@@ -95,11 +84,11 @@ class MousePointerSensor extends PointerSensor {
 const POINTER: PointerActivationConstraint = { distance: 6 };
 
 type SlotProps = {
-  id: string; index: number; slug: string | null; title: string | null; replacing: string | null;
+  id: string; index: number; slug: string | null; title: string | null; noArt?: boolean; replacing: string | null;
   onReplace: (i: number) => void; onRemove: (i: number) => void; onEmpty: () => void;
 };
 
-function Slot({ id, index, slug, title, replacing, onReplace, onRemove, onEmpty }: SlotProps) {
+function Slot({ id, index, slug, title, noArt, replacing, onReplace, onRemove, onEmpty }: SlotProps) {
   const { attributes, listeners, setNodeRef, setActivatorNodeRef, transform, transition, isDragging } = useSortable({
     id, disabled: replacing ? true : { draggable: !slug, droppable: false },
   });
@@ -130,7 +119,7 @@ function Slot({ id, index, slug, title, replacing, onReplace, onRemove, onEmpty 
         <span className="s-t8-rank" aria-hidden="true">{n}</span>
         {slug ? (
           <>
-            <img src={box(slug)} alt="" width={300} height={209} loading="lazy" decoding="async" draggable={false} />
+            <Cover src={box(slug)} title={title ?? slug} width={300} height={209} noArt={noArt} />
             <span className="s-t8-nm">{title}</span>
           </>
         ) : <span className="s-t8-add">Add a friend</span>}
@@ -169,7 +158,7 @@ export default function Top8({ games }: { games: Top8Game[] }) {
     const fromLink = parseQuery(window.location.search, known);
     openedFromLink.current = fromLink !== null;
     const stored = readStored(known);
-    const next = fromLink ? { ...EMPTY_STATE, denied: stored?.denied ?? [], ...fromLink } : stored ?? EMPTY_STATE;
+    const next = fromLink ? { ...EMPTY_STATE, denied: stored.denied, ...fromLink } : stored;
     setState(next);
     setNameDraft(next.name);
     setReady(true);
@@ -182,11 +171,26 @@ export default function Top8({ games }: { games: Top8Game[] }) {
 
   useEffect(() => {
     if (!ready) return;
-    if (edited.current || !openedFromLink.current) {
-      try { localStorage.setItem(STORE, JSON.stringify(state)); } catch { /* storage blocked: the session still works */ }
-    }
+    // The store blocks nothing: when storage throws it keeps the list in memory, so the session still works.
+    if ((edited.current || !openedFromLink.current) && !same(state, readStored(known))) writeTop8(state);
     if (edited.current) window.history.replaceState(null, '', urlFor(state, window.location.search, window.location.hash));
-  }, [state, ready]);
+  }, [state, ready, known]);
+
+  // Another tab (or the store's own event) changed the saved list: follow it, unless this is a shared link the
+  // visitor hasn't edited, whose list stays on screen while the stored one changes underneath.
+  const latestState = useRef(state);
+  useLayoutEffect(() => { latestState.current = state; });
+  useEffect(() => {
+    if (!ready) return;
+    return subscribeTop8(() => {
+      if (openedFromLink.current && !edited.current) return;
+      const next = readStored(known);
+      if (same(next, latestState.current)) return;
+      setState(next);
+      setNameDraft((d) => (cleanName(d) === next.name ? d : next.name));
+      setReplacing((r) => (r && next.slots.includes(r) ? null : r));
+    });
+  }, [ready, known]);
 
   const update = useCallback((fn: (s: Top8State) => Top8State) => { edited.current = true; setState(fn); }, []);
 
@@ -211,6 +215,26 @@ export default function Top8({ games }: { games: Top8Game[] }) {
     setReplacing(null);
     update((s) => ({ ...s, slots: s.slots.map((x, k) => (k === i ? slug : x)) }));
   }, [replacing, update]);
+
+  // A browse cover toggles: in (the replace flow when full) or out; tapping the game waiting to replace cancels.
+  // Stable, so the grid's covers don't all re-render.
+  const slotsBox = useRef<HTMLElement>(null);
+  const replacingRef = useRef(replacing);
+  useLayoutEffect(() => { replacingRef.current = replacing; });
+  const toggle = useCallback((slug: string) => {
+    if (replacingRef.current === slug) { setReplacing(null); return; }
+    const { slots } = latestState.current;
+    if (slots.includes(slug)) { update((s) => removePick(s, slug)); return; }
+    const { full } = addPick(latestState.current, slug);
+    if (!full) { update((s) => addPick(s, slug).state); return; }
+    setReplacing(slug);
+    // The slots and their "Tap a slot" hint sit far above the grid: bring them into view and focus the first slot.
+    const box = slotsBox.current;
+    if (!box) return;
+    const still = typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    box.scrollIntoView?.({ behavior: still ? 'auto' : 'smooth', block: 'start' });
+    box.querySelector<HTMLElement>('.s-t8-handle')?.focus({ preventScroll: true });
+  }, [update]);
 
   useEffect(() => {
     if (!replacing) return;
@@ -494,7 +518,7 @@ export default function Top8({ games }: { games: Top8Game[] }) {
                       key={g.slug} id={`t8-opt-${i}`} role="option" aria-selected={i === active} className="s-t8-opt"
                       onMouseDown={(e) => e.preventDefault()} onClick={() => pick(g.slug)} onMouseEnter={() => setActive(i)}
                     >
-                      <img src={box(g.slug)} alt="" width={46} height={32} loading="lazy" decoding="async" />
+                      <Cover src={box(g.slug)} title={g.title} width={46} height={32} noArt={g.noArt} />
                       <span>{g.title} <small>{g.year}</small></span>
                     </li>
                   )) : null}
@@ -504,7 +528,7 @@ export default function Top8({ games }: { games: Top8Game[] }) {
           </div>
         </section>
 
-        <section className="s-t8-box" aria-labelledby="t8-friends">
+        <section className="s-t8-box" aria-labelledby="t8-friends" ref={slotsBox}>
           <div className="s-t8-bh">
             <h2 id="t8-friends">{state.name ? `${state.name}'s Friend Space` : 'My Friend Space'}</h2>
             <span>{filled} of 8</span>
@@ -522,7 +546,7 @@ export default function Top8({ games }: { games: Top8Game[] }) {
                 <ol className="s-t8-slots">
                   {state.slots.map((slug, i) => (
                     <Slot
-                      key={ids[i]} id={ids[i]} index={i} slug={slug} title={slug ? titleOf(slug) : null} replacing={replacing}
+                      key={ids[i]} id={ids[i]} index={i} slug={slug} title={slug ? titleOf(slug) : null} noArt={slug ? bySlug.get(slug)?.noArt : undefined} replacing={replacing}
                       onReplace={replaceAt} onRemove={(k) => update((s) => ({ ...s, slots: s.slots.map((x, j) => (j === k ? null : x)) }))}
                       onEmpty={() => inputRef.current?.focus()}
                     />
@@ -545,7 +569,7 @@ export default function Top8({ games }: { games: Top8Game[] }) {
                   const g = bySlug.get(slug)!;
                   return (
                     <li key={slug} className="s-t8-req">
-                      <img src={box(slug)} alt="" width={72} height={50} loading="lazy" decoding="async" />
+                      <Cover src={box(slug)} title={g.title} width={72} height={50} noArt={g.noArt} />
                       <div>
                         <b>{g.title}</b>
                         <span>{reason} · {g.year}</span>
@@ -561,6 +585,8 @@ export default function Top8({ games }: { games: Top8Game[] }) {
             ) : <p className="s-t8-note">{state.denied.length > 0 ? 'Deny fewer games and more will show up.' : 'No more suggestions right now.'}</p>}
           </div>
         </section>
+
+        <Top8Browse games={games} query={q} picked={state.slots} pending={replacing} onToggle={toggle} />
       </div>
 
       <section className="s-t8-box s-t8-prev" aria-labelledby="t8-pic">

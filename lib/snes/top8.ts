@@ -1,14 +1,19 @@
 /* Pure logic for the Top 8 maker: slim game index, recommendations, link state and name cleaning. */
 import type { Game } from './types.ts';
+import { slugify } from './titles.ts';
 
 export type Top8Game = {
   slug: string;
   title: string;
   year: string;
+  /** US release date as in the data: YYYY-MM-DD, or YYYY-MM / YYYY when only that much is known. */
+  released: string;
   genres: string[];
   series: string | null;
   similar: string[];
   score: number | null;
+  /** Present (true) only for the few games with no box art, so the covers show a placeholder. */
+  noArt?: true;
 };
 
 export const THEME_IDS = ['myspace', 'glitter', 'console', 'grandprix', 'crystal', 'polygon'] as const;
@@ -43,10 +48,12 @@ export function slimIndex(games: Game[]): Top8Game[] {
     slug: g.slug,
     title: g.title,
     year: g.releasedUS.slice(0, 4),
+    released: g.releasedUS,
     genres: g.genres,
     series: g.series,
     similar: g.similar,
     score: scoreOf(g),
+    ...(g.boxArt ? {} : { noArt: true as const }),
   }));
 }
 
@@ -142,3 +149,49 @@ export function recommend(state: Top8State, games: Top8Game[], n = 5): { slug: s
     .slice(0, n)
     .map(({ slug, reason }) => ({ slug, reason }));
 }
+
+/** Sorts release dates: by year, month, then day; a month-only date after that month's dated games, and a year-only
+ * date after the year's. Equal dates return 0 (the caller keeps its own tie-break). */
+export function compareReleased(a: string, b: string): number {
+  const parts = (d: string) => { const [y, m, day] = d.split('-').map(Number); return [y, m || 13, day || 32]; };
+  const pa = parts(a), pb = parts(b);
+  return pa[0] - pb[0] || pa[1] - pb[1] || pa[2] - pb[2];
+}
+
+/** Lower case, accents and punctuation dropped: how the Top 8 search and browse grid match titles. */
+export const norm = (s: string) => s.toLowerCase().normalize('NFKD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, ' ').trim();
+
+/** A readable stand-in title from a slug ("super-metroid" → "Super Metroid") when no title is known. */
+export const fromSlug = (slug: string) => slug.split('-').filter(Boolean).map((w) => w[0].toUpperCase() + w.slice(1)).join(' ');
+
+export const isPicked = (state: Top8State, slug: string): boolean => state.slots.includes(slug);
+
+/** Fills the first empty slot. Already picked: same state, full false. No empty slot: same state, full true. */
+export function addPick(state: Top8State, slug: string): { state: Top8State; full: boolean } {
+  if (isPicked(state, slug)) return { state, full: false };
+  const i = state.slots.indexOf(null);
+  if (i < 0) return { state, full: true };
+  const slots = state.slots.slice();
+  slots[i] = slug;
+  return { state: { ...state, slots }, full: false };
+}
+
+/** Empties the slot holding slug; the others stay where they are. */
+export function removePick(state: Top8State, slug: string): Top8State {
+  if (!isPicked(state, slug)) return state;
+  return { ...state, slots: state.slots.map((s) => (s === slug ? null : s)) };
+}
+
+/** Puts slug at index; if it sat in another slot, that slot becomes empty. */
+export function replacePick(state: Top8State, index: number, slug: string): Top8State {
+  if (!Number.isInteger(index) || index < 0 || index >= state.slots.length) return state;
+  const slots = state.slots.map((s, i) => (i === index ? slug : s === slug ? null : s));
+  return { ...state, slots };
+}
+
+/** Every title, for pages without a game index (game and company pages): the slugs are rebuilt from them in the
+ * browser (every slug is slugify(title)), which ships far less than a slug → title map. */
+export const titleList = (games: { title: string }[]): string[] => games.map((g) => g.title);
+
+/** Slug → title from titleList's output, labelling the tray and the replace popover. */
+export const titlesBySlug = (titles: string[]): Record<string, string> => Object.fromEntries(titles.map((t) => [slugify(t), t]));

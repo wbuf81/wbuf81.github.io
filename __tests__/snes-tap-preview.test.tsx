@@ -135,3 +135,17 @@ test('on desktop a click always navigates and hover still previews, without the 
   expect(a.querySelector('video')).not.toBeNull();
   expect(a).not.toHaveTextContent('Tap again to open');
 });
+
+test('on a phone a tap on the ★ adds the game without previewing or opening it', () => {
+  render(<GameTile game={base} publisherName="Nintendo" />);
+  const star = screen.getByRole('button', { name: 'Add F-Zero to your Top 8' });
+  expect(star.closest('a')).toBeNull();
+  tapOn(star);
+  expect(document.querySelector('video')).toBeNull();
+  expect(link('F-Zero')).not.toHaveClass('is-playing');
+  expect(play).not.toHaveBeenCalled();
+  expect(screen.getByRole('button', { name: 'Remove F-Zero from your Top 8' })).toBeInTheDocument();
+  // the tile itself still previews on its first tap
+  tapOn(link('F-Zero'));
+  expect(link('F-Zero')).toHaveClass('is-playing');
+});

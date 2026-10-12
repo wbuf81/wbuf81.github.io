@@ -280,3 +280,10 @@ npm run snes:pop         # all three
 - **Payload:** `__tests__/snes-top8-budget.test.ts` holds the client props to ≤50 KB gzipped (page HTML + RSC ≤120 KB). Anything added to the props counts.
 - **Link vs storage:** a shared link (`?g=`) wins on load and is never written to storage; localStorage `snes-top8` is written only after the visitor edits. Every storage access is in try/catch.
 - **Share card and hub image:** `python3 scripts/og/build-og.py top8` writes `public/og-top8.jpg` (1200×630, ≤300 KB) and `public/snes/top8-example.jpg` (the hub card's 600×418 example, the 300:209 shape of the other hub cards, ≤80 KB). The script re-draws the MySpace Classic example in HTML (it cannot run the TypeScript renderer), so **if `themes/myspace.ts` changes, update `top8_picture()` in `build-og.py` and re-run it**.
+- **One shared Top 8 everywhere:** `app/snes/top8/store.ts` (`useTop8`, `useSyncExternalStore`, server snapshot `null`; same-tab `snes-top8:change` event plus cross-tab `storage`) backs:
+  - the ★ (`Top8Star`: a tile or page variant with a full-list replace popover; always a **sibling** of the tile link, never inside the `<a>`)
+  - the tray (`Top8Tray`, collapse state in `snes-top8-tray`; not mounted on the Top 8 or Time Machine pages)
+  - the library filter `mine=1`
+  - the builder's "Browse all games" panel (`Top8Browse`)
+  - Lists use `Top8Provider` (one subscription per page). Game and company pages pass a slug→title map. No-art games render `Cover`'s initials placeholder.
+- **Popover focus:** it opens `visibility: hidden` until positioned. Focus only after it's visible (browsers refuse focus on hidden elements; jsdom doesn't notice).

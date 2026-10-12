@@ -12,7 +12,7 @@ type Props = { filters: Filters; facets: Facets; onChange: (patch: Partial<Filte
 
 // How many filter controls in the panel are set (search, view, sort and the scatter axis are not filters).
 export const activeFilterCount = (f: Filters) =>
-  [f.years.length, f.publisher, f.developer, f.chip, f.genre, f.players, f.series, f.theme, f.camera, f.mp, f.scores.length, f.launch].filter(Boolean).length;
+  [f.years.length, f.publisher, f.developer, f.chip, f.genre, f.players, f.series, f.theme, f.camera, f.mp, f.scores.length, f.launch, f.mine].filter(Boolean).length;
 
 export default function FilterBar({ filters: f, facets, onChange, onClear, hasMultiplayer = false }: Props) {
   const [open, setOpen] = useState(false);
@@ -129,6 +129,7 @@ export default function FilterBar({ filters: f, facets, onChange, onClear, hasMu
             </div>
           </details>
           <button type="button" className="s-toggle" aria-pressed={f.launch} onClick={() => onChange({ launch: !f.launch })}>Launch day</button>
+          <button type="button" className="s-toggle" aria-pressed={f.mine} onClick={() => onChange({ mine: !f.mine })}><span aria-hidden="true">★</span> In my Top 8</button>
           <button type="button" className="s-clear" onClick={onClear}>Clear filters</button>
         </div>
       ) : null}

@@ -34,11 +34,11 @@ export default function Scatter({ games, axis, onAxis, names = {} }: {
   const video = useRef<HTMLVideoElement>(null);
   const sound = useSound();
 
-  // A tapped card closes when the visitor taps anywhere but a dot or the card.
+  // A tapped card closes when the visitor taps anywhere but a dot, the card (with its ★) or the ★'s replace popover.
   useEffect(() => {
     if (card?.mode !== 'tap') return;
     const away = (e: PointerEvent) => {
-      if (!(e.target as Element).closest?.('.s-dot, .s-card')) setCard(null);
+      if (!(e.target as Element).closest?.('.s-dot, .s-card-w, .s-star-pop')) setCard(null);
     };
     document.addEventListener('pointerdown', away, true);
     return () => document.removeEventListener('pointerdown', away, true);
@@ -63,10 +63,14 @@ export default function Scatter({ games, axis, onAxis, names = {} }: {
   const enter = (slug: string) => {
     if (!hasHover()) return;
     clearTimeout(timer.current);
+    if (card?.slug === slug && card.mode === 'hover') return; // back on the dot from its own card
     timer.current = setTimeout(() => open(slug, 'hover'), 300);
   };
-  const leave = () => {
+  // A hover card stays while the pointer moves between its dot, the card (and its ★) and the ★'s replace popover.
+  const leave = (e?: MouseEvent) => {
     clearTimeout(timer.current);
+    const to = e?.relatedTarget;
+    if (to instanceof Element && to.closest('.s-card-w, .s-star-pop, .s-dot.is-open')) return;
     setCard((c) => (c?.mode === 'hover' ? null : c));
   };
   // Focus from a click or tap is not keyboard focus: those have their own handling.
@@ -150,6 +154,8 @@ export default function Scatter({ games, axis, onAxis, names = {} }: {
                 mode={card.mode}
                 clip={card.clip}
                 videoRef={video}
+                onEnter={() => clearTimeout(timer.current)}
+                onLeave={leave}
               />
             ) : null}
           </div>
