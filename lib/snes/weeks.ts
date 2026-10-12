@@ -83,3 +83,9 @@ export function panelWeekFor(weeks: Week[], game: Dated): { index: number; label
   const first = weeks.findIndex((w) => w.start.startsWith(ym));
   return { index: first >= 0 ? first : weekIndexFor(weeks, game.releasedUS), label: 'month' };
 }
+
+/** Art-override ids that match no article in the charts (typos or stale ids), as build errors. */
+export function unknownArtOverrides(articles: string[], art: Record<string, unknown>): string[] {
+  const known = new Set(articles.map(artId));
+  return Object.keys(art).filter((id) => !known.has(id)).map((id) => `art override names unknown id ${id}`);
+}

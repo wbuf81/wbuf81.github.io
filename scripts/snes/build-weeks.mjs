@@ -10,7 +10,7 @@ import path from 'path';
 import { DATA_DIR, POP_DIR, loadTs, popCachePath, readJson, writeJson } from './lib.mjs';
 
 const { parseChart, parseNews } = loadTs('lib/snes/pop.ts');
-const { weekStarts, assembleWeeks, artId } = loadTs('lib/snes/weeks.ts');
+const { weekStarts, assembleWeeks, artId, unknownArtOverrides } = loadTs('lib/snes/weeks.ts');
 
 const rows = { hot: [], album: [], box: [], news: [] };
 for (let y = 1991; y <= 1998; y++) {
@@ -35,6 +35,8 @@ const art = (article) => {
   return null;
 };
 const { weeks, errors } = assembleWeeks({ starts: weekStarts(lastGame), ...rows, art, overrides });
+const articles = [...rows.hot, ...rows.album, ...rows.box].map((r) => r.article).filter(Boolean);
+errors.push(...unknownArtOverrides(articles, overrides.art ?? {}));
 if (errors.length) { console.error(`Build refused — nothing written:\n${errors.map((e) => `  ✗ ${e}`).join('\n')}`); process.exit(1); }
 writeJson(path.join(DATA_DIR, 'weeks.json'), weeks);
 

@@ -11,6 +11,8 @@ import path from 'path';
 import { execFileSync } from 'child_process';
 import { POP_DIR, fetchWithRetry, loadTs, popCachePath, refresh, repoRoot, sleep, wikiPageImages } from './lib.mjs';
 
+// Wikimedia rate-limits upload.wikimedia.org too (429 at ~0.6 s), so image downloads keep the same 2.5 s spacing.
+const POLITE_MS = 2500;
 const { parseChart } = loadTs('lib/snes/pop.ts');
 const { artId } = loadTs('lib/snes/weeks.ts');
 const articles = new Set();
@@ -23,7 +25,7 @@ console.log(`${articles.size} articles, ${want.length} to fetch`);
 const urls = {};
 for (let i = 0; i < want.length; i += 40) {
   Object.assign(urls, await wikiPageImages(want.slice(i, i + 40)));
-  await sleep(2500);
+  await sleep(POLITE_MS);
 }
 for (const [article, url] of Object.entries(urls)) {
   if (!url) { console.warn(`  – no image: ${article}`); continue; }
@@ -33,7 +35,7 @@ for (const [article, url] of Object.entries(urls)) {
   try {
     if (!fs.existsSync(raw)) {
       fs.writeFileSync(raw, Buffer.from(await (await fetchWithRetry(url, {}, 6)).arrayBuffer()));
-      await sleep(600);
+      await sleep(POLITE_MS);
     }
     execFileSync('python3', [path.join(repoRoot, 'scripts/snes/webp.py'), raw, path.join(POP_DIR, `${id}.webp`), '75', 'w', '240'], { stdio: ['ignore', 'ignore', 'pipe'] });
   } catch (err) {
