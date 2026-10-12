@@ -1,9 +1,12 @@
 import type { Metadata } from 'next';
 import { Nav } from '../components/Nav';
 import Footer from '../components/Footer';
+import Print from '../components/home/Print';
+import FeaturedBuild from '../components/home/FeaturedBuild';
+import { featured, type Tape } from '@/lib/projects';
 import { getGames, getWeeks } from '@/lib/snes/data';
 import { slimWeeks } from '@/lib/snes/onThisDay';
-import { SNES_BASE, TIME_MACHINE, TOP8 } from '@/lib/snes/routes';
+import { TIME_MACHINE, TOP8 } from '@/lib/snes/routes';
 import OnThisDay from '../snes/components/OnThisDay';
 import SnesCredit from '../snes/components/SnesCredit';
 import { vt323 } from '../snes/fonts';
@@ -22,43 +25,129 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
+// The hub wears the homepage's look (design system › the featured build, tiles): SNES History is the featured
+// build, and everything else in the section is a tile whose 2:1 print stands over its card.
+type HubTile = {
+  name: string;
+  subtitle: string;
+  badge: string;
+  accent?: boolean;
+  description: string;
+  caption: [string, string];
+  image?: string;
+  alt?: string;
+  href?: string;
+  foot: string;
+  tilt: number;
+  tapes: Tape[];
+};
+
+const TILES: HubTile[] = [
+  {
+    name: 'SNES Time Machine',
+    subtitle: '1991–1998, week by week',
+    badge: 'New',
+    description: 'Every week of the SNES years: the #1 song, album and movie, the news in the Omaha World-Pixel, and the games that came out.',
+    caption: ['Time Machine', '372 weeks'],
+    image: '/videogames/time-machine.jpg',
+    alt: 'The Time Machine on launch week, August 23, 1991: the #1 song, album and movie',
+    href: TIME_MACHINE,
+    foot: '📼 372 weeks',
+    tilt: 1.9,
+    tapes: [{ left: '8%', top: '-9px', width: '64px', angle: '-8deg' }],
+  },
+  {
+    name: 'My SNES Top 8',
+    subtitle: 'MySpace-style, 1080×1080',
+    badge: 'Make yours',
+    accent: true,
+    description: 'Pick your 8 favorites from anywhere on the site, drag them into order, pick a theme and save the picture to share.',
+    caption: ['My SNES Top 8', '6 themes'],
+    image: '/videogames/top-8.jpg',
+    alt: 'An example Top 8 picture: a snesspace title tile and SNES covers',
+    href: TOP8,
+    foot: '🏆 Share a link or a picture',
+    tilt: -1.3,
+    tapes: [{ left: '62%', top: '-9px', width: '70px', angle: '6deg' }],
+  },
+  {
+    name: "Wes's Pocket run",
+    subtitle: 'Played · beaten · rated',
+    badge: 'Coming soon',
+    description: 'My run through the library on an Analogue Pocket: what I played, what I beat, and how it holds up.',
+    caption: ['Analogue Pocket', 'soon'],
+    foot: '🎮 In progress',
+    tilt: 2.9,
+    tapes: [{ left: '40%', top: '-9px', width: '60px', angle: '-2deg' }],
+  },
+];
+
+function Tile({ t }: { t: HubTile }) {
+  return (
+    <article className="tile">
+      <Print
+        image={t.image}
+        alt={t.alt}
+        tilt={t.tilt}
+        tapes={t.tapes}
+        href={t.href}
+        label={t.href ? `Open ${t.name}` : undefined}
+        caption={
+          <>
+            <span>{t.caption[0]}</span>
+            <span>{t.caption[1]}</span>
+          </>
+        }
+      >
+        {t.image ? undefined : (
+          <span className="ph s-vg-soon" role="img" aria-label="Coming soon">
+            <b>COMING SOON</b>
+            <small>INSERT CARTRIDGE</small>
+          </span>
+        )}
+      </Print>
+      <div className="tb">
+        <div className="th">
+          <h3>{t.name}</h3>
+          <span className={t.accent ? 'tag acc' : 'tag'}>{t.badge}</span>
+        </div>
+        <div className="fn">{t.subtitle}</div>
+        <p>{t.description}</p>
+        <div className="tf">
+          <span className="fine">{t.foot}</span>
+          {t.href && <a href={t.href}>Open →</a>}
+        </div>
+      </div>
+    </article>
+  );
+}
+
 export default function VideoGamesPage() {
   const weeks = slimWeeks(getWeeks(), getGames());
+  // The homepage's featured build, with the hub's own picture: the right side of the share card, all windows.
+  const snes = { ...featured(), image: '/videogames/snes-history-windows.jpg', alt: 'Gameplay clips, the Omaha World-Pixel, a score scatter and a shelf of SNES covers' };
   return (
     <>
       <Nav theme />
       <main className={`wb wb-page ${vt323.variable}`}>
-        <div className="s-wrap">
+        <div className="s-wrap s-vg">
           <header className="s-hero">
             <div className="eyebrow">Video games</div>
             <h1>Video games</h1>
-            <p>Projects about the games I grew up with — starting with every Super Nintendo game released in America.</p>
+            <p>Projects about the games I grew up with, starting with every Super Nintendo game released in America.</p>
           </header>
+          <FeaturedBuild project={snes} />
           <OnThisDay weeks={weeks} />
-          <div className="s-hub">
-            <a className="s-hub-card" href={SNES_BASE}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/snes/box/super-mario-world.jpg" alt="" width={300} height={209} />
-              <span className="s-hub-t">Super Nintendo history</span>
-              <span className="s-hub-p">717 games, 1991–1998 — timeline, cover wall, shelf and more</span>
-            </a>
-            <a className="s-hub-card" href={TIME_MACHINE}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/snes/pop/unforgettable-with-love.webp" alt="" width={300} height={209} />
-              <span className="s-hub-t">SNES Time Machine</span>
-              <span className="s-hub-p">Every week, 1991–1998: the #1 song, album and movie, the news, and the new games</span>
-            </a>
-            <a className="s-hub-card" href={TOP8}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/snes/top8-example.jpg" alt="An example Top 8 picture: a title tile and SNES covers in a three-by-three grid" width={600} height={418} />
-              <span className="s-hub-t">My SNES Top 8</span>
-              <span className="s-hub-p">Pick your 8 favorites, drag them into order, pick a theme and save the picture</span>
-            </a>
-            <div className="s-hub-card s-hub-soon">
-              <span className="s-hub-t">Coming soon: Wes&apos;s Analogue Pocket run</span>
-              <span className="s-hub-p">Played, beaten, rated — my run through the library on an Analogue Pocket.</span>
+          <section className="s-vg-more" aria-labelledby="vg-more">
+            <div className="eyebrow">Play along</div>
+            <h2 id="vg-more">More SNES</h2>
+            <p>Things to do with the library: go back to the week a game came out, or build your own Top 8.</p>
+            <div className="tiles">
+              {TILES.map((t) => (
+                <Tile key={t.name} t={t} />
+              ))}
             </div>
-          </div>
+          </section>
           <SnesCredit pop />
         </div>
       </main>

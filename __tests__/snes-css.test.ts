@@ -39,10 +39,6 @@ test('on touch the scatter dots never lift into a stacking context, so enlarged 
   expect(touch).toMatch(/\.s-dot \{[^}]*opacity: 1/);
   expect(touch).toMatch(/\.s-dot::before \{[^}]*z-index: -1/);
 });
-test('the coming-soon hub card has no link glow', () => {
-  expect(css).toMatch(/\.s-hub-soon:hover[^{]*\{[^}]*box-shadow: none/);
-});
-
 test('the data credit is readable: at least 11px, in a body-text token that passes 4.5:1 in both themes', () => {
   const rule = css.match(/\.wb \.s-credit\s*\{([^}]*)\}/);
   expect(rule).not.toBeNull();
@@ -52,9 +48,3 @@ test('the data credit is readable: at least 11px, in a body-text token that pass
   expect(css).not.toMatch(/\.s-tm-credit/);
 });
 
-test('hub card images keep the card shape: height follows the 300 / 209 aspect ratio, not the img height attribute', () => {
-  const rule = css.match(/\.wb \.s-hub-card img\s*\{([^}]*)\}/);
-  expect(rule).not.toBeNull();
-  expect(rule![1]).toMatch(/height: auto/);
-  expect(rule![1]).toMatch(/aspect-ratio: 300 \/ 209/);
-});
