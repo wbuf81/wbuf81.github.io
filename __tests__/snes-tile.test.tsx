@@ -134,3 +134,26 @@ test('a clip stops when the page is hidden, but not when it becomes visible', ()
   expect(link.querySelector('video')).toBeNull();
   state.mockRestore();
 });
+
+test('a ★ sits beside the link in the tile wrapper, never inside it', () => {
+  const { container } = render(<GameTile game={base} publisherName="Nintendo" />);
+  const star = screen.getByRole('button', { name: 'Add F-Zero to your Top 8' });
+  expect(star.closest('a')).toBeNull();
+  const wrap = container.querySelector('.s-tile-w')!;
+  expect(wrap).toContainElement(star);
+  expect(wrap).toContainElement(screen.getByRole('link'));
+  expect(star.closest('.s-star-tile')!.parentElement).toBe(wrap);
+  expect(container.querySelector('a button')).toBeNull();
+});
+
+test('moving from the tile onto its ★ keeps the clip playing', () => {
+  render(<GameTile game={base} publisherName="Nintendo" />);
+  const link = screen.getByRole('link');
+  enter(link);
+  const star = screen.getByRole('button', { name: /F-Zero/ });
+  fireEvent.mouseOut(link, { relatedTarget: star });
+  fireEvent.mouseOver(star, { relatedTarget: link });
+  expect(link.querySelector('video')).not.toBeNull();
+  fireEvent.mouseOut(star, { relatedTarget: document.body });
+  expect(link.querySelector('video')).toBeNull();
+});

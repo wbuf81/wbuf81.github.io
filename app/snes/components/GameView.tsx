@@ -8,6 +8,7 @@ import Booklet from './Booklet';
 import MediaFrame from './MediaFrame';
 import { GameTile } from './GameTile';
 import { SoundProvider } from './sound';
+import { Top8Star } from './Top8Star';
 
 const STRIP = 8;
 
@@ -50,7 +51,7 @@ export default function GameView({ game, names, prev, next, sameMonth, seriesGam
             Played? Beaten? 100%? Rating, tier and a Pocket log line will live here.
           </div>
         </div>
-        <Booklet game={game} names={names} logoSize={logoSize} />
+        <Booklet game={game} names={names} logoSize={logoSize} star={<Top8Star slug={game.slug} title={game.title} variant="page" />} />
       </div>
       {rewind ? <BeKindRewind {...rewind} /> : null}
       {similarGames.length ? strip(`If you like ${game.title}, try…`, similarGames) : null}

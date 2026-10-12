@@ -42,7 +42,8 @@
 .wb .s-anchor { display: block; grid-column: 1 / -1; height: 0; scroll-margin-top: 70px; }
 
 /* game tile: a card in the screen colour; hover glows and eases the TV scanlines in */
-.wb .s-tile { position: relative; display: block; width: 136px; overflow: hidden; background: var(--screen-2); border: 1px solid var(--screen-rule); border-radius: 5px; color: var(--screen-ink); text-decoration: none; transition: box-shadow .25s; }
+.wb .s-tile-w { position: relative; flex: none; width: 136px; }
+.wb .s-tile { position: relative; display: block; width: 100%; overflow: hidden; background: var(--screen-2); border: 1px solid var(--screen-rule); border-radius: 5px; color: var(--screen-ink); text-decoration: none; transition: box-shadow .25s; }
 .wb .s-tile:hover, .wb .s-tile:focus-visible { outline: none; box-shadow: 0 0 0 2px var(--snes-glow), 0 0 20px color-mix(in srgb, var(--snes-glow) 50%, transparent); }
 .wb .s-art { position: relative; display: block; aspect-ratio: 300 / 209; overflow: hidden; background: var(--screen); }
 .wb .s-art img, .wb .s-art video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
@@ -78,6 +79,8 @@
 
 /* cover wall */
 .wb .s-wall { display: grid; grid-template-columns: repeat(auto-fill, minmax(56px, 1fr)); gap: 3px; padding: 8px; background: var(--screen); border-radius: 6px; }
+.wb .s-wall-cell { position: relative; display: block; }
+.wb .s-wall-cell:hover, .wb .s-wall-cell:focus-within { z-index: 3; }
 .wb .s-wall-item { position: relative; display: block; aspect-ratio: 96 / 67; overflow: hidden; border-radius: 2px; background: var(--screen-2); transition: opacity .2s, transform .2s; }
 .wb .s-wall-item img { width: 100%; height: 100%; object-fit: cover; }
 .wb .s-wall-item.is-dim { opacity: .18; filter: saturate(.2); }
@@ -89,16 +92,17 @@
 .wb .s-shelf-year { margin: 16px 0 26px; scroll-margin-top: 70px; }
 .wb .s-shelf-year h2 { margin: 0 0 8px; font: 600 20px var(--serif); color: var(--ink); }
 .wb .s-shelf { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 14px 2px; padding: 0 12px 14px; border-radius: 6px; background: repeating-linear-gradient(to bottom, var(--shelf) 0 210px, var(--plank) 210px 224px); }
+.wb .s-spine-w { position: relative; flex: none; }
 .wb .s-spine { position: relative; flex: none; display: flex; flex-direction: column; align-items: center; width: 32px; height: 210px; border-radius: 2px 2px 0 0; color: var(--screen-ink); text-decoration: none;
   background-color: var(--screen-2); background-image: var(--art, none); background-position: center; background-size: auto 100%; background-repeat: no-repeat; box-shadow: inset -3px 0 0 rgba(0, 0, 0, .22); transition: transform .2s; }
 .wb .s-spine::after { content: ''; position: absolute; inset: 56px 0 0; background: linear-gradient(90deg, rgba(0, 0, 0, .55), rgba(0, 0, 0, .25) 50%, rgba(0, 0, 0, .55)); }
-.wb .s-spine:hover, .wb .s-spine:focus-visible { z-index: 4; transform: translateY(-16px); outline: none; }
+.wb .s-spine:hover, .wb .s-spine:focus-visible, .wb .s-spine-w:hover > .s-spine, .wb .s-spine-w:has(:focus-visible) > .s-spine { z-index: 4; transform: translateY(-16px); outline: none; }
 .wb .s-band { display: flex; align-items: center; justify-content: center; flex: none; width: 100%; height: 56px; background: var(--screen); border-bottom: 2px solid var(--screen-ink-2); }
 .wb .s-band b { writing-mode: vertical-rl; transform: rotate(180deg); font: 700 6px/1 var(--sans); letter-spacing: .06em; color: var(--screen-ink); }
 .wb .s-spine-t { position: relative; z-index: 1; margin: auto 0; max-height: 118px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; writing-mode: vertical-rl; transform: rotate(180deg); font: 600 12.5px/1 var(--serif); text-shadow: 0 1px 2px rgba(0, 0, 0, .8); }
 .wb .s-seal { position: relative; z-index: 1; flex: none; width: 14px; height: 14px; margin-bottom: 7px; border: 2px solid currentColor; border-radius: 50%; opacity: .7; }
 .wb .s-spine-tip { position: absolute; bottom: calc(100% + 8px); left: 50%; z-index: 5; width: 150px; margin-left: -75px; padding: 6px; background: var(--paper); border: 1px solid var(--rule); border-radius: 6px; font: 600 12px/1.2 var(--serif); color: var(--ink); opacity: 0; pointer-events: none; transition: opacity .15s; }
-.wb .s-spine:hover .s-spine-tip, .wb .s-spine:focus-visible .s-spine-tip { opacity: 1; }
+.wb .s-spine:hover .s-spine-tip, .wb .s-spine:focus-visible .s-spine-tip, .wb .s-spine-w:hover .s-spine-tip, .wb .s-spine-w:has(:focus-visible) .s-spine-tip { opacity: 1; }
 .wb .s-spine-tip img { width: 100%; margin-bottom: 5px; border-radius: 3px; }
 
 /* score scatter */
@@ -130,7 +134,14 @@
 .wb .s-key-btn { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border: 1px solid var(--rule); border-radius: 14px; background: var(--paper); color: var(--ink-2); font: 500 11px var(--mono); cursor: pointer; }
 .wb .s-key-btn i { width: 9px; height: 9px; border-radius: 50%; }
 .wb .s-key-btn[aria-pressed="true"] { border-color: var(--ink-2); background: var(--rule-soft); color: var(--ink); }
-.wb .s-card { --card-h: 196px; position: absolute; z-index: 6; display: flex; flex-direction: column; width: min(190px, calc(48% - 14px)); height: var(--card-h); overflow: hidden; padding: 6px; background: var(--paper); border: 1px solid var(--rule); border-radius: 6px; box-shadow: 0 0 0 2px var(--snes-glow), 0 6px 18px rgba(0, 0, 0, .25); color: var(--ink); pointer-events: none; text-decoration: none; }
+/* the wrapper is positioned beside the dot and holds the card and its Top 8 star; a hover card's wrapper takes the pointer,
+   with a bridge back to the dot, so the star can be reached */
+.wb .s-card-w { --card-h: 196px; position: absolute; z-index: 6; width: min(190px, calc(48% - 14px)); height: var(--card-h); pointer-events: none; }
+.wb .s-card-w.is-hover { pointer-events: auto; }
+.wb .s-card-w.is-hover::before { content: ''; position: absolute; top: 0; bottom: 0; right: 100%; width: 14px; }
+.wb .s-card-w.is-hover.is-left::before { right: auto; left: 100%; }
+.wb .s-card-w > .s-star-tile { top: 10px; right: 10px; }
+.wb .s-card { position: relative; display: flex; flex-direction: column; width: 100%; height: 100%; overflow: hidden; padding: 6px; background: var(--paper); border: 1px solid var(--rule); border-radius: 6px; box-shadow: 0 0 0 2px var(--snes-glow), 0 6px 18px rgba(0, 0, 0, .25); color: var(--ink); pointer-events: none; text-decoration: none; }
 .wb a.s-card { pointer-events: auto; }
 .wb .s-card-art { position: relative; flex: none; aspect-ratio: 300 / 209; overflow: hidden; margin-bottom: 6px; background: var(--screen-2); border-radius: 3px; }
 .wb .s-card-art > img, .wb .s-card-art > video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
@@ -201,7 +212,7 @@
   .wb .s-game { grid-template-columns: 1fr; }
   .wb .s-month { grid-template-columns: 58px 1fr; gap: 0 10px; }
   .wb .s-row { gap: 10px; }
-  .wb .s-tile { width: calc(50% - 5px); }
+  .wb .s-tile-w { width: calc(50% - 5px); }
   .wb .s-views { margin-left: 0; }
   .wb .s-spec { grid-template-columns: 96px 1fr; }
   .wb .s-heat-row { grid-template-columns: 30px repeat(12, 1fr); gap: 2px; }
@@ -508,9 +519,52 @@
 .wb.s-star-pop .s-star-pick img { display: block; width: 100%; height: auto; min-height: 44px; aspect-ratio: 96 / 67; object-fit: cover; }
 .wb.s-star-pop .s-star-pick:hover { border-color: var(--t8-hot); box-shadow: 0 0 0 2px var(--t8-hot); }
 .wb.s-star-pop .s-star-pick:focus-visible { outline: 2px solid var(--snes-glow); outline-offset: 2px; }
-.wb.s-live { position: fixed; left: 50%; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); z-index: 70; transform: translateX(-50%); pointer-events: none; font-family: var(--sans); }
+.wb.s-live { position: fixed; left: 50%; bottom: calc(20px + var(--t8-tray-h, env(safe-area-inset-bottom, 0px))); z-index: 70; transform: translateX(-50%); pointer-events: none; font-family: var(--sans); }
 .wb.s-live span { display: block; padding: 10px 14px; border-radius: 8px; background: var(--ink); color: var(--bg); font-weight: 600; }
 .wb.s-live span:empty { display: none; }
 @media (hover: none) {
   .wb .s-star-tile { opacity: 1; pointer-events: auto; }
+}
+/* where the star sits on each surface: tiles keep the corner; wall covers get a smaller disc (same 44px hit area) */
+.wb .s-wall-cell > .s-star-tile { top: 2px; right: 2px; }
+.wb .s-wall-cell .s-star-btn { width: 22px; height: 22px; font-size: 13px; line-height: 22px; }
+.wb .s-wall-cell .s-star-btn::before { inset: -11px; }
+/* shelf, desktop: in the hover tip's bottom row (the tip leaves room), shown while the spine is lifted. Its hit area
+   reaches down to the lifted spine so the pointer never crosses a gap. */
+.wb .s-spine-w > .s-star-tile { top: auto; right: auto; left: calc(50% + 41px); bottom: calc(100% + 30px); z-index: 6; }
+.wb .s-spine-w > .s-star-tile.is-on { opacity: 0; pointer-events: none; }
+.wb .s-spine-w:hover > .s-star-tile, .wb .s-spine-w:focus-within > .s-star-tile { opacity: 1; pointer-events: auto; }
+.wb .s-spine-w .s-star-btn::before { inset: -8px -8px -16px; }
+@media (hover: hover) {
+  .wb .s-spine-tip { padding-bottom: 40px; }
+}
+/* shelf, touch: on the spine's black top band, always shown */
+@media (hover: none) {
+  .wb .s-spine-w > .s-star-tile, .wb .s-spine-w > .s-star-tile.is-on { top: 14px; bottom: auto; left: 2px; opacity: 1; pointer-events: auto; }
+  .wb .s-spine-w .s-star-btn::before { inset: -8px; }
+}
+.wb .s-btitle-star { margin: 0 0 12px; }
+
+/* Top 8 tray: fixed to the bottom of the library, game and company pages once something is picked. No motion. */
+.wb .s-tray { position: fixed; left: 0; right: 0; bottom: 0; z-index: 40; padding-bottom: env(safe-area-inset-bottom, 0px); border-top: 1px solid var(--rule); background: var(--paper); box-shadow: 0 -4px 16px rgba(0, 0, 0, .18); color: var(--ink); font-family: var(--sans); }
+.wb .s-tray-in { display: flex; align-items: center; gap: 12px; max-width: 1380px; margin: 0 auto; padding: 8px clamp(12px, 3vw, 40px); }
+.wb .s-tray-slots { display: grid; grid-template-columns: repeat(8, 48px); gap: 4px; margin: 0; padding: 0; list-style: none; }
+.wb .s-tray-slot { width: 48px; height: 44px; overflow: hidden; border-radius: 3px; background: var(--screen-2); }
+.wb .s-tray-slot.is-empty { border: 1px dashed var(--ink-3); background: none; }
+.wb .s-tray-slot a { display: block; width: 100%; height: 100%; }
+.wb .s-tray-slot img { width: 100%; height: 100%; object-fit: cover; }
+.wb .s-tray-slot a:focus-visible { outline-offset: -2px; }
+.wb .s-tray-n { font: 600 13px var(--mono); color: var(--ink-2); }
+.wb .s-tray-go { display: inline-flex; align-items: center; min-height: 44px; font-size: 14px; font-weight: 600; color: var(--t8-link); text-decoration: underline; }
+.wb .s-tray-fold { flex: none; width: 44px; height: 44px; margin-left: auto; padding: 0; border: 1px solid var(--rule); border-radius: 8px; background: var(--paper); color: var(--ink); font-size: 20px; line-height: 1; cursor: pointer; }
+.wb .s-tray.is-collapsed { left: auto; right: 12px; bottom: calc(12px + env(safe-area-inset-bottom, 0px)); padding-bottom: 0; border: 0; background: none; box-shadow: none; }
+.wb .s-tray-pill { min-height: 44px; padding: 0 16px; border: 0; border-radius: 22px; background: var(--t8-my); color: var(--t8-my-ink); font: 700 14px var(--sans); box-shadow: 0 4px 14px rgba(0, 0, 0, .25); cursor: pointer; }
+/* the page's last block (the footer) makes room for the tray, so nothing ends up behind it */
+.wb.wb-foot:is(body.t8-tray-open *) { padding-bottom: var(--t8-tray-h, 0px); }
+@media (max-width: 760px) {
+  .wb .s-tray-in { display: grid; grid-template-columns: auto 1fr auto; grid-template-areas: "slots n fold" "slots go fold"; gap: 0 8px; padding: 6px 12px; }
+  .wb .s-tray-slots { grid-area: slots; grid-template-columns: repeat(4, 48px); }
+  .wb .s-tray-n { grid-area: n; align-self: end; }
+  .wb .s-tray-go { grid-area: go; align-self: start; font-size: 13px; }
+  .wb .s-tray-fold { grid-area: fold; align-self: center; }
 }

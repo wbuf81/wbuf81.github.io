@@ -1,5 +1,6 @@
 /* Pure logic for the Top 8 maker: slim game index, recommendations, link state and name cleaning. */
 import type { Game } from './types.ts';
+import { slugify } from './titles.ts';
 
 export type Top8Game = {
   slug: string;
@@ -167,3 +168,10 @@ export function replacePick(state: Top8State, index: number, slug: string): Top8
   const slots = state.slots.map((s, i) => (i === index ? slug : s === slug ? null : s));
   return { ...state, slots };
 }
+
+/** Every title, for pages without a game index (game and company pages): the slugs are rebuilt from them in the
+ * browser (every slug is slugify(title)), which ships far less than a slug → title map. */
+export const titleList = (games: { title: string }[]): string[] => games.map((g) => g.title);
+
+/** Slug → title from titleList's output, labelling the tray and the replace popover. */
+export const titlesBySlug = (titles: string[]): Record<string, string> => Object.fromEntries(titles.map((t) => [slugify(t), t]));

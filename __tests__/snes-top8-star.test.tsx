@@ -2,7 +2,7 @@
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import { EMPTY_STATE } from '@/lib/snes/top8';
 import { readTop8, resetTop8Memory, writeTop8 } from '../app/snes/top8/store';
-import { Top8Star } from '../app/snes/components/Top8Star';
+import { Top8Star, Top8Titles } from '../app/snes/components/Top8Star';
 
 const full = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
 const titles = Object.fromEntries([...full, 'new-game'].map((s) => [s, `Game ${s.toUpperCase()}`]));
@@ -130,4 +130,51 @@ it('works with storage blocked', () => {
 it('renders nothing before mount (server)', () => {
   const { renderToString } = require('react-dom/server');
   expect(renderToString(<Top8Star slug="x" title="X" variant="tile" />)).toBe('');
+});
+
+describe('popover containment', () => {
+  beforeEach(() => writeTop8({ ...EMPTY_STATE, slots: full }));
+
+  it('stays open when the list itself scrolls (short screens), still closing on a page scroll', () => {
+    render(<Top8Star slug="new-game" title="New Game" variant="tile" titles={titles} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Add New Game to your Top 8' }));
+    const dlg = screen.getByRole('dialog');
+    fireEvent.scroll(dlg);
+    expect(screen.getByRole('dialog')).toBeInTheDocument();
+    fireEvent.scroll(document);
+    expect(screen.queryByRole('dialog')).toBeNull();
+  });
+
+  it("stops clicks and keys at the popover, so a tile's own handlers never see them", () => {
+    const onClick = jest.fn();
+    const onKeyDown = jest.fn();
+    render(
+      <div onClick={onClick} onKeyDown={onKeyDown}>
+        <Top8Star slug="new-game" title="New Game" variant="tile" titles={titles} />
+      </div>,
+    );
+    fireEvent.click(screen.getByRole('button', { name: 'Add New Game to your Top 8' }));
+    onClick.mockClear();
+    const pick = screen.getByRole('button', { name: 'Replace Game B' });
+    fireEvent.keyDown(pick, { key: 'ArrowRight' });
+    expect(onKeyDown).not.toHaveBeenCalled();
+    fireEvent.click(pick);
+    expect(onClick).not.toHaveBeenCalled();
+    expect(readTop8().slots[1]).toBe('new-game');
+  });
+
+  it('Esc from inside the popover still closes it and returns focus', () => {
+    render(<Top8Star slug="new-game" title="New Game" variant="tile" titles={titles} />);
+    const star = screen.getByRole('button', { name: 'Add New Game to your Top 8' });
+    fireEvent.click(star);
+    fireEvent.keyDown(screen.getByRole('button', { name: 'Replace Game A' }), { key: 'Escape' });
+    expect(screen.queryByRole('dialog')).toBeNull();
+    expect(star).toHaveFocus();
+  });
+
+  it('labels the covers from the shared titles context when no titles prop is passed', () => {
+    render(<Top8Titles titles={titles}><Top8Star slug="new-game" title="New Game" variant="tile" /></Top8Titles>);
+    fireEvent.click(screen.getByRole('button'));
+    expect(screen.getByRole('button', { name: 'Replace Game H' })).toBeInTheDocument();
+  });
 });

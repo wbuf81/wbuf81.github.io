@@ -207,3 +207,45 @@ test('the library page hero links to the Top 8', async () => {
   render(<SnesPage />);
   expect(screen.getByRole('link', { name: /Make your SNES Top 8/ })).toHaveAttribute('href', '/videogames/snes-history/top-8');
 });
+
+describe('Top 8 in the library', () => {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const store = require('@/app/snes/top8/store');
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const { EMPTY_STATE } = require('@/lib/snes/top8');
+  const picks = (...slots: string[]) => store.writeTop8({ ...EMPTY_STATE, slots: [...slots, ...Array(8 - slots.length).fill(null)] });
+  beforeEach(() => { localStorage.clear(); store.resetTop8Memory(); document.body.className = ''; });
+
+  test('"★ In my Top 8" keeps only picked games, counts as a filter and writes mine=1', () => {
+    picks('super-metroid');
+    setup();
+    openFilters();
+    const toggle = screen.getByRole('button', { name: '★ In my Top 8' });
+    expect(toggle).toHaveAttribute('aria-pressed', 'false');
+    fireEvent.click(toggle);
+    expect(toggle).toHaveAttribute('aria-pressed', 'true');
+    expect(window.location.search).toBe('?mine=1');
+    expect(screen.getByRole('button', { name: 'Filters (1)' })).toBeInTheDocument();
+    expect(screen.getByText('Showing 1 of 3')).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /^Super Metroid,/ })).toBeInTheDocument();
+    expect(screen.queryByRole('link', { name: /^F-Zero,/ })).toBeNull();
+  });
+
+  test('mine=1 from a link follows picks made on the page; with none picked it is the empty state', () => {
+    setup('?mine=1');
+    expect(screen.getByText('No carts match those filters')).toBeInTheDocument();
+    act(() => { picks('f-zero'); });
+    expect(screen.getByRole('link', { name: /^F-Zero,/ })).toBeInTheDocument();
+    expect(screen.queryByText('No carts match those filters')).toBeNull();
+  });
+
+  test('every tile carries a ★ beside its link, and the first pick brings up the tray', () => {
+    const { container } = setup();
+    expect(document.querySelector('.s-tray')).toBeNull();
+    expect(container.querySelector('a button')).toBeNull();
+    fireEvent.click(screen.getByRole('button', { name: 'Add Gradius III to your Top 8' }));
+    expect(screen.getByRole('region', { name: 'Your Top 8' })).toHaveTextContent('1/8');
+    expect(screen.getByRole('link', { name: 'Gradius III' })).toHaveAttribute('href', '/videogames/snes-history/gradius-iii');
+    expect(document.body).toHaveClass('t8-tray-open');
+  });
+});

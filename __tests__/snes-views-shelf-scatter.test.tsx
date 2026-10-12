@@ -34,6 +34,19 @@ describe('Shelf', () => {
   });
 });
 
+describe('Shelf ★', () => {
+  beforeEach(() => localStorage.clear());
+  test('each spine has a ★ beside its link (never inside), sharing a wrapper with it', () => {
+    const { container } = render(<Shelf games={GAMES} byYear />);
+    expect(container.querySelector('a button')).toBeNull();
+    const star = screen.getByRole('button', { name: 'Add C to your Top 8' });
+    const wrap = star.closest('.s-star-tile')!.parentElement!;
+    expect(wrap).toHaveClass('s-spine-w');
+    expect(wrap.querySelector('a.s-spine')).toHaveAttribute('href', gamePath('c'));
+    expect(screen.getAllByRole('button', { name: /to your Top 8$/ })).toHaveLength(4);
+  });
+});
+
 describe('Scatter', () => {
   const scored = [g('a', '1991-08-23', { egmAvg: 9.5 }), g('b', '1993-06', { egmAvg: 6 }), g('c', '1995-01', { np10: 8 })];
   test('a dot per game with the chosen score, the best labelled, and a table for screen readers', () => {

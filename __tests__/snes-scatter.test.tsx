@@ -160,3 +160,31 @@ test('only one card at a time: another dot switches, tapping elsewhere closes', 
   act(() => { fireEvent.pointerDown(document.body); });
   expect(card()).toBeNull();
 });
+
+describe('the card ★', () => {
+  const star = () => screen.getByRole('button', { name: /your Top 8$/ });
+  test('a tapped card carries a ★ beside its link; tapping it adds the game and keeps the card open', () => {
+    view();
+    tapOn(dot('Dud'));
+    expect(star().closest('a')).toBeNull();
+    expect(star().closest('.s-card-w')).toContainElement(card() as HTMLElement);
+    navigated = [];
+    tapOn(star());
+    expect(card()).toHaveTextContent('Dud');
+    expect(screen.getByRole('button', { name: 'Remove Dud from your Top 8' })).toBeInTheDocument();
+    expect(document.querySelector('.s-card-w a button')).toBeNull();
+  });
+  test('on desktop the pointer can move from the dot onto the hover card and its ★ without the card closing', () => {
+    hover = true;
+    view();
+    fireEvent.mouseEnter(dot('Super Mario World'));
+    act(() => { jest.advanceTimersByTime(300); });
+    const wrap = document.querySelector('.s-card-w')!;
+    fireEvent.mouseLeave(dot('Super Mario World'), { relatedTarget: wrap });
+    expect(card()).toHaveTextContent('Super Mario World');
+    fireEvent.click(star());
+    expect(screen.getByRole('button', { name: 'Remove Super Mario World from your Top 8' })).toBeInTheDocument();
+    fireEvent.mouseLeave(wrap, { relatedTarget: document.body });
+    expect(card()).toBeNull();
+  });
+});

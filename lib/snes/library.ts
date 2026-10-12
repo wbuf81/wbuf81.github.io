@@ -115,6 +115,8 @@ export interface Filters {
   theme: string | null;
   camera: string | null;
   mp: 'coop' | 'versus' | null;
+  /** Only games in the visitor's Top 8 (client-only: the picks come from the browser). */
+  mine: boolean;
   sort: SortKey;
   view: ViewKey;
   y: ScoreAxis;
@@ -122,10 +124,12 @@ export interface Filters {
 
 export const DEFAULT_FILTERS: Filters = {
   q: '', years: [], publisher: null, developer: null, chip: null, scores: [], launch: false,
-  genre: null, players: null, series: null, theme: null, camera: null, mp: null, sort: 'date', view: 'timeline', y: 'egm',
+  genre: null, players: null, series: null, theme: null, camera: null, mp: null, mine: false, sort: 'date', view: 'timeline', y: 'egm',
 };
 
-export function matches(g: IndexGame, f: Filters): boolean {
+/** `picks` is the visitor's Top 8; while it is unknown (null, on the server and the first render) `mine` is not applied. */
+export function matches(g: IndexGame, f: Filters, picks: Set<string> | null = null): boolean {
+  if (f.mine && picks && !picks.has(g.slug)) return false;
   if (f.q) {
     const q = normalizeTitle(f.q);
     if (q && !g.search.includes(q)) return false;
@@ -148,10 +152,10 @@ export function matches(g: IndexGame, f: Filters): boolean {
   return true;
 }
 
-export const filterGames = (games: IndexGame[], f: Filters) => games.filter((g) => matches(g, f));
+export const filterGames = (games: IndexGame[], f: Filters, picks: Set<string> | null = null) => games.filter((g) => matches(g, f, picks));
 
 export function isFiltered(f: Filters): boolean {
-  return Boolean(f.q || f.years.length || f.publisher || f.developer || f.chip || f.scores.length || f.launch || f.genre || f.players || f.series || f.theme || f.camera || f.mp);
+  return Boolean(f.q || f.years.length || f.publisher || f.developer || f.chip || f.scores.length || f.launch || f.genre || f.players || f.series || f.theme || f.camera || f.mp || f.mine);
 }
 
 const scoreOf = (g: IndexGame, key: 'egm' | 'np' | 'aggregate' | 'users') =>
@@ -259,6 +263,7 @@ export function parseQuery(search: string, ctx: QueryContext): Filters {
     theme: inSet('theme', ctx.themes),
     camera: inSet('camera', ctx.perspectives),
     mp: pick<'coop' | 'versus' | ''>('mp', ['coop', 'versus'], '') || null,
+    mine: p.get('mine') === '1',
     sort: pick('sort', SORTS, 'date'),
     view: pick('view', VIEWS, 'timeline'),
     y: pick('y', AXES, 'egm'),
@@ -280,6 +285,7 @@ export function toQuery(f: Filters): string {
   if (f.theme) p.set('theme', f.theme);
   if (f.camera) p.set('camera', f.camera);
   if (f.mp) p.set('mp', f.mp);
+  if (f.mine) p.set('mine', '1');
   if (f.sort !== 'date') p.set('sort', f.sort);
   if (f.view !== 'timeline') p.set('view', f.view);
   if (f.y !== 'egm') p.set('y', f.y);

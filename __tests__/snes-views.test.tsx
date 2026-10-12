@@ -45,3 +45,18 @@ describe('CoverWall', () => {
     expect(Array.from(container.querySelectorAll('.s-wall-year'), (e) => e.id)).toEqual(['y-1991', 'y-1994', 'y-1995']);
   });
 });
+
+describe('CoverWall ★', () => {
+  beforeEach(() => localStorage.clear());
+  test('each cover has a ★ beside its link (not inside it), in a positioned cell that is the grid item', () => {
+    const { container } = render(<CoverWall games={GAMES} matched={new Set(['a', 'c'])} />);
+    expect(container.querySelector('a button')).toBeNull();
+    const star = screen.getByRole('button', { name: 'Add A to your Top 8' });
+    const cell = star.closest('.s-star-tile')!.parentElement!;
+    expect(cell).toHaveClass('s-wall-cell');
+    expect(cell.querySelector('a')).toHaveAttribute('href', '/videogames/snes-history/a');
+    expect(screen.getAllByRole('button', { name: /to your Top 8$/ })).toHaveLength(4);
+    fireEvent.click(star);
+    expect(screen.getByRole('button', { name: 'Remove A from your Top 8' })).toHaveAttribute('aria-pressed', 'true');
+  });
+});

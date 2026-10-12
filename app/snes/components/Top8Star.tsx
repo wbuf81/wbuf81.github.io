@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from 'react';
+import { createContext, useContext, useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import { addPick, isPicked, removePick, replacePick } from '../../../lib/snes/top8.ts';
 import { useTop8 } from '../top8/store';
@@ -17,9 +17,16 @@ type Props = {
 
 const fromSlug = (slug: string) => slug.split('-').filter(Boolean).map((w) => w[0].toUpperCase() + w.slice(1)).join(' ');
 
+// Slug → title for the replace popover's labels, shared by every star under one provider (a page passes it once).
+const TitlesContext = createContext<Record<string, string> | undefined>(undefined);
+export function Top8Titles({ titles, children }: { titles: Record<string, string>; children: ReactNode }) {
+  return <TitlesContext.Provider value={titles}>{children}</TitlesContext.Provider>;
+}
+
 // The add-to-Top-8 star. A sibling of the tile's link (never inside it). Renders nothing until mounted.
 export function Top8Star({ slug, title, variant, onToast, titles }: Props) {
   const [state, update] = useTop8();
+  const shared = useContext(TitlesContext);
   const [open, setOpen] = useState(false);
   const [pos, setPos] = useState<CSSProperties>({});
   const btn = useRef<HTMLButtonElement>(null);
@@ -37,7 +44,9 @@ export function Top8Star({ slug, title, variant, onToast, titles }: Props) {
       if (pop.current?.contains(t) || btn.current?.contains(t)) return;
       setOpen(false);
     };
-    const shut = () => setOpen(false);
+    // Scrolling the popover's own list (short screens) must not close it; any other scroll does.
+    const shut = (e: Event) => { if (!(e.target instanceof Node && pop.current?.contains(e.target))) setOpen(false); };
+    const onResize = () => setOpen(false);
     const onFocusOut = (e: FocusEvent) => {
       const to = e.relatedTarget as Node | null;
       if (to && !pop.current?.contains(to) && !btn.current?.contains(to)) setOpen(false);
@@ -46,13 +55,13 @@ export function Top8Star({ slug, title, variant, onToast, titles }: Props) {
     document.addEventListener('keydown', onKey);
     document.addEventListener('pointerdown', onDown);
     window.addEventListener('scroll', shut, true);
-    window.addEventListener('resize', shut);
+    window.addEventListener('resize', onResize);
     el?.addEventListener('focusout', onFocusOut);
     return () => {
       document.removeEventListener('keydown', onKey);
       document.removeEventListener('pointerdown', onDown);
       window.removeEventListener('scroll', shut, true);
-      window.removeEventListener('resize', shut);
+      window.removeEventListener('resize', onResize);
       el?.removeEventListener('focusout', onFocusOut);
     };
   }, [open]);
@@ -77,7 +86,7 @@ export function Top8Star({ slug, title, variant, onToast, titles }: Props) {
   if (!state) return null;
   const picked = isPicked(state, slug);
   const full = state.slots.every(Boolean);
-  const nameOf = (s: string) => titles?.[s] ?? fromSlug(s);
+  const nameOf = (s: string) => (titles ?? shared)?.[s] ?? fromSlug(s);
 
   const click = () => {
     if (picked) {
@@ -106,7 +115,14 @@ export function Top8Star({ slug, title, variant, onToast, titles }: Props) {
         {variant === 'page' ? (picked ? '★ In your Top 8' : '☆ Add to my Top 8') : <span aria-hidden="true">{picked ? '★' : '☆'}</span>}
       </button>
       {open && createPortal(
-        <div ref={pop} className="wb s-star-pop" role="dialog" aria-label="Your Top 8 is full. Replace which?" style={pos}>
+        // React bubbles portal events through the React tree: stop clicks and keys here so a tile's own handlers (tap
+        // preview, card toggles) never see them. Esc is handled here because it no longer reaches the document.
+        <div ref={pop} className="wb s-star-pop" role="dialog" aria-label="Your Top 8 is full. Replace which?" style={pos}
+          onClick={(e) => e.stopPropagation()}
+          onKeyDown={(e) => {
+            e.stopPropagation();
+            if (e.key === 'Escape') { setOpen(false); btn.current?.focus(); }
+          }}>
           <p className="s-star-pop-t" aria-hidden="true">Top 8 is full. Replace which?</p>
           <div className="s-star-pop-grid">
             {state.slots.map((s, i) => s && (

@@ -1,21 +1,24 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, type RefObject } from 'react';
+import { useEffect, type MouseEvent, type RefObject } from 'react';
 import type { IndexGame } from '@/lib/snes/library';
 import { gamePath } from '@/lib/snes/routes';
 import { formatRelease } from '@/lib/snes/display';
 import { playClip } from '../clip';
 import { useSound } from '../sound';
+import { Top8Star } from '../Top8Star';
 
 export type CardMode = 'hover' | 'focus' | 'tap';
 
 // The floating card beside a scatter dot: box art with the game's clip playing over it, the title, release date,
 // publisher and the score on the current axis. Hover plays with sound (per the sound button), keyboard focus plays
 // muted, and a tapped card was already started inside the tap; on phones the card is itself a link to the game.
-export default function ScatterCard({ game, x, y, publisherName, axisLabel, score, mode, clip, videoRef }: {
+// The card sits in a wrapper with its ★ (a sibling of the link, never inside it). A hover card's wrapper takes the
+// pointer, bridged to the dot, so the ★ can be reached; the scatter is told when the pointer comes and goes.
+export default function ScatterCard({ game, x, y, publisherName, axisLabel, score, mode, clip, videoRef, onEnter, onLeave }: {
   game: IndexGame; x: number; y: number; publisherName: string; axisLabel: string; score: number; mode: CardMode; clip: boolean;
-  videoRef: RefObject<HTMLVideoElement | null>;
+  videoRef: RefObject<HTMLVideoElement | null>; onEnter?: () => void; onLeave?: (e: MouseEvent) => void;
 }) {
   const sound = useSound();
 
@@ -46,10 +49,14 @@ export default function ScatterCard({ game, x, y, publisherName, axisLabel, scor
       {mode === 'tap' ? <span className="s-card-hint">Tap again to open</span> : null}
     </>
   );
-  const className = `s-card${flip ? ' is-left' : ''}`;
-  return mode === 'tap' ? (
-    <Link href={gamePath(game.slug)} prefetch={false} className={className} style={style} aria-label={`Open ${game.title}`}>{body}</Link>
-  ) : (
-    <div className={className} style={style} aria-hidden="true">{body}</div>
+  return (
+    <div className={`s-card-w${flip ? ' is-left' : ''}${mode === 'hover' ? ' is-hover' : ''}`} style={style} onMouseEnter={onEnter} onMouseLeave={onLeave}>
+      {mode === 'tap' ? (
+        <Link href={gamePath(game.slug)} prefetch={false} className="s-card" aria-label={`Open ${game.title}`}>{body}</Link>
+      ) : (
+        <div className="s-card" aria-hidden="true">{body}</div>
+      )}
+      <Top8Star slug={game.slug} title={game.title} variant="tile" />
+    </div>
   );
 }

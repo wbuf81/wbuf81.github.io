@@ -6,6 +6,8 @@ import { buildIndex } from '@/lib/snes/library';
 import CompanyView from '../../../../snes/components/CompanyView';
 import SnesCredit from '../../../../snes/components/SnesCredit';
 import { companyPath } from '@/lib/snes/routes';
+import { titleList } from '@/lib/snes/top8';
+import { Top8Scope } from '../../../../snes/components/Top8Tray';
 import '../../../../snes/snes.css';
 
 type Params = { params: Promise<{ slug: string }> };
@@ -34,13 +36,16 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
 export default async function CompanyPage({ params }: Params) {
   const { slug } = await params;
   const company = getCompanies().find((c) => c.slug === slug)!;
-  const games = buildIndex(getGames()).filter((g) => g.publisher === slug || g.developers.includes(slug));
+  const all = getGames();
+  const games = buildIndex(all).filter((g) => g.publisher === slug || g.developers.includes(slug));
   return (
     <>
       <Nav theme />
       <main className="wb wb-page">
         <div className="s-wrap">
-          <CompanyView company={company} games={games} names={getCompanyNames()} />
+          <Top8Scope titles={titleList(all)}>
+            <CompanyView company={company} games={games} names={getCompanyNames()} />
+          </Top8Scope>
           <SnesCredit />
         </div>
       </main>
