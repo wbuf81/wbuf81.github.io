@@ -1,4 +1,4 @@
-import { centered, fitText, rr, titleLines, titleOf, layout, SIZE, type Theme } from '../render';
+import { centered, rr, titleLines, titleOf, layout, SIZE, type Theme, fitFont } from '../render';
 
 export const consoleTheme: Theme = {
   id: 'console',
@@ -33,8 +33,10 @@ export const consoleTheme: Theme = {
     rr(ctx, x + 14, y + 14, w - 28, h - 28, 10);
     ctx.fill();
     ctx.fillStyle = '#4b4752';
+    const [a, b] = titleLines(name);
+    ctx.fillText(fitFont(ctx, a, w - 60, (px) => `900 ${px}px ${fonts.sans}`, 44, 18), x + 30, y + 78);
     ctx.font = `900 44px ${fonts.sans}`;
-    titleLines(name).forEach((l, i) => ctx.fillText(fitText(ctx, l, w - 60), x + 30, y + 78 + i * 48));
+    ctx.fillText(b, x + 30, y + 126);
     ctx.fillStyle = '#6b6773';
     ctx.font = `700 15px ${fonts.sans}`;
     ctx.fillText('16-BIT', x + 32, y + h - 74);

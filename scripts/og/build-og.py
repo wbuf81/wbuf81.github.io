@@ -574,7 +574,8 @@ html, body {{ width: 1200px; height: 630px; background: #0e1117; }}
 
 
 def top8_hub_image():
-    """public/snes/top8-example.jpg: the same example rendered at 1080 and saved 600 wide for the hub card."""
+    """public/snes/top8-example.jpg: the same example rendered at 1080, cropped to the hub cards' 300:209 shape
+    (title tile and the first two rows, the third row peeking in) and saved 600 wide."""
     src = HERE / '.top8-hub.html'
     shot = PUBLIC / 'snes' / '.top8-hub.png'
     src.write_text(f'<!doctype html><meta charset="utf-8"><style>{TOP8_CSS}html,body{{width:1080px;height:1080px}}</style>{top8_picture()}')
@@ -587,7 +588,7 @@ def top8_hub_image():
     finally:
         src.unlink(missing_ok=True)
     from PIL import Image
-    im = Image.open(shot).convert('RGB').resize((600, 600), Image.LANCZOS)
+    im = Image.open(shot).convert('RGB').crop((0, 70, 1080, 70 + 752)).resize((600, 418), Image.LANCZOS)
     shot.unlink(missing_ok=True)
     out = PUBLIC / 'snes' / 'top8-example.jpg'
     save_under_limit(im, out, limit=80 * 1024)

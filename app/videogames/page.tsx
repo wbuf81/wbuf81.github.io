@@ -50,7 +50,7 @@ export default function VideoGamesPage() {
             </a>
             <a className="s-hub-card" href={TOP8}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img className="s-hub-example" src="/snes/top8-example.jpg" alt="An example Top 8 picture: eight SNES covers in a three-by-three grid" width={600} height={600} />
+              <img src="/snes/top8-example.jpg" alt="An example Top 8 picture: a title tile and SNES covers in a three-by-three grid" width={600} height={418} />
               <span className="s-hub-t">My SNES Top 8</span>
               <span className="s-hub-p">Pick your 8 favorites, drag them into order, pick a theme and save the picture</span>
             </a>

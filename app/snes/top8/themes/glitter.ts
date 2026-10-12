@@ -1,4 +1,4 @@
-import { centered, fitText, rng, titleLines, titleOf, layout, SIZE, type Theme } from '../render';
+import { centered, rng, titleLines, titleOf, layout, SIZE, type Theme, fitFont } from '../render';
 
 export const glitter: Theme = {
   id: 'glitter',
@@ -51,7 +51,6 @@ export const glitter: Theme = {
     const { ctx, fonts, name } = d;
     ctx.textAlign = 'center';
     const cx = x + w / 2;
-    ctx.font = `900 54px ${fonts.sans}`;
     ctx.lineWidth = 8;
     ctx.strokeStyle = '#fff';
     const tg = ctx.createLinearGradient(0, y + 60, 0, y + 160);
@@ -59,7 +58,8 @@ export const glitter: Theme = {
     tg.addColorStop(1, '#ff2fae');
     const [a, b] = titleLines(name);
     [`✧ ${a}`, `${b} ✧`].forEach((l, i) => {
-      const t = fitText(ctx, l, w - 24);
+      const t = i === 0 ? fitFont(ctx, l, w - 24, (px) => `900 ${px}px ${fonts.sans}`, 54, 20) : l;
+      if (i) ctx.font = `900 54px ${fonts.sans}`;
       ctx.strokeText(t, cx, y + 92 + i * 60);
       ctx.fillStyle = tg;
       ctx.fillText(t, cx, y + 92 + i * 60);

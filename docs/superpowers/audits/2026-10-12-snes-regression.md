@@ -48,4 +48,10 @@ All themes render with their real fonts. Long titles truncate with "…", and em
 | R5 | nice to have | Test hygiene from task reviews: remove the dead `orig` lines in the render test; make the font-coverage check honour italic. |
 
 ## After fixes
-(to be filled by the fix pass)
+| # | Before | After |
+|---|---|---|
+| R1 | Name line truncated with "…" in all six title tiles; MySpace friends line cut off | New `fitFont` in `render.ts` steps the name line down per theme (min 16 MySpace, 20 Glitter, 18 Console, 16 Grand Prix, 10 Crystal, 22 Polygon) before any ellipsis; "Top 8" stays at its designed size. MySpace friends line wraps to 2 lines. A 24-character name now shows in full in all six themes (checked by eye in real Chrome: `.superpowers/sdd/2026-10-12-snes-top-8/renders/long-name-<theme>.png`). Per-theme tests added. |
+| R2 | Hub Top 8 image 600x600 with an `aspect-ratio: 1` special case | `top8-example.jpg` is 600x418 (300:209), 77.8 KB: title tile plus two full rows with the third peeking in. The `.s-hub-example` rule and class are gone; image tag is 600x418. Tests assert the shape. |
+| R3 | Share could hand out the previous picture between an edit and the next draw | `Top8.tsx` clears the cached share file and its timer on every state change; the next completed draw re-prepares it. New test fails without the fix. |
+| R4 | CLAUDE.md "both", double "and", og-top8 missing from Share cards bullet | Wording fixed ("all 5 cards", comma list, og-top8.jpg in the bullet, hub image size updated). |
+| R5 | Dead `orig` lines; font-coverage key dropped `italic` | Dead lines removed; the normalised key keeps `italic`. All theme families already declared their italic faces, so none needed changes. |

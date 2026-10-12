@@ -33,10 +33,10 @@ describe('share card images', () => {
   });
 });
 
-it('the hub example picture is a 600px-wide JPEG within 80 KB', () => {
+it('the hub example picture is a 600px-wide JPEG in the hub cards\' 300:209 shape, within 80 KB', () => {
   const { w, h } = jpegSize('snes/top8-example.jpg');
   expect(w).toBe(600);
-  expect(h).toBe(600);
+  expect(h).toBe(Math.round((600 * 209) / 300));
   expect(fs.statSync(path.join(PUBLIC, 'snes', 'top8-example.jpg')).size).toBeLessThanOrEqual(80 * 1024);
 });
 

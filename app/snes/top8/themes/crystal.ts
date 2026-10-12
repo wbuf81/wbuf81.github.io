@@ -1,4 +1,4 @@
-import { count, fitText, layout, rr, titleLines, titleOf, SIZE, type DrawCtx, type Theme } from '../render';
+import { count, fitText, layout, rr, titleLines, titleOf, SIZE, type DrawCtx, type Theme, fitFont } from '../render';
 
 function win(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number) {
   const g = ctx.createLinearGradient(0, y, 0, y + h);
@@ -38,8 +38,10 @@ export const crystal: Theme = {
     const { ctx, fonts, name } = d;
     win(ctx, x, y, w, h);
     ctx.fillStyle = '#fff';
+    const [a, b] = titleLines(name);
+    ctx.fillText(fitFont(ctx, a, w - 44, (px) => `${px}px ${fonts.pixel}`, 30, 10), x + 22, y + 70);
     ctx.font = `30px ${fonts.pixel}`;
-    titleLines(name).forEach((l, i) => ctx.fillText(fitText(ctx, l, w - 44), x + 22, y + 70 + i * 44));
+    ctx.fillText(b, x + 22, y + 114);
     ctx.font = `15px ${fonts.pixel}`;
     ctx.fillStyle = '#ffe680';
     ctx.fillText(`PARTY  ${count(d)}/8`, x + 22, y + h - 56);

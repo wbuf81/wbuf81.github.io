@@ -325,6 +325,11 @@ export default function Top8({ games }: { games: Top8Game[] }) {
     }, SHARE_DEBOUNCE);
   }, []);
   useEffect(() => () => clearTimeout(shareTimer.current), []);
+  // Any edit makes the cached picture stale; it is re-prepared after the next completed draw.
+  useEffect(() => {
+    shareFile.current = null;
+    clearTimeout(shareTimer.current);
+  }, [state]);
 
   /** Draws the latest state; skipped (returns false) while that theme's fonts are still loading. */
   const draw = useCallback((): boolean => {

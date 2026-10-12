@@ -1,4 +1,4 @@
-import { fitText, titleLines, titleOf, count, layout, SIZE, type Theme } from '../render';
+import { fitText, titleLines, titleOf, count, layout, SIZE, type Theme, fitFont } from '../render';
 
 export const grandprix: Theme = {
   id: 'grandprix',
@@ -71,11 +71,13 @@ export const grandprix: Theme = {
         ctx.fillRect(x + w - 56 + a * 16, y + 8 + b * 16, 16, 16);
       }
     ctx.save();
-    ctx.font = `italic 900 46px ${fonts.orbit}`;
     ctx.fillStyle = '#fff';
     ctx.shadowColor = '#21e3ff';
     ctx.shadowBlur = 18;
-    titleLines(name).forEach((l, i) => ctx.fillText(fitText(ctx, l.toUpperCase(), w - 36), x + 18, y + 120 + i * 52));
+    const [a, b] = titleLines(name);
+    ctx.fillText(fitFont(ctx, a.toUpperCase(), w - 36, (px) => `italic 900 ${px}px ${fonts.orbit}`, 46, 16), x + 18, y + 120);
+    ctx.font = `italic 900 46px ${fonts.orbit}`;
+    ctx.fillText(b.toUpperCase(), x + 18, y + 172);
     ctx.restore();
     ctx.font = `36px ${fonts.vt}`;
     ctx.fillStyle = '#ff5a3c';

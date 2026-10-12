@@ -1,4 +1,4 @@
-import { centered, count, fitText, layout, rng, titleLines, titleOf, SIZE, type Theme } from '../render';
+import { centered, count, layout, rng, titleLines, titleOf, SIZE, type Theme, fitFont } from '../render';
 
 export const polygon: Theme = {
   id: 'polygon',
@@ -61,8 +61,10 @@ export const polygon: Theme = {
     }
     ctx.globalAlpha = 1;
     ctx.fillStyle = '#2bff6a';
+    const [a, b] = titleLines(name);
+    ctx.fillText(fitFont(ctx, a.toUpperCase(), w - 36, (px) => `${px}px ${fonts.vt}`, 64, 22), x + 18, y + 76);
     ctx.font = `64px ${fonts.vt}`;
-    titleLines(name).forEach((l, i) => ctx.fillText(fitText(ctx, l.toUpperCase(), w - 36), x + 18, y + 76 + i * 56));
+    ctx.fillText(b.toUpperCase(), x + 18, y + 132);
     ctx.font = `28px ${fonts.vt}`;
     ctx.fillText(`WINGMEN ${count(d)}/8`, x + 18, y + h - 52);
     ctx.font = `22px ${fonts.vt}`;

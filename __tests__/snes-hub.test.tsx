@@ -43,5 +43,9 @@ test('the Top 8 card links in, before Coming soon', () => {
   const link = screen.getByRole('link', { name: /My SNES Top 8/ });
   expect(link).toHaveAttribute('href', '/videogames/snes-history/top-8');
   expect(container.querySelectorAll('.s-hub > .s-hub-card')[2]).toBe(link);
-  expect(link.querySelector('img')).toHaveAttribute('src', '/snes/top8-example.jpg');
+  const img = link.querySelector('img')!;
+  expect(img).toHaveAttribute('src', '/snes/top8-example.jpg');
+  expect(img).toHaveAttribute('width', '600');
+  expect(img).toHaveAttribute('height', '418');
+  expect(img).not.toHaveClass('s-hub-example');
 });

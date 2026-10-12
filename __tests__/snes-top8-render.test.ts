@@ -1,11 +1,13 @@
 import fs from 'fs';
 import path from 'path';
-import { drawTop8, fitText, layout, titleLines, type DrawCtx, type Fonts } from '@/app/snes/top8/render';
+import { drawTop8, fitFont, fitText, layout, titleLines, type DrawCtx, type Fonts } from '@/app/snes/top8/render';
 import { THEMES } from '@/app/snes/top8/themes';
 import { THEME_IDS } from '@/lib/snes/top8';
 
-type Call = { name: string; args: unknown[] };
-function mockCtx() {
+type Call = { name: string; args: unknown[]; font?: string };
+const pxOf = (font: unknown) => Number(/(\d+(?:\.\d+)?)px/.exec(String(font))?.[1] ?? 10);
+/** fontAware: text width scales with the current font size (0.5em per character) instead of a flat 10px. */
+function mockCtx(fontAware = false) {
   const calls: Call[] = [];
   const sets: Record<string, unknown[]> = {};
   const gradient = { addColorStop() {} };
@@ -13,9 +15,9 @@ function mockCtx() {
   const ctx = new Proxy(own, {
     get(t, prop: string) {
       if (Object.prototype.hasOwnProperty.call(t, prop)) return t[prop]; // honours overrides like `ctx.roundRect = undefined`
-      if (prop === 'measureText') return (text: string) => ({ width: text.length * 10 });
+      if (prop === 'measureText') return (text: string) => ({ width: text.length * (fontAware ? pxOf(t.font) * 0.5 : 10) });
       if (prop === 'createLinearGradient') return () => gradient;
-      return (...args: unknown[]) => void calls.push({ name: prop, args });
+      return (...args: unknown[]) => void calls.push({ name: prop, args, font: String(t.font ?? '') });
     },
     set(_t, prop: string, v) {
       (sets[prop] ||= []).push(v);
@@ -28,8 +30,8 @@ function mockCtx() {
 
 const fonts: Fonts = { sans: 'Sans', mono: 'Mono', vt: 'VT', pixel: 'Pixel', orbit: 'Orbit' };
 const SLUGS = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
-function make(slots: (string | null)[], name = 'Wes') {
-  const m = mockCtx();
+function make(slots: (string | null)[], name = 'Wes', fontAware = false) {
+  const m = mockCtx(fontAware);
   const images: Record<string, CanvasImageSource | undefined> = {};
   slots.forEach((s) => s && (images[s] = {} as CanvasImageSource));
   const titles = Object.fromEntries(SLUGS.map((s) => [s, `Game ${s}`]));
@@ -61,6 +63,19 @@ describe('text helpers', () => {
     const t = fitText(ctx, 'x'.repeat(40), 100);
     expect(t.endsWith('…')).toBe(true);
     expect(t.length * 10).toBeLessThanOrEqual(100);
+  });
+});
+
+describe('fitFont', () => {
+  it('picks the largest size that fits, and ellipsizes only below the minimum', () => {
+    const { ctx, sets } = mockCtx(true);
+    const mk = (px: number) => `${px}px X`;
+    expect(fitFont(ctx, 'abcd', 100, mk, 40, 10)).toBe('abcd');
+    expect(sets.font?.at(-1)).toBe('40px X');
+    expect(fitFont(ctx, 'a'.repeat(20), 100, mk, 40, 10)).toBe('a'.repeat(20));
+    expect(sets.font?.at(-1)).toBe('10px X');
+    expect(fitFont(ctx, 'a'.repeat(60), 100, mk, 40, 10).endsWith('…')).toBe(true);
+    expect(sets.font?.at(-1)).toBe('10px X');
   });
 });
 
@@ -103,6 +118,25 @@ describe('themes', () => {
       expect(wide.length).toBeGreaterThan(0);
       wide.forEach((c) => expect(String(c.args[0]).length * 10).toBeLessThanOrEqual(CW));
     });
+    it('shrinks a 24-character name to fit the tile instead of truncating it', () => {
+      const { d, calls } = make(SLUGS, 'Wesley Bard The Third!!!', true);
+      drawTop8(d, theme);
+      const { CW } = layout();
+      const drawn = calls.filter((c) => c.name === 'fillText' && /wesley bard the third!!!/i.test(String(c.args[0])));
+      expect(drawn.length).toBeGreaterThan(0);
+      drawn.forEach((c) => {
+        const t = String(c.args[0]);
+        expect(t).not.toContain('…');
+        expect(t.length * pxOf(c.font) * 0.5).toBeLessThanOrEqual(CW);
+      });
+    });
+    it('keeps the designed name size for a short name', () => {
+      const designed = { myspace: 34, glitter: 54, console: 44, grandprix: 46, crystal: 30, polygon: 64 }[id];
+      const { d, calls } = make(SLUGS, 'Wes', true);
+      drawTop8(d, theme);
+      const c = calls.find((k) => k.name === 'fillText' && /wes's/i.test(String(k.args[0])));
+      expect(pxOf(c?.font)).toBe(designed);
+    });
     it('falls back when roundRect is missing', () => {
       const { d, calls } = make(SLUGS);
       (d.ctx as unknown as { roundRect?: unknown }).roundRect = undefined;
@@ -112,8 +146,6 @@ describe('themes', () => {
     });
     it('survives a throwing drawImage and a broken image, drawing the title instead', () => {
       const { d, calls } = make(SLUGS);
-      const orig = d.ctx.drawImage;
-      void orig;
       (d.ctx as unknown as { drawImage: unknown }).drawImage = () => {
         throw new Error('bad');
       };
@@ -132,8 +164,8 @@ describe('themes', () => {
       const { d, sets } = make(SLUGS);
       drawTop8(d, theme);
       const norm = (f: string) => {
-        const m = /^(?:italic\s+)?(?:(\d+|bold)\s+)?[\d.]+px\s+(.*)$/.exec(f.trim());
-        return m ? `${m[1] === 'bold' ? '700' : m[1] ?? '400'}|${m[2]}` : f;
+        const m = /^(italic\s+)?(?:(\d+|bold)\s+)?[\d.]+px\s+(.*)$/.exec(f.trim());
+        return m ? `${m[1] ? 'italic ' : ''}${m[2] === 'bold' ? '700' : m[2] ?? '400'}|${m[3]}` : f;
       };
       const declared = new Set(theme.families(fonts).map(norm));
       const used = [...new Set((sets.font ?? []).map((f) => String(f)))];

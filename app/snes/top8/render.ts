@@ -41,6 +41,16 @@ export function fitText(ctx: CanvasRenderingContext2D, text: string, maxW: numbe
   return t + '…';
 }
 
+/** Sets ctx.font to the largest size in [minPx, maxPx] at which the text fits maxW and returns it; only below minPx does it fall back to an ellipsis. */
+export function fitFont(ctx: CanvasRenderingContext2D, text: string, maxW: number, makeFont: (px: number) => string, maxPx: number, minPx: number): string {
+  for (let px = maxPx; px >= minPx; px--) {
+    ctx.font = makeFont(px);
+    if (ctx.measureText(text).width <= maxW) return text;
+  }
+  ctx.font = makeFont(minPx);
+  return fitText(ctx, text, maxW);
+}
+
 export function titleLines(name: string): [string, string] {
   return [name ? `${name}'s` : 'My', 'Top 8'];
 }

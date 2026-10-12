@@ -367,6 +367,24 @@ describe('Share', () => {
     expect((HTMLCanvasElement.prototype.toBlob as jest.Mock).mock.calls.length).toBe(encoded);
   });
 
+  it('drops the cached PNG on an edit, so an early Share encodes the new picture instead of the old one', async () => {
+    const share = jest.fn(() => Promise.resolve());
+    sharing(share);
+    window.history.replaceState(null, '', '?g=a,b');
+    await mount();
+    await frames();
+    await act(async () => { await new Promise((r) => setTimeout(r, 350)); });
+    const toBlob = HTMLCanvasElement.prototype.toBlob as jest.Mock;
+    const before = toBlob.mock.calls.length;
+    expect(before).toBeGreaterThan(0); // a picture is ready
+    fireEvent.click(screen.getAllByRole('button', { name: /^Remove / })[0]);
+    fireEvent.click(screen.getByRole('button', { name: 'Share' }));
+    expect(share).not.toHaveBeenCalled(); // the stale file is not handed out synchronously
+    await act(async () => { await new Promise((r) => setTimeout(r, 50)); });
+    expect(share).toHaveBeenCalledTimes(1);
+    expect(toBlob.mock.calls.length).toBeGreaterThan(before); // it was encoded fresh
+  });
+
   it('encodes on the spot when no PNG is ready yet, and toasts a real failure', async () => {
     const share = jest.fn(() => Promise.reject(Object.assign(new Error('nope'), { name: 'NotAllowedError' })));
     sharing(share);
