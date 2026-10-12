@@ -268,3 +268,14 @@
 .wb .s-bkr-obj.is-tix img { aspect-ratio: 2 / 3; object-fit: cover; }
 .wb .s-bkr-price { margin: 0; padding: 0 16px 10px; font: 400 14px/1.4 var(--serif); color: var(--screen-ink); }
 .wb .s-bkr-go { display: inline-block; margin: 0 16px 16px; color: var(--screen-ink); text-decoration: underline; font: 600 14px/1.4 var(--serif); }
+
+/* Fix round 1: phone ticket stub, one-line compact paper top, unbroken compact masthead. */
+@media (max-width: 759px) {
+  .wb .s-bkr-obj.is-tix { grid-column: 1 / -1; }
+  .wb .s-bkr-obj.is-tix:has(img) { display: grid; grid-template-columns: 100px minmax(0, 1fr); column-gap: 12px; align-content: start; }
+  .wb .s-bkr-obj.is-tix:has(img) > * { grid-column: 2; }
+  .wb .s-bkr-obj.is-tix:has(img) > img { grid-column: 1; grid-row: 1 / span 4; }
+}
+.wb .s-tm-paper.is-compact .s-tm-ptop { white-space: nowrap; font-size: 11px; }
+.wb .s-tm-paper.is-compact .s-tm-ptop span:nth-child(2) { display: none; }
+.wb .s-tm-paper.is-compact .s-tm-pmast { font-size: clamp(18px, 5.4vw, 22px); white-space: nowrap; }
