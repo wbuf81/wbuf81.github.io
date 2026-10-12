@@ -489,3 +489,24 @@
 .wb .s-t8-fallback { margin-top: 12px; }
 .wb .s-t8-toast { position: fixed; left: 50%; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); z-index: 50; transform: translateX(-50%); pointer-events: none; }
 .wb .s-t8-toast span { display: block; padding: 10px 14px; border-radius: 8px; background: var(--ink); color: var(--bg); font-weight: 600; }
+
+/* Top 8 star: a corner button on tiles (sibling of the link), a labelled button on game pages */
+.wb .s-star { display: inline-block; }
+.wb .s-star-tile { position: absolute; top: 4px; right: 4px; z-index: 3; opacity: 0; }
+.wb .s-star-tile.is-on, .wb *:hover > .s-star-tile, .wb *:focus-within > .s-star-tile, .wb .s-star-tile:focus-within { opacity: 1; }
+.wb .s-star-tile .s-star-btn { width: 28px; height: 28px; padding: 0; border: 0; border-radius: 50%; background: var(--t8-x); color: var(--t8-my-ink); font-size: 16px; line-height: 28px; cursor: pointer; position: relative; }
+.wb .s-star-tile.is-on .s-star-btn { background: var(--t8-hot); color: var(--t8-hot-ink); }
+.wb .s-star-tile .s-star-btn::before { content: ''; position: absolute; inset: -8px; }
+.wb .s-star-page .s-star-btn { padding: 8px 14px; min-height: 44px; border: 1px solid var(--t8-my); border-radius: 6px; background: var(--t8-my); color: var(--t8-my-ink); font: inherit; font-weight: 600; cursor: pointer; }
+.wb .s-star-page.is-on .s-star-btn { background: var(--t8-hot); border-color: var(--t8-hot); color: var(--t8-hot-ink); }
+.wb .s-star-btn:focus-visible, .wb .s-star-pick:focus-visible { outline: 2px solid var(--snes-glow); outline-offset: 2px; }
+.wb .s-star-pop { z-index: 60; width: 232px; max-width: calc(100vw - 16px); padding: 10px; border: 1px solid var(--screen-rule); border-radius: 8px; background: var(--screen-2); color: var(--screen-ink); box-shadow: 0 6px 24px rgba(0, 0, 0, .4); }
+.wb .s-star-pop-t { margin: 0 0 8px; font-size: 12px; font-weight: 600; }
+.wb .s-star-pop-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.wb .s-star-pick { padding: 0; border: 1px solid var(--screen-rule); border-radius: 4px; background: none; cursor: pointer; overflow: hidden; line-height: 0; }
+.wb .s-star-pick img { width: 100%; height: auto; aspect-ratio: 96 / 67; object-fit: cover; }
+.wb .s-star-pick:hover { border-color: var(--t8-hot); box-shadow: 0 0 0 2px var(--t8-hot); }
+@media (hover: none) {
+  .wb .s-star-tile { opacity: 1; }
+  .wb .s-star-tile .s-star-btn::before { inset: -8px; }
+}
