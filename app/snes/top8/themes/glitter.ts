@@ -3,7 +3,7 @@ import { centered, fitText, rng, titleLines, titleOf, layout, SIZE, type Theme }
 export const glitter: Theme = {
   id: 'glitter',
   displayName: 'Glitter',
-  families: (f) => [`900 54px ${f.sans}`, `italic 600 24px ${f.sans}`, `700 20px ${f.sans}`],
+  families: (f) => [`600 24px ${f.sans}`, `900 54px ${f.sans}`, `italic 600 24px ${f.sans}`, `600 16px ${f.sans}`, `700 20px ${f.sans}`],
   empty: { fill: '#4a1450', ink: '#ffd6f5' },
   bg({ ctx }) {
     const { TOP } = layout();

@@ -9,14 +9,17 @@ function mockCtx() {
   const calls: Call[] = [];
   const sets: Record<string, unknown[]> = {};
   const gradient = { addColorStop() {} };
-  const ctx = new Proxy({} as Record<string, unknown>, {
-    get(_t, prop: string) {
+  const own: Record<string, unknown> = {};
+  const ctx = new Proxy(own, {
+    get(t, prop: string) {
+      if (Object.prototype.hasOwnProperty.call(t, prop)) return t[prop]; // honours overrides like `ctx.roundRect = undefined`
       if (prop === 'measureText') return (text: string) => ({ width: text.length * 10 });
       if (prop === 'createLinearGradient') return () => gradient;
       return (...args: unknown[]) => void calls.push({ name: prop, args });
     },
     set(_t, prop: string, v) {
       (sets[prop] ||= []).push(v);
+      _t[prop] = v;
       return true;
     },
   }) as unknown as CanvasRenderingContext2D;
@@ -92,14 +95,49 @@ describe('themes', () => {
       expect(calls.filter((c) => c.name === 'drawImage')).toHaveLength(0);
       expect(sets.fillStyle).toContain(theme.empty.fill);
     });
-    it('survives a 60-character name', () => {
-      const { d } = make(SLUGS, 'W'.repeat(60));
+    it('survives a 60-character name and keeps the title inside the tile', () => {
+      const { d, calls } = make(SLUGS, 'W'.repeat(60));
       expect(() => drawTop8(d, theme)).not.toThrow();
+      const { CW } = layout();
+      const wide = calls.filter((c) => c.name === 'fillText' && String(c.args[0]).includes('WWW'));
+      expect(wide.length).toBeGreaterThan(0);
+      wide.forEach((c) => expect(String(c.args[0]).length * 10).toBeLessThanOrEqual(CW));
     });
     it('falls back when roundRect is missing', () => {
-      const { d } = make(SLUGS);
+      const { d, calls } = make(SLUGS);
       (d.ctx as unknown as { roundRect?: unknown }).roundRect = undefined;
       expect(() => drawTop8(d, theme)).not.toThrow();
+      expect(calls.some((c) => c.name === 'roundRect')).toBe(false);
+      if (['console', 'crystal'].includes(id)) expect(calls.some((c) => c.name === 'rect')).toBe(true);
+    });
+    it('survives a throwing drawImage and a broken image, drawing the title instead', () => {
+      const { d, calls } = make(SLUGS);
+      const orig = d.ctx.drawImage;
+      void orig;
+      (d.ctx as unknown as { drawImage: unknown }).drawImage = () => {
+        throw new Error('bad');
+      };
+      expect(() => drawTop8(d, theme)).not.toThrow();
+      expect(calls.some((c) => c.name === 'fillText' && String(c.args[0]).startsWith('Game '))).toBe(true);
+    });
+    it('draws the game title in a slot with no usable image', () => {
+      const { d, calls } = make(['a', ...Array(7).fill(null)]);
+      const broken = document.createElement('img');
+      d.images = { a: broken };
+      drawTop8(d, theme);
+      expect(calls.filter((c) => c.name === 'drawImage')).toHaveLength(0);
+      expect(calls.some((c) => c.name === 'fillText' && c.args[0] === 'Game a')).toBe(true);
+    });
+    it('declares every font it draws in families()', () => {
+      const { d, sets } = make(SLUGS);
+      drawTop8(d, theme);
+      const norm = (f: string) => {
+        const m = /^(?:italic\s+)?(?:(\d+|bold)\s+)?[\d.]+px\s+(.*)$/.exec(f.trim());
+        return m ? `${m[1] === 'bold' ? '700' : m[1] ?? '400'}|${m[2]}` : f;
+      };
+      const declared = new Set(theme.families(fonts).map(norm));
+      const used = [...new Set((sets.font ?? []).map((f) => String(f)))];
+      used.forEach((f) => expect([f, declared.has(norm(f))]).toEqual([f, true]));
     });
   });
 
@@ -108,6 +146,8 @@ describe('themes', () => {
     drawTop8(d, THEMES.crystal);
     const xs = calls.filter((c) => c.name === 'moveTo' || c.name === 'lineTo').map((c) => c.args[0] as number);
     expect(Math.min(...xs)).toBeGreaterThanOrEqual(4);
+    const cursorXs = calls.slice(-8).filter((c) => c.name === 'moveTo' || c.name === 'lineTo').map((c) => c.args[0] as number);
+    expect(Math.max(...cursorXs)).toBeLessThan(layout().cellXY(1)[0]);
   });
 
   it('draws no trademarked game names to the canvas', () => {

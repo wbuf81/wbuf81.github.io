@@ -3,7 +3,7 @@ import { centered, count, fitText, layout, rng, titleLines, titleOf, SIZE, type 
 export const polygon: Theme = {
   id: 'polygon',
   displayName: 'Polygon Space',
-  families: (f) => [`64px ${f.vt}`, `30px ${f.vt}`],
+  families: (f) => [`600 24px ${f.sans}`, `64px ${f.vt}`, `28px ${f.vt}`, `22px ${f.vt}`, `30px ${f.vt}`],
   empty: { fill: 'rgba(43,255,106,.06)', ink: '#2bff6a' },
   bg({ ctx }) {
     const { TOP } = layout();

@@ -19,7 +19,7 @@ function win(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: 
 export const crystal: Theme = {
   id: 'crystal',
   displayName: 'Crystal Menu',
-  families: (f) => [`30px ${f.pixel}`, `13px ${f.pixel}`],
+  families: (f) => [`600 24px ${f.sans}`, `30px ${f.pixel}`, `15px ${f.pixel}`, `11px ${f.pixel}`, `13px ${f.pixel}`],
   empty: { fill: 'rgba(255,255,255,.08)', ink: 'rgba(255,255,255,.7)' },
   bg({ ctx }) {
     const { TOP } = layout();

@@ -69,6 +69,29 @@ export function centered(d: DrawCtx, font: string, color: string, text: string, 
   ctx.textAlign = 'left';
 }
 
+function usable(img: CanvasImageSource | undefined): img is CanvasImageSource {
+  if (!img) return false;
+  if (typeof HTMLImageElement !== 'undefined' && img instanceof HTMLImageElement) return img.complete && img.naturalWidth > 0;
+  return true;
+}
+
+/** Word-wraps to at most n lines; the last line is truncated with an ellipsis if text remains. */
+export function wrapLines(ctx: CanvasRenderingContext2D, text: string, maxW: number, n: number): string[] {
+  const out: string[] = [];
+  let line = '';
+  const words = text.split(' ');
+  for (let i = 0; i < words.length; i++) {
+    const t = line ? `${line} ${words[i]}` : words[i];
+    if (line && ctx.measureText(t).width > maxW) {
+      if (out.length === n - 1) return [...out, fitText(ctx, [line, ...words.slice(i)].join(' '), maxW)];
+      out.push(line);
+      line = words[i];
+    } else line = t;
+  }
+  out.push(line);
+  return out.map((l) => fitText(ctx, l, maxW));
+}
+
 export function drawTop8(d: DrawCtx, theme: Theme): void {
   const { ctx } = d;
   const { CW, CH, CELL, cellXY } = layout();
@@ -87,15 +110,25 @@ export function drawTop8(d: DrawCtx, theme: Theme): void {
     ctx.restore();
     const img = slug ? d.images[slug] : undefined;
     ctx.save();
-    if (slug && img) ctx.drawImage(img, x, y, CW, CH);
-    else {
+    let drawn = false;
+    if (slug && usable(img)) {
+      try {
+        ctx.drawImage(img, x, y, CW, CH);
+        drawn = true;
+      } catch {
+        /* one bad cover must not abort the picture */
+      }
+    }
+    if (!drawn) {
       ctx.fillStyle = theme.empty.fill;
       ctx.fillRect(x, y, CW, CH);
-      if (!slug) {
-        ctx.fillStyle = theme.empty.ink;
-        ctx.font = `600 24px ${d.fonts.sans}`;
-        ctx.textAlign = 'center';
-        ctx.fillText('Add a friend', x + CW / 2, y + CH / 2 + 8);
+      ctx.fillStyle = theme.empty.ink;
+      ctx.font = `600 24px ${d.fonts.sans}`;
+      ctx.textAlign = 'center';
+      if (!slug) ctx.fillText('Add a friend', x + CW / 2, y + CH / 2 + 8);
+      else {
+        const ls = wrapLines(ctx, d.titles[slug] ?? slug, CW - 40, 2);
+        ls.forEach((l, i) => ctx.fillText(l, x + CW / 2, y + CH / 2 + 8 + (i - (ls.length - 1) / 2) * 30));
       }
     }
     ctx.restore();

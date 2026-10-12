@@ -3,7 +3,7 @@ import { fitText, titleLines, titleOf, count, layout, SIZE, type Theme } from '.
 export const grandprix: Theme = {
   id: 'grandprix',
   displayName: 'Grand Prix',
-  families: (f) => [`italic 900 46px ${f.orbit}`, `700 17px ${f.orbit}`, `36px ${f.vt}`],
+  families: (f) => [`600 24px ${f.sans}`, `italic 900 46px ${f.orbit}`, `700 17px ${f.orbit}`, `36px ${f.vt}`, `24px ${f.vt}`, `30px ${f.vt}`],
   empty: { fill: 'rgba(33,227,255,.08)', ink: '#21e3ff' },
   bg({ ctx }) {
     const { TOP } = layout();

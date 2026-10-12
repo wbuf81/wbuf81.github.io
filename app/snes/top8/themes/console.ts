@@ -3,7 +3,7 @@ import { centered, fitText, rr, titleLines, titleOf, layout, SIZE, type Theme } 
 export const consoleTheme: Theme = {
   id: 'console',
   displayName: 'Console',
-  families: (f) => [`900 44px ${f.sans}`, `700 15px ${f.sans}`, `800 20px ${f.sans}`],
+  families: (f) => [`600 24px ${f.sans}`, `900 44px ${f.sans}`, `700 15px ${f.sans}`, `600 14px ${f.sans}`, `800 20px ${f.sans}`],
   empty: { fill: '#a9a5b3', ink: '#5d5966' },
   bg({ ctx }) {
     const { TOP } = layout();

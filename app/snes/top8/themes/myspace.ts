@@ -3,7 +3,7 @@ import { centered, count, fitText, titleLines, titleOf, layout, SIZE, type Theme
 export const myspace: Theme = {
   id: 'myspace',
   displayName: 'MySpace Classic',
-  families: () => [],
+  families: (f) => ['bold 34px Verdana, Arial, sans-serif', '19px Verdana, Arial, sans-serif', 'bold 17px Verdana, Arial, sans-serif', 'bold 20px Verdana, Arial, sans-serif', `600 24px ${f.sans}`],
   empty: { fill: '#eef2f7', ink: '#8aa0bf' },
   bg({ ctx }) {
     const { TOP } = layout();
