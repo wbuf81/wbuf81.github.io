@@ -608,7 +608,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
   - `ageAt(birthYear, isoDate): number`
   - `schoolGrade(birthYear, isoDate): number`
   - `gradeName(n): string`
-  - `story(birthYear): { html: false; parts: StoryPart[] }`. Return plain strings instead of HTML: `story(by)` returns `{ lead: string; wes: string | null; close: string }`.
+  - `story(birthYear): { lead: string; wes: string | null; close: string }` (plain strings, no HTML).
   - `WES_BIRTH_YEAR = 1981`, `WES_LINE`
 
 - [ ] **Step 1: Write the failing tests**
@@ -1522,7 +1522,7 @@ export default function YearsStory({ milestones, onJump }: { milestones: { slug:
 }
 ```
 
-Remove the unused `MILESTONES as _unused` import while implementing. It's shown above only to flag that milestones arrive as a prop, with their dates resolved by the server page. Also note that `defaultValue` + `key={year}` re-mounts the input when the saved year loads. Use a controlled `value` with a string state instead if the test or typing feels jumpy, keeping `change` validation on blur.
+Milestones arrive as a prop, with their dates resolved by the server page. Note that `defaultValue` + `key={year}` re-mounts the input when the saved year loads. Use a controlled `value` with a string state instead if the test or typing feels jumpy, keeping `change` validation on blur.
 
 - [ ] **Step 4: Implement `TimeMachine`.** It builds on the prototype's T1.
   - **State:** a single `i` (week index), read from `?w=` after mount with `weekIndexFor`. The fallback is launch week; a value that isn't a date gives 0.
