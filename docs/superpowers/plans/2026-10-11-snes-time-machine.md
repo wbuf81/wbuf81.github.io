@@ -1662,6 +1662,61 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 
 ---
 
+### Task 9b: Link the section from the main site: header, featured homepage project, richer hub
+
+Added 11 Oct 2026 at Wes's request: "yes add the header link homepage tile and new hub… make the snes history thing the new featured tile on the homepage". Search engines stay blocked (noindex + robots `Disallow: /videogames` unchanged).
+
+**Files:**
+- Modify: `app/components/Nav.tsx`, `lib/projects.ts`, `app/components/home/FeaturedBuild.tsx` (and `Print.tsx` if its link label assumes GitHub), `app/videogames/page.tsx`, `app/snes/snes.css`
+- Create: `public/projects/snes-history.jpg` (cover collage), `app/snes/components/OnThisDay.tsx` (client), `lib/snes/onThisDay.ts` (pure)
+- Test: `__tests__/projects.test.ts`, `__tests__/nav.test.tsx` (create if absent, or extend the existing header test), `__tests__/snes-hub.test.tsx`, `__tests__/snes-on-this-day.test.ts(x)`
+
+**Interfaces:**
+- Consumes: `getWeeks()`, `weekIndexFor`, `gamesForWeek` (Tasks 2 and 4), `Paper` is NOT used here, `TIME_MACHINE`/`timeMachinePath` (Task 7), `SNES_BASE`, `gamePath`.
+- Produces: `onThisDay(weeks: Week[], today: string, year: number): number`, which returns the index of the week in `year` (1991–1998) that holds the same month and day as `today`, clamped to the data range. Plus `ON_THIS_DAY_YEARS`, the years that have a week for that date. For example, Jan–Aug 22 has no 1991 week, and after Oct 2 there is no 1998 week.
+
+**1. Header.**
+- `NAV_LINKS` becomes Projects · Games · Connect. "Games" links to `/videogames` with a plain `next/link` (not the home-page scroll handler).
+- Mark the link `aria-current="page"` when the pathname starts with `/videogames`, and style that state with the header's existing active/accent treatment, or add a minimal one in design-system.css.
+- At 375 px the header must stay usable. It may wrap like today, but no link may be clipped, and touch targets must be ≥ 44 px tall.
+- Test: the three links in order, the Games href, and `aria-current` on a `/videogames/snes-history` pathname (mock `usePathname`).
+
+**2. Featured homepage project.**
+- Add a PERSONAL project to `lib/projects.ts` and set `FEATURED = 'snes'`:
+  - `key: 'snes'`, `name: 'SNES History'`
+  - `group: 'Everything else'` (it is excluded from its group while featured)
+  - `kind: 'Next.js · TypeScript'`, `fit: 'shot'`
+  - `subtitle: 'Every US Super Nintendo game, 1991–1998'`
+  - `description`: two plain sentences, along the lines of "A playable history of the Super Nintendo in America: all 717 US releases on a month-by-month timeline, cover wall, shelf and score scatter, with box art, magazine scores and gameplay clips. A week-by-week time machine shows what was on the radio, at the movies and in the news when each game came out." Keep to CLAUDE.md content rules. The existing test bans digits only for WBDB, so "717" is fine.
+  - `chips: ['Timeline', 'Cover wall', 'Game shelf', 'Score scatter', 'Time Machine', 'Gameplay clips']`, `chipsLabel: 'Ways in'`
+  - `image: '/projects/snes-history.jpg'`, `alt: 'A collage of Super Nintendo box art'`
+  - `href: '/videogames/snes-history'`
+- **Badge:** the badge union gains `'Live on this site'`; this project uses it. Update the projects test rule: Private repo → no href; Open source → GitHub href; Live on this site → href starts with `/`.
+- **FeaturedBuild and Print:** an internal href (starting with `/`) opens in the same tab (no `target`/`rel`). The print's label reads `Open SNES History`, and the button reads "Explore it →" instead of "View on GitHub →". GitHub projects keep today's behaviour.
+- **The collage** `public/projects/snes-history.jpg`: build it once with a small throwaway Python/Pillow snippet (not committed) from 12 iconic covers in `public/snes/box/`: super-mario-world, the-legend-of-zelda-a-link-to-the-past, super-metroid, f-zero, chrono-trigger, donkey-kong-country, street-fighter-ii-the-world-warrior, star-fox, super-mario-kart, final-fantasy-iii, earthbound, mega-man-x. Skip any that are missing and substitute others with box art. Lay them out as a 4×3 grid, about 1200×840, JPEG q≈82, under 250 KB. Print sizes the image itself; check how other `fit: 'shot'` images look and match their aspect.
+- Neo returns to its group automatically. Update any test that pins `FEATURED === 'neo'` or the group contents.
+
+**3. The /videogames hub.**
+- **Cards:** keep the SNES History card. Add:
+  - **"SNES Time Machine"**: image `/snes/pop/unforgettable-with-love.webp`, or the F-Zero box if that file is missing; text "Every week, 1991–1998: the #1 song, album and movie, the news, and the new games".
+  - **"Coming soon: Wes's Analogue Pocket run"**: not a link. Dimmed (`aria-disabled` is not needed on a non-link), with the text "Played, beaten, rated — my run through the library on an Analogue Pocket." A `<div>`, not an `<a>`.
+- **"On this day in SNES history" strip** (`OnThisDay`, client), placed above the cards:
+  - It receives slim week data from the server page: `{ start, song: {title, by}, film: {title}, lead: string | null, games: number }[]`. `lead` is the first news text or the near text. `games` is the count of exact-date games that week plus month-only games in that week's month. The payload must stay small, so test that the serialized prop is under 60 KB raw.
+  - After mount it reads today's date in the visitor's time zone, picks a random year from `ON_THIS_DAY_YEARS` for that date, and shows: "This week in ‹YEAR›" · #1 song (title — artist) · #1 movie · the lead headline · "N new SNES games" · a link "Open this week in the Time Machine →" (`timeMachinePath(start)`). ◀ ▶ buttons (aria-labels "Earlier year" / "Later year") cycle the years.
+  - The server render shows a neutral placeholder card with the same height, so there is no layout shift and nothing date-dependent is baked into the static HTML.
+- **Styling:** reuse the dark screen look (`--screen`, `--screen-2`) with `--tm-led` for the year, in `app/snes/snes.css`. Phone width: everything stacks, nothing overflows.
+- **Tests:**
+  - `onThisDay`: Aug 23 1991 → week 0; Oct 6 → 1998 week holding 1998-10-02; Jan 10 → no 1991; Dec 25 → no 1998.
+  - The hub renders three cards, one of them not a link.
+  - With `jest.useFakeTimers().setSystemTime(new Date('2026-03-14T12:00:00'))` and `Math.random` mocked, `OnThisDay` shows the expected year's song and a Time Machine link; ◀ ▶ change the year.
+
+- [ ] Write the failing tests; run them and see them fail.
+- [ ] Implement 1–3.
+- [ ] `npx jest` passes; `npm test` builds.
+- [ ] Commit `feat(snes): link Games from the header, feature SNES History on the homepage, richer /videogames hub` (with Co-Authored-By line).
+
+---
+
 ### Task 10: End-to-end usability and readability audit (every SNES screen)
 
 Wes asked for a thorough audit of every screen. The controller runs this in a real browser after `npm test` builds `out/`. Use the static preview (`.claude/launch.json` → `snes-static`, or the `snes-history-static` entry on port 4321) and the Playwright tools.
