@@ -242,6 +242,22 @@
 .wb .type > div { display: grid; grid-template-columns: 170px minmax(0, 1fr); gap: 16px; align-items: baseline; padding-bottom: 12px; border-bottom: 1px solid var(--rule-soft); }
 .wb .type small { font: 400 11px var(--mono); color: var(--ink-3); }
 .wb .spec-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+/* the SNES kit (app/design/SnesKit.tsx): holds the SNES pieces still and in the flow, using app/snes/snes.css as is */
+.wb .ds-snes-nav { overflow: hidden; border: 1px solid var(--rule); border-radius: 6px; }
+.wb .ds-snes-nav .s-nav { position: static; }
+.wb .ds-snes > .s-tray { position: static; z-index: auto; margin: 4px 0 10px; border: 1px solid var(--rule); border-radius: 6px; box-shadow: none; }
+.wb .ds-snes > .s-tray.is-collapsed { border: 0; }
+.wb .ds-cover { width: 136px; }
+.wb .ds-toast .s-live { position: static; display: inline-block; transform: none; }
+.wb .ds-still .s-key { margin-top: 10px; }
+.wb .ds-heat { max-width: 640px; }
+.wb .ds-booklet { max-width: 640px; }
+.wb .ds-paper { max-width: 664px; padding: 10px 12px 16px; }
+.wb .ds-tm { max-width: 900px; }
+.wb .ds-still-otd .s-otd { min-height: 0; }
+/* the demo tray isn't at the bottom of the window, so the page's end makes no room for it and the toast stays put */
+.wb.wb-foot:is(body:has(.ds-snes > .s-tray) *) { padding-bottom: 0; }
+.wb.s-live:is(body:has(.ds-snes > .s-tray) *) { bottom: calc(20px + env(safe-area-inset-bottom, 0px)); }
 
 /* ── layout ─────────────────────────────────────────────────── */
 @media (max-width: 860px) {

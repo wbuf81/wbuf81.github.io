@@ -19,8 +19,10 @@ function Obj({ kind, label, item, sub }: { kind: 'cass' | 'cd' | 'tix'; label: s
   return href ? <a className={`s-bkr-obj is-${kind}`} href={href} target="_blank" rel="noopener noreferrer">{body}</a> : <div className={`s-bkr-obj is-${kind}`}>{body}</div>;
 }
 
-export default function BeKindRewind({ week, weekNumber, label, monthName, price }: {
+export default function BeKindRewind({ week, weekNumber, label, monthName, price, paperHeadline }: {
   week: Week; weekNumber: number; label: 'week' | 'month'; monthName: string; price: { usd: number; year: number; what: 'game' | 'console' };
+  /** The paper's headline level (see Paper); h2 unless the panel sits under an h3. */
+  paperHeadline?: 'h2' | 'h4';
 }) {
   const now = toToday(price.usd, price.year);
   return (
@@ -33,7 +35,7 @@ export default function BeKindRewind({ week, weekNumber, label, monthName, price
         <Obj kind="cass" label="#1 song" item={week.song} sub={week.song.by} />
         <Obj kind="cd" label="#1 album" item={week.album} sub={week.album.by} />
         <Obj kind="tix" label="Admit one · #1 movie" item={week.film} sub={week.film.gross ? `${week.film.gross} weekend` : null} />
-        <Paper week={week} weekNumber={weekNumber} compact />
+        <Paper week={week} weekNumber={weekNumber} compact headline={paperHeadline} />
       </div>
       <p className="s-bkr-price">
         💵 {price.what === 'game' ? `$${price.usd.toFixed(2)} in a ${price.year} catalog · about $${now} today` : `A Super NES was $${price.usd.toFixed(2)} at launch · about $${now} today`}

@@ -242,7 +242,7 @@
 .wb .s-tm-pbody { position: relative; display: grid; grid-template-columns: 1.6fr 1fr; gap: 16px; padding-top: 10px; }
 .wb .s-tm-pbody.is-solo { grid-template-columns: 1fr; }
 .wb .s-tm-pkick { font: 700 11px/1.2 var(--serif); letter-spacing: .14em; text-transform: uppercase; color: var(--tm-kicker); margin-bottom: 4px; }
-.wb .s-tm-pbody h2 { margin: 0; font: 700 clamp(20px, 3.4vw, 28px)/1.12 var(--serif); text-wrap: balance; color: var(--tm-paper-ink); }
+.wb .s-tm-pbody h2, .wb .s-tm-pbody h4 { margin: 0; font: 700 clamp(20px, 3.4vw, 28px)/1.12 var(--serif); text-wrap: balance; color: var(--tm-paper-ink); }
 .wb .s-tm-pmore { border-left: 1px solid color-mix(in srgb, var(--tm-paper-ink) 33%, transparent); padding-left: 14px; }
 .wb .s-tm-pmore p { margin: 0 0 8px; font: 400 14px/1.3 var(--serif); }
 .wb .s-tm-pmore p b { font-variant: small-caps; font-weight: 700; }

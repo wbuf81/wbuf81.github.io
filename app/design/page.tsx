@@ -12,6 +12,9 @@ import GitHubMap from '../components/home/GitHubMap';
 import { AGENTS, PERSONAL, place, featured, buildCounts } from '@/lib/projects';
 import contributions from '@/data/github-contributions.json';
 import { TOKENS, tokenValues, type TokenGroup } from './tokens';
+import SnesKit from './SnesKit';
+import { fraktur, vt323 } from '../snes/fonts';
+import '../snes/snes.css';
 
 export const metadata: Metadata = {
   title: 'Design system · Wesley Bard',
@@ -40,7 +43,7 @@ export default function DesignPage() {
   return (
     <>
       <Nav theme />
-      <main className="wb wb-page">
+      <main className={`wb wb-page ${vt323.variable} ${fraktur.variable}`}>
         <div className="wrap ds">
           <header className="ds-top">
             <div className="eyebrow">Design system</div>
@@ -190,6 +193,8 @@ export default function DesignPage() {
             </div>
           </section>
 
+          <SnesKit />
+
           <section className="ch" aria-labelledby="ds-writing">
             <h2 id="ds-writing">Writing</h2>
             <ul>
@@ -201,6 +206,19 @@ export default function DesignPage() {
               <li>Counts are computed from the project lists and spelled out (&ldquo;nine builds&rdquo;), so they can&apos;t go stale.</li>
               <li>The homepage is about the building, not a résumé. Keep the top terse; no taglines.</li>
               <li>Plain English, from the reader&apos;s side of the screen.</li>
+              <li>
+                On the SNES pages the newspaper is &ldquo;The Omaha World-Pixel&rdquo;. The real Omaha paper&apos;s name
+                never appears anywhere.
+              </li>
+              <li>
+                A price always says when and what kind: &ldquo;$199.99 at launch in 1991&rdquo;, &ldquo;$99.99 in a 1993
+                catalog&rdquo;, then &ldquo;about $X today&rdquo;. Never &ldquo;then&rdquo;.
+              </li>
+              <li>
+                The Top 8 says &ldquo;snesspace&rdquo;, never &ldquo;myspace&rdquo;, and its themes use no game logos, ripped
+                art or trademarked game names.
+              </li>
+              <li>Titles are the US titles as printed on the box.</li>
             </ul>
           </section>
 
@@ -216,6 +234,22 @@ export default function DesignPage() {
                 tests fail.
               </li>
               <li>Every block is scoped under <code>.wb</code>, so pages with their own look are untouched.</li>
+              <li>
+                An SNES page also imports <code>app/snes/snes.css</code>, starts <code>&lt;main&gt;</code> with{' '}
+                <code>SnesNav</code> and ends with <code>SnesCredit</code>. Route paths come from{' '}
+                <code>lib/snes/routes.ts</code>, never typed by hand.
+              </li>
+              <li>
+                Anything else stuck to the top of an SNES page sits under the menu: <code>top: var(--s-nav-h)</code>.
+              </li>
+              <li>
+                The display faces in <code>app/snes/fonts.ts</code> go on <code>&lt;main&gt;</code> only on the pages
+                that use them, never site-wide.
+              </li>
+              <li>
+                Nothing that reads the visitor&apos;s saved Top 8 or settings renders on the server: the Top 8 store
+                answers <code>null</code> there, and the star, tray and badge appear after load.
+              </li>
               <li>Check both themes and a phone (390 px wide) before shipping.</li>
             </ul>
           </section>
