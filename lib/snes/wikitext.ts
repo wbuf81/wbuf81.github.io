@@ -121,6 +121,48 @@ export function tableRows(table: string): string[][] {
 /** Drops leading cell attributes: `id="A"|text` → `text`. */
 export function stripCellAttrs(cell: string): string {
   const parts = splitTopLevel(cell);
-  if (parts.length > 1 && /^\s*([a-z-]+\s*=\s*"[^"]*"\s*)+$/i.test(parts[0])) return parts.slice(1).join('|');
+  if (parts.length > 1 && /^\s*([a-z-]+\s*=\s*("[^"]*"|[^\s|"]+)\s*)+$/i.test(parts[0])) return parts.slice(1).join('|');
   return cell;
+}
+
+/** A wikitable as a header plus a full grid of raw cells, with rowspan cells copied down into the rows they span. */
+export function tableGrid(table: string): { header: string[]; rows: string[][] } {
+  let header: string[] = [];
+  const rows: string[][] = [];
+  let pending = new Map<number, { left: number; cell: string }>();
+  for (const raw of table.split(/\n\|-[^\n]*/)) {
+    const cells: { head: boolean; cell: string }[] = [];
+    for (const line of raw.split('\n')) {
+      if (line.startsWith('{|') || line.startsWith('|+') || line.startsWith('|}')) continue;
+      if (line.startsWith('!')) for (const c of splitTopLevel(line.slice(1), '!!')) for (const cc of splitTopLevel(c, '||')) cells.push({ head: true, cell: cc });
+      else if (line.startsWith('|')) for (const c of splitTopLevel(line.slice(1), '||')) cells.push({ head: false, cell: c });
+      else if (cells.length && line.trim()) cells[cells.length - 1].cell += '\n' + line;
+    }
+    if (!cells.length) continue;
+    const rowHeader = cells.some((c) => /scope\s*=\s*"?row/i.test(c.cell));
+    if (!rows.length && cells.every((c) => c.head) && !rowHeader) {
+      header = cells.map((c) => linkText(unwrapTemplates(stripNoise(stripCellAttrs(c.cell)))));
+      continue;
+    }
+    const row: string[] = [];
+    const queue = [...cells];
+    for (let col = 0; queue.length || pending.has(col); col++) {
+      const carried = pending.get(col);
+      if (carried) {
+        row.push(carried.cell);
+        if (carried.left <= 1) pending.delete(col);
+        else pending.set(col, { left: carried.left - 1, cell: carried.cell });
+        continue;
+      }
+      const { cell } = queue.shift()!;
+      const attrs = cell.length > stripCellAttrs(cell).length ? cell.slice(0, cell.length - stripCellAttrs(cell).length) : '';
+      const content = stripCellAttrs(cell);
+      const span = Number(attrs.match(/rowspan\s*=\s*"?(\d+)/i)?.[1] ?? 1);
+      if (span > 1) pending.set(col, { left: span - 1, cell: content });
+      row.push(content);
+    }
+    rows.push(row);
+    pending = new Map(pending);
+  }
+  return { header, rows };
 }
