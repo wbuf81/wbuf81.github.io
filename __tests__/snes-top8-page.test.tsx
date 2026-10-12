@@ -1,0 +1,277 @@
+import React from 'react';
+import '@testing-library/jest-dom';
+import { act, fireEvent, render, screen, within } from '@testing-library/react';
+import Top8, { moveSlot } from '@/app/snes/components/Top8';
+import type { Top8Game } from '@/lib/snes/top8';
+
+jest.mock('next/navigation', () => ({ usePathname: () => '/videogames/snes-history/top-8' }));
+
+const g = (slug: string, title: string, extra: Partial<Top8Game> = {}): Top8Game => ({
+  slug, title, year: '1993', genres: ['Platform'], series: null, similar: [], score: 7, ...extra,
+});
+const GAMES: Top8Game[] = [
+  g('a', 'Alpha Quest', { similar: ['super-metroid', 'chrono-trigger'] }),
+  g('b', 'Bravo Racer'), g('c', 'Charlie Golf'), g('d', 'Delta Force'),
+  g('e', 'Echo Island'), g('f', 'Foxtrot Run'), g('h', 'Hotel Hopper'), g('i', 'India Jones'),
+  g('super-metroid', 'Super Metroid', { year: '1994', score: 9.5 }),
+  g('chrono-trigger', 'Chrono Trigger', { year: '1995', score: 9.6 }),
+  g('the-legend-of-zelda-a-link-to-the-past', 'The Legend of Zelda: A Link to the Past', { year: '1992' }),
+  g('super-mario-world', 'Super Mario World', { year: '1991' }),
+  g('metroid-other', 'Metroidvania Tribute', { year: '1997', score: 5 }),
+];
+const FULL = 'a,b,c,d,e,f,h,i';
+
+// A recording 2D context, so the preview draws without a real canvas.
+const calls: { name: string; args: unknown[] }[] = [];
+function recordingCtx() {
+  const gradient = { addColorStop() {} };
+  const own: Record<string, unknown> = {};
+  return new Proxy(own, {
+    get(t, prop: string) {
+      if (prop in t) return t[prop];
+      if (prop === 'measureText') return (s: string) => ({ width: s.length * 10 });
+      if (prop === 'createLinearGradient' || prop === 'createRadialGradient') return () => gradient;
+      if (prop === 'createPattern') return () => null;
+      return (...args: unknown[]) => void calls.push({ name: prop, args });
+    },
+    set(t, prop: string, v) { t[prop] = v; return true; },
+  });
+}
+
+// Lay the 8 slot wrappers out on a 4x2 grid so dnd-kit's keyboard coordinates have real rects to move between.
+const realRect = HTMLElement.prototype.getBoundingClientRect;
+function gridRects() {
+  HTMLElement.prototype.getBoundingClientRect = function () {
+    const i = this.getAttribute('data-t8-slot');
+    if (i === null) return realRect.call(this);
+    const n = Number(i), x = (n % 4) * 110, y = Math.floor(n / 4) * 110;
+    return { x, y, left: x, top: y, width: 100, height: 100, right: x + 100, bottom: y + 100, toJSON() {} } as DOMRect;
+  };
+}
+
+beforeEach(() => {
+  calls.length = 0;
+  window.history.replaceState(null, '', '/videogames/snes-history/top-8');
+  localStorage.clear();
+  HTMLCanvasElement.prototype.getContext = jest.fn(() => recordingCtx()) as unknown as typeof HTMLCanvasElement.prototype.getContext;
+  HTMLCanvasElement.prototype.toBlob = jest.fn(function (cb: BlobCallback) { cb(new Blob(['png'], { type: 'image/png' })); });
+  Object.defineProperty(navigator, 'canShare', { value: undefined, configurable: true });
+});
+afterEach(() => {
+  jest.restoreAllMocks();
+  HTMLElement.prototype.getBoundingClientRect = realRect;
+});
+
+// Mount, then let the theme fonts settle inside act (they resolve a tick later).
+async function mount() {
+  const r = render(<Top8 games={GAMES} />);
+  await act(async () => {});
+  return r;
+}
+
+const slot = (n: number) => screen.getByRole('button', { name: new RegExp(`^Slot ${n}:`) });
+const search = () => screen.getByRole('combobox', { name: /Add a game/ });
+const requests = () => screen.getByRole('region', { name: /friend request/i });
+
+it('adds a game through search with the keyboard', async () => {
+  await mount();
+  fireEvent.change(search(), { target: { value: 'metroid' } });
+  const list = screen.getByRole('listbox');
+  expect(within(list).getAllByRole('option').map((o) => o.textContent)).toEqual([expect.stringContaining('Super Metroid'), expect.stringContaining('Metroidvania')]);
+  fireEvent.keyDown(search(), { key: 'Enter' });
+  expect(slot(1)).toHaveAccessibleName(/Super Metroid/);
+  expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
+  expect(screen.getByText('1 of 8')).toBeInTheDocument();
+});
+
+it('matches ignoring case and punctuation, moves with arrows, and closes on Esc and outside clicks', async () => {
+  await mount();
+  fireEvent.change(search(), { target: { value: 'ZELDA link' } });
+  expect(screen.getByRole('option', { name: /A Link to the Past/ })).toBeInTheDocument();
+  fireEvent.keyDown(search(), { key: 'Escape' });
+  expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
+  fireEvent.change(search(), { target: { value: 'metroid' } });
+  fireEvent.keyDown(search(), { key: 'ArrowDown' });
+  expect(search()).toHaveAttribute('aria-activedescendant', screen.getAllByRole('option')[1].id);
+  fireEvent.pointerDown(document.body);
+  expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
+});
+
+it('removes a game', async () => {
+  window.history.replaceState(null, '', '?g=super-metroid');
+  await mount();
+  expect(slot(1)).toHaveAccessibleName(/Super Metroid/);
+  fireEvent.click(screen.getByRole('button', { name: 'Remove Super Metroid' }));
+  expect(slot(1)).toHaveAccessibleName(/empty/);
+  expect(screen.getByText('0 of 8')).toBeInTheDocument();
+});
+
+it('Accept puts a request in the first empty slot', async () => {
+  window.history.replaceState(null, '', '?g=a,_,b');
+  await mount();
+  expect(screen.getByText(/You have \d new friend requests?!/)).toBeInTheDocument();
+  fireEvent.click(within(requests()).getByRole('button', { name: 'Accept Super Metroid' }));
+  expect(slot(2)).toHaveAccessibleName(/Super Metroid/);
+});
+
+it('with all 8 full, Accept enters replace mode; a slot click replaces and Esc cancels', async () => {
+  window.history.replaceState(null, '', `?g=${FULL}`);
+  await mount();
+  fireEvent.click(screen.getByRole('button', { name: 'Accept Super Metroid' }));
+  expect(screen.getByText('Tap a slot to put Super Metroid there. Esc to cancel.')).toBeInTheDocument();
+  fireEvent.click(slot(3));
+  expect(slot(3)).toHaveAccessibleName(/Super Metroid/);
+  expect(screen.queryByText(/Tap a slot/)).not.toBeInTheDocument();
+
+  fireEvent.click(screen.getByRole('button', { name: 'Accept Chrono Trigger' }));
+  expect(screen.getByText(/Tap a slot to put Chrono Trigger there/)).toBeInTheDocument();
+  fireEvent.keyDown(document, { key: 'Escape' });
+  expect(screen.queryByText(/Tap a slot/)).not.toBeInTheDocument();
+  fireEvent.click(slot(4));
+  expect(slot(4)).toHaveAccessibleName(/Delta Force/);
+});
+
+it('Deny hides the game and remembers it', async () => {
+  window.history.replaceState(null, '', '?g=a');
+  await mount();
+  fireEvent.click(screen.getByRole('button', { name: 'Deny Super Metroid' }));
+  expect(within(requests()).queryByText('Super Metroid')).not.toBeInTheDocument();
+  expect(JSON.parse(localStorage.getItem('snes-top8')!).denied).toEqual(['super-metroid']);
+});
+
+it('reorders with the keyboard through dnd-kit, announcing in plain English', async () => {
+  gridRects();
+  window.history.replaceState(null, '', '?g=super-metroid,b,c');
+  await mount();
+  const tick = () => act(async () => { await new Promise((r) => setTimeout(r, 0)); });
+  slot(1).focus();
+  fireEvent.keyDown(slot(1), { code: 'Space', key: ' ' });
+  await tick();
+  expect(screen.getAllByText('Picked up Super Metroid, slot 1.').length).toBeGreaterThan(0);
+  fireEvent.keyDown(document.activeElement!, { code: 'ArrowRight', key: 'ArrowRight' });
+  await tick();
+  fireEvent.keyDown(document.activeElement!, { code: 'ArrowRight', key: 'ArrowRight' });
+  await tick();
+  fireEvent.keyDown(document.activeElement!, { code: 'Space', key: ' ' });
+  await tick();
+  expect(slot(3)).toHaveAccessibleName(/Super Metroid/);
+  expect(slot(1)).toHaveAccessibleName(/Bravo Racer/);
+  expect(slot(2)).toHaveAccessibleName(/Charlie Golf/);
+  expect(screen.getAllByText('Dropped Super Metroid in slot 3.').length).toBeGreaterThan(0);
+  expect(window.location.search).toContain('g=b,c,super-metroid');
+});
+
+it('moveSlot shifts the others, empties included', async () => {
+  expect(moveSlot(['a', 'b', null, 'c', null, null, null, null], 0, 3)).toEqual(['b', null, 'c', 'a', null, null, null, null]);
+});
+
+it('a ?g= link beats storage (keeping the stored denials)', async () => {
+  localStorage.setItem('snes-top8', JSON.stringify({ slots: ['b', null, null, null, null, null, null, null], theme: 'glitter', name: 'Stored', denied: ['d'] }));
+  window.history.replaceState(null, '', '?g=chrono-trigger&skin=crystal&n=Wes');
+  await mount();
+  expect(slot(1)).toHaveAccessibleName(/Chrono Trigger/);
+  expect(screen.getByRole('button', { name: 'Crystal Menu' })).toHaveAttribute('aria-pressed', 'true');
+  expect(screen.getByText("Wes's Friend Space")).toBeInTheDocument();
+  expect(JSON.parse(localStorage.getItem('snes-top8')!)).toMatchObject({ slots: ['chrono-trigger', null, null, null, null, null, null, null], denied: ['d'] });
+});
+
+it('restores from storage when there is no link, and only rewrites the URL after an edit', async () => {
+  localStorage.setItem('snes-top8', JSON.stringify({ slots: ['b', null, null, null, null, null, null, null], theme: 'glitter', name: 'Stored', denied: [] }));
+  await mount();
+  expect(slot(1)).toHaveAccessibleName(/Bravo Racer/);
+  expect(screen.getByRole('button', { name: 'Glitter' })).toHaveAttribute('aria-pressed', 'true');
+  expect(window.location.search).toBe('');
+  await act(async () => { fireEvent.click(screen.getByRole('button', { name: 'Console' })); });
+  expect(window.location.search).toBe('?g=b,_,_,_,_,_,_,_&skin=console&n=Stored');
+});
+
+it('still works when storage throws', async () => {
+  jest.spyOn(Storage.prototype, 'getItem').mockImplementation(() => { throw new Error('blocked'); });
+  jest.spyOn(Storage.prototype, 'setItem').mockImplementation(() => { throw new Error('blocked'); });
+  await mount();
+  fireEvent.change(search(), { target: { value: 'chrono' } });
+  fireEvent.keyDown(search(), { key: 'Enter' });
+  expect(slot(1)).toHaveAccessibleName(/Chrono Trigger/);
+});
+
+it('cleans the display name on every keystroke and titles the Friend Space', async () => {
+  await mount();
+  const name = screen.getByLabelText(/Display name/);
+  fireEvent.change(name, { target: { value: 'W<e>s ' } });
+  expect(screen.getByText("Wes's Friend Space")).toBeInTheDocument();
+  expect(name).toHaveValue('W<e>s ');
+});
+
+it('Copy link falls back to a selected read-only field when the clipboard refuses', async () => {
+  Object.defineProperty(navigator, 'clipboard', { value: { writeText: jest.fn(() => Promise.reject(new Error('no'))) }, configurable: true });
+  window.history.replaceState(null, '', '?g=a');
+  await mount();
+  await act(async () => { fireEvent.click(screen.getByRole('button', { name: 'Copy link' })); });
+  const field = screen.getByRole('textbox', { name: /Link to your Top 8/ });
+  expect(field).toHaveAttribute('readonly');
+  expect((field as HTMLInputElement).value).toMatch(/^http:\/\/localhost\/videogames\/snes-history\/top-8\?g=a,_/);
+});
+
+it('Copy link shows a toast when the clipboard works', async () => {
+  const writeText = jest.fn(() => Promise.resolve());
+  Object.defineProperty(navigator, 'clipboard', { value: { writeText }, configurable: true });
+  await mount();
+  await act(async () => { fireEvent.click(screen.getByRole('button', { name: 'Copy link' })); });
+  expect(writeText).toHaveBeenCalledWith(expect.stringContaining('/videogames/snes-history/top-8?g='));
+  expect(screen.getByText('Link copied').closest('[aria-live="polite"]')).toBeInTheDocument();
+});
+
+it('Save picture makes a PNG and clicks a download link', async () => {
+  const createObjectURL = jest.fn(() => 'blob:top8');
+  const revokeObjectURL = jest.fn();
+  Object.assign(URL, { createObjectURL, revokeObjectURL });
+  let anchor: HTMLAnchorElement | null = null;
+  jest.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(function (this: HTMLAnchorElement) { anchor = this; });
+  jest.useFakeTimers();
+  await mount();
+  fireEvent.click(screen.getByRole('button', { name: 'Save picture' }));
+  expect(HTMLCanvasElement.prototype.toBlob).toHaveBeenCalled();
+  expect(anchor!.download).toBe('my-snes-top-8.png');
+  expect(anchor!.href).toBe('blob:top8');
+  act(() => { jest.runAllTimers(); });
+  expect(revokeObjectURL).toHaveBeenCalledWith('blob:top8');
+  jest.useRealTimers();
+});
+
+it('hides Share without canShare and shows it where files can be shared', async () => {
+  const { unmount } = await mount();
+  expect(screen.queryByRole('button', { name: 'Share' })).not.toBeInTheDocument();
+  unmount();
+  Object.defineProperty(navigator, 'canShare', { value: () => true, configurable: true });
+  await mount();
+  expect(screen.getByRole('button', { name: 'Share' })).toBeInTheDocument();
+});
+
+it('Start over asks first, then clears the list but keeps the theme', async () => {
+  window.history.replaceState(null, '', '?g=a,b&skin=polygon');
+  await mount();
+  fireEvent.click(screen.getByRole('button', { name: 'Start over' }));
+  fireEvent.click(screen.getByRole('button', { name: 'Yes, start over' }));
+  expect(screen.getByText('0 of 8')).toBeInTheDocument();
+  expect(screen.getByRole('button', { name: 'Polygon Space' })).toHaveAttribute('aria-pressed', 'true');
+});
+
+it('draws the preview on the canvas', async () => {
+  window.history.replaceState(null, '', '?g=a');
+  await mount();
+  // Fonts settle in one act, the frame they schedule fires in the next.
+  for (let k = 0; k < 2; k++) await act(async () => { await new Promise((r) => setTimeout(r, 30)); });
+  expect(calls.some((c) => c.name === 'fillText')).toBe(true);
+});
+
+it('the page is noindex, titled, and renders the maker with the credit', async () => {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const mod = require('@/app/videogames/snes-history/top-8/page');
+  expect(mod.metadata.title).toBe('My SNES Top 8');
+  expect(mod.metadata.robots).toEqual({ index: false, follow: false });
+  render(<mod.default />);
+  await act(async () => {});
+  expect(screen.getByRole('heading', { level: 1, name: 'My SNES Top 8' })).toBeInTheDocument();
+  expect(screen.getByRole('link', { name: /Super Nintendo in America/ })).toHaveAttribute('href', '/videogames/snes-history');
+  expect(screen.getByText(/Data: IGDB/)).toBeInTheDocument();
+});

@@ -67,6 +67,14 @@ export const TOKENS: { name: string; job: string; group: TokenGroup }[] = [
   { name: '--tm-cd', job: 'Time Machine: CD disc, cool edge', group: 'SNES' },
   { name: '--tm-cd-2', job: 'Time Machine: CD disc, pale sheen', group: 'SNES' },
   { name: '--tm-cd-ink', job: 'Time Machine: label text on the CD', group: 'SNES' },
+  { name: '--t8-my', job: 'Top 8: the MySpace-blue header bar on each box', group: 'SNES' },
+  { name: '--t8-my-ink', job: 'Top 8: text on the MySpace-blue header bar', group: 'SNES' },
+  { name: '--t8-link', job: 'Top 8: MySpace-blue underlined game names', group: 'SNES' },
+  { name: '--t8-my-soft', job: 'Top 8: empty Friend Space slots and hovered search results', group: 'SNES' },
+  { name: '--t8-hot', job: 'Top 8: the orange rank badges and the replace-mode outline', group: 'SNES' },
+  { name: '--t8-hot-ink', job: 'Top 8: numbers on the orange rank badges', group: 'SNES' },
+  { name: '--t8-ok', job: 'Top 8: the Accept button on friend requests', group: 'SNES' },
+  { name: '--t8-ok-ink', job: 'Top 8: text on the Accept button', group: 'SNES' },
 ];
 
 function declarations(css: string, selector: string): Record<string, string> {
