@@ -3,6 +3,8 @@ import { Nav } from '../../components/Nav';
 import Footer from '../../components/Footer';
 import { getCompanyNames, getGames } from '@/lib/snes/data';
 import { buildIndex, facets } from '@/lib/snes/library';
+import Link from 'next/link';
+import { TIME_MACHINE } from '@/lib/snes/routes';
 import Library from '../../snes/components/Library';
 import '../../snes/snes.css';
 
@@ -30,6 +32,9 @@ export default function SnesPage() {
             <p>
               {index.length} games, month by month — from launch day on August 23, 1991, when F-Zero and Super Mario World hit the shelves,
               to the last cart in 1998.
+            </p>
+            <p className="s-hero-links">
+              <Link href={TIME_MACHINE}>📼 Open the Time Machine →</Link>
             </p>
           </header>
           <Library games={index} names={names} facets={facets(index, names)} />

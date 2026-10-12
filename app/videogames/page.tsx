@@ -1,7 +1,10 @@
 import type { Metadata } from 'next';
 import { Nav } from '../components/Nav';
 import Footer from '../components/Footer';
-import { SNES_BASE } from '@/lib/snes/routes';
+import { getGames, getWeeks } from '@/lib/snes/data';
+import { slimWeeks } from '@/lib/snes/onThisDay';
+import { SNES_BASE, TIME_MACHINE } from '@/lib/snes/routes';
+import OnThisDay from '../snes/components/OnThisDay';
 import '../snes/snes.css';
 
 export const metadata: Metadata = {
@@ -11,6 +14,7 @@ export const metadata: Metadata = {
 };
 
 export default function VideoGamesPage() {
+  const weeks = slimWeeks(getWeeks(), getGames());
   return (
     <>
       <Nav theme />
@@ -21,6 +25,7 @@ export default function VideoGamesPage() {
             <h1>Video games</h1>
             <p>Projects about the games I grew up with — starting with every Super Nintendo game released in America.</p>
           </header>
+          <OnThisDay weeks={weeks} />
           <div className="s-hub">
             <a className="s-hub-card" href={SNES_BASE}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -28,6 +33,16 @@ export default function VideoGamesPage() {
               <span className="s-hub-t">Super Nintendo history</span>
               <span className="s-hub-p">717 games, 1991–1998 — timeline, cover wall, shelf and more</span>
             </a>
+            <a className="s-hub-card" href={TIME_MACHINE}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/snes/pop/unforgettable-with-love.webp" alt="" width={300} height={209} />
+              <span className="s-hub-t">SNES Time Machine</span>
+              <span className="s-hub-p">Every week, 1991–1998: the #1 song, album and movie, the news, and the new games</span>
+            </a>
+            <div className="s-hub-card s-hub-soon">
+              <span className="s-hub-t">Coming soon: Wes&apos;s Analogue Pocket run</span>
+              <span className="s-hub-p">Played, beaten, rated — my run through the library on an Analogue Pocket.</span>
+            </div>
           </div>
         </div>
       </main>

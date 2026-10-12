@@ -341,3 +341,26 @@
   .wb .s-tm-paper:not(.is-compact) .s-tm-ptop { white-space: nowrap; font-size: 11px; }
   .wb .s-tm-paper:not(.is-compact) .s-tm-ptop span:nth-child(2) { display: none; }
 }
+
+/* library hero: the Time Machine link under the paragraph */
+.wb .s-hero .s-hero-links { margin-top: 10px; font: 500 14px var(--mono); }
+.wb .s-hero-links a { color: var(--accent); }
+
+/* hub: "on this day" strip. The placeholder and the filled strip share min-heights, so nothing shifts on mount. */
+.wb .s-otd { margin-top: 22px; padding: 14px 16px; min-height: 176px; background: var(--screen); border: 1px solid var(--screen-rule); border-radius: 6px; color: var(--screen-ink); }
+.wb .s-otd-h { font: 500 11px var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--screen-ink-2); }
+.wb .s-otd-body { margin-top: 8px; }
+.wb .s-otd-year { display: flex; align-items: center; gap: 12px; }
+.wb .s-otd-year button { width: 44px; height: 44px; border: 1px solid var(--screen-rule); border-radius: 4px; background: var(--screen-2); color: var(--screen-ink); font-size: 14px; cursor: pointer; }
+.wb .s-otd-year button:hover, .wb .s-otd-year button:focus-visible { outline: none; border-color: var(--snes-glow); }
+.wb .s-otd-led { font: 400 clamp(26px, 6vw, 34px)/1 var(--font-vt323), ui-monospace, Menlo, monospace; letter-spacing: .04em; color: var(--tm-led); text-shadow: 0 0 8px color-mix(in srgb, var(--tm-led) 55%, transparent); }
+.wb .s-otd-list { list-style: none; margin: 10px 0 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px 22px; font-size: 14px; }
+.wb .s-otd-list li { min-width: 0; overflow-wrap: anywhere; }
+.wb .s-otd-list b { display: block; font: 500 10.5px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--screen-ink-2); }
+.wb a.s-otd-go { display: inline-block; margin-top: 12px; color: var(--screen-ink); font: 500 13px var(--mono); }
+.wb a.s-otd-go:hover, .wb a.s-otd-go:focus-visible { color: var(--tm-led); }
+.wb .s-hub-soon { opacity: .55; border-style: dashed; }
+@media (max-width: 600px) {
+  .wb .s-otd { min-height: 300px; }
+  .wb .s-otd-list { grid-template-columns: 1fr; }
+}

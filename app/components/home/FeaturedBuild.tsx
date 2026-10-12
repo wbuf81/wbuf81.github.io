@@ -5,6 +5,7 @@ import { HardwareLink } from './ProjectTile';
 // The featured build (design system › the featured build): a big print over the left edge of its panel.
 // lib/projects.ts › FEATURED picks it.
 export default function FeaturedBuild({ project: p }: { project: Project }) {
+  const internal = !!p.href?.startsWith('/');
   return (
     <article className="feat" aria-label="Featured build">
       <Print
@@ -14,7 +15,7 @@ export default function FeaturedBuild({ project: p }: { project: Project }) {
         tilt={-1.8}
         tapes={[{ left: '41%', top: '-10px', width: '100px', angle: '-4deg' }]}
         href={p.href}
-        label={p.href ? `Open ${p.name} on GitHub` : undefined}
+        label={p.href ? (internal ? `Open ${p.name}` : `Open ${p.name} on GitHub`) : undefined}
         caption={
           <>
             <span>{p.name}</span>
@@ -35,8 +36,8 @@ export default function FeaturedBuild({ project: p }: { project: Project }) {
         <div className="fcopy">
           <p>{p.description}</p>
           {p.href && (
-            <a className="btn" href={p.href} target="_blank" rel="noopener noreferrer">
-              View on GitHub →
+            <a className="btn" href={p.href} {...(internal ? {} : { target: '_blank', rel: 'noopener noreferrer' })}>
+              {internal ? 'Explore it →' : 'View on GitHub →'}
             </a>
           )}
         </div>

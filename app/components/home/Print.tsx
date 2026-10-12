@@ -9,7 +9,7 @@ interface PrintProps {
   caption: ReactNode;
   tilt: number;
   tapes: Tape[];
-  /** Makes the whole print a link. */
+  /** Makes the whole print a link; a path on this site opens in the same tab, anything else in a new one. */
   href?: string;
   label?: string;
   className?: string;
@@ -45,7 +45,7 @@ export default function Print({ image, alt = '', fit = 'photo', caption, tilt, t
     </>
   );
   return href ? (
-    <a className={cls} href={href} aria-label={label} style={style} target="_blank" rel="noopener noreferrer">
+    <a className={cls} href={href} aria-label={label} style={style} {...(href.startsWith('/') ? {} : { target: '_blank', rel: 'noopener noreferrer' })}>
       {inner}
     </a>
   ) : (

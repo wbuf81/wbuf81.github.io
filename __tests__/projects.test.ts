@@ -30,11 +30,18 @@ test('the new tiles are there', () => {
   expect(PERSONAL.find((p) => p.name === 'OmaFinance')).toMatchObject({ group: 'Omarchy Linux', badge: 'Private repo' });
 });
 
-test('private repos have no GitHub link, open ones do', () => {
+test('private repos have no link, open ones link to GitHub, live ones to a page on this site', () => {
   for (const p of all) {
     if (p.badge === 'Private repo') expect(p.href).toBeUndefined();
-    else expect(p.href).toMatch(/^https:\/\/github\.com\/wbuf81\//);
+    else if (p.badge === 'Open source') expect(p.href).toMatch(/^https:\/\/github\.com\/wbuf81\//);
+    else expect(p.href).toMatch(/^\//);
   }
+});
+
+test('SNES History is the featured build', () => {
+  expect(FEATURED).toBe('snes');
+  expect(featured()).toMatchObject({ name: 'SNES History', badge: 'Live on this site', href: '/videogames/snes-history', group: 'Everything else' });
+  expect(personalGroups()[2].items.map((i) => i.key)).toContain('neo');
 });
 
 test('public copy rules', () => {
@@ -75,7 +82,7 @@ test('personal tiles continue the pattern after the work tiles', () => {
 });
 
 test('counts for the strip, in words', () => {
-  expect(buildCounts()).toEqual({ work: 9, home: 9 });
+  expect(buildCounts()).toEqual({ work: 9, home: 10 });
   expect(spelled(9)).toBe('nine');
   expect(spelled(20)).toBe('twenty');
   expect(spelled(21)).toBe('21');

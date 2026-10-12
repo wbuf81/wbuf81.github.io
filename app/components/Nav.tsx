@@ -6,15 +6,16 @@ import ThemeSwitch from './ThemeSwitch';
 
 const NAV_LINKS = [
   { label: 'Projects', href: '/#projects' },
+  { label: 'Games', href: '/videogames' },
   { label: 'Connect', href: '/#connect' },
 ];
 
 // The site header, in the design system (app/design-system.css › the header). On a phone the bar wraps
-// rather than collapsing into a menu: two links and the theme switch fit on two short lines.
+// rather than collapsing into a menu: three links and the theme switch fit on two short lines.
 // `theme` shows the light/dark switch: only pages built on the system have a dark look (/, /design), so the
 // page that keeps its own styles (/lee) gets the header without it, always light.
 export function Nav({ theme = false }: { theme?: boolean }) {
-  const pathname = usePathname();
+  const pathname = usePathname() ?? '';
   const isHome = pathname === '/';
 
   const handleClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
@@ -35,11 +36,18 @@ export function Nav({ theme = false }: { theme?: boolean }) {
           </span>
         </Link>
         <nav className="nav" aria-label="Main">
-          {NAV_LINKS.map((link) => (
-            <a key={link.label} href={link.href} onClick={(e) => handleClick(e, link.href)}>
-              {link.label}
-            </a>
-          ))}
+          {NAV_LINKS.map((link) =>
+            link.href.startsWith('/#') ? (
+              <a key={link.label} href={link.href} onClick={(e) => handleClick(e, link.href)}>
+                {link.label}
+              </a>
+            ) : (
+              // a page of its own, not a home-page section: a plain link, current while anywhere under it
+              <Link key={link.label} href={link.href} aria-current={pathname.startsWith(link.href) ? 'page' : undefined}>
+                {link.label}
+              </Link>
+            ),
+          )}
         </nav>
         {theme && (
           <div className="tools">

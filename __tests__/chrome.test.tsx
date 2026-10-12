@@ -1,13 +1,16 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import { Nav } from '@/app/components/Nav';
 import Footer from '@/app/components/Footer';
 
-jest.mock('next/navigation', () => ({ usePathname: () => '/' }));
+let mockPath = '/';
+jest.mock('next/navigation', () => ({ usePathname: () => mockPath }));
+beforeEach(() => { mockPath = '/'; });
 
-test('header has the wordmark, the two links and the theme switch', () => {
+test('header has the wordmark, the three links and the theme switch', () => {
   render(<Nav theme />);
   expect(screen.getByRole('link', { name: 'Wesley Bard' })).toHaveAttribute('href', '/');
   expect(screen.getByRole('link', { name: 'Projects' })).toHaveAttribute('href', '/#projects');
+  expect(screen.getByRole('link', { name: 'Games' })).toHaveAttribute('href', '/videogames');
   expect(screen.getByRole('link', { name: 'Connect' })).toHaveAttribute('href', '/#connect');
   expect(screen.getByRole('group', { name: 'Colour theme' })).toBeInTheDocument();
 });
@@ -34,4 +37,20 @@ test('footer links LinkedIn, GitHub and the design system', () => {
   expect(screen.getByRole('link', { name: /Design system/ })).toHaveAttribute('href', '/design');
   expect(screen.getByRole('link', { name: /LinkedIn/ })).toHaveAttribute('href', 'https://www.linkedin.com/in/wesleybard/');
   expect(screen.getByRole('link', { name: /GitHub/ })).toHaveAttribute('href', 'https://github.com/wbuf81');
+});
+
+test('the nav order is Projects, Games, Connect', () => {
+  render(<Nav />);
+  expect(within(screen.getByRole('navigation', { name: 'Main' })).getAllByRole('link').map((a) => a.textContent)).toEqual(['Projects', 'Games', 'Connect']);
+});
+
+test('Games is marked current under /videogames, and only there', () => {
+  mockPath = '/videogames/snes-history';
+  const { unmount } = render(<Nav />);
+  expect(screen.getByRole('link', { name: 'Games' })).toHaveAttribute('aria-current', 'page');
+  expect(screen.getByRole('link', { name: 'Projects' })).not.toHaveAttribute('aria-current');
+  unmount();
+  mockPath = '/';
+  render(<Nav />);
+  expect(screen.getByRole('link', { name: 'Games' })).not.toHaveAttribute('aria-current');
 });

@@ -49,12 +49,27 @@ test('the print is tilted and taped by its position', () => {
 });
 
 test('the featured build shows what it runs on and its chips', () => {
-  render(<FeaturedBuild project={featured()} />);
+  render(<FeaturedBuild project={PERSONAL.find((p) => p.key === 'neo')!} />);
   expect(screen.getByText('Featured build')).toBeInTheDocument();
   expect(screen.getByRole('heading', { level: 2, name: 'Stream Deck Neo Takeover' })).toBeInTheDocument();
   expect(screen.getByRole('link', { name: /Elgato Stream Deck Neo/ })).toBeInTheDocument();
   expect(screen.getByText('Machine vitals')).toBeInTheDocument();
   expect(screen.getByRole('link', { name: 'View on GitHub →' })).toHaveAttribute('href', 'https://github.com/wbuf81/streamdeckneoclaude');
+  expect(screen.getByRole('link', { name: 'View on GitHub →' })).toHaveAttribute('target', '_blank');
+});
+
+test('the featured SNES History build opens on this site, in the same tab', () => {
+  render(<FeaturedBuild project={featured()} />);
+  expect(screen.getByRole('heading', { level: 2, name: 'SNES History' })).toBeInTheDocument();
+  expect(screen.getByText('Live on this site')).toBeInTheDocument();
+  const explore = screen.getByRole('link', { name: 'Explore it →' });
+  expect(explore).toHaveAttribute('href', '/videogames/snes-history');
+  expect(explore).not.toHaveAttribute('target');
+  expect(explore).not.toHaveAttribute('rel');
+  const print = screen.getByRole('link', { name: 'Open SNES History' });
+  expect(print).toHaveAttribute('href', '/videogames/snes-history');
+  expect(print).not.toHaveAttribute('target');
+  expect(screen.getByText('Time Machine')).toBeInTheDocument();
 });
 
 test('then, now and still, with the counts in words', () => {

@@ -11,3 +11,21 @@ test('the hub links to the SNES history and stays out of search', () => {
   expect(screen.getByRole('link', { name: /Super Nintendo history/ })).toHaveAttribute('href', '/videogames/snes-history');
   expect(metadata.robots).toEqual({ index: false, follow: false });
 });
+
+test('the hub shows the on-this-day strip above three cards, one of them not a link', () => {
+  const { container } = render(<VideoGamesPage />);
+  expect(screen.getByText('On this day in SNES history')).toBeInTheDocument();
+  const cards = container.querySelectorAll('.s-hub > .s-hub-card');
+  expect(cards).toHaveLength(3);
+  expect(cards[2].tagName).toBe('DIV');
+  expect(cards[2]).toHaveTextContent("Coming soon: Wes's Analogue Pocket run");
+  expect(cards[2]).toHaveTextContent('Played, beaten, rated — my run through the library on an Analogue Pocket.');
+  expect(screen.queryByRole('link', { name: /Analogue Pocket/ })).toBeNull();
+  expect(container.querySelector('.s-otd')!.compareDocumentPosition(cards[0]) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+});
+
+test('the Time Machine card links in', () => {
+  render(<VideoGamesPage />);
+  expect(screen.getByRole('link', { name: /SNES Time Machine/ })).toHaveAttribute('href', '/videogames/snes-history/time-machine');
+  expect(screen.getByText('Every week, 1991–1998: the #1 song, album and movie, the news, and the new games')).toBeInTheDocument();
+});

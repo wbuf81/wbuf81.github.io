@@ -75,7 +75,8 @@
 .wb-head .wm { font: 600 22px/1 var(--serif); letter-spacing: -.01em; color: var(--ink); }
 .wb-head .wm i, .wb-foot .wmk i { font-style: normal; color: var(--accent); }
 .wb-head .nav { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; }
-.wb-head .nav a { font: 500 14px var(--sans); color: var(--ink-2); padding: 8px 10px; border-radius: 4px; white-space: nowrap; }
+.wb-head .nav a { display: inline-flex; align-items: center; min-height: 44px; font: 500 14px var(--sans); color: var(--ink-2); padding: 0 10px; border-radius: 4px; white-space: nowrap; }
+.wb-head .nav a[aria-current="page"] { color: var(--accent); background: var(--accent-soft); }
 .wb-head .nav a:hover { color: var(--accent); background: var(--accent-soft); }
 .wb-head .tools { margin-left: auto; display: flex; align-items: center; gap: 12px; padding: 10px 0; }
 

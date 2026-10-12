@@ -193,3 +193,10 @@ test('/videogames is kept out of search engines', () => {
   const { metadata } = require('@/app/videogames/snes-history/page');
   expect(metadata.robots).toEqual({ index: false, follow: false });
 });
+
+test('the library page hero links to the Time Machine', async () => {
+  jest.doMock('next/navigation', () => ({ usePathname: () => '/videogames/snes-history' }));
+  const { default: SnesPage } = await import('@/app/videogames/snes-history/page');
+  render(<SnesPage />);
+  expect(screen.getByRole('link', { name: /Open the Time Machine/ })).toHaveAttribute('href', '/videogames/snes-history/time-machine');
+});

@@ -18,7 +18,7 @@ export interface Project {
   kind: string;
   subtitle: string;
   description: string;
-  badge: 'Private repo' | 'Open source';
+  badge: 'Private repo' | 'Open source' | 'Live on this site';
   image: string;
   alt: string;
   /** photo: a mascot, cropped from the top · shot: a screenshot, centred · board: a product shot on white */
@@ -47,7 +47,7 @@ export interface Placed extends Project {
 export const GROUPS = ['Omarchy Linux', 'Microcontrollers', 'Everything else'] as const;
 
 /** The build in the big block at the top. Any personal project with chips fits. */
-export const FEATURED = 'neo';
+export const FEATURED = 'snes';
 
 const M5: Hardware = {
   label: 'M5Stack Core Basic v2.7',
@@ -117,6 +117,15 @@ export const TOOLS: Project[] = [
 ];
 
 export const PERSONAL: Project[] = [
+  {
+    key: 'snes', name: 'SNES History', group: 'Everything else', kind: 'Next.js · TypeScript', fit: 'shot', badge: 'Live on this site',
+    image: '/projects/snes-history.jpg', alt: 'A collage of Super Nintendo box art',
+    subtitle: 'Every US Super Nintendo game, 1991–1998',
+    description: 'A playable history of the Super Nintendo in America: all 717 US releases on a month-by-month timeline, cover wall, shelf and score scatter, with box art, magazine scores and gameplay clips. A week-by-week time machine shows what was on the radio, at the movies and in the news when each game came out.',
+    href: '/videogames/snes-history',
+    chips: ['Timeline', 'Cover wall', 'Game shelf', 'Score scatter', 'Time Machine', 'Gameplay clips'],
+    chipsLabel: 'Ways in',
+  },
   {
     key: 'spotify', name: 'M5 Spotify Deck', group: 'Microcontrollers', kind: 'C++', fit: 'shot', badge: 'Open source',
     image: '/projects/m5-spotify-deck.jpg', alt: 'Screenshot of M5 Spotify Deck',
