@@ -30,3 +30,15 @@
 - **Browse panel:** "Showing n of 717", and the year, genre and sort controls all filter. Tapping a cover adds it, and picked covers get the ★ badge and frame. No overflow on a 390px phone.
 - **★ touch target:** the audit's "28×28" flag is a false positive. A `::before` with an -8px inset gives a 44px hit area.
 - **Older pre-existing findings:** unchanged and still accepted from the 11 and 12 Oct audits: newspaper-texture "over image" contrast, 11–11.5px eyebrows and chips, scatter dot sizes.
+
+## Final review fixes (1747531 + popover focus fix)
+
+**Whole-branch review fixes** (1747531):
+- Browse-panel taps on a full list now scroll to the slots, mark the pending cover, and a second tap cancels.
+- Popover focus returns to the ★ on every way of closing it.
+- Minor items: labels, layout shift, toast repeats, a debounced count, dead code.
+
+**Browser re-check:**
+- It caught a regression jsdom couldn't see. The popover now opens `visibility: hidden` until it's positioned, and the focus effect ran before it was visible, so browsers refused the focus.
+- Fixed by focusing only once the popover is shown.
+- Final run: 36/36 browse checks and 25/25 earlier checks pass, with 824 jest tests.

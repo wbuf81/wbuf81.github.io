@@ -125,9 +125,11 @@ export const Top8Star = memo(function Top8Star({ slug, title, variant, onToast, 
     setPos({ position: 'fixed', left, top });
   }, [open]);
 
+  // Focus only once positioned: browsers refuse focus on the first, visibility-hidden render.
+  const shown = open && pos.visibility !== 'hidden';
   useEffect(() => {
-    if (open) pop.current?.querySelector<HTMLButtonElement>('button')?.focus({ preventScroll: true });
-  }, [open]);
+    if (shown) pop.current?.querySelector<HTMLButtonElement>('button')?.focus({ preventScroll: true });
+  }, [shown]);
 
   if (!state) return null;
   const picked = isPicked(state, slug);
