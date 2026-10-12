@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useRef, useState, type KeyboardEvent as ReactKeyboardEvent } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type KeyboardEvent as ReactKeyboardEvent } from 'react';
 import {
   DndContext, KeyboardSensor, PointerSensor, TouchSensor, closestCenter, useSensor, useSensors,
   type Announcements, type DragEndEvent, type PointerActivationConstraint, type UniqueIdentifier,
@@ -22,8 +22,25 @@ import { orbitron, pressStart, vt323 } from '../fonts';
 const STORE = 'snes-top8';
 const FILE = 'my-snes-top-8.png';
 const MAX_RESULTS = 12;
+const LINK_KEYS = ['g', 'skin', 'n'];
+const SHARE_DEBOUNCE = 300;
+const REVOKE_AFTER = 4000;
+const PICTURE_FAILED = 'Couldn’t make the picture — try Save again';
+const SHARE_FAILED = 'Couldn’t open the share sheet — try Save instead';
 const box = (slug: string) => `/snes/box/${slug}.jpg`;
 const norm = (s: string) => s.toLowerCase().normalize('NFKD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, ' ').trim();
+
+/** The page URL for a state: our params replaced, any others (utm_…) and the hash kept. */
+export function urlFor(state: Top8State, search: string, hash: string): string {
+  const rest = new URLSearchParams(search);
+  for (const k of LINK_KEYS) rest.delete(k);
+  const extra = rest.toString();
+  return `${toQuery(state)}${extra ? `&${extra}` : ''}${hash}`;
+}
+
+const toBlobAsync = (cv: HTMLCanvasElement) => new Promise<Blob | null>((resolve) => {
+  try { cv.toBlob(resolve, 'image/png'); } catch { resolve(null); }
+});
 
 /** Moves one slot and shifts the rest, empties included (the drag's onDragEnd). */
 export function moveSlot(slots: (string | null)[], from: number, to: number): (string | null)[] {
@@ -142,10 +159,14 @@ export default function Top8({ games }: { games: Top8Game[] }) {
   const [fallbackUrl, setFallbackUrl] = useState<string | null>(null);
   const [canShare, setCanShare] = useState(false);
   const edited = useRef(false);
+  // Opened from a shared link: the visitor's own stored list is left alone until they edit.
+  const openedFromLink = useRef(false);
+  const canShareRef = useRef(false);
 
   // ---- state: load after mount, save every change, follow in the URL once edited ----
   useEffect(() => {
     const fromLink = parseQuery(window.location.search, known);
+    openedFromLink.current = fromLink !== null;
     const stored = readStored(known);
     const next = fromLink ? { ...EMPTY_STATE, denied: stored?.denied ?? [], ...fromLink } : stored ?? EMPTY_STATE;
     setState(next);
@@ -153,14 +174,17 @@ export default function Top8({ games }: { games: Top8Game[] }) {
     setReady(true);
     try {
       const probe = new File([''], FILE, { type: 'image/png' });
-      setCanShare(typeof navigator.canShare === 'function' && navigator.canShare({ files: [probe] }));
-    } catch { setCanShare(false); }
+      canShareRef.current = typeof navigator.canShare === 'function' && navigator.canShare({ files: [probe] });
+    } catch { canShareRef.current = false; }
+    setCanShare(canShareRef.current);
   }, [known]);
 
   useEffect(() => {
     if (!ready) return;
-    try { localStorage.setItem(STORE, JSON.stringify(state)); } catch { /* storage blocked: the session still works */ }
-    if (edited.current) window.history.replaceState(null, '', toQuery(state));
+    if (edited.current || !openedFromLink.current) {
+      try { localStorage.setItem(STORE, JSON.stringify(state)); } catch { /* storage blocked: the session still works */ }
+    }
+    if (edited.current) window.history.replaceState(null, '', urlFor(state, window.location.search, window.location.hash));
   }, [state, ready]);
 
   const update = useCallback((fn: (s: Top8State) => Top8State) => { edited.current = true; setState(fn); }, []);
@@ -270,16 +294,44 @@ export default function Top8({ games }: { games: Top8Game[] }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const images = useRef(new Map<string, HTMLImageElement>());
   const fonts = useRef<Fonts | null>(null);
+  // Fonts are loaded once per theme; a theme is drawn only after its fonts have settled.
+  const fontLoads = useRef(new Map<ThemeId, Promise<void>>());
+  const fontsLoaded = useRef(new Set<ThemeId>());
   const [fontsFor, setFontsFor] = useState<ThemeId | null>(null);
   const frame = useRef(0);
   const latest = useRef(state);
-  latest.current = state;
+  const shareFile = useRef<File | null>(null);
+  const shareTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
-  const draw = useCallback(() => {
-    const cv = canvasRef.current;
-    const ctx = cv?.getContext('2d');
-    if (!ctx || !fonts.current) return;
+  const ensureFonts = useCallback((theme: ThemeId) => {
+    fonts.current ??= siteFonts();
+    let p = fontLoads.current.get(theme);
+    if (!p) {
+      p = loadThemeFonts(THEMES[theme], fonts.current).then(() => { fontsLoaded.current.add(theme); });
+      fontLoads.current.set(theme, p);
+    }
+    return p;
+  }, []);
+
+  // Keeps a ready-made PNG for Share, so navigator.share runs straight from the click (browsers want a user gesture).
+  const prepareShare = useCallback(() => {
+    shareFile.current = null;
+    clearTimeout(shareTimer.current);
+    if (!canShareRef.current) return;
+    shareTimer.current = setTimeout(async () => {
+      const cv = canvasRef.current;
+      const blob = cv ? await toBlobAsync(cv) : null;
+      shareFile.current = blob ? new File([blob], FILE, { type: 'image/png' }) : null;
+    }, SHARE_DEBOUNCE);
+  }, []);
+  useEffect(() => () => clearTimeout(shareTimer.current), []);
+
+  /** Draws the latest state; skipped (returns false) while that theme's fonts are still loading. */
+  const draw = useCallback((): boolean => {
     const s = latest.current;
+    if (!fonts.current || !fontsLoaded.current.has(s.theme)) return false;
+    const ctx = canvasRef.current?.getContext('2d');
+    if (!ctx) return false;
     const imgs: Record<string, HTMLImageElement> = {};
     for (const slug of s.slots) {
       if (!slug) continue;
@@ -293,36 +345,43 @@ export default function Top8({ games }: { games: Top8Game[] }) {
       imgs[slug] = img;
     }
     drawTop8({ ctx, slots: s.slots, titles, name: s.name, images: imgs, fonts: fonts.current }, THEMES[s.theme]);
-  }, [titles]);
+    prepareShare();
+    return true;
+  }, [titles, prepareShare]);
   const schedule = useCallback(() => {
     cancelAnimationFrame(frame.current);
-    frame.current = requestAnimationFrame(() => draw());
+    frame.current = requestAnimationFrame(() => { draw(); });
   }, [draw]);
   // A cover that arrives later redraws through the current scheduler.
   const scheduleRef = useRef(schedule);
-  scheduleRef.current = schedule;
+  useLayoutEffect(() => {
+    latest.current = state;
+    scheduleRef.current = schedule;
+  });
 
   useEffect(() => {
     let live = true;
-    fonts.current ??= siteFonts();
-    loadThemeFonts(THEMES[state.theme], fonts.current).then(() => { if (live) setFontsFor(state.theme); });
+    ensureFonts(state.theme).then(() => { if (live) setFontsFor(state.theme); });
     return () => { live = false; };
-  }, [state.theme]);
+  }, [state.theme, ensureFonts]);
 
   useEffect(() => {
-    if (fontsFor === null) return;
+    if (fontsFor !== state.theme) return;
     schedule();
     return () => cancelAnimationFrame(frame.current);
   }, [state, fontsFor, schedule]);
 
-  const toBlob = (cb: (b: Blob | null) => void) => {
+  /** The current picture as a PNG: waits for the theme's fonts, draws, then encodes. */
+  const picture = async (): Promise<Blob | null> => {
     const cv = canvasRef.current;
-    if (!cv) return cb(null);
-    draw();
-    try { cv.toBlob(cb, 'image/png'); } catch { cb(null); }
+    if (!cv) return null;
+    await ensureFonts(latest.current.theme);
+    if (!draw()) return null;
+    return toBlobAsync(cv);
   };
-  const save = () => toBlob((blob) => {
-    if (!blob) { say('Couldn’t make the picture — try Save again'); return; }
+  const save = async () => {
+    const blob = await picture();
+    if (!blob) { say(PICTURE_FAILED); return; }
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
@@ -330,15 +389,27 @@ export default function Top8({ games }: { games: Top8Game[] }) {
     document.body.appendChild(a);
     a.click();
     a.remove();
-    setTimeout(() => URL.revokeObjectURL(url), 0);
-  });
+    // Some browsers start the download after click() returns; give them time before the URL goes away.
+    setTimeout(() => URL.revokeObjectURL(url), REVOKE_AFTER);
+  };
   const shareUrl = () => `${window.location.origin}${window.location.pathname}${toQuery(state)}`;
-  const share = () => toBlob(async (blob) => {
-    if (!blob) { say('Couldn’t make the picture — try Save again'); return; }
-    try {
-      await navigator.share({ files: [new File([blob], FILE, { type: 'image/png' })], title: 'My SNES Top 8', url: shareUrl() });
-    } catch { /* cancelled or refused: nothing to do */ }
-  });
+  const shareFailed = (err: unknown) => {
+    if ((err as { name?: string } | null)?.name !== 'AbortError') say(SHARE_FAILED);
+  };
+  const share = () => {
+    const data = (file: File) => ({ files: [file], title: 'My SNES Top 8', url: shareUrl() });
+    const ready = shareFile.current;
+    if (ready) {
+      // Called synchronously inside the click, so the share sheet keeps its user activation.
+      try { navigator.share(data(ready)).catch(shareFailed); } catch (err) { shareFailed(err); }
+      return;
+    }
+    // Not encoded yet (the visitor was quick): encode now and share, accepting the browser may refuse.
+    picture().then((blob) => {
+      if (!blob) { say(PICTURE_FAILED); return; }
+      return navigator.share(data(new File([blob], FILE, { type: 'image/png' })));
+    }).catch(shareFailed);
+  };
   const copy = async () => {
     const url = shareUrl();
     try {
@@ -366,7 +437,7 @@ export default function Top8({ games }: { games: Top8Game[] }) {
           <div className="s-t8-bb">
             <label className="s-t8-label" htmlFor="t8-name">Display name (optional)</label>
             <input
-              id="t8-name" className="s-t8-input" type="text" maxLength={24} autoComplete="off" placeholder="Wes" value={nameDraft}
+              id="t8-name" className="s-t8-input" type="text" maxLength={24} autoComplete="off" placeholder="Your name" value={nameDraft}
               onChange={(e) => { const raw = e.target.value; setNameDraft(raw); update((s) => ({ ...s, name: cleanName(raw) })); }}
             />
             <div className="s-t8-themes" role="group" aria-label="Theme">
@@ -387,9 +458,8 @@ export default function Top8({ games }: { games: Top8Game[] }) {
                 onFocus={() => setOpen(true)}
                 onKeyDown={onSearchKey}
               />
-              {listOpen ? (
-                <ul className="s-t8-results" id="t8-results" role="listbox" aria-label="Matching games">
-                  {results.map((g, i) => (
+              <ul className="s-t8-results" id="t8-results" role="listbox" aria-label="Matching games" hidden={!listOpen}>
+                {listOpen ? results.map((g, i) => (
                     <li
                       key={g.slug} id={`t8-opt-${i}`} role="option" aria-selected={i === active} className="s-t8-opt"
                       onMouseDown={(e) => e.preventDefault()} onClick={() => pick(g.slug)} onMouseEnter={() => setActive(i)}
@@ -397,9 +467,9 @@ export default function Top8({ games }: { games: Top8Game[] }) {
                       <img src={box(g.slug)} alt="" width={46} height={32} loading="lazy" decoding="async" />
                       <span>{g.title} <small>{g.year}</small></span>
                     </li>
-                  ))}
-                </ul>
-              ) : open && norm(q).length >= 2 ? <p className="s-t8-note s-t8-none">No games match.</p> : null}
+                  )) : null}
+              </ul>
+              {open && !listOpen && norm(q).length >= 2 ? <p className="s-t8-note s-t8-none">No games match.</p> : null}
             </div>
           </div>
         </section>
@@ -452,7 +522,7 @@ export default function Top8({ games }: { games: Top8Game[] }) {
                       </div>
                       <div className="s-t8-act">
                         <button type="button" className="s-t8-acc" aria-label={`Accept ${g.title}`} onClick={() => add(slug)}>Accept</button>
-                        <button type="button" className="s-t8-den" aria-label={`Deny ${g.title}`} onClick={() => update((s) => ({ ...s, denied: [...s.denied, slug] }))}>Deny</button>
+                        <button type="button" className="s-t8-den" aria-label={`Deny ${g.title}`} onClick={() => { if (replacing === slug) setReplacing(null); update((s) => ({ ...s, denied: [...s.denied, slug] })); }}>Deny</button>
                       </div>
                     </li>
                   );

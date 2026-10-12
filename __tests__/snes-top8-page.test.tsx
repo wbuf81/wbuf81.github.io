@@ -3,8 +3,18 @@ import '@testing-library/jest-dom';
 import { act, fireEvent, render, screen, within } from '@testing-library/react';
 import Top8, { moveSlot } from '@/app/snes/components/Top8';
 import type { Top8Game } from '@/lib/snes/top8';
+import * as render8 from '@/app/snes/top8/render';
 
 jest.mock('next/navigation', () => ({ usePathname: () => '/videogames/snes-history/top-8' }));
+// The real renderer, behind spies: tests can hold a theme's fonts back and see which theme each draw used.
+jest.mock('@/app/snes/top8/render', () => {
+  const actual = jest.requireActual('@/app/snes/top8/render');
+  return { ...actual, drawTop8: jest.fn(actual.drawTop8), loadThemeFonts: jest.fn(actual.loadThemeFonts) };
+});
+const actualRender = jest.requireActual('@/app/snes/top8/render') as typeof render8;
+const drawSpy = render8.drawTop8 as jest.MockedFunction<typeof render8.drawTop8>;
+const fontsSpy = render8.loadThemeFonts as jest.MockedFunction<typeof render8.loadThemeFonts>;
+const drawnThemes = () => drawSpy.mock.calls.map(([, theme]) => theme.id);
 
 const g = (slug: string, title: string, extra: Partial<Top8Game> = {}): Top8Game => ({
   slug, title, year: '1993', genres: ['Platform'], series: null, similar: [], score: 7, ...extra,
@@ -49,8 +59,14 @@ function gridRects() {
   };
 }
 
+const realCreate = URL.createObjectURL, realRevoke = URL.revokeObjectURL;
+const realClipboard = Object.getOwnPropertyDescriptor(navigator, 'clipboard');
+const realShare = Object.getOwnPropertyDescriptor(navigator, 'share');
+
 beforeEach(() => {
   calls.length = 0;
+  drawSpy.mockClear().mockImplementation(actualRender.drawTop8);
+  fontsSpy.mockClear().mockImplementation(actualRender.loadThemeFonts);
   window.history.replaceState(null, '', '/videogames/snes-history/top-8');
   localStorage.clear();
   HTMLCanvasElement.prototype.getContext = jest.fn(() => recordingCtx()) as unknown as typeof HTMLCanvasElement.prototype.getContext;
@@ -59,8 +75,17 @@ beforeEach(() => {
 });
 afterEach(() => {
   jest.restoreAllMocks();
+  jest.useRealTimers();
   HTMLElement.prototype.getBoundingClientRect = realRect;
+  Object.assign(URL, { createObjectURL: realCreate, revokeObjectURL: realRevoke });
+  for (const [k, d] of [['clipboard', realClipboard], ['share', realShare]] as const) {
+    if (d) Object.defineProperty(navigator, k, d);
+    else delete (navigator as unknown as Record<string, unknown>)[k];
+  }
 });
+
+// Waits long enough for a font promise to settle and the animation frame it schedules to fire.
+const frames = async () => { for (let k = 0; k < 2; k++) await act(async () => { await new Promise((r) => setTimeout(r, 30)); }); };
 
 // Mount, then let the theme fonts settle inside act (they resolve a tick later).
 async function mount() {
@@ -95,6 +120,8 @@ it('matches ignoring case and punctuation, moves with arrows, and closes on Esc 
   expect(search()).toHaveAttribute('aria-activedescendant', screen.getAllByRole('option')[1].id);
   fireEvent.pointerDown(document.body);
   expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
+  // The listbox stays in the DOM (hidden), so aria-controls always points at something.
+  expect(document.getElementById(search().getAttribute('aria-controls')!)).toHaveAttribute('hidden');
 });
 
 it('removes a game', async () => {
@@ -131,6 +158,29 @@ it('with all 8 full, Accept enters replace mode; a slot click replaces and Esc c
   expect(slot(4)).toHaveAccessibleName(/Delta Force/);
 });
 
+it('replace mode works from the keyboard: Enter or Space on a slot replaces it', async () => {
+  window.history.replaceState(null, '', `?g=${FULL}`);
+  await mount();
+  fireEvent.click(screen.getByRole('button', { name: 'Accept Super Metroid' }));
+  fireEvent.keyDown(slot(2), { key: 'Enter', code: 'Enter' });
+  expect(slot(2)).toHaveAccessibleName(/Super Metroid/);
+  fireEvent.click(screen.getByRole('button', { name: 'Accept Chrono Trigger' }));
+  fireEvent.keyDown(slot(5), { key: ' ', code: 'Space' });
+  expect(slot(5)).toHaveAccessibleName(/Chrono Trigger/);
+  expect(screen.queryByText(/Tap a slot/)).not.toBeInTheDocument();
+});
+
+it('denying the game waiting in replace mode cancels replace mode', async () => {
+  window.history.replaceState(null, '', `?g=${FULL}`);
+  await mount();
+  fireEvent.click(screen.getByRole('button', { name: 'Accept Super Metroid' }));
+  expect(screen.getByText(/Tap a slot to put Super Metroid there/)).toBeInTheDocument();
+  fireEvent.click(screen.getByRole('button', { name: 'Deny Super Metroid' }));
+  expect(screen.queryByText(/Tap a slot/)).not.toBeInTheDocument();
+  fireEvent.click(slot(1));
+  expect(slot(1)).toHaveAccessibleName(/Alpha Quest/);
+});
+
 it('Deny hides the game and remembers it', async () => {
   window.history.replaceState(null, '', '?g=a');
   await mount();
@@ -165,14 +215,26 @@ it('moveSlot shifts the others, empties included', async () => {
   expect(moveSlot(['a', 'b', null, 'c', null, null, null, null], 0, 3)).toEqual(['b', null, 'c', 'a', null, null, null, null]);
 });
 
-it('a ?g= link beats storage (keeping the stored denials)', async () => {
+it('a ?g= link beats storage, and a plain visit leaves the stored list alone until an edit', async () => {
   localStorage.setItem('snes-top8', JSON.stringify({ slots: ['b', null, null, null, null, null, null, null], theme: 'glitter', name: 'Stored', denied: ['d'] }));
   window.history.replaceState(null, '', '?g=chrono-trigger&skin=crystal&n=Wes');
   await mount();
   expect(slot(1)).toHaveAccessibleName(/Chrono Trigger/);
   expect(screen.getByRole('button', { name: 'Crystal Menu' })).toHaveAttribute('aria-pressed', 'true');
   expect(screen.getByText("Wes's Friend Space")).toBeInTheDocument();
-  expect(JSON.parse(localStorage.getItem('snes-top8')!)).toMatchObject({ slots: ['chrono-trigger', null, null, null, null, null, null, null], denied: ['d'] });
+  expect(JSON.parse(localStorage.getItem('snes-top8')!)).toMatchObject({ slots: ['b', null, null, null, null, null, null, null], name: 'Stored' });
+  fireEvent.click(screen.getByRole('button', { name: 'Remove Chrono Trigger' }));
+  // The edit saves the list being edited, with the visitor's own denials carried over.
+  expect(JSON.parse(localStorage.getItem('snes-top8')!)).toEqual({ slots: Array(8).fill(null), theme: 'crystal', name: 'Wes', denied: ['d'] });
+});
+
+it('edits keep other query params and the hash in the URL', async () => {
+  window.history.replaceState(null, '', '/videogames/snes-history/top-8?utm_source=x#top');
+  await mount();
+  fireEvent.change(search(), { target: { value: 'chrono' } });
+  fireEvent.keyDown(search(), { key: 'Enter' });
+  expect(window.location.search).toBe('?g=chrono-trigger,_,_,_,_,_,_,_&skin=myspace&utm_source=x');
+  expect(window.location.hash).toBe('#top');
 });
 
 it('restores from storage when there is no link, and only rewrites the URL after an edit', async () => {
@@ -227,15 +289,49 @@ it('Save picture makes a PNG and clicks a download link', async () => {
   Object.assign(URL, { createObjectURL, revokeObjectURL });
   let anchor: HTMLAnchorElement | null = null;
   jest.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(function (this: HTMLAnchorElement) { anchor = this; });
-  jest.useFakeTimers();
   await mount();
-  fireEvent.click(screen.getByRole('button', { name: 'Save picture' }));
+  jest.useFakeTimers();
+  await act(async () => { fireEvent.click(screen.getByRole('button', { name: 'Save picture' })); });
   expect(HTMLCanvasElement.prototype.toBlob).toHaveBeenCalled();
   expect(anchor!.download).toBe('my-snes-top-8.png');
   expect(anchor!.href).toBe('blob:top8');
-  act(() => { jest.runAllTimers(); });
+  act(() => { jest.advanceTimersByTime(1000); });
+  expect(revokeObjectURL).not.toHaveBeenCalled();
+  act(() => { jest.advanceTimersByTime(4000); });
   expect(revokeObjectURL).toHaveBeenCalledWith('blob:top8');
-  jest.useRealTimers();
+});
+
+it('Save waits for the theme fonts before drawing and encoding', async () => {
+  Object.assign(URL, { createObjectURL: jest.fn(() => 'blob:x'), revokeObjectURL: jest.fn() });
+  jest.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {});
+  let release!: () => void;
+  fontsSpy.mockImplementation(() => new Promise<void>((r) => { release = r; }));
+  await mount();
+  await act(async () => { fireEvent.click(screen.getByRole('button', { name: 'Save picture' })); });
+  expect(HTMLCanvasElement.prototype.toBlob).not.toHaveBeenCalled();
+  expect(drawSpy).not.toHaveBeenCalled();
+  await act(async () => { release(); });
+  expect(drawnThemes()).toContain('myspace');
+  expect(HTMLCanvasElement.prototype.toBlob).toHaveBeenCalled();
+});
+
+it('a theme switch draws nothing until that theme’s fonts load, and rapid switches end on the latest theme', async () => {
+  window.history.replaceState(null, '', '?g=a');
+  await mount();
+  await frames();
+  expect(drawnThemes()).toEqual(['myspace']);
+  const pending: Record<string, () => void> = {};
+  fontsSpy.mockImplementation((theme) => new Promise<void>((r) => { pending[theme.id] = r; }));
+  await act(async () => { fireEvent.click(screen.getByRole('button', { name: 'Glitter' })); });
+  await act(async () => { fireEvent.click(screen.getByRole('button', { name: 'Console' })); });
+  await frames();
+  expect(drawnThemes()).toEqual(['myspace']);
+  await act(async () => { pending.glitter(); });
+  await frames();
+  expect(drawnThemes()).toEqual(['myspace']);
+  await act(async () => { pending.console(); });
+  await frames();
+  expect(drawnThemes().slice(1)).toEqual(['console']);
 });
 
 it('hides Share without canShare and shows it where files can be shared', async () => {
@@ -245,6 +341,49 @@ it('hides Share without canShare and shows it where files can be shared', async 
   Object.defineProperty(navigator, 'canShare', { value: () => true, configurable: true });
   await mount();
   expect(screen.getByRole('button', { name: 'Share' })).toBeInTheDocument();
+});
+
+describe('Share', () => {
+  const sharing = (share: jest.Mock) => {
+    Object.defineProperty(navigator, 'canShare', { value: () => true, configurable: true });
+    Object.defineProperty(navigator, 'share', { value: share, configurable: true });
+  };
+
+  it('uses the PNG made after the last draw, calling navigator.share synchronously from the click', async () => {
+    const share = jest.fn(() => Promise.resolve());
+    sharing(share);
+    window.history.replaceState(null, '', '?g=a');
+    await mount();
+    await frames();
+    await act(async () => { await new Promise((r) => setTimeout(r, 350)); });
+    const encoded = (HTMLCanvasElement.prototype.toBlob as jest.Mock).mock.calls.length;
+    expect(encoded).toBeGreaterThan(0);
+    fireEvent.click(screen.getByRole('button', { name: 'Share' }));
+    expect(share).toHaveBeenCalledTimes(1); // no await between the click and the call
+    const arg = (share.mock.calls[0] as unknown as [ShareData])[0];
+    expect(arg.files![0].name).toBe('my-snes-top-8.png');
+    expect(arg.title).toBe('My SNES Top 8');
+    expect(arg.url).toMatch(/\/videogames\/snes-history\/top-8\?g=a,_/);
+    expect((HTMLCanvasElement.prototype.toBlob as jest.Mock).mock.calls.length).toBe(encoded);
+  });
+
+  it('encodes on the spot when no PNG is ready yet, and toasts a real failure', async () => {
+    const share = jest.fn(() => Promise.reject(Object.assign(new Error('nope'), { name: 'NotAllowedError' })));
+    sharing(share);
+    await mount();
+    await act(async () => { fireEvent.click(screen.getByRole('button', { name: 'Share' })); });
+    expect(share).toHaveBeenCalledTimes(1);
+    expect(screen.getByText('Couldn’t open the share sheet — try Save instead')).toBeInTheDocument();
+  });
+
+  it('stays quiet when the visitor cancels the share sheet', async () => {
+    const share = jest.fn(() => Promise.reject(Object.assign(new Error('cancel'), { name: 'AbortError' })));
+    sharing(share);
+    await mount();
+    await act(async () => { fireEvent.click(screen.getByRole('button', { name: 'Share' })); });
+    expect(share).toHaveBeenCalled();
+    expect(screen.queryByText(/share sheet/)).not.toBeInTheDocument();
+  });
 });
 
 it('Start over asks first, then clears the list but keeps the theme', async () => {
@@ -259,8 +398,7 @@ it('Start over asks first, then clears the list but keeps the theme', async () =
 it('draws the preview on the canvas', async () => {
   window.history.replaceState(null, '', '?g=a');
   await mount();
-  // Fonts settle in one act, the frame they schedule fires in the next.
-  for (let k = 0; k < 2; k++) await act(async () => { await new Promise((r) => setTimeout(r, 30)); });
+  await frames();
   expect(calls.some((c) => c.name === 'fillText')).toBe(true);
 });
 

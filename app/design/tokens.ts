@@ -75,6 +75,7 @@ export const TOKENS: { name: string; job: string; group: TokenGroup }[] = [
   { name: '--t8-hot-ink', job: 'Top 8: numbers on the orange rank badges', group: 'SNES' },
   { name: '--t8-ok', job: 'Top 8: the Accept button on friend requests', group: 'SNES' },
   { name: '--t8-ok-ink', job: 'Top 8: text on the Accept button', group: 'SNES' },
+  { name: '--t8-x', job: 'Top 8: the dark disc behind each slot’s ✕ remove button', group: 'SNES' },
 ];
 
 function declarations(css: string, selector: string): Record<string, string> {
