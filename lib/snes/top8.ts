@@ -51,12 +51,12 @@ export function slimIndex(games: Game[]): Top8Game[] {
 const NAME_MAX = 24;
 
 export function cleanName(raw: string): string {
-  return raw
+  const cleaned = raw
     .normalize('NFC')
     .replace(/[^\p{L}\p{N} '.\-_&!]/gu, '')
     .replace(/ +/g, ' ')
-    .trim()
-    .slice(0, NAME_MAX);
+    .trim();
+  return Array.from(cleaned).slice(0, NAME_MAX).join('').trim();
 }
 
 export function parseQuery(search: string, known: Set<string>): Partial<Top8State> | null {
@@ -87,7 +87,7 @@ export function parseQuery(search: string, known: Set<string>): Partial<Top8Stat
 export function toQuery(state: Top8State): string {
   const g = state.slots.map((s) => s ?? '_').join(',');
   let q = `?g=${g}&skin=${state.theme}`;
-  if (state.name) q += `&n=${encodeURIComponent(state.name).replace(/%27/g, "'")}`;
+  if (state.name) q += `&n=${encodeURIComponent(state.name)}`;
   return q;
 }
 

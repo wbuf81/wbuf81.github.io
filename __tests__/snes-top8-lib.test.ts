@@ -62,3 +62,21 @@ describe('cleanName', () => {
     expect(cleanName('Zoë-Ann_9.')).toBe('Zoë-Ann_9.');
   });
 });
+
+describe('name robustness', () => {
+  const known = new Set(games.map((g) => g.slug));
+  it('round-trips names with &, an apostrophe and non-ASCII', () => {
+    const s = st(['metroid'], { name: "Zoë & Ann's" });
+    expect(parseQuery(toQuery(s), known)?.name).toBe("Zoë & Ann's");
+  });
+  it('counts code points, so an astral 24th character cannot leave a lone surrogate', () => {
+    const name = cleanName('x'.repeat(23) + '\u{1D49C}');
+    expect(Array.from(name)).toHaveLength(24);
+    expect(() => toQuery(st([], { name }))).not.toThrow();
+    expect(parseQuery(toQuery(st([], { name })), known)?.name).toBe(name);
+  });
+  it('is idempotent', () => {
+    for (const raw of ['a'.repeat(23) + ' b', '  <b>Wes</b> & Co!  ', 'x'.repeat(40)]) expect(cleanName(cleanName(raw))).toBe(cleanName(raw));
+    expect(cleanName('a'.repeat(23) + ' b')).toBe('a'.repeat(23));
+  });
+});
