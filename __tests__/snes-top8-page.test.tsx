@@ -4,6 +4,7 @@ import { act, fireEvent, render, screen, within } from '@testing-library/react';
 import Top8, { moveSlot } from '@/app/snes/components/Top8';
 import type { Top8Game } from '@/lib/snes/top8';
 import * as render8 from '@/app/snes/top8/render';
+import { resetTop8Memory } from '@/app/snes/top8/store';
 
 jest.mock('next/navigation', () => ({ usePathname: () => '/videogames/snes-history/top-8' }));
 // The real renderer, behind spies: tests can hold a theme's fonts back and see which theme each draw used.
@@ -73,6 +74,7 @@ beforeEach(() => {
   fontsSpy.mockClear().mockImplementation(actualRender.loadThemeFonts);
   window.history.replaceState(null, '', '/videogames/snes-history/top-8');
   localStorage.clear();
+  resetTop8Memory(); // the shared store keeps a module-level fallback; each test starts clean
   HTMLCanvasElement.prototype.getContext = jest.fn(() => recordingCtx()) as unknown as typeof HTMLCanvasElement.prototype.getContext;
   HTMLCanvasElement.prototype.toBlob = jest.fn(function (cb: BlobCallback) { cb(new Blob(['png'], { type: 'image/png' })); });
   Object.defineProperty(navigator, 'canShare', { value: undefined, configurable: true });
