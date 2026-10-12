@@ -169,3 +169,23 @@ test('the titles a game or company page ships stay within 12 KB gzipped, and reb
   expect(titlesBySlug(list)).toEqual(Object.fromEntries(games.map((g) => [g.slug, g.title])));
   expect(zlib.gzipSync(JSON.stringify(list), { level: 9 }).length).toBeLessThanOrEqual(12 * 1024);
 });
+
+test('ignores stored slugs that are not games: not counted, no mini cover', () => {
+  render(<Top8Tray titles={TITLES} />);
+  pick('super-metroid', 'not-a-game');
+  const t = screen.getByRole('region', { name: 'Your Top 8' });
+  expect(t).toHaveTextContent('1/8');
+  expect(t.querySelectorAll('img')).toHaveLength(1);
+  // Storage is left alone.
+  expect(JSON.parse(localStorage.getItem('snes-top8')!).slots[1]).toBe('not-a-game');
+});
+
+test('a mini cover that fails to load becomes a placeholder', () => {
+  render(<Top8Tray titles={TITLES} />);
+  pick('super-metroid');
+  const img = screen.getByRole('region', { name: 'Your Top 8' }).querySelector('img')!;
+  fireEvent.error(img);
+  const t = screen.getByRole('region', { name: 'Your Top 8' });
+  expect(t.querySelector('img')).toBeNull();
+  expect(t.querySelector('.s-cover-none')).toHaveTextContent('SM');
+});

@@ -13,6 +13,7 @@ import {
 } from '@/lib/snes/top8';
 import { readTop8, subscribeTop8, writeTop8 } from '../top8/store';
 import Top8Browse, { norm } from './Top8Browse';
+import { Cover } from './Cover';
 import { SIZE, drawTop8, loadThemeFonts, type Fonts } from '../top8/render';
 import { THEMES } from '../top8/themes';
 import { orbitron, pressStart, vt323 } from '../fonts';
@@ -83,11 +84,11 @@ class MousePointerSensor extends PointerSensor {
 const POINTER: PointerActivationConstraint = { distance: 6 };
 
 type SlotProps = {
-  id: string; index: number; slug: string | null; title: string | null; replacing: string | null;
+  id: string; index: number; slug: string | null; title: string | null; noArt?: boolean; replacing: string | null;
   onReplace: (i: number) => void; onRemove: (i: number) => void; onEmpty: () => void;
 };
 
-function Slot({ id, index, slug, title, replacing, onReplace, onRemove, onEmpty }: SlotProps) {
+function Slot({ id, index, slug, title, noArt, replacing, onReplace, onRemove, onEmpty }: SlotProps) {
   const { attributes, listeners, setNodeRef, setActivatorNodeRef, transform, transition, isDragging } = useSortable({
     id, disabled: replacing ? true : { draggable: !slug, droppable: false },
   });
@@ -118,7 +119,7 @@ function Slot({ id, index, slug, title, replacing, onReplace, onRemove, onEmpty 
         <span className="s-t8-rank" aria-hidden="true">{n}</span>
         {slug ? (
           <>
-            <img src={box(slug)} alt="" width={300} height={209} loading="lazy" decoding="async" draggable={false} />
+            <Cover src={box(slug)} title={title ?? slug} width={300} height={209} noArt={noArt} />
             <span className="s-t8-nm">{title}</span>
           </>
         ) : <span className="s-t8-add">Add a friend</span>}
@@ -506,7 +507,7 @@ export default function Top8({ games }: { games: Top8Game[] }) {
                       key={g.slug} id={`t8-opt-${i}`} role="option" aria-selected={i === active} className="s-t8-opt"
                       onMouseDown={(e) => e.preventDefault()} onClick={() => pick(g.slug)} onMouseEnter={() => setActive(i)}
                     >
-                      <img src={box(g.slug)} alt="" width={46} height={32} loading="lazy" decoding="async" />
+                      <Cover src={box(g.slug)} title={g.title} width={46} height={32} noArt={g.noArt} />
                       <span>{g.title} <small>{g.year}</small></span>
                     </li>
                   )) : null}
@@ -534,7 +535,7 @@ export default function Top8({ games }: { games: Top8Game[] }) {
                 <ol className="s-t8-slots">
                   {state.slots.map((slug, i) => (
                     <Slot
-                      key={ids[i]} id={ids[i]} index={i} slug={slug} title={slug ? titleOf(slug) : null} replacing={replacing}
+                      key={ids[i]} id={ids[i]} index={i} slug={slug} title={slug ? titleOf(slug) : null} noArt={slug ? bySlug.get(slug)?.noArt : undefined} replacing={replacing}
                       onReplace={replaceAt} onRemove={(k) => update((s) => ({ ...s, slots: s.slots.map((x, j) => (j === k ? null : x)) }))}
                       onEmpty={() => inputRef.current?.focus()}
                     />
@@ -557,7 +558,7 @@ export default function Top8({ games }: { games: Top8Game[] }) {
                   const g = bySlug.get(slug)!;
                   return (
                     <li key={slug} className="s-t8-req">
-                      <img src={box(slug)} alt="" width={72} height={50} loading="lazy" decoding="async" />
+                      <Cover src={box(slug)} title={g.title} width={72} height={50} noArt={g.noArt} />
                       <div>
                         <b>{g.title}</b>
                         <span>{reason} · {g.year}</span>

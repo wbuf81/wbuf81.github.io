@@ -6,7 +6,8 @@ import { gamePath, TOP8 } from '@/lib/snes/routes';
 import { titlesBySlug } from '@/lib/snes/top8';
 import { Top8Provider, useTop8Hub } from '../top8/store';
 import { ensureToastRegion } from './toast';
-import { Top8Titles } from './Top8Star';
+import { Top8Titles, knownOnly } from './Top8Star';
+import { Cover } from './Cover';
 
 export const TRAY_KEY = 'snes-top8-tray';
 const OPEN_CLASS = 't8-tray-open';
@@ -21,8 +22,10 @@ const readCollapsed = () => {
 // Nothing renders on the server or before mount (the store's server snapshot is null).
 export function Top8Tray({ titles }: { titles: Record<string, string> | string[] }) {
   const hub = useTop8Hub();
-  const state = useSyncExternalStore(hub.subscribe, hub.get, () => null);
+  const stored = useSyncExternalStore(hub.subscribe, hub.get, () => null);
   const names = useMemo(() => (Array.isArray(titles) ? titlesBySlug(titles) : titles), [titles]);
+  // Stored slugs that aren't games are left in storage but neither shown nor counted.
+  const state = useMemo(() => stored && knownOnly(stored, names), [stored, names]);
   const [collapsed, setCollapsed] = useState<boolean | null>(null);
   const el = useRef<HTMLElement>(null);
   useEffect(() => { setCollapsed(readCollapsed()); }, []);
@@ -87,8 +90,7 @@ export function Top8Tray({ titles }: { titles: Record<string, string> | string[]
             <li key={slug ?? `empty-${i}`} className={`s-tray-slot${slug ? '' : ' is-empty'}`}>
               {slug ? (
                 <Link href={gamePath(slug)} prefetch={false} aria-label={names[slug] ?? fromSlug(slug)}>
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={`/snes/thumb/${slug}.jpg`} alt="" width={48} height={33} loading="lazy" decoding="async" />
+                  <Cover src={`/snes/thumb/${slug}.jpg`} title={names[slug] ?? fromSlug(slug)} width={48} height={33} />
                 </Link>
               ) : null}
             </li>

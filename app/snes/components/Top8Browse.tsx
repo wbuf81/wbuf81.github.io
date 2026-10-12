@@ -1,6 +1,7 @@
 'use client';
 
 import { memo, useEffect, useMemo, useRef, useState } from 'react';
+import { Cover } from './Cover';
 import { FIRST_YEAR, GENRE_FAMILIES, LAST_YEAR, genreFamily, type GenreFamily } from '@/lib/snes/library';
 import type { Top8Game } from '@/lib/snes/top8';
 
@@ -35,7 +36,7 @@ const Tile = memo(function Tile({ g, picked, onToggle }: { g: Top8Game; picked: 
     <li>
       <button type="button" className={`s-t8-tile${picked ? ' is-picked' : ''}`} aria-pressed={picked} onClick={() => onToggle(g.slug)}>
         <span className="s-t8-tc">
-          <img src={thumb(g.slug)} alt="" width={96} height={67} loading="lazy" decoding="async" />
+          <Cover src={thumb(g.slug)} title={g.title} width={96} height={67} noArt={g.noArt} />
           {picked ? <span className="s-t8-badge" aria-hidden="true">★</span> : null}
         </span>
         <span className="s-t8-tt">{g.title}</span>
@@ -62,8 +63,14 @@ export default function Top8Browse({ games, query, picked, onToggle }: Props) {
   const matches = useMemo(() => sorted.filter((r) =>
     (!year || r.g.year === year) && (!family || r.fam === family) && words.every((w) => r.n.includes(w))), [sorted, year, family, words]);
 
-  // Any change to what matches starts again from the first page.
-  useEffect(() => setShown(PAGE), [year, family, sort, words]);
+  // Any change to what matches starts again from the first page. Reset during render, so the old count never
+  // renders against the new matches.
+  const filterKey = `${year}|${family}|${sort}|${words.join(' ')}`;
+  const [lastKey, setLastKey] = useState(filterKey);
+  if (lastKey !== filterKey) {
+    setLastKey(filterKey);
+    setShown(PAGE);
+  }
 
   const pickedSet = useMemo(() => new Set(picked.filter((s): s is string => !!s)), [picked]);
   const more = matches.length > shown;
@@ -83,13 +90,13 @@ export default function Top8Browse({ games, query, picked, onToggle }: Props) {
     <section className="s-t8-box" aria-labelledby="t8-browse">
       <div className="s-t8-bh">
         <h2 id="t8-browse">Browse all games</h2>
-        <span>Showing {matches.length} of {games.length}</span>
+        <span aria-live="polite">Showing {matches.length} of {games.length}</span>
       </div>
       <div className="s-t8-bb">
         <div className="s-t8-tabs" role="group" aria-label="Year">
           <button type="button" className="s-t8-chip" aria-pressed={year === null} onClick={() => setYear(null)}>All</button>
           {YEARS.map((y) => (
-            <button key={y} type="button" className="s-t8-chip" aria-pressed={year === y} onClick={() => setYear(y)}>{`'${y.slice(2)}`}</button>
+            <button key={y} type="button" className="s-t8-chip" aria-pressed={year === y} aria-label={y} onClick={() => setYear(y)}>{`'${y.slice(2)}`}</button>
           ))}
         </div>
         <div className="s-t8-tabs" role="group" aria-label="Genre">

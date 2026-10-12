@@ -20,6 +20,7 @@ const GAMES: Top8Game[] = [
   g('d', 'Delta Force', { genres: ['Shooter'] }), g('e', 'Echo Island'), g('f', 'Foxtrot Run'), g('h', 'Hotel Hopper'),
   g('super-metroid', 'Super Metroid', { year: '1994', score: null }),
   g('chrono-trigger', 'Chrono Trigger', { year: '1995', genres: ['Role-playing (RPG)'], score: 9.6 }),
+  g('soccer-kid', 'Soccer Kid', { year: '1994', genres: ['Sport'], score: null, noArt: true }),
 ];
 const FULL = 'a,b,c,d,e,f,h,street-fighter-ii';
 
@@ -63,13 +64,13 @@ describe('controls', () => {
     expect(img).toHaveAttribute('loading', 'lazy');
     // Top rated: score desc, then title; unscored last.
     expect(tileNames().slice(0, 4)).toEqual(['Chrono Trigger', 'The Legend of Zelda: A Link to the Past', 'Super Mario World', 'Street Fighter II']);
-    expect(tileNames().at(-1)).toBe('Super Metroid');
+    expect(tileNames().slice(-2)).toEqual(['Soccer Kid', 'Super Metroid']);
   });
 
   it('filters by year tab', async () => {
     await mount();
-    fireEvent.click(within(years()).getByRole('button', { name: "'92" }));
-    expect(within(years()).getByRole('button', { name: "'92" })).toHaveAttribute('aria-pressed', 'true');
+    fireEvent.click(within(years()).getByRole('button', { name: "1992" }));
+    expect(within(years()).getByRole('button', { name: "1992" })).toHaveAttribute('aria-pressed', 'true');
     expect(tileNames().sort()).toEqual(['Street Fighter II', 'The Legend of Zelda: A Link to the Past']);
     expect(within(browse()).getByText(`Showing 2 of ${GAMES.length}`)).toBeInTheDocument();
   });
@@ -77,10 +78,10 @@ describe('controls', () => {
   it('filters by genre family, combined with the year', async () => {
     await mount();
     fireEvent.click(within(genres()).getByRole('button', { name: 'Sports/Racing' }));
-    expect(tileNames().sort()).toEqual(['Bravo Racer', 'Charlie Golf']);
+    expect(tileNames().sort()).toEqual(['Bravo Racer', 'Charlie Golf', 'Soccer Kid']);
     fireEvent.click(within(genres()).getByRole('button', { name: 'RPG/Adventure' }));
     expect(tileNames().sort()).toEqual(['Chrono Trigger', 'The Legend of Zelda: A Link to the Past']);
-    fireEvent.click(within(years()).getByRole('button', { name: "'95" }));
+    fireEvent.click(within(years()).getByRole('button', { name: "1995" }));
     expect(tileNames()).toEqual(['Chrono Trigger']);
     fireEvent.click(within(genres()).getByRole('button', { name: 'All' }));
     fireEvent.click(within(years()).getByRole('button', { name: 'All' }));
@@ -107,6 +108,31 @@ describe('controls', () => {
     fireEvent.change(search(), { target: { value: '' } });
     expect(tiles()).toHaveLength(GAMES.length);
   });
+});
+
+it('year tabs read the full year, and the count is a polite live region', async () => {
+  await mount();
+  expect(within(years()).getByRole('button', { name: '1991' })).toHaveTextContent("'91");
+  const count = within(browse()).getByText(`Showing ${GAMES.length} of ${GAMES.length}`);
+  expect(count).toHaveAttribute('aria-live', 'polite');
+});
+
+it('a game with no box art shows a placeholder, never an image', async () => {
+  await mount();
+  const t = tile('Soccer Kid');
+  expect(t.querySelector('img')).toBeNull();
+  expect(t.querySelector('.s-cover-none')).toHaveTextContent('SK');
+});
+
+it('the Top 8 slot and the search result for a no-art game show the placeholder too', async () => {
+  window.history.replaceState(null, '', '?g=soccer-kid');
+  await mount();
+  expect(slot(1).querySelector('img')).toBeNull();
+  expect(slot(1).querySelector('.s-cover-none')).not.toBeNull();
+  fireEvent.change(search(), { target: { value: 'soccer' } });
+  const opt = screen.getByRole('option', { name: /Soccer Kid/ });
+  expect(opt.querySelector('img')).toBeNull();
+  expect(opt.querySelector('.s-cover-none')).not.toBeNull();
 });
 
 describe('toggling', () => {

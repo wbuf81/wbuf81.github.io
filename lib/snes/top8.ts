@@ -10,6 +10,8 @@ export type Top8Game = {
   series: string | null;
   similar: string[];
   score: number | null;
+  /** Present (true) only for the few games with no box art, so the covers show a placeholder. */
+  noArt?: true;
 };
 
 export const THEME_IDS = ['myspace', 'glitter', 'console', 'grandprix', 'crystal', 'polygon'] as const;
@@ -48,6 +50,7 @@ export function slimIndex(games: Game[]): Top8Game[] {
     series: g.series,
     similar: g.similar,
     score: scoreOf(g),
+    ...(g.boxArt ? {} : { noArt: true as const }),
   }));
 }
 

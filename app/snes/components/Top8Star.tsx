@@ -2,9 +2,10 @@
 
 import { createContext, memo, useContext, useEffect, useLayoutEffect, useRef, useState, useSyncExternalStore, type CSSProperties, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
-import { addPick, isPicked, removePick, replacePick } from '../../../lib/snes/top8.ts';
+import { addPick, isPicked, removePick, replacePick, type Top8State } from '../../../lib/snes/top8.ts';
 import { useInTop8Provider, useTop8Hub } from '../top8/store';
 import { ensureToastRegion, showToast } from './toast';
+import { Cover } from './Cover';
 
 type Props = {
   slug: string;
@@ -14,6 +15,14 @@ type Props = {
   /** Titles for the replace popover's covers (slug → title). Falls back to the slug, title-cased. */
   titles?: Record<string, string>;
 };
+
+/** With a titles map, stored slugs that aren't games (renamed or removed) count as empty slots. Storage is not
+ * rewritten for this; the next edit through the star drops them. An empty map means no titles, so nothing is dropped. */
+export const knownOnly = (s: Top8State, names: Record<string, string> | undefined): Top8State =>
+  !names || isEmpty(names) || s.slots.every((x) => !x || Object.hasOwn(names, x)) ? s : { ...s, slots: s.slots.map((x) => (x && Object.hasOwn(names, x) ? x : null)) };
+const isEmpty = (o: object) => { for (const k in o) if (Object.hasOwn(o, k)) return false; return true; };
+// The popover closes on a scroll or resize only once the star has moved this far (px).
+const MOVED = 4;
 
 const fromSlug = (slug: string) => slug.split('-').filter(Boolean).map((w) => w[0].toUpperCase() + w.slice(1)).join(' ');
 
@@ -30,16 +39,20 @@ export const Top8Star = memo(function Top8Star({ slug, title, variant, onToast, 
   const hub = useTop8Hub();
   const inProvider = useInTop8Provider();
   const shared = useContext(TitlesContext);
+  const names = titles ?? shared;
   const [open, setOpen] = useState(false);
   const key = useSyncExternalStore(hub.subscribe, () => {
-    const s = hub.get();
-    if (!s) return 'x';
+    const raw = hub.get();
+    if (!raw) return 'x';
+    const s = knownOnly(raw, names);
     const flags = `${isPicked(s, slug) ? 1 : 0}${s.slots.every(Boolean) ? 1 : 0}`;
     return open ? `${flags}${s.slots.join(',')}` : flags;
   }, () => 'x');
-  const state = key === 'x' ? null : hub.get();
+  const raw = key === 'x' ? null : hub.get();
+  const state = raw && knownOnly(raw, names);
   const update = hub.update;
-  const [pos, setPos] = useState<CSSProperties>({});
+  // Fixed (and hidden) from the first paint, so the popover never sits in the flow at the end of <body>.
+  const [pos, setPos] = useState<CSSProperties>({ position: 'fixed', left: 0, top: 0, visibility: 'hidden' });
   const btn = useRef<HTMLButtonElement>(null);
   const pop = useRef<HTMLDivElement>(null);
   const say = onToast ?? showToast;
@@ -56,9 +69,18 @@ export const Top8Star = memo(function Top8Star({ slug, title, variant, onToast, 
       if (pop.current?.contains(t) || btn.current?.contains(t)) return;
       setOpen(false);
     };
-    // Scrolling the popover's own list (short screens) must not close it; any other scroll does.
-    const shut = (e: Event) => { if (!(e.target instanceof Node && pop.current?.contains(e.target))) setOpen(false); };
-    const onResize = () => setOpen(false);
+    // A scroll or resize closes it only when the star itself has moved (focusing the popover, or a page's late
+    // layout shift, can fire a scroll without moving anything). Scrolling the popover's own list never closes it.
+    const at = btn.current?.getBoundingClientRect();
+    const moved = () => {
+      const now = btn.current?.getBoundingClientRect();
+      return !at || !now || Math.abs(now.top - at.top) > MOVED || Math.abs(now.left - at.left) > MOVED;
+    };
+    const shut = (e: Event) => {
+      if (e.target instanceof Node && pop.current?.contains(e.target)) return;
+      if (moved()) setOpen(false);
+    };
+    const onResize = () => { if (moved()) setOpen(false); };
     const onFocusOut = (e: FocusEvent) => {
       const to = e.relatedTarget as Node | null;
       if (to && !pop.current?.contains(to) && !btn.current?.contains(to)) setOpen(false);
@@ -92,13 +114,13 @@ export const Top8Star = memo(function Top8Star({ slug, title, variant, onToast, 
   }, [open]);
 
   useEffect(() => {
-    if (open) pop.current?.querySelector<HTMLButtonElement>('button')?.focus();
+    if (open) pop.current?.querySelector<HTMLButtonElement>('button')?.focus({ preventScroll: true });
   }, [open]);
 
   if (!state) return null;
   const picked = isPicked(state, slug);
   const full = state.slots.every(Boolean);
-  const nameOf = (s: string) => (titles ?? shared)?.[s] ?? fromSlug(s);
+  const nameOf = (s: string) => names?.[s] ?? fromSlug(s);
 
   const click = () => {
     if (picked) {
@@ -109,7 +131,7 @@ export const Top8Star = memo(function Top8Star({ slug, title, variant, onToast, 
     if (full) { setOpen((o) => !o); return; }
     let count = 0;
     update((s) => {
-      const next = addPick(s, slug).state;
+      const next = addPick(knownOnly(s, names), slug).state;
       count = next.slots.filter(Boolean).length;
       return next;
     });
@@ -118,7 +140,7 @@ export const Top8Star = memo(function Top8Star({ slug, title, variant, onToast, 
 
   const replace = (i: number) => {
     const old = state.slots[i] as string;
-    update((s) => replacePick(s, i, slug));
+    update((s) => replacePick(knownOnly(s, names), i, slug));
     say(`Replaced ${nameOf(old)} with ${title}`);
     setOpen(false);
     btn.current?.focus();
@@ -144,8 +166,7 @@ export const Top8Star = memo(function Top8Star({ slug, title, variant, onToast, 
           <div className="s-star-pop-grid">
             {state.slots.map((s, i) => s && (
               <button key={s} type="button" className="s-star-pick" aria-label={`Replace ${nameOf(s)}`} onClick={() => replace(i)}>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={`/snes/thumb/${s}.jpg`} alt="" width={96} height={67} loading="lazy" />
+                <Cover src={`/snes/thumb/${s}.jpg`} title={nameOf(s)} width={96} height={67} />
               </button>
             ))}
           </div>

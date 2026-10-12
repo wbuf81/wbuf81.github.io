@@ -11,6 +11,23 @@ const titles = Object.fromEntries([...full, 'new-game'].map((s) => [s, `Game ${s
 
 beforeEach(() => { localStorage.clear(); resetTop8Memory(); });
 
+// Pretends the star now sits at (left, top) on screen, so a scroll or resize sees it move.
+function moveTo(el: HTMLElement, left: number, top: number) {
+  el.getBoundingClientRect = () => ({ x: left, y: top, left, top, width: 44, height: 44, right: left + 44, bottom: top + 44, toJSON() {} }) as DOMRect;
+}
+
+it('ignores stored slugs it has no title for: they count as empty, and an add fills their slot', () => {
+  writeTop8({ ...EMPTY_STATE, slots: ['a', 'b', 'c', 'gone', 'e', 'f', 'g', 'h'] });
+  const onToast = jest.fn();
+  render(<Top8Star slug="new-game" title="New Game" variant="tile" titles={titles} onToast={onToast} />);
+  const star = screen.getByRole('button', { name: 'Add New Game to your Top 8' });
+  expect(star).not.toHaveAttribute('aria-haspopup');
+  fireEvent.click(star);
+  expect(screen.queryByRole('dialog')).toBeNull();
+  expect(readTop8().slots).toEqual(['a', 'b', 'c', 'new-game', 'e', 'f', 'g', 'h']);
+  expect(onToast).toHaveBeenLastCalledWith('Added to your Top 8 · 8/8');
+});
+
 it('toggles with exact labels and aria-pressed', () => {
   render(<Top8Star slug="new-game" title="New Game" variant="tile" />);
   const add = screen.getByRole('button', { name: 'Add New Game to your Top 8' });
@@ -83,14 +100,45 @@ describe('when full', () => {
     expect(screen.getByRole('button', { name: 'Add New Game to your Top 8' })).toHaveAttribute('aria-haspopup', 'dialog');
   });
 
-  it('closes on scroll and resize', () => {
+  it('closes on scroll and resize only once the star has actually moved', () => {
     render(<Top8Star slug="new-game" title="New Game" variant="tile" />);
-    fireEvent.click(screen.getByRole('button'));
+    const star = screen.getByRole('button');
+    fireEvent.click(star);
+    fireEvent.scroll(window);
+    fireEvent(window, new Event('resize'));
+    expect(screen.getByRole('dialog')).toBeInTheDocument();
+    moveTo(star, 3, 3); // a jiggle under 4px is not a move
+    fireEvent.scroll(window);
+    expect(screen.getByRole('dialog')).toBeInTheDocument();
+    moveTo(star, 0, 40);
     fireEvent.scroll(window);
     expect(screen.queryByRole('dialog')).toBeNull();
-    fireEvent.click(screen.getByRole('button'));
+    moveTo(star, 0, 0);
+    fireEvent.click(star);
+    moveTo(star, 30, 0);
     fireEvent(window, new Event('resize'));
     expect(screen.queryByRole('dialog')).toBeNull();
+  });
+
+  it('focuses its first cover without scrolling, and is fixed from its first paint', () => {
+    const focus = jest.spyOn(HTMLElement.prototype, 'focus');
+    render(<Top8Star slug="new-game" title="New Game" variant="page" titles={titles} />);
+    fireEvent.click(screen.getByRole('button'));
+    const first = screen.getByRole('button', { name: 'Replace Game A' });
+    expect(first).toHaveFocus();
+    expect(focus.mock.contexts.indexOf(first)).toBeGreaterThanOrEqual(0);
+    expect(focus.mock.calls[focus.mock.contexts.indexOf(first)][0]).toEqual({ preventScroll: true });
+    expect(screen.getByRole('dialog').style.position).toBe('fixed');
+    focus.mockRestore();
+  });
+
+  it('shows a placeholder, not a broken image, for a cover that fails to load', () => {
+    render(<Top8Star slug="new-game" title="New Game" variant="tile" titles={titles} />);
+    fireEvent.click(screen.getByRole('button'));
+    const pickC = screen.getByRole('button', { name: 'Replace Game C' });
+    fireEvent.error(pickC.querySelector('img')!);
+    expect(pickC.querySelector('img')).toBeNull();
+    expect(pickC.querySelector('.s-cover-none')).toHaveTextContent('GC');
   });
 
   it('Esc closes and returns focus to the star', () => {
@@ -146,6 +194,7 @@ describe('popover containment', () => {
     const dlg = screen.getByRole('dialog');
     fireEvent.scroll(dlg);
     expect(screen.getByRole('dialog')).toBeInTheDocument();
+    moveTo(screen.getByRole('button', { name: 'Add New Game to your Top 8' }), 0, -200);
     fireEvent.scroll(document);
     expect(screen.queryByRole('dialog')).toBeNull();
   });

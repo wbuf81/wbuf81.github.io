@@ -500,7 +500,7 @@
 .wb .s-t8-sort .s-t8-input { width: auto; }
 .wb .s-t8-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: 10px 8px; margin: 0; padding: 0; list-style: none; }
 .wb .s-t8-tile { display: flex; flex-direction: column; align-items: center; gap: 4px; width: 100%; min-height: 44px; padding: 4px; border: 2px solid transparent; border-radius: 4px; background: none; color: var(--t8-link); font: 12px/1.25 var(--verd); text-align: center; cursor: pointer; touch-action: manipulation; }
-.wb .s-t8-tile:hover { background: var(--t8-my-soft); }
+@media (hover: hover) { .wb .s-t8-tile:hover { background: var(--t8-my-soft); } }
 .wb .s-t8-tile:focus-visible { outline: 3px solid var(--snes-glow); outline-offset: 1px; }
 .wb .s-t8-tile.is-picked { border-color: var(--t8-hot); background: var(--t8-my-soft); }
 .wb .s-t8-tc { position: relative; display: block; }
@@ -508,6 +508,14 @@
 .wb .s-t8-badge { position: absolute; right: -6px; top: -6px; display: grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: var(--t8-hot); color: var(--t8-hot-ink); font: 700 13px/1 var(--sans); }
 .wb .s-t8-tt { display: -webkit-box; max-width: 100%; overflow: hidden; text-decoration: underline; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
 .wb .s-t8-more { display: flex; justify-content: center; margin-top: 12px; }
+.wb .s-cover-none { display: grid; place-items: center; box-sizing: border-box; width: 100%; overflow: hidden; border-radius: 2px; background: var(--rule-soft); color: var(--ink); font: 700 12px/1 var(--sans); letter-spacing: .04em; text-align: center; }
+.wb .s-t8-tc .s-cover-none { width: 96px; height: 67px; }
+.wb .s-t8-opt .s-cover-none { flex: none; width: 46px; height: 32px; font-size: 11px; }
+.wb .s-t8-req .s-cover-none { width: 72px; }
+@media (max-width: 420px) { .wb .s-t8-req .s-cover-none { width: 56px; } }
+.wb .s-t8-handle .s-cover-none { pointer-events: none; }
+.wb .s-tray-slot .s-cover-none { height: 100%; font-size: 11px; }
+.wb.s-star-pop .s-star-pick .s-cover-none { min-height: 44px; }
 .wb .s-t8-canvas { display: block; width: 100%; height: auto; aspect-ratio: 1; border-radius: 6px; box-shadow: 0 8px 30px rgba(0, 0, 0, .2); }
 .wb .s-t8-btns { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 12px; }
 .wb .s-t8-btn { min-height: 44px; padding: 0 14px; border: 1.5px solid var(--snes); border-radius: 8px; background: var(--snes); color: var(--paper); font: 700 14px var(--sans); cursor: pointer; }
