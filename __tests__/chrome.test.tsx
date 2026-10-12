@@ -54,3 +54,14 @@ test('Games is marked current under /videogames, and only there', () => {
   render(<Nav />);
   expect(screen.getByRole('link', { name: 'Games' })).not.toHaveAttribute('aria-current');
 });
+
+test('Games is current on /videogames itself and below it, but not on a look-alike path', () => {
+  for (const [path, current] of [['/videogames', true], ['/videogames/snes-history/f-zero', true], ['/videogamesxyz', false]] as const) {
+    mockPath = path;
+    const { unmount } = render(<Nav />);
+    const games = screen.getByRole('link', { name: 'Games' });
+    if (current) expect(games).toHaveAttribute('aria-current', 'page');
+    else expect(games).not.toHaveAttribute('aria-current');
+    unmount();
+  }
+});

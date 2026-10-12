@@ -1,11 +1,10 @@
 import type { PopItem, Week } from '@/lib/snes/types';
 import { toToday } from '@/lib/snes/money';
-import { timeMachinePath } from '@/lib/snes/routes';
+import { timeMachinePath, wikiUrl } from '@/lib/snes/routes';
 import Paper from './Paper';
 
 // "Be Kind, Rewind": what was on the radio, in the record store, at the movies and in the paper the week a game came
 // out, laid out as things on a 90s coffee table. Month-only games show their month rather than claiming a week.
-const wiki = (article: string | null) => (article ? `https://en.wikipedia.org/wiki/${article.replace(/ /g, '_')}` : undefined);
 
 function Obj({ kind, label, item, sub }: { kind: 'cass' | 'cd' | 'tix'; label: string; item: PopItem; sub: string | null }) {
   const body = (
@@ -16,7 +15,7 @@ function Obj({ kind, label, item, sub }: { kind: 'cass' | 'cd' | 'tix'; label: s
       {sub ? <span>{sub}</span> : null}
     </>
   );
-  const href = wiki(item.article);
+  const href = item.article ? wikiUrl(item.article) : undefined;
   return href ? <a className={`s-bkr-obj is-${kind}`} href={href} target="_blank" rel="noopener noreferrer">{body}</a> : <div className={`s-bkr-obj is-${kind}`}>{body}</div>;
 }
 

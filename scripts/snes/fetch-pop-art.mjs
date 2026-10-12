@@ -15,6 +15,7 @@ import { POP_DIR, fetchWithRetry, loadTs, popCachePath, refresh, repoRoot, sleep
 const POLITE_MS = 2500;
 const { parseChart } = loadTs('lib/snes/pop.ts');
 const { artId } = loadTs('lib/snes/weeks.ts');
+const { wikiUrl } = loadTs('lib/snes/routes.ts');
 const articles = new Set();
 for (let y = 1991; y <= 1998; y++) for (const kind of ['hot', 'album', 'box']) {
   for (const r of parseChart(fs.readFileSync(popCachePath(`${kind}-${y}.wiki`), 'utf8'), y)) if (r.date >= '1991-08-10' && r.article) articles.add(r.article);
@@ -43,6 +44,6 @@ for (const [article, url] of Object.entries(urls)) {
   }
 }
 const lines = [...articles].sort().filter((a) => fs.existsSync(path.join(POP_DIR, `${artId(a)}.webp`)))
-  .map((a) => `- ${artId(a)}.webp — [${a}](https://en.wikipedia.org/wiki/${encodeURIComponent(a.replace(/ /g, '_'))}) (Wikipedia page image)`);
+  .map((a) => `- ${artId(a)}.webp — [${a}](${wikiUrl(a)}) (Wikipedia page image)`);
 fs.writeFileSync(path.join(POP_DIR, 'SOURCES.md'), `# Time Machine artwork\n\nAlbum covers, single covers and film posters, shown small (≤240 px) for commentary in a non-commercial history. Each comes from its Wikipedia article's page image.\n\n${lines.join('\n')}\n`);
 console.log(`Wrote ${lines.length} images`);

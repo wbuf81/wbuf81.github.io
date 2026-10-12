@@ -5,7 +5,8 @@ import Link from 'next/link';
 import type { PopItem, Week } from '@/lib/snes/types';
 import { gamesForWeek, weekIndexFor } from '@/lib/snes/weeks';
 import { toToday } from '@/lib/snes/money';
-import { gamePath } from '@/lib/snes/routes';
+import { gamePath, wikiUrl } from '@/lib/snes/routes';
+import { consoleAt, consoleLabel, type ConsoleOffer } from '@/lib/snes/prices';
 import { MONTHS, SHORT_MONTHS } from '@/lib/snes/display';
 import Paper from './Paper';
 import YearsStory, { type Milestone } from './YearsStory';
@@ -14,15 +15,16 @@ import YearsStory, { type Milestone } from './YearsStory';
 // screen; the VCR deck is a sibling of the screen (not a child), so scrubbing never re-mounts the slider. The week
 // lives in ?w= so a week can be shared; a plain URL stays plain until the visitor moves.
 export type TmGame = { slug: string; title: string; releasedUS: string; datePrecision: string; boxArt: string | null };
-export type TmPrices = { console: { usd: number; year: number }; games: Record<string, { usd: number; year: number }> };
+export type TmPrices = { consoles: ConsoleOffer[]; games: Record<string, { usd: number; year: number }> };
 
 const DATE = /^\d{4}-\d{2}(-\d{2})?$/;
 const MONTH_CAP = 12;
-const wiki = (article: string | null) => (article ? `https://en.wikipedia.org/wiki/${encodeURIComponent(article.replace(/ /g, '_'))}` : undefined);
 const led = (iso: string) => { const [y, m, d] = iso.split('-'); return `${SHORT_MONTHS[Number(m) - 1].toUpperCase()}·${d}·${y}`; };
 const money = (n: number) => `$${n.toFixed(2)}`;
+// Buttons don't count: after clicking ◀◀/▶▶/⏏ or a milestone chip, focus sits on the button and the arrows must still step.
 const isTyping = (t: EventTarget | null) =>
-  t instanceof HTMLElement && (t.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT', 'BUTTON'].includes(t.tagName));
+  t instanceof HTMLElement && (t.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(t.tagName));
+const reducedMotion = () => typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 function Card({ label, item, sub, poster = false }: { label: string; item: PopItem; sub: string | null; poster?: boolean }) {
   const body = (
@@ -35,7 +37,7 @@ function Card({ label, item, sub, poster = false }: { label: string; item: PopIt
       {sub ? <span className="s-tm-by">{sub}</span> : null}
     </>
   );
-  const href = wiki(item.article);
+  const href = item.article ? wikiUrl(item.article) : undefined;
   return href
     ? <a className="s-tm-card" href={href} target="_blank" rel="noopener noreferrer">{body}</a>
     : <div className="s-tm-card">{body}</div>;
@@ -67,6 +69,7 @@ function Screen({ weeks, i, games, bySlug, prices }: { weeks: Week[]; i: number;
     .sort((a, b) => Math.abs(at(a.releasedUS) - at(week.start)) - Math.abs(at(b.releasedUS) - at(week.start)))[0];
   const np = near ? prices.games[near.slug] : null;
   const monthName = MONTHS[Number(week.start.slice(5, 7)) - 1];
+  const hw = consoleAt(prices.consoles, week.start);
   return (
     <>
       <div className="s-tm-top" aria-live="polite">
@@ -82,7 +85,7 @@ function Screen({ weeks, i, games, bySlug, prices }: { weeks: Week[]; i: number;
         <Card label="#1 movie" item={week.film} sub={week.film.gross ? `${week.film.gross} weekend` : null} poster />
         <div className="s-tm-card s-tm-price">
           <span className="s-tm-k">Price check</span>
-          <p>💵 A Super NES: {money(prices.console.usd)} · about ${toToday(prices.console.usd, prices.console.year)} in today&rsquo;s money</p>
+          <p>💵 {consoleLabel(hw)} · about ${toToday(hw.usd, hw.year)} today</p>
           {gp && priced ? (
             <p>🎮 {bySlug.get(priced)!.title}: {money(gp.usd)} in a {gp.year} catalog · about ${toToday(gp.usd, gp.year)} today</p>
           ) : near && np ? (
@@ -175,7 +178,7 @@ export default function TimeMachine({ weeks, games, milestones, prices }: { week
 
   const jump = useCallback((date: string) => {
     go(weekIndexFor(weeks, date));
-    screenRef.current?.scrollIntoView?.({ behavior: 'smooth', block: 'start' });
+    screenRef.current?.scrollIntoView?.({ behavior: reducedMotion() ? 'auto' : 'smooth', block: 'start' });
   }, [go, weeks]);
 
   return (

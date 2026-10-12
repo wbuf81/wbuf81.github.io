@@ -27,3 +27,18 @@ it('helpers expose the launch console and per-game prices', () => {
   expect(gamePrice(p, 'star-fox')?.usd).toBe(59.99);
   expect(gamePrice(p, 'not-a-game')).toBeNull();
 });
+describe('the console price for a week', () => {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const { CONSOLE_ITEMS, consoleOffers, consoleAt } = require('@/lib/snes/prices');
+  const offers = consoleOffers(getPrices());
+  it('counts only complete console packages, never accessories', () => {
+    expect(CONSOLE_ITEMS).toEqual(['Super NES Control Set', 'Super NES with Mario (Super Set)']);
+    expect(offers.map((o: { item: string }) => o.item)).not.toEqual(expect.arrayContaining(['Super Scope 6']));
+    expect(offers.every((o: { item: string }) => CONSOLE_ITEMS.includes(o.item))).toBe(true);
+  });
+  it('picks the latest console entry dated on or before the week', () => {
+    expect(consoleAt(offers, '1991-08-23')).toMatchObject({ usd: 199.99, year: 1991, kind: 'launch' });
+    expect(consoleAt(offers, '1993-05-07')).toMatchObject({ item: 'Super NES with Mario (Super Set)', usd: 139.99, year: 1993, kind: 'catalog' });
+    expect(consoleAt(offers, '1995-06-02')).toMatchObject({ item: 'Super NES Control Set', usd: 99.99, year: 1993, kind: 'catalog' });
+  });
+});

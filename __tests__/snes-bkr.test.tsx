@@ -37,3 +37,8 @@ it('a year-only game says "Sometime in 1995" on the sticker', () => {
   expect(screen.getByText('Sometime in 1995')).toBeInTheDocument();
   expect(screen.queryByText('1995')).toBeNull();
 });
+it('encodes Wikipedia links (? and +)', () => {
+  const w: Week = { ...week, film: { title: 'Romeo + Juliet', by: null, article: 'Romeo + Juliet', art: null, gross: null } };
+  render(<BeKindRewind week={w} weekNumber={1} label="week" monthName="November 1996" price={{ usd: 199.99, year: 1991, what: 'console' }} />);
+  expect(screen.getByRole('link', { name: /Romeo \+ Juliet/ })).toHaveAttribute('href', 'https://en.wikipedia.org/wiki/Romeo_%2B_Juliet');
+});

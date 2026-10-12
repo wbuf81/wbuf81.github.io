@@ -43,7 +43,7 @@ export function Nav({ theme = false }: { theme?: boolean }) {
               </a>
             ) : (
               // a page of its own, not a home-page section: a plain link, current while anywhere under it
-              <Link key={link.label} href={link.href} aria-current={pathname.startsWith(link.href) ? 'page' : undefined}>
+              <Link key={link.label} href={link.href} aria-current={pathname === link.href || pathname.startsWith(`${link.href}/`) ? 'page' : undefined}>
                 {link.label}
               </Link>
             ),

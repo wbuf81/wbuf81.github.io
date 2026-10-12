@@ -11,3 +11,11 @@ test('links into the Time Machine at a week', async () => {
   expect(TIME_MACHINE).toBe('/videogames/snes-history/time-machine');
   expect(timeMachinePath('1991-08-23')).toBe('/videogames/snes-history/time-machine?w=1991-08-23');
 });
+
+test('wikiUrl makes a valid Wikipedia path from an article title', async () => {
+  const { wikiUrl } = await import('../lib/snes/routes');
+  expect(wikiUrl('Have You Ever Really Loved a Woman?')).toBe('https://en.wikipedia.org/wiki/Have_You_Ever_Really_Loved_a_Woman%3F');
+  expect(wikiUrl('Romeo + Juliet')).toBe('https://en.wikipedia.org/wiki/Romeo_%2B_Juliet');
+  expect(wikiUrl('(Everything I Do) I Do It for You')).toBe('https://en.wikipedia.org/wiki/(Everything_I_Do)_I_Do_It_for_You');
+  expect(wikiUrl('A#B&C%D/E')).toBe('https://en.wikipedia.org/wiki/A%23B%26C%25D%2FE');
+});
