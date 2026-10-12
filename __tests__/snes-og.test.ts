@@ -54,3 +54,22 @@ describe.each([
     expect(meta.robots).toEqual({ index: false, follow: false });
   });
 });
+
+describe.each([
+  ['a game page', '@/app/videogames/snes-history/[slug]/page', 'f-zero', '/videogames/snes-history/f-zero', /F-Zero/],
+  ['a company page', '@/app/videogames/snes-history/company/[slug]/page', 'nintendo', '/videogames/snes-history/company/nintendo', /Nintendo/],
+])('%s metadata', (_name, mod, slug, url, title) => {
+  it('has its own share card (not the homepage one) and stays noindex', async () => {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { generateMetadata } = require(mod);
+    const meta = await generateMetadata({ params: Promise.resolve({ slug }) });
+    const og = meta.openGraph as { title: string; description: string; url: string; images: { url: string; width: number; height: number; alt: string }[] };
+    expect(og.title).toMatch(title);
+    expect(og.description.length).toBeGreaterThan(10);
+    expect(og.url).toBe(url);
+    expect(og.images[0]).toMatchObject({ url: '/og-snes.jpg', width: 1200, height: 630 });
+    expect(og.images[0].alt.length).toBeGreaterThan(5);
+    expect(meta.twitter).toMatchObject({ card: 'summary_large_image', title: og.title, images: ['/og-snes.jpg'] });
+    expect(meta.robots).toEqual({ index: false, follow: false });
+  });
+});

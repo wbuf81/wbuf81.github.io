@@ -5,6 +5,8 @@ import { getGames, getWeeks } from '@/lib/snes/data';
 import { slimWeeks } from '@/lib/snes/onThisDay';
 import { SNES_BASE, TIME_MACHINE } from '@/lib/snes/routes';
 import OnThisDay from '../snes/components/OnThisDay';
+import SnesCredit from '../snes/components/SnesCredit';
+import { vt323 } from '../snes/fonts';
 import '../snes/snes.css';
 
 export const metadata: Metadata = {
@@ -25,7 +27,7 @@ export default function VideoGamesPage() {
   return (
     <>
       <Nav theme />
-      <main className="wb wb-page">
+      <main className={`wb wb-page ${vt323.variable}`}>
         <div className="s-wrap">
           <header className="s-hero">
             <div className="eyebrow">Video games</div>
@@ -51,6 +53,7 @@ export default function VideoGamesPage() {
               <span className="s-hub-p">Played, beaten, rated — my run through the library on an Analogue Pocket.</span>
             </div>
           </div>
+          <SnesCredit pop />
         </div>
       </main>
       <Footer />

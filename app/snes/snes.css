@@ -333,7 +333,7 @@
 .wb .s-tm-scrub input[type="range"] { display: block; width: 100%; height: 38px; margin: 0; accent-color: var(--snes-glow); }
 .wb .s-tm-ticks { position: relative; height: 16px; margin: 0 8px; font: 400 14px/16px var(--font-vt323), ui-monospace, Menlo, monospace; color: var(--screen-ink-2); }
 .wb .s-tm-ticks span { position: absolute; top: 0; transform: translateX(-50%); }
-.wb .s-tm-credit { margin: 14px 0 0; max-width: 90ch; font: 400 12px/1.5 var(--sans); color: var(--ink-3); }
+.wb .s-credit { margin: 28px 0 0; max-width: 90ch; font: 400 12px/1.5 var(--sans); color: var(--ink-2); }
 @media (max-width: 760px) {
   .wb .s-tm-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .wb .s-tm-deck { position: sticky; bottom: env(safe-area-inset-bottom); grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px 8px; padding: 6px 10px 10px; }

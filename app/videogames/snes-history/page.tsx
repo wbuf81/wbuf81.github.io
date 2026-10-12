@@ -6,6 +6,7 @@ import { buildIndex, facets } from '@/lib/snes/library';
 import Link from 'next/link';
 import { TIME_MACHINE } from '@/lib/snes/routes';
 import Library from '../../snes/components/Library';
+import SnesCredit from '../../snes/components/SnesCredit';
 import '../../snes/snes.css';
 
 const TITLE = 'Every US SNES game';
@@ -21,7 +22,7 @@ export const metadata: Metadata = {
     images: [{ url: '/og-snes.jpg', width: 1200, height: 630, alt: 'Every US SNES game, 1991–1998: a wall of box art beside the title' }],
   },
   twitter: { card: 'summary_large_image', title: TITLE, description: DESCRIPTION, images: ['/og-snes.jpg'] },
-  // Unlinked and kept out of search until Wes's played-games layer (piece 3) ships.
+  // Linked from the header and the homepage, but kept out of search (noindex, no sitemap entry).
   robots: { index: false, follow: false },
 };
 
@@ -45,6 +46,7 @@ export default function SnesPage() {
             </p>
           </header>
           <Library games={index} names={names} facets={facets(index, names)} />
+          <SnesCredit />
         </div>
       </main>
       <Footer />

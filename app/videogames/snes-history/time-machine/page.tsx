@@ -3,9 +3,9 @@ import Link from 'next/link';
 import { Nav } from '../../../components/Nav';
 import Footer from '../../../components/Footer';
 import { getGames, getPrices, getWeeks } from '@/lib/snes/data';
-import { NOW_YEAR } from '@/lib/snes/money';
 import { SNES_BASE } from '@/lib/snes/routes';
 import TimeMachineData from '../../../snes/components/TimeMachineData';
+import SnesCredit from '../../../snes/components/SnesCredit';
 import { buildTimeMachineProps } from '@/lib/snes/tmProps';
 import { fraktur, vt323 } from '../../../snes/fonts';
 import '../../../snes/snes.css';
@@ -36,7 +36,7 @@ export default function TimeMachinePage() {
             <p>Every week from launch day, August 23, 1991, to the last cart in 1998: the #1 song, album and movie, what was in the news, and what was new on the shelf.</p>
           </header>
           <TimeMachineData {...props} />
-          <p className="s-tm-credit">Charts: Billboard Hot 100 and Billboard 200 by issue week. Movies: weekend US box office (Box Office Mojo, via Wikipedia). News: Wikipedia, “YEAR in the United States”. Covers and posters: each item’s Wikipedia article, shown small. Prices in today’s money use the US CPI-U ({NOW_YEAR} dollars).</p>
+          <SnesCredit pop cpi />
         </div>
       </main>
       <Footer />

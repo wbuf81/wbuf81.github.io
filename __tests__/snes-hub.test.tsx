@@ -29,3 +29,11 @@ test('the Time Machine card links in', () => {
   expect(screen.getByRole('link', { name: /SNES Time Machine/ })).toHaveAttribute('href', '/videogames/snes-history/time-machine');
   expect(screen.getByText('Every week, 1991–1998: the #1 song, album and movie, the news, and the new games')).toBeInTheDocument();
 });
+
+test('the hub attaches the VT323 font variable for the on-this-day LED', () => {
+  render(<VideoGamesPage />);
+  // next/jest mocks next/font: the class names are stubbed, so check the hub's <main> carries the font's class.
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const { vt323 } = require('@/app/snes/fonts');
+  expect(screen.getByRole('main').className).toContain(vt323.variable);
+});

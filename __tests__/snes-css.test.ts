@@ -42,3 +42,12 @@ test('on touch the scatter dots never lift into a stacking context, so enlarged 
 test('the coming-soon hub card has no link glow', () => {
   expect(css).toMatch(/\.s-hub-soon:hover[^{]*\{[^}]*box-shadow: none/);
 });
+
+test('the data credit is readable: at least 11px, in a body-text token that passes 4.5:1 in both themes', () => {
+  const rule = css.match(/\.wb \.s-credit\s*\{([^}]*)\}/);
+  expect(rule).not.toBeNull();
+  const size = Number(rule![1].match(/(\d+(?:\.\d+)?)px/)![1]);
+  expect(size).toBeGreaterThanOrEqual(11);
+  expect(rule![1]).toMatch(/color: var\(--ink-2\)/);
+  expect(css).not.toMatch(/\.s-tm-credit/);
+});

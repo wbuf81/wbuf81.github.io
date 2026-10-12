@@ -11,6 +11,8 @@ import { consolePrice, gamePrice } from '@/lib/snes/prices';
 import { webpSize } from '@/lib/snes/webpSize';
 import { fraktur, vt323 } from '../../../snes/fonts';
 import GameView from '../../../snes/components/GameView';
+import SnesCredit from '../../../snes/components/SnesCredit';
+import { gamePath } from '@/lib/snes/routes';
 import '../../../snes/snes.css';
 
 type Params = { params: Promise<{ slug: string }> };
@@ -22,7 +24,17 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const game = getGame((await params).slug);
-  return { title: game ? `${game.title} · SNES` : 'SNES', robots: { index: false, follow: false } };
+  if (!game) return { title: 'SNES', robots: { index: false, follow: false } };
+  const title = `${game.title} · SNES`;
+  const description = `${game.title} on the Super Nintendo, released in America ${formatRelease(game.releasedUS, game.datePrecision)}.`;
+  return {
+    title,
+    description,
+    // Its own card, so a shared game link doesn't preview as the homepage.
+    openGraph: { title, description, url: gamePath(game.slug), images: [{ url: '/og-snes.jpg', width: 1200, height: 630, alt: 'Every US SNES game, 1991–1998: a wall of box art beside the title' }] },
+    twitter: { card: 'summary_large_image', title, description, images: ['/og-snes.jpg'] },
+    robots: { index: false, follow: false },
+  };
 }
 
 export default async function GamePage({ params }: Params) {
@@ -57,6 +69,7 @@ export default async function GamePage({ params }: Params) {
       <main className={`wb wb-page ${vt323.variable} ${fraktur.variable}`}>
         <div className="s-wrap">
           <GameView game={game} names={getCompanyNames()} prev={prev} next={next} sameMonth={sameMonth} seriesGames={seriesGames} similarGames={similarGames} rewind={rewind} logoSize={logoSize} />
+          <SnesCredit pop cpi />
         </div>
       </main>
       <Footer />
