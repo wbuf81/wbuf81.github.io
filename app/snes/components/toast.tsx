@@ -1,10 +1,11 @@
 'use client';
 
-import { useCallback } from 'react';
-
 // One always-mounted polite live region per page, appended to <body> once. Each toast swaps its text.
 let region: HTMLElement | null = null;
 let timer: ReturnType<typeof setTimeout> | null = null;
+let again: ReturnType<typeof setTimeout> | null = null;
+// A screen reader ignores a live region whose text didn't change, so a repeat is cleared and set again this much later.
+const REPEAT_GAP = 50;
 
 /** Creates the shared live region if it is missing (so it exists before the first toast is announced). */
 export function ensureToastRegion(): HTMLElement | null {
@@ -22,11 +23,15 @@ export function ensureToastRegion(): HTMLElement | null {
 export function showToast(msg: string): void {
   const r = ensureToastRegion();
   if (!r) return;
-  r.firstElementChild!.textContent = msg;
+  const span = r.firstElementChild!;
   if (timer) clearTimeout(timer);
-  timer = setTimeout(() => { r.firstElementChild!.textContent = ''; }, 2400);
-}
-
-export function useToast(): { show: (msg: string) => void } {
-  return { show: useCallback(showToast, []) };
+  if (again) { clearTimeout(again); again = null; }
+  const hide = () => { timer = setTimeout(() => { span.textContent = ''; }, 2400); };
+  if (span.textContent === msg) {
+    span.textContent = '';
+    again = setTimeout(() => { again = null; span.textContent = msg; hide(); }, REPEAT_GAP);
+    return;
+  }
+  span.textContent = msg;
+  hide();
 }

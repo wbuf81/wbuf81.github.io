@@ -3,12 +3,14 @@
 import { memo, useEffect, useMemo, useRef, useState } from 'react';
 import { Cover } from './Cover';
 import { FIRST_YEAR, GENRE_FAMILIES, LAST_YEAR, genreFamily, type GenreFamily } from '@/lib/snes/library';
-import type { Top8Game } from '@/lib/snes/top8';
+import { compareReleased, norm, type Top8Game } from '@/lib/snes/top8';
 
 // "Browse all games" on the Top 8 page: year, genre and sort controls over a cover grid that also follows the
 // page's search text. Tapping a cover toggles it in the Top 8. Covers render 60 at a time as the visitor scrolls.
 
 export const PAGE = 60;
+// The count's spoken announcement waits this long after the last change, so typing isn't read out letter by letter.
+const ANNOUNCE_AFTER = 600;
 const YEARS = Array.from({ length: LAST_YEAR - FIRST_YEAR + 1 }, (_, i) => String(FIRST_YEAR + i));
 type Sort = 'top' | 'az' | 'date';
 const SORTS: { key: Sort; label: string }[] = [
@@ -17,8 +19,6 @@ const SORTS: { key: Sort; label: string }[] = [
   { key: 'date', label: 'Release date' },
 ];
 const thumb = (slug: string) => `/snes/thumb/${slug}.jpg`;
-/** Lower case, accents and punctuation dropped: the same matching as the page's search box. */
-export const norm = (s: string) => s.toLowerCase().normalize('NFKD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, ' ').trim();
 const byTitle = (a: Top8Game, b: Top8Game) => a.title.localeCompare(b.title, 'en', { sensitivity: 'base' });
 
 type Props = {
@@ -26,15 +26,17 @@ type Props = {
   /** The page's search text. */
   query: string;
   picked: (string | null)[];
+  /** The game waiting in replace mode, if any (its cover is marked). */
+  pending: string | null;
   onToggle: (slug: string) => void;
 };
 
 type Row = { g: Top8Game; n: string; fam: GenreFamily; i: number };
 
-const Tile = memo(function Tile({ g, picked, onToggle }: { g: Top8Game; picked: boolean; onToggle: (slug: string) => void }) {
+const Tile = memo(function Tile({ g, picked, pending, onToggle }: { g: Top8Game; picked: boolean; pending: boolean; onToggle: (slug: string) => void }) {
   return (
     <li>
-      <button type="button" className={`s-t8-tile${picked ? ' is-picked' : ''}`} aria-pressed={picked} onClick={() => onToggle(g.slug)}>
+      <button type="button" className={`s-t8-tile${picked ? ' is-picked' : ''}${pending ? ' is-pending' : ''}`} aria-pressed={picked} onClick={() => onToggle(g.slug)}>
         <span className="s-t8-tc">
           <Cover src={thumb(g.slug)} title={g.title} width={96} height={67} noArt={g.noArt} />
           {picked ? <span className="s-t8-badge" aria-hidden="true">★</span> : null}
@@ -45,7 +47,7 @@ const Tile = memo(function Tile({ g, picked, onToggle }: { g: Top8Game; picked: 
   );
 });
 
-export default function Top8Browse({ games, query, picked, onToggle }: Props) {
+export default function Top8Browse({ games, query, picked, pending, onToggle }: Props) {
   const [year, setYear] = useState<string | null>(null);
   const [family, setFamily] = useState<GenreFamily | null>(null);
   const [sort, setSort] = useState<Sort>('top');
@@ -53,9 +55,9 @@ export default function Top8Browse({ games, query, picked, onToggle }: Props) {
 
   const rows = useMemo<Row[]>(() => games.map((g, i) => ({ g, n: norm(g.title), fam: genreFamily(g.genres), i })), [games]);
   const sorted = useMemo(() => {
-    if (sort === 'date') return rows; // the index is already in release order
     const out = rows.slice();
-    if (sort === 'az') out.sort((a, b) => byTitle(a.g, b.g) || a.i - b.i);
+    if (sort === 'date') out.sort((a, b) => compareReleased(a.g.released, b.g.released) || a.i - b.i);
+    else if (sort === 'az') out.sort((a, b) => byTitle(a.g, b.g) || a.i - b.i);
     else out.sort((a, b) => (b.g.score ?? -1) - (a.g.score ?? -1) || byTitle(a.g, b.g) || a.i - b.i);
     return out;
   }, [rows, sort]);
@@ -75,6 +77,13 @@ export default function Top8Browse({ games, query, picked, onToggle }: Props) {
   const pickedSet = useMemo(() => new Set(picked.filter((s): s is string => !!s)), [picked]);
   const more = matches.length > shown;
 
+  const countText = `Showing ${matches.length} of ${games.length}`;
+  const [spoken, setSpoken] = useState(countText);
+  useEffect(() => {
+    const t = setTimeout(() => setSpoken(countText), ANNOUNCE_AFTER);
+    return () => clearTimeout(t);
+  }, [countText]);
+
   const sentinel = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const el = sentinel.current;
@@ -90,8 +99,9 @@ export default function Top8Browse({ games, query, picked, onToggle }: Props) {
     <section className="s-t8-box" aria-labelledby="t8-browse">
       <div className="s-t8-bh">
         <h2 id="t8-browse">Browse all games</h2>
-        <span aria-live="polite">Showing {matches.length} of {games.length}</span>
+        <span>{countText}</span>
       </div>
+      <span className="vh" aria-live="polite">{spoken}</span>
       <div className="s-t8-bb">
         <div className="s-t8-tabs" role="group" aria-label="Year">
           <button type="button" className="s-t8-chip" aria-pressed={year === null} onClick={() => setYear(null)}>All</button>
@@ -113,7 +123,7 @@ export default function Top8Browse({ games, query, picked, onToggle }: Props) {
         </div>
         {matches.length ? (
           <ul className="s-t8-grid">
-            {matches.slice(0, shown).map(({ g }) => <Tile key={g.slug} g={g} picked={pickedSet.has(g.slug)} onToggle={onToggle} />)}
+            {matches.slice(0, shown).map(({ g }) => <Tile key={g.slug} g={g} picked={pickedSet.has(g.slug)} pending={pending === g.slug} onToggle={onToggle} />)}
           </ul>
         ) : <p className="s-t8-note">No games match.</p>}
         {more ? (

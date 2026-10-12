@@ -1,8 +1,8 @@
 'use client';
 
-import { createContext, memo, useContext, useEffect, useLayoutEffect, useRef, useState, useSyncExternalStore, type CSSProperties, type ReactNode } from 'react';
+import { createContext, memo, useCallback, useContext, useEffect, useLayoutEffect, useRef, useState, useSyncExternalStore, type CSSProperties, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
-import { addPick, isPicked, removePick, replacePick, type Top8State } from '../../../lib/snes/top8.ts';
+import { addPick, fromSlug, isPicked, removePick, replacePick, type Top8State } from '../../../lib/snes/top8.ts';
 import { useInTop8Provider, useTop8Hub } from '../top8/store';
 import { ensureToastRegion, showToast } from './toast';
 import { Cover } from './Cover';
@@ -21,10 +21,10 @@ type Props = {
 export const knownOnly = (s: Top8State, names: Record<string, string> | undefined): Top8State =>
   !names || isEmpty(names) || s.slots.every((x) => !x || Object.hasOwn(names, x)) ? s : { ...s, slots: s.slots.map((x) => (x && Object.hasOwn(names, x) ? x : null)) };
 const isEmpty = (o: object) => { for (const k in o) if (Object.hasOwn(o, k)) return false; return true; };
+const FOCUSABLE = 'a[href], button, input, select, textarea, summary, [tabindex]:not([tabindex="-1"])';
 // The popover closes on a scroll or resize only once the star has moved this far (px).
 const MOVED = 4;
 
-const fromSlug = (slug: string) => slug.split('-').filter(Boolean).map((w) => w[0].toUpperCase() + w.slice(1)).join(' ');
 
 // Slug → title for the replace popover's labels, shared by every star under one provider (a page passes it once).
 const TitlesContext = createContext<Record<string, string> | undefined>(undefined);
@@ -60,14 +60,26 @@ export const Top8Star = memo(function Top8Star({ slug, title, variant, onToast, 
   // A provider sets up the shared toast region once for its whole page; a star on its own does it itself.
   useEffect(() => { if (mounted && !onToast && !inProvider) ensureToastRegion(); }, [mounted, onToast, inProvider]);
 
+  /** Every way the popover closes. 'auto' puts focus back on the star only when it was in the popover or lost to
+   * <body>, so moving to another control keeps that control's focus. */
+  const close = useCallback((restore: boolean | 'auto') => {
+    const a = document.activeElement;
+    const back = restore === true || (restore === 'auto' && (!a || a === document.body || !!pop.current?.contains(a)));
+    setOpen(false);
+    if (back) btn.current?.focus({ preventScroll: true });
+  }, []);
+
   useEffect(() => {
     if (!open) return;
-    const close = () => { setOpen(false); btn.current?.focus(); };
-    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') close(); };
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') close(true); };
     const onDown = (e: Event) => {
       const t = e.target as Node;
       if (pop.current?.contains(t) || btn.current?.contains(t)) return;
-      setOpen(false);
+      // Pressing another control: it takes focus. Pressing plain page: focus comes back to the star, again after
+      // the browser's own mousedown has blurred to <body>.
+      if (t instanceof Element && t.closest(FOCUSABLE)) { close(false); return; }
+      close('auto');
+      setTimeout(() => { if (document.activeElement === document.body) btn.current?.focus({ preventScroll: true }); }, 0);
     };
     // A scroll or resize closes it only when the star itself has moved (focusing the popover, or a page's late
     // layout shift, can fire a scroll without moving anything). Scrolling the popover's own list never closes it.
@@ -78,12 +90,12 @@ export const Top8Star = memo(function Top8Star({ slug, title, variant, onToast, 
     };
     const shut = (e: Event) => {
       if (e.target instanceof Node && pop.current?.contains(e.target)) return;
-      if (moved()) setOpen(false);
+      if (moved()) close('auto');
     };
-    const onResize = () => { if (moved()) setOpen(false); };
+    const onResize = () => { if (moved()) close('auto'); };
     const onFocusOut = (e: FocusEvent) => {
       const to = e.relatedTarget as Node | null;
-      if (to && !pop.current?.contains(to) && !btn.current?.contains(to)) setOpen(false);
+      if (to && !pop.current?.contains(to) && !btn.current?.contains(to)) close(false);
     };
     const el = pop.current;
     document.addEventListener('keydown', onKey);
@@ -98,7 +110,7 @@ export const Top8Star = memo(function Top8Star({ slug, title, variant, onToast, 
       window.removeEventListener('resize', onResize);
       el?.removeEventListener('focusout', onFocusOut);
     };
-  }, [open]);
+  }, [open, close]);
 
   // Keep the popover inside the viewport: fixed at the star, nudged back on screen.
   useLayoutEffect(() => {
@@ -129,12 +141,16 @@ export const Top8Star = memo(function Top8Star({ slug, title, variant, onToast, 
       return;
     }
     if (full) { setOpen((o) => !o); return; }
+    // "Full" is decided again from the fresh state: another tab may have filled the list since this rendered.
     let count = 0;
+    let nowFull = false;
     update((s) => {
-      const next = addPick(knownOnly(s, names), slug).state;
-      count = next.slots.filter(Boolean).length;
-      return next;
+      const r = addPick(knownOnly(s, names), slug);
+      if (r.full) { nowFull = true; return s; }
+      count = r.state.slots.filter(Boolean).length;
+      return r.state;
     });
+    if (nowFull) { setOpen(true); return; }
     say(`Added to your Top 8 · ${count}/8`);
   };
 
@@ -142,16 +158,18 @@ export const Top8Star = memo(function Top8Star({ slug, title, variant, onToast, 
     const old = state.slots[i] as string;
     update((s) => replacePick(knownOnly(s, names), i, slug));
     say(`Replaced ${nameOf(old)} with ${title}`);
-    setOpen(false);
-    btn.current?.focus();
+    close(true);
   };
 
-  const label = picked ? `Remove ${title} from your Top 8` : `Add ${title} to your Top 8`;
+  // The tile star is an icon, so it carries the game's name; the page button's visible words are its whole name.
+  const label = variant === 'page' ? undefined : picked ? `Remove ${title} from your Top 8` : `Add ${title} to your Top 8`;
   return (
     <span className={`s-star s-star-${variant}${picked ? ' is-on' : ''}`}>
       <button ref={btn} type="button" className="s-star-btn" aria-pressed={picked} aria-label={label}
         aria-haspopup={!picked && full ? 'dialog' : undefined} aria-expanded={open || undefined} onClick={click}>
-        {variant === 'page' ? (picked ? '★ In your Top 8' : '☆ Add to my Top 8') : <span aria-hidden="true">{picked ? '★' : '☆'}</span>}
+        {variant === 'page'
+          ? <><span aria-hidden="true">{picked ? '★' : '☆'}</span> {picked ? 'Remove from your Top 8' : 'Add to your Top 8'}</>
+          : <span aria-hidden="true">{picked ? '★' : '☆'}</span>}
       </button>
       {open && createPortal(
         // React bubbles portal events through the React tree: stop clicks and keys here so a tile's own handlers (tap
@@ -160,7 +178,14 @@ export const Top8Star = memo(function Top8Star({ slug, title, variant, onToast, 
           onClick={(e) => e.stopPropagation()}
           onKeyDown={(e) => {
             e.stopPropagation();
-            if (e.key === 'Escape') { setOpen(false); btn.current?.focus(); }
+            if (e.key === 'Escape') { close(true); return; }
+            if (e.key === 'Tab') {
+              // Tabbing off either end leaves the popover: close it and go back to the star.
+              const all = pop.current?.querySelectorAll<HTMLButtonElement>('button');
+              if (!all?.length) return;
+              const edge = e.shiftKey ? all[0] : all[all.length - 1];
+              if (document.activeElement === edge) { e.preventDefault(); close(true); }
+            }
           }}>
           <p className="s-star-pop-t" aria-hidden="true">Top 8 is full. Replace which?</p>
           <div className="s-star-pop-grid">

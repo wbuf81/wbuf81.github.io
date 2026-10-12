@@ -222,7 +222,8 @@ describe('Top 8 in the library', () => {
     picks('super-metroid');
     setup();
     openFilters();
-    const toggle = screen.getByRole('button', { name: '★ In my Top 8' });
+    const toggle = screen.getByRole('button', { name: 'In my Top 8' });
+    expect(toggle.querySelector('[aria-hidden="true"]')).toHaveTextContent('★');
     expect(toggle).toHaveAttribute('aria-pressed', 'false');
     fireEvent.click(toggle);
     expect(toggle).toHaveAttribute('aria-pressed', 'true');

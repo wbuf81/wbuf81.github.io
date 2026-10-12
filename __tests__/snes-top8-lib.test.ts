@@ -1,6 +1,6 @@
-import { EMPTY_STATE, STARTERS, addPick, cleanName, isPicked, removePick, replacePick, parseQuery, recommend, toQuery, type Top8Game, type Top8State } from '@/lib/snes/top8';
+import { EMPTY_STATE, STARTERS, addPick, compareReleased, fromSlug, norm, cleanName, isPicked, removePick, replacePick, parseQuery, recommend, toQuery, type Top8Game, type Top8State } from '@/lib/snes/top8';
 
-const G = (slug: string, o: Partial<Top8Game> = {}): Top8Game => ({ slug, title: slug.toUpperCase(), year: '1993', genres: [], series: null, similar: [], score: 7, ...o });
+const G = (slug: string, o: Partial<Top8Game> = {}): Top8Game => ({ slug, title: slug.toUpperCase(), year: '1993', released: '1993-06-01', genres: [], series: null, similar: [], score: 7, ...o });
 const games = [
   G('metroid', { genres: ['Platform', 'Adventure'], similar: ['castlevania', 'megaman'], score: 9.5 }),
   G('castlevania', { genres: ['Platform'], score: 8.5 }),
@@ -139,3 +139,18 @@ describe('pick helpers', () => {
     expect(JSON.stringify(s)).toBe(copy);
   });
 });
+
+describe('small helpers', () => {
+  it('compareReleased orders by date, with month-only and year-only dates after the dated ones', () => {
+    const dates = ['1994-03', '1993', '1994-03-15', '1991-08-23', '1994-04-01', '1993-12-31'];
+    expect(dates.slice().sort(compareReleased)).toEqual(['1991-08-23', '1993-12-31', '1993', '1994-03-15', '1994-03', '1994-04-01']);
+    expect(compareReleased('1994-03-15', '1994-03-15')).toBe(0);
+  });
+  it('norm drops case, accents and punctuation', () => {
+    expect(norm('  Pokémon: STREET-Fighter II!! ')).toBe('pokemon street fighter ii');
+  });
+  it('fromSlug title-cases a slug', () => {
+    expect(fromSlug('super-metroid')).toBe('Super Metroid');
+  });
+});
+

@@ -503,6 +503,7 @@
 @media (hover: hover) { .wb .s-t8-tile:hover { background: var(--t8-my-soft); } }
 .wb .s-t8-tile:focus-visible { outline: 3px solid var(--snes-glow); outline-offset: 1px; }
 .wb .s-t8-tile.is-picked { border-color: var(--t8-hot); background: var(--t8-my-soft); }
+.wb .s-t8-tile.is-pending { border-color: var(--t8-hot); border-style: dashed; outline: 2px solid var(--t8-hot); outline-offset: 1px; }
 .wb .s-t8-tc { position: relative; display: block; }
 .wb .s-t8-tc img { display: block; width: 96px; height: 67px; object-fit: cover; border-radius: 2px; }
 .wb .s-t8-badge { position: absolute; right: -6px; top: -6px; display: grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: var(--t8-hot); color: var(--t8-hot-ink); font: 700 13px/1 var(--sans); }
@@ -523,7 +524,6 @@
 .wb .s-t8-confirm { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 8px; color: var(--ink); font-weight: 600; }
 .wb .s-t8-fallback { margin-top: 12px; }
 .wb .s-t8-toast { position: fixed; left: 50%; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); z-index: 50; transform: translateX(-50%); pointer-events: none; }
-.wb .s-t8-toast span { display: block; padding: 10px 14px; border-radius: 8px; background: var(--ink); color: var(--bg); font-weight: 600; }
 
 /* Top 8 star: a corner button on tiles (sibling of the link), a labelled button on game pages */
 .wb .s-star { display: inline-block; }
@@ -544,7 +544,7 @@
 .wb.s-star-pop .s-star-pick:hover { border-color: var(--t8-hot); box-shadow: 0 0 0 2px var(--t8-hot); }
 .wb.s-star-pop .s-star-pick:focus-visible { outline: 2px solid var(--snes-glow); outline-offset: 2px; }
 .wb.s-live { position: fixed; left: 50%; bottom: calc(20px + var(--t8-tray-h, env(safe-area-inset-bottom, 0px))); z-index: 70; transform: translateX(-50%); pointer-events: none; font-family: var(--sans); }
-.wb.s-live span { display: block; padding: 10px 14px; border-radius: 8px; background: var(--ink); color: var(--bg); font-weight: 600; }
+.wb .s-t8-toast span, .wb.s-live span { display: block; padding: 10px 14px; border-radius: 8px; background: var(--ink); color: var(--bg); font-weight: 600; }
 .wb.s-live span:empty { display: none; }
 @media (hover: none) {
   .wb .s-star-tile { opacity: 1; pointer-events: auto; }
@@ -567,7 +567,7 @@
 @media (hover: none) {
   .wb .s-wall-cell > .s-star-tile, .wb .s-spine-w > .s-star-tile { display: none; }
 }
-.wb .s-btitle-star { margin: 0 0 12px; }
+.wb .s-btitle-star { min-height: 44px; margin: 0 0 12px; }
 
 /* Top 8 tray: fixed to the bottom of the library, game and company pages once something is picked. No motion. */
 .wb .s-tray { position: fixed; left: 0; right: 0; bottom: 0; z-index: 40; padding-bottom: env(safe-area-inset-bottom, 0px); border-top: 1px solid var(--rule); background: var(--paper); box-shadow: 0 -4px 16px rgba(0, 0, 0, .18); color: var(--ink); font-family: var(--sans); }

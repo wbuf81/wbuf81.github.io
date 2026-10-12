@@ -140,17 +140,19 @@ describe('Top 8 on a game page', () => {
   test('a labelled ★ button sits beside the title, and every strip tile has its own ★', () => {
     const { container } = render(<GameView game={bare} names={NAMES} prev={null} next={null} sameMonth={[gradius]} seriesGames={[]} similarGames={[gradius]} />);
     const title = screen.getByRole('heading', { level: 1, name: 'Bare Cart' });
-    const add = screen.getByRole('button', { name: 'Add Bare Cart to your Top 8' });
-    expect(add).toHaveTextContent('☆ Add to my Top 8');
+    const add = screen.getByRole('button', { name: 'Add to your Top 8' });
+    expect(add).toHaveTextContent('☆ Add to your Top 8');
+    expect(add).toHaveAttribute('aria-pressed', 'false');
     expect(title.parentElement).toContainElement(add);
     fireEvent.click(add);
-    expect(screen.getByRole('button', { name: 'Remove Bare Cart from your Top 8' })).toHaveTextContent('★ In your Top 8');
+    expect(screen.getByRole('button', { name: 'Remove from your Top 8' })).toHaveTextContent('★ Remove from your Top 8');
+    expect(screen.getByRole('button', { name: 'Remove from your Top 8' })).toHaveAttribute('aria-pressed', 'true');
     expect(screen.getAllByRole('button', { name: 'Add Gradius III to your Top 8' })).toHaveLength(2);
     expect(container.querySelector('a button')).toBeNull();
   });
   test('with a logo for a title the button follows the logo', () => {
     render(<GameView game={full} names={NAMES} prev={null} next={null} sameMonth={[]} seriesGames={[]} similarGames={[]} />);
-    const add = screen.getByRole('button', { name: 'Add F-Zero to your Top 8' });
+    const add = screen.getByRole('button', { name: 'Add to your Top 8' });
     expect(screen.getByRole('img', { name: 'F-Zero' }).compareDocumentPosition(add) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   });
 });

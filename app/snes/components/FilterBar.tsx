@@ -129,7 +129,7 @@ export default function FilterBar({ filters: f, facets, onChange, onClear, hasMu
             </div>
           </details>
           <button type="button" className="s-toggle" aria-pressed={f.launch} onClick={() => onChange({ launch: !f.launch })}>Launch day</button>
-          <button type="button" className="s-toggle" aria-pressed={f.mine} onClick={() => onChange({ mine: !f.mine })}>★ In my Top 8</button>
+          <button type="button" className="s-toggle" aria-pressed={f.mine} onClick={() => onChange({ mine: !f.mine })}><span aria-hidden="true">★</span> In my Top 8</button>
           <button type="button" className="s-clear" onClick={onClear}>Clear filters</button>
         </div>
       ) : null}

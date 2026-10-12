@@ -42,9 +42,11 @@ it('toggles with exact labels and aria-pressed', () => {
 
 it('page variant shows its text', () => {
   render(<Top8Star slug="x" title="X" variant="page" />);
-  expect(screen.getByRole('button')).toHaveTextContent('☆ Add to my Top 8');
+  expect(screen.getByRole('button', { name: 'Add to your Top 8' })).toHaveTextContent('☆ Add to your Top 8');
+  expect(screen.getByRole('button').querySelector('[aria-hidden="true"]')).toHaveTextContent('☆');
   fireEvent.click(screen.getByRole('button'));
-  expect(screen.getByRole('button')).toHaveTextContent('★ In your Top 8');
+  expect(screen.getByRole('button', { name: 'Remove from your Top 8' })).toHaveTextContent('★ Remove from your Top 8');
+  expect(screen.getByRole('button')).toHaveAttribute('aria-pressed', 'true');
 });
 
 it('has no popup hint while the list has room', () => {
@@ -267,4 +269,80 @@ describe('one store subscription per page', () => {
     expect([...renders].sort()).toEqual(['game-0', 'game-1', 'game-2']);
     expect(screen.getByRole('button', { name: 'Add game-1 to your Top 8' })).toHaveAttribute('aria-haspopup', 'dialog');
   });
+});
+
+describe('focus when the popover closes', () => {
+  beforeEach(() => writeTop8({ ...EMPTY_STATE, slots: full }));
+  const moveStar = (el: HTMLElement, top: number) => {
+    el.getBoundingClientRect = () => ({ x: 0, y: top, left: 0, top, width: 44, height: 44, right: 44, bottom: top + 44, toJSON() {} }) as DOMRect;
+  };
+
+  it('a scroll that moves the star closes it and puts focus back on the star', () => {
+    render(<Top8Star slug="new-game" title="New Game" variant="tile" titles={titles} />);
+    const star = screen.getByRole('button', { name: 'Add New Game to your Top 8' });
+    fireEvent.click(star);
+    expect(screen.getByRole('dialog')).toContainElement(document.activeElement as HTMLElement);
+    moveStar(star, 120);
+    fireEvent.scroll(window);
+    expect(screen.queryByRole('dialog')).toBeNull();
+    expect(star).toHaveFocus();
+  });
+
+  it('an outside pointerdown on another control does not pull focus to the star', () => {
+    render(<><button type="button">Other</button><Top8Star slug="new-game" title="New Game" variant="tile" titles={titles} /></>);
+    const star = screen.getByRole('button', { name: 'Add New Game to your Top 8' });
+    fireEvent.click(star);
+    const other = screen.getByRole('button', { name: 'Other' });
+    const focus = jest.spyOn(star, 'focus');
+    fireEvent.pointerDown(other);
+    other.focus(); // what the browser does next
+    expect(screen.queryByRole('dialog')).toBeNull();
+    expect(focus).not.toHaveBeenCalled();
+    expect(other).toHaveFocus();
+  });
+
+  it('an outside pointerdown on plain page returns focus to the star', () => {
+    render(<><p>outside</p><Top8Star slug="new-game" title="New Game" variant="tile" titles={titles} /></>);
+    const star = screen.getByRole('button', { name: 'Add New Game to your Top 8' });
+    fireEvent.click(star);
+    fireEvent.pointerDown(screen.getByText('outside'));
+    expect(screen.queryByRole('dialog')).toBeNull();
+    expect(star).toHaveFocus();
+  });
+
+  it('Tab past the last cover, or Shift+Tab before the first, closes it and refocuses the star', () => {
+    render(<Top8Star slug="new-game" title="New Game" variant="tile" titles={titles} />);
+    const star = screen.getByRole('button', { name: 'Add New Game to your Top 8' });
+    fireEvent.click(star);
+    const last = screen.getByRole('button', { name: 'Replace Game H' });
+    last.focus();
+    fireEvent.keyDown(last, { key: 'Tab' });
+    expect(screen.queryByRole('dialog')).toBeNull();
+    expect(star).toHaveFocus();
+    fireEvent.click(star);
+    const first = screen.getByRole('button', { name: 'Replace Game A' });
+    expect(first).toHaveFocus();
+    fireEvent.keyDown(first, { key: 'Tab', shiftKey: true });
+    expect(screen.queryByRole('dialog')).toBeNull();
+    expect(star).toHaveFocus();
+  });
+
+  it('Tab between covers inside the popover leaves it open', () => {
+    render(<Top8Star slug="new-game" title="New Game" variant="tile" titles={titles} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Add New Game to your Top 8' }));
+    fireEvent.keyDown(screen.getByRole('button', { name: 'Replace Game A' }), { key: 'Tab' });
+    expect(screen.getByRole('dialog')).toBeInTheDocument();
+  });
+});
+
+it('decides "full" from the fresh state: a list filled elsewhere since render opens the popover, with no Added toast', () => {
+  writeTop8({ ...EMPTY_STATE, slots: ['a', 'b', 'c', 'd', 'e', 'f', 'g', null] });
+  const onToast = jest.fn();
+  render(<Top8Star slug="new-game" title="New Game" variant="tile" titles={titles} onToast={onToast} />);
+  // Another tab fills the last slot; this star hasn't heard yet (no event).
+  localStorage.setItem('snes-top8', JSON.stringify({ ...EMPTY_STATE, slots: full }));
+  fireEvent.click(screen.getByRole('button', { name: 'Add New Game to your Top 8' }));
+  expect(onToast).not.toHaveBeenCalled();
+  expect(screen.getByRole('dialog')).toBeInTheDocument();
+  expect(readTop8().slots).toEqual(full);
 });

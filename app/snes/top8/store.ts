@@ -78,11 +78,16 @@ function getSnapshot(): Top8State {
 
 const getServerSnapshot = (): Top8State | null => null;
 
+/** Applies an edit to the latest stored state; an updater that returns the same state writes nothing. */
+function apply(fn: (s: Top8State) => Top8State): void {
+  const cur = getSnapshot();
+  const next = fn(cur);
+  if (next !== cur) writeTop8(next);
+}
+
 export function useTop8(): [Top8State | null, (fn: (s: Top8State) => Top8State) => void] {
   const state = useSyncExternalStore(subscribeTop8, getSnapshot, getServerSnapshot);
-  const update = useCallback((fn: (s: Top8State) => Top8State) => {
-    writeTop8(fn(getSnapshot()));
-  }, []);
+  const update = useCallback(apply, []);
   return [state, update];
 }
 
@@ -98,7 +103,7 @@ export type Top8Hub = {
 const directHub: Top8Hub = {
   get: () => getSnapshot(),
   subscribe: subscribeTop8,
-  update: (fn) => writeTop8(fn(getSnapshot())),
+  update: apply,
 };
 
 const HubContext = createContext<Top8Hub | null>(null);

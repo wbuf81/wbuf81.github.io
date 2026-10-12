@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useEffect, useMemo, useRef, useState, useSyncExternalStore, type ReactNode } from 'react';
 import { gamePath, TOP8 } from '@/lib/snes/routes';
-import { titlesBySlug } from '@/lib/snes/top8';
+import { fromSlug, titlesBySlug } from '@/lib/snes/top8';
 import { Top8Provider, useTop8Hub } from '../top8/store';
 import { ensureToastRegion } from './toast';
 import { Top8Titles, knownOnly } from './Top8Star';
@@ -13,7 +13,6 @@ export const TRAY_KEY = 'snes-top8-tray';
 const OPEN_CLASS = 't8-tray-open';
 const HEIGHT_VAR = '--t8-tray-h';
 
-const fromSlug = (slug: string) => slug.split('-').filter(Boolean).map((w) => w[0].toUpperCase() + w.slice(1)).join(' ');
 const readCollapsed = () => {
   try { return localStorage.getItem(TRAY_KEY) === 'collapsed'; } catch { return false; }
 };

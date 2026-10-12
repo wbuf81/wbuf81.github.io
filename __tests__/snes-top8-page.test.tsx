@@ -18,7 +18,7 @@ const fontsSpy = render8.loadThemeFonts as jest.MockedFunction<typeof render8.lo
 const drawnThemes = () => drawSpy.mock.calls.map(([, theme]) => theme.id);
 
 const g = (slug: string, title: string, extra: Partial<Top8Game> = {}): Top8Game => ({
-  slug, title, year: '1993', genres: ['Platform'], series: null, similar: [], score: 7, ...extra,
+  slug, title, year: '1993', released: '1993-06-01', genres: ['Platform'], series: null, similar: [], score: 7, ...extra,
 });
 const GAMES: Top8Game[] = [
   g('a', 'Alpha Quest', { similar: ['super-metroid', 'chrono-trigger'] }),

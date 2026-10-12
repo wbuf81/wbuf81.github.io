@@ -8,11 +8,11 @@ import {
 import { SortableContext, arrayMove, rectSortingStrategy, sortableKeyboardCoordinates, useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import {
-  EMPTY_STATE, THEME_IDS, cleanName, parseQuery, recommend, addPick, removePick, toQuery,
+  EMPTY_STATE, THEME_IDS, cleanName, norm, parseQuery, recommend, addPick, removePick, toQuery,
   type ThemeId, type Top8Game, type Top8State,
 } from '@/lib/snes/top8';
 import { readTop8, subscribeTop8, writeTop8 } from '../top8/store';
-import Top8Browse, { norm } from './Top8Browse';
+import Top8Browse from './Top8Browse';
 import { Cover } from './Cover';
 import { SIZE, drawTop8, loadThemeFonts, type Fonts } from '../top8/render';
 import { THEMES } from '../top8/themes';
@@ -216,13 +216,24 @@ export default function Top8({ games }: { games: Top8Game[] }) {
     update((s) => ({ ...s, slots: s.slots.map((x, k) => (k === i ? slug : x)) }));
   }, [replacing, update]);
 
-  // A browse cover toggles: in (the replace flow when full) or out. Stable, so the grid's covers don't all re-render.
+  // A browse cover toggles: in (the replace flow when full) or out; tapping the game waiting to replace cancels.
+  // Stable, so the grid's covers don't all re-render.
+  const slotsBox = useRef<HTMLElement>(null);
+  const replacingRef = useRef(replacing);
+  useLayoutEffect(() => { replacingRef.current = replacing; });
   const toggle = useCallback((slug: string) => {
+    if (replacingRef.current === slug) { setReplacing(null); return; }
     const { slots } = latestState.current;
     if (slots.includes(slug)) { update((s) => removePick(s, slug)); return; }
     const { full } = addPick(latestState.current, slug);
-    if (full) { setReplacing(slug); return; }
-    update((s) => addPick(s, slug).state);
+    if (!full) { update((s) => addPick(s, slug).state); return; }
+    setReplacing(slug);
+    // The slots and their "Tap a slot" hint sit far above the grid: bring them into view and focus the first slot.
+    const box = slotsBox.current;
+    if (!box) return;
+    const still = typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    box.scrollIntoView?.({ behavior: still ? 'auto' : 'smooth', block: 'start' });
+    box.querySelector<HTMLElement>('.s-t8-handle')?.focus({ preventScroll: true });
   }, [update]);
 
   useEffect(() => {
@@ -517,7 +528,7 @@ export default function Top8({ games }: { games: Top8Game[] }) {
           </div>
         </section>
 
-        <section className="s-t8-box" aria-labelledby="t8-friends">
+        <section className="s-t8-box" aria-labelledby="t8-friends" ref={slotsBox}>
           <div className="s-t8-bh">
             <h2 id="t8-friends">{state.name ? `${state.name}'s Friend Space` : 'My Friend Space'}</h2>
             <span>{filled} of 8</span>
@@ -575,7 +586,7 @@ export default function Top8({ games }: { games: Top8Game[] }) {
           </div>
         </section>
 
-        <Top8Browse games={games} query={q} picked={state.slots} onToggle={toggle} />
+        <Top8Browse games={games} query={q} picked={state.slots} pending={replacing} onToggle={toggle} />
       </div>
 
       <section className="s-t8-box s-t8-prev" aria-labelledby="t8-pic">
