@@ -30,16 +30,30 @@ export function parseStored(text: string | null): Top8State {
   }
 }
 
+// When storage throws (blocked), the session's state lives here so edits still show and subscribers still fire.
+let memory: Top8State | null = null;
+let blocked = false;
+
 function rawStored(): string | null {
-  try { return localStorage.getItem(TOP8_KEY); } catch { return null; }
+  try { return localStorage.getItem(TOP8_KEY); } catch { blocked = true; return null; }
+}
+
+/** Test hook: forget the in-memory fallback. */
+export function resetTop8Memory(): void {
+  memory = null;
+  blocked = false;
+  cache = null;
 }
 
 export function readTop8(): Top8State {
-  return parseStored(rawStored());
+  const raw = rawStored();
+  if (blocked && memory) return memory;
+  return parseStored(raw);
 }
 
 export function writeTop8(state: Top8State): void {
-  try { localStorage.setItem(TOP8_KEY, JSON.stringify(state)); } catch { /* storage blocked: the session still works */ }
+  memory = state;
+  try { localStorage.setItem(TOP8_KEY, JSON.stringify(state)); } catch { blocked = true; }
   try { window.dispatchEvent(new CustomEvent(TOP8_EVENT)); } catch { /* no window */ }
 }
 
@@ -57,6 +71,7 @@ export function subscribeTop8(cb: () => void): () => void {
 let cache: { raw: string | null; state: Top8State } | null = null;
 function getSnapshot(): Top8State {
   const raw = rawStored();
+  if (blocked && memory) return memory;
   if (!cache || cache.raw !== raw) cache = { raw, state: parseStored(raw) };
   return cache.state;
 }

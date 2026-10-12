@@ -128,6 +128,10 @@ describe('pick helpers', () => {
     expect(replacePick(st(['a', 'b']), 1, 'b').slots.slice(0, 2)).toEqual(['a', 'b']);
     expect(replacePick(st(['a']), 5, 'x').slots[5]).toBe('x');
   });
+  it('replacePick ignores a non-integer or out-of-range index', () => {
+    const s = st(['a']);
+    for (const i of [-1, 8, 1.5, NaN]) expect(replacePick(s, i, 'x')).toBe(s);
+  });
   it('does not mutate its input', () => {
     const s = st(['a', 'b']);
     const copy = JSON.stringify(s);

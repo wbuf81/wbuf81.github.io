@@ -2,11 +2,11 @@
 import { renderToString } from 'react-dom/server';
 import { act, renderHook } from '@testing-library/react';
 import { EMPTY_STATE } from '@/lib/snes/top8';
-import { readTop8, subscribeTop8, useTop8, writeTop8 } from '../app/snes/top8/store';
+import { readTop8, resetTop8Memory, subscribeTop8, useTop8, writeTop8 } from '../app/snes/top8/store';
 
 const state = (slots: (string | null)[]) => ({ ...EMPTY_STATE, slots: [...slots, ...Array(8 - slots.length).fill(null)] });
 
-beforeEach(() => localStorage.clear());
+beforeEach(() => { localStorage.clear(); resetTop8Memory(); });
 
 describe('readTop8', () => {
   it('is EMPTY_STATE with nothing or junk stored', () => {
@@ -47,6 +47,28 @@ describe('write and subscribe', () => {
     expect(() => writeTop8(state(['a']))).not.toThrow();
     get.mockRestore();
     set.mockRestore();
+  });
+});
+
+describe('useTop8 with storage blocked', () => {
+  it('keeps edits in memory, notifies subscribers and keeps a stable snapshot between writes', () => {
+    jest.spyOn(Storage.prototype, 'getItem').mockImplementation(() => { throw new Error('blocked'); });
+    jest.spyOn(Storage.prototype, 'setItem').mockImplementation(() => { throw new Error('blocked'); });
+    const cb = jest.fn();
+    const off = subscribeTop8(cb);
+    const { result, rerender } = renderHook(() => useTop8());
+    expect(result.current[0]).toEqual(EMPTY_STATE);
+    act(() => result.current[1]((s) => ({ ...s, slots: ['a', ...s.slots.slice(1)] })));
+    expect(cb).toHaveBeenCalled();
+    expect(result.current[0]?.slots[0]).toBe('a');
+    expect(readTop8().slots[0]).toBe('a');
+    const snap = result.current[0];
+    rerender();
+    expect(result.current[0]).toBe(snap);
+    act(() => result.current[1]((s) => ({ ...s, slots: [s.slots[0], 'b', ...s.slots.slice(2)] })));
+    expect(result.current[0]?.slots.slice(0, 2)).toEqual(['a', 'b']);
+    off();
+    jest.restoreAllMocks();
   });
 });
 

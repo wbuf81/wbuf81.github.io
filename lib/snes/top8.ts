@@ -163,7 +163,7 @@ export function removePick(state: Top8State, slug: string): Top8State {
 
 /** Puts slug at index; if it sat in another slot, that slot becomes empty. */
 export function replacePick(state: Top8State, index: number, slug: string): Top8State {
-  if (index < 0 || index >= state.slots.length) return state;
+  if (!Number.isInteger(index) || index < 0 || index >= state.slots.length) return state;
   const slots = state.slots.map((s, i) => (i === index ? slug : s === slug ? null : s));
   return { ...state, slots };
 }
