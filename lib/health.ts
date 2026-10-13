@@ -900,8 +900,9 @@ export function parseHealthTsv(
 
     // The cardio note is the record of the session, so a stated duration is
     // taken as written rather than warned about — a 45-minute treadmill walk
-    // used to import as 30 and need fixing by hand afterwards.
-    const statedMinutes = cardioNote.match(/(\d+)\s*min/i);
+    // used to import as 30 and need fixing by hand afterwards. A note that is
+    // only a whole number ("60") is the duration on its own.
+    const statedMinutes = cardioNote.match(/(\d+)\s*min/i) ?? cardioNote.match(/^(\d+)$/);
     const cardioMinutes = cardio
       ? statedMinutes
         ? Number(statedMinutes[1])

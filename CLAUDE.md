@@ -62,7 +62,7 @@ The script appends to `data/health.json`. **Hard errors** (wrong column count, u
 ### The sheet's columns
 Twelve, in order: Date, Day, Cals, Protein, Carbs, Fat, Weight, Steps, Workout, Cardio, **Cardio Notes**, **Notes**. The last two are separate columns and land in separate fields — `cardioNote` ("30 mins 12.5 / 3.0") and `notes` (everything else: "Church", "Jags Game").
 
-- `cardioMinutes` is **read from the cardio note** ("45 mins …" → 45), falling back to 30 only when the note states no duration. Before Aug 2026 the two notes shared one column and 30 was assumed, so a longer session had to be corrected by hand after every import.
+- `cardioMinutes` is **read from the cardio note** ("45 mins …" → 45, or a note that is only a whole number, "60" → 60, as the sheet has carried since Oct 2026), falling back to 30 only when the note states no duration. Before Aug 2026 the two notes shared one column and 30 was assumed, so a longer session had to be corrected by hand after every import.
 - Both columns are joined for display and for `noteMarks` matching by `noteTextFor` in `lib/noteMarks.ts` ("30 mins Orange Theory · Church"). Match against that, never against `notes` alone — the Orange Theory glyph is triggered by text that lives in the *cardio* note.
 - `scripts/backfill-cardio-note.mjs` is the one-off migration that split the 35 pre-existing days. Kept as the record of that change; re-running it is a no-op.
 

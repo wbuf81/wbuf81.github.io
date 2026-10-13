@@ -589,6 +589,25 @@ describe('parseHealthTsv', () => {
     expect(result.warnings.some((w) => /45/.test(w))).toBe(false);
   });
 
+  test('reads a cardio note that is only a number as the minutes', () => {
+    // From Oct 2026 the sheet's cardio note is sometimes just the duration.
+    const tsv = 'Jul 27\tMon\t2271\t217\t216\t65\t207.8\t12922\tLee - Push\tTRUE\t60\t';
+
+    const result = parseHealthTsv(tsv, { year: 2026, existing: WEEK_ONE });
+
+    expect(result.days[0].cardioMinutes).toBe(60);
+    expect(result.warnings.some((w) => /minutes/i.test(w))).toBe(false);
+  });
+
+  test('does not read a bare speed and incline as minutes', () => {
+    const tsv = 'Jul 27\tMon\t2271\t217\t216\t65\t207.8\t12922\tLee - Push\tTRUE\t12.5 / 3.0\t';
+
+    const result = parseHealthTsv(tsv, { year: 2026, existing: WEEK_ONE });
+
+    expect(result.days[0].cardioMinutes).toBe(30);
+    expect(result.warnings.some((w) => /minutes/i.test(w))).toBe(true);
+  });
+
   test('falls back to 30 minutes and warns when the cardio note states no duration', () => {
     const tsv = 'Jul 27\tMon\t2271\t217\t216\t65\t207.8\t12922\tLee - Push\tTRUE\ttreadmill\t';
 
