@@ -131,8 +131,11 @@ def n(value, digits=0):
 
 
 def delta(value, digits=1):
+    """Signed, rounded first so a change that rounds to zero prints "±0.0"
+    rather than "−0.0" (Oct 5–11 averaged −0.04 lb)."""
     if value is None:
         return '—'
+    value = round(value, digits)
     sign = '+' if value > 0 else '−' if value < 0 else '±'
     return f'{sign}{abs(value):,.{digits}f}'
 
@@ -223,7 +226,8 @@ def status_card(d):
     if move is None:
         week_move = 'first week on the books'
     else:
-        color = GREEN if move < 0 else ORANGE if move > 0 else PAPER
+        shown = round(move, 1)  # colour what is printed, not the unrounded value
+        color = GREEN if shown < 0 else ORANGE if shown > 0 else PAPER
         week_move = f'<b style="color:{color}">{delta(move)} lb</b> vs last week\u2019s avg'
 
     # The recent rate, once the block is old enough to have one — the all-time
@@ -251,7 +255,8 @@ def status_card(d):
     rows = ''
     for i, wk in enumerate(recents):
         ch = wk['weightChange']
-        ch_color = GREEN if (ch or 0) < 0 else ORANGE if (ch or 0) > 0 else MUTED
+        shown = round(ch or 0, 1)
+        ch_color = GREEN if shown < 0 else ORANGE if shown > 0 else MUTED
         ch_text = delta(ch) if ch is not None else '—'
         # Older rows fade in steps toward the week being posted, so five rows
         # read as one motion rather than a wall of equal numbers.
