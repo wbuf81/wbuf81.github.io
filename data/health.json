@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-10-13",
+  "lastUpdated": "2026-10-19",
   "units": {
     "weight": "lb"
   },
@@ -30,6 +30,18 @@
       "label": "Florida vs Ole Miss · home game",
       "icon": "🐊",
       "note": "In the Swamp for the Gators’ home game against Ole Miss."
+    },
+    {
+      "date": "2026-10-16",
+      "label": "Icemen game",
+      "icon": "🏒",
+      "note": "At the Icemen game with Harrison."
+    },
+    {
+      "date": "2026-10-18",
+      "label": "Florida vs Baylor · basketball",
+      "icon": "🏀🐊",
+      "note": "At the Gators’ basketball game against Baylor."
     }
   ],
   "targets": [
@@ -1329,6 +1341,111 @@
       "cardioMinutes": null,
       "cardioNote": "",
       "notes": "Church"
+    },
+    {
+      "date": "2026-10-12",
+      "day": "Mon",
+      "cals": 2670,
+      "protein": 193,
+      "carbs": 306,
+      "fat": 77,
+      "weight": 201.5,
+      "steps": 17661,
+      "workout": "Lee - Legs A",
+      "cardio": false,
+      "cardioMinutes": null,
+      "cardioNote": "",
+      "notes": ""
+    },
+    {
+      "date": "2026-10-13",
+      "day": "Tue",
+      "cals": 2404,
+      "protein": 205,
+      "carbs": 261,
+      "fat": 66,
+      "weight": 201.1,
+      "steps": 15862,
+      "workout": "Lee - Push",
+      "cardio": true,
+      "cardioMinutes": 30,
+      "cardioNote": "30",
+      "notes": ""
+    },
+    {
+      "date": "2026-10-14",
+      "day": "Wed",
+      "cals": 2652,
+      "protein": 226,
+      "carbs": 262,
+      "fat": 82,
+      "weight": 200.5,
+      "steps": 18417,
+      "workout": "Lee - Pull",
+      "cardio": true,
+      "cardioMinutes": 30,
+      "cardioNote": "30",
+      "notes": ""
+    },
+    {
+      "date": "2026-10-15",
+      "day": "Thu",
+      "cals": 2458,
+      "protein": 215,
+      "carbs": 312,
+      "fat": 48,
+      "weight": 199.5,
+      "steps": 17680,
+      "workout": "",
+      "cardio": true,
+      "cardioMinutes": 30,
+      "cardioNote": "30",
+      "notes": ""
+    },
+    {
+      "date": "2026-10-16",
+      "day": "Fri",
+      "cals": 2361,
+      "protein": 183,
+      "carbs": 292,
+      "fat": 53,
+      "weight": 199.5,
+      "steps": 10100,
+      "workout": "Lee - Legs B",
+      "cardio": false,
+      "cardioMinutes": null,
+      "cardioNote": "",
+      "notes": "Icemen Game with Harrison"
+    },
+    {
+      "date": "2026-10-17",
+      "day": "Sat",
+      "cals": 3034,
+      "protein": 161,
+      "carbs": 328,
+      "fat": 121,
+      "weight": 200.5,
+      "steps": 14606,
+      "workout": "Lee - Upper",
+      "cardio": false,
+      "cardioMinutes": null,
+      "cardioNote": "",
+      "notes": ""
+    },
+    {
+      "date": "2026-10-18",
+      "day": "Sun",
+      "cals": 2862,
+      "protein": 155,
+      "carbs": 189,
+      "fat": 168,
+      "weight": 200.5,
+      "steps": 13052,
+      "workout": "",
+      "cardio": false,
+      "cardioMinutes": null,
+      "cardioNote": "",
+      "notes": "Gator Basketball Game vs Baylor"
     }
   ]
 }
