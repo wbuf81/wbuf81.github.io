@@ -67,6 +67,9 @@ jobs:
         uses: actions/upload-pages-artifact@v5
         with:
           path: ./out
+          # Keeps public/.well-known/ in the upload; Tesla's Fleet API reads the
+          # app's public key from /.well-known/appspecific/ on this domain.
+          include-hidden-files: true
 
   deploy:
     environment:
