@@ -46,7 +46,7 @@ const mono = IBM_Plex_Mono({
 // sentences, in Wes's voice (4 Oct 2026). LinkedIn caches it; re-fetch with its Post Inspector after a change.
 // The homepage card's address. LinkedIn keeps an image by its address, so bump ?v= whenever
 // public/og-image.png is redrawn, or it goes on showing the old one (or a blank box).
-const OG_IMAGE = '/og-image.png?v=2';
+const OG_IMAGE = '/og-image.png?v=3';
 
 const DESCRIPTION =
   "I work in compliance, and before that I spent 12 years as an engineer. These days I'm all in on building with AI agents.";
