@@ -3,7 +3,7 @@ import { Nav } from '../components/Nav';
 import Footer from '../components/Footer';
 import Print from '../components/home/Print';
 import FeaturedBuild from '../components/home/FeaturedBuild';
-import { featured, type Tape } from '@/lib/projects';
+import { personal, type Tape } from '@/lib/projects';
 import { getGames, getWeeks } from '@/lib/snes/data';
 import { slimWeeks } from '@/lib/snes/onThisDay';
 import { TIME_MACHINE, TOP8 } from '@/lib/snes/routes';
@@ -124,8 +124,8 @@ function Tile({ t }: { t: HubTile }) {
 
 export default function VideoGamesPage() {
   const weeks = slimWeeks(getWeeks(), getGames());
-  // The homepage's featured build, with the hub's own picture: the right side of the share card, all windows.
-  const snes = { ...featured(), image: '/videogames/snes-history-windows.jpg', alt: 'Gameplay clips, the Omaha World-Pixel, a score scatter and a shelf of SNES covers' };
+  // SNES History in the featured-build block, with the hub's own picture: the right side of the share card, all windows.
+  const snes = { ...personal('snes'), image: '/videogames/snes-history-windows.jpg', alt: 'Gameplay clips, the Omaha World-Pixel, a score scatter and a shelf of SNES covers' };
   return (
     <>
       <Nav theme />

@@ -44,10 +44,10 @@ export interface Placed extends Project {
 }
 
 /** Personal work reads in these groups, in this order. */
-export const GROUPS = ['Omarchy Linux', 'Microcontrollers', 'Everything else'] as const;
+export const GROUPS = ['Mac apps', 'Omarchy Linux', 'Microcontrollers', 'Everything else'] as const;
 
 /** The build in the big block at the top. Any personal project with chips fits. */
-export const FEATURED = 'snes';
+export const FEATURED = 'tesla';
 
 const M5: Hardware = {
   label: 'M5Stack Core Basic v2.7',
@@ -170,7 +170,22 @@ export const PERSONAL: Project[] = [
     chipsLabel: 'Seven live pages',
   },
   {
-    key: 'daisy', name: 'Daisy Status Bar', group: 'Everything else', kind: 'Swift · macOS', fit: 'shot', badge: 'Open source',
+    key: 'tesla', name: 'Mac Tesla Tracker', group: 'Mac apps', kind: 'Swift · macOS', fit: 'shot', badge: 'Open source',
+    image: '/projects/mac-tesla-tracker.jpg', alt: 'Mac Tesla Tracker open from the menu bar: one car parked at School and one asleep at Home, each on its own map',
+    subtitle: 'wbuf81/mac-tesla-tracker',
+    description: "Where every car on your Tesla account is, right in the menu bar — School · Home at a glance, a moon when a car is asleep, an arrival time while one is driving. Click a car for its map, get an alert when one leaves or gets home. Read-only through Tesla's official API: it never wakes a sleeping car, keeps inside the free monthly credit, and everything stays on the Mac.",
+    href: 'https://github.com/wbuf81/mac-tesla-tracker',
+    chips: ['Every car in the menu bar', 'Leave and arrive alerts', 'A map for each car', 'Usage against the free credit', 'Read-only', 'Lets cars sleep'],
+  },
+  {
+    key: 'tidemark', name: 'Tidemark', group: 'Mac apps', kind: 'Swift · macOS', fit: 'shot', badge: 'Open source',
+    image: '/projects/tidemark.jpg', alt: "Tidemark's Usage window under a battery per plan in the menu bar, headed Harbor Labs runs out Saturday afternoon",
+    subtitle: 'wbuf81/tidemark',
+    description: "Your week with Claude Code and your plan's limits, at the edge of the screen: a tide for each plan beside the Dock, a battery for each in the menu bar, and a calendar of the week's sessions and commits that writes your weekly report. Swift.",
+    href: 'https://github.com/wbuf81/tidemark',
+  },
+  {
+    key: 'daisy', name: 'Daisy Status Bar', group: 'Mac apps', kind: 'Swift · macOS', fit: 'shot', badge: 'Open source',
     image: '/projects/daisy-status-bar.jpg', alt: 'Screenshot of Daisy Status Bar',
     subtitle: 'wbuf81/daisy-claude-status-bar',
     description: 'A Bernese Mountain Dog in the macOS menu bar that reacts to what Claude Code is doing. Swift, installable from a Homebrew tap.',
@@ -226,10 +241,15 @@ export function place(list: Project[], start: number): Placed[] {
   return list.map((p, i) => ({ ...p, tilt: TILT[(start + i) % TILT.length], tapes: tapesAt(start + i) }));
 }
 
-export function featured(): Project {
-  const p = PERSONAL.find((x) => x.key === FEATURED);
-  if (!p) throw new Error(`FEATURED names no personal project: ${FEATURED}`);
+/** A personal project by key; throws rather than let a renamed key render nothing. */
+export function personal(key: string): Project {
+  const p = PERSONAL.find((x) => x.key === key);
+  if (!p) throw new Error(`No personal project: ${key}`);
   return p;
+}
+
+export function featured(): Project {
+  return personal(FEATURED);
 }
 
 /** The personal groups in order, the featured build left out; positions carry on after the work tiles. */

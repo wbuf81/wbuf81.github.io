@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { AGENTS, TOOLS, PERSONAL, GROUPS, FEATURED, place, personalGroups, featured, spelled, buildCounts } from '@/lib/projects';
+import { AGENTS, TOOLS, PERSONAL, GROUPS, FEATURED, place, personalGroups, featured, personal, spelled, buildCounts } from '@/lib/projects';
 
 const all = [...AGENTS, ...TOOLS, ...PERSONAL];
 const inPublic = (p: string) => fs.existsSync(path.join(process.cwd(), 'public', p));
@@ -38,10 +38,14 @@ test('private repos have no link, open ones link to GitHub, live ones to a page 
   }
 });
 
-test('SNES History is the featured build', () => {
-  expect(FEATURED).toBe('snes');
-  expect(featured()).toMatchObject({ name: 'SNES History', badge: 'Live on this site', href: '/videogames/snes-history', group: 'Everything else' });
-  expect(personalGroups()[2].items.map((i) => i.key)).toContain('neo');
+test('Mac Tesla Tracker is the featured build, and SNES History is back among the tiles', () => {
+  expect(FEATURED).toBe('tesla');
+  expect(featured()).toMatchObject({ name: 'Mac Tesla Tracker', badge: 'Open source', href: 'https://github.com/wbuf81/mac-tesla-tracker', group: 'Mac apps' });
+  const keys = (label: string) => personalGroups().find((g) => g.label === label)!.items.map((i) => i.key);
+  expect(keys('Mac apps')).toEqual(['tidemark', 'daisy']);
+  expect(keys('Everything else')).toEqual(['snes', 'neo', 'gbforge']);
+  expect(personal('snes')).toMatchObject({ badge: 'Live on this site', href: '/videogames/snes-history' });
+  expect(() => personal('nope')).toThrow();
 });
 
 test('public copy rules', () => {
@@ -82,7 +86,7 @@ test('personal tiles continue the pattern after the work tiles', () => {
 });
 
 test('counts for the strip, in words', () => {
-  expect(buildCounts()).toEqual({ work: 9, home: 10 });
+  expect(buildCounts()).toEqual({ work: 9, home: 12 });
   expect(spelled(9)).toBe('nine');
   expect(spelled(20)).toBe('twenty');
   expect(spelled(21)).toBe('21');

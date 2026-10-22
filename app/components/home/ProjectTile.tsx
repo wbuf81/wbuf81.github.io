@@ -12,7 +12,8 @@ export function HardwareLink({ hardware }: { hardware: Hardware }) {
 }
 
 // A tile (design system › tiles): the print stands over the top of its card. Personal projects get a footer
-// with the board they run on (or what they're written in) and, when the repo is public, a GitHub link.
+// with the board they run on (or what they're written in) and, when the repo is public, a GitHub link —
+// or, for a build that lives on this site, a link to it in the same tab.
 export default function ProjectTile({ project: p, footer = false }: { project: Placed; footer?: boolean }) {
   return (
     <article className="tile">
@@ -39,11 +40,14 @@ export default function ProjectTile({ project: p, footer = false }: { project: P
         {footer && (
           <div className="tf">
             {p.hardware ? <HardwareLink hardware={p.hardware} /> : <span className="fine">{p.kind}</span>}
-            {p.href && (
-              <a href={p.href} target="_blank" rel="noopener noreferrer">
-                GitHub →
-              </a>
-            )}
+            {p.href &&
+              (p.href.startsWith('/') ? (
+                <a href={p.href}>Explore it →</a>
+              ) : (
+                <a href={p.href} target="_blank" rel="noopener noreferrer">
+                  GitHub →
+                </a>
+              ))}
           </div>
         )}
       </div>

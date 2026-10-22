@@ -6,7 +6,7 @@ import FeaturedBuild from '@/app/components/home/FeaturedBuild';
 import ThenNowStill from '@/app/components/home/ThenNowStill';
 import TetrisPrint from '@/app/components/home/TetrisPrint';
 import GitHubMap from '@/app/components/home/GitHubMap';
-import { place, PERSONAL, TOOLS, featured } from '@/lib/projects';
+import { place, PERSONAL, TOOLS, featured, personal } from '@/lib/projects';
 import type { Contributions } from '@/lib/githubContributions';
 
 const data: Contributions = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'data/github-contributions.json'), 'utf8'));
@@ -58,8 +58,23 @@ test('the featured build shows what it runs on and its chips', () => {
   expect(screen.getByRole('link', { name: 'View on GitHub →' })).toHaveAttribute('target', '_blank');
 });
 
-test('the featured SNES History build opens on this site, in the same tab', () => {
+test('the featured Mac Tesla Tracker opens on GitHub, with its chips', () => {
   render(<FeaturedBuild project={featured()} />);
+  expect(screen.getByRole('heading', { level: 2, name: 'Mac Tesla Tracker' })).toBeInTheDocument();
+  expect(screen.getByRole('link', { name: 'View on GitHub →' })).toHaveAttribute('href', 'https://github.com/wbuf81/mac-tesla-tracker');
+  expect(screen.getByRole('link', { name: 'Open Mac Tesla Tracker on GitHub' })).toHaveAttribute('target', '_blank');
+  expect(screen.getByText('Leave and arrive alerts')).toBeInTheDocument();
+});
+
+test('a build on this site opens in the same tab, featured or as a tile', () => {
+  const { unmount } = render(<ProjectTile project={place([personal('snes')], 0)[0]} footer />);
+  const tile = screen.getByRole('link', { name: 'Explore it →' });
+  expect(tile).toHaveAttribute('href', '/videogames/snes-history');
+  expect(tile).not.toHaveAttribute('target');
+  expect(screen.queryByRole('link', { name: /GitHub/ })).toBeNull();
+  unmount();
+
+  render(<FeaturedBuild project={personal('snes')} />);
   expect(screen.getByRole('heading', { level: 2, name: 'SNES History' })).toBeInTheDocument();
   expect(screen.getByText('Live on this site')).toBeInTheDocument();
   const explore = screen.getByRole('link', { name: 'Explore it →' });
