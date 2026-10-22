@@ -104,6 +104,12 @@ export const AGENTS: Project[] = [
     subtitle: 'Litigation Utility for Conflicts on Your Brand',
     description: "Polls a domain-name watch service every couple of hours for newly registered look-alike domains, works out which brand in the portfolio manages each one, and emails Legal a digest with Take action and Dismiss buttons — then follows every actioned domain until it's gone.",
   },
+  {
+    key: 'winnie', name: 'WINNIE', kind: 'Tabby cat', fit: 'photo', badge: 'Private repo',
+    image: '/agents/winnie.jpg', alt: 'WINNIE, a tabby cat in glasses and a flamingo shirt, at a desk',
+    subtitle: 'Watchful Inbox Navigator for Notices, Inquiries & Escalations',
+    description: "Watches the privacy team's shared inbox and sorts every message by the rules the team already works by — what needs action, what's a follow-up, what's noise. Each request becomes a ticket with the routing WINNIE proposes, checked against what a person actually did, and a weekday morning brief says what's waiting.",
+  },
 ];
 
 /** Work that isn't a pet-named agent. */

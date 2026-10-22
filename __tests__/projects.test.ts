@@ -25,7 +25,7 @@ test('keys are unique', () => {
 });
 
 test('the new tiles are there', () => {
-  expect(AGENTS.map((a) => a.name)).toEqual(['OSCAR', 'SMORES', 'MAISIE', 'SNOOP', 'RHINO', 'PABSTY', 'BEASLEY', 'LUCY']);
+  expect(AGENTS.map((a) => a.name)).toEqual(['OSCAR', 'SMORES', 'MAISIE', 'SNOOP', 'RHINO', 'PABSTY', 'BEASLEY', 'LUCY', 'WINNIE']);
   expect(TOOLS.map((t) => t.name)).toEqual(['WBDB']);
   expect(PERSONAL.find((p) => p.name === 'OmaFinance')).toMatchObject({ group: 'Omarchy Linux', badge: 'Private repo' });
 });
@@ -86,7 +86,7 @@ test('personal tiles continue the pattern after the work tiles', () => {
 });
 
 test('counts for the strip, in words', () => {
-  expect(buildCounts()).toEqual({ work: 9, home: 12 });
+  expect(buildCounts()).toEqual({ work: 10, home: 12 });
   expect(spelled(9)).toBe('nine');
   expect(spelled(20)).toBe('twenty');
   expect(spelled(21)).toBe('21');
