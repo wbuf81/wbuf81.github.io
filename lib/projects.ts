@@ -173,9 +173,9 @@ export const PERSONAL: Project[] = [
     key: 'tesla', name: 'Mac Tesla Tracker', group: 'Mac apps', kind: 'Swift · macOS', fit: 'shot', badge: 'Open source',
     image: '/projects/mac-tesla-tracker.jpg', alt: 'Mac Tesla Tracker open from the menu bar: one car parked at School and one asleep at Home, each on its own map',
     subtitle: 'wbuf81/mac-tesla-tracker',
-    description: "Where every car on your Tesla account is, right in the menu bar — School · Home at a glance, a moon when a car is asleep, an arrival time while one is driving. Click a car for its map, get an alert when one leaves or gets home. Read-only through Tesla's official API: it never wakes a sleeping car, keeps inside the free monthly credit, and everything stays on the Mac.",
+    description: "Where every car on your Tesla account is, right in the menu bar — School · Home at a glance, and an arrival time while one is driving. Click a car for its map, get an alert when one leaves or gets home. Read-only through Tesla's official API: it keeps inside the free monthly credit, and everything stays on the Mac.",
     href: 'https://github.com/wbuf81/mac-tesla-tracker',
-    chips: ['Every car in the menu bar', 'Leave and arrive alerts', 'A map for each car', 'Usage against the free credit', 'Read-only', 'Lets cars sleep'],
+    chips: ['Every car in the menu bar', 'Leave and arrive alerts', 'A map for each car', 'Usage against the free credit', 'Read-only'],
   },
   {
     key: 'tidemark', name: 'Tidemark', group: 'Mac apps', kind: 'Swift · macOS', fit: 'shot', badge: 'Open source',
