@@ -1,19 +1,29 @@
 import type { Metadata, Viewport } from 'next';
-import { Playfair_Display, Outfit, Source_Serif_4, IBM_Plex_Sans, IBM_Plex_Mono } from 'next/font/google';
+import localFont from 'next/font/local';
 import './globals.css';
 import './design-system.css';
 import { THEME_BOOT_SCRIPT } from '@/lib/theme';
 
+// The fonts are in app/fonts/, cut from Google's own files by scripts/fonts/fetch-fonts.py, so a build never
+// downloads anything (on 25 Oct 2026 an answer from Google Fonts that Next.js couldn't read failed the deploy).
+// A variable face's weight range is the weights the site loaded from Google, so a bolder request still stops at
+// the heaviest of them. Serif faces size their fallback against Times New Roman, the rest against Arial.
+// Turbopack names each family after its variable, so none may be called serif, sans or mono: a family named
+// "serif" is the generic serif the moment anything drops its quotes.
+
 // Playfair and Outfit are only for the pages that keep their own look, so they aren't preloaded everywhere.
-const playfair = Playfair_Display({
-  subsets: ['latin'],
+const playfair = localFont({
+  src: './fonts/playfair-display.woff2',
+  weight: '400 900',
   variable: '--font-playfair',
   display: 'swap',
   preload: false,
+  adjustFontFallback: 'Times New Roman',
 });
 
-const outfit = Outfit({
-  subsets: ['latin'],
+const outfit = localFont({
+  src: './fonts/outfit.woff2',
+  weight: '100 900',
   variable: '--font-outfit',
   display: 'swap',
   preload: false,
@@ -21,23 +31,26 @@ const outfit = Outfit({
 
 // The design system's three faces (app/design-system.css reads them as --serif, --sans, --mono).
 // Playfair and Outfit stay for the pages that keep their own look (/health, /lee, /articles).
-const serif = Source_Serif_4({
-  subsets: ['latin'],
-  weight: ['500', '600'],
+const sourceSerif = localFont({
+  src: './fonts/source-serif-4.woff2',
+  weight: '500 600',
   variable: '--font-serif',
   display: 'swap',
+  adjustFontFallback: 'Times New Roman',
 });
 
-const sans = IBM_Plex_Sans({
-  subsets: ['latin'],
-  weight: ['400', '500', '600'],
+const plexSans = localFont({
+  src: './fonts/ibm-plex-sans.woff2',
+  weight: '400 600',
   variable: '--font-sans',
   display: 'swap',
 });
 
-const mono = IBM_Plex_Mono({
-  subsets: ['latin'],
-  weight: ['400', '500'],
+const plexMono = localFont({
+  src: [
+    { path: './fonts/ibm-plex-mono-400.woff2', weight: '400' },
+    { path: './fonts/ibm-plex-mono-500.woff2', weight: '500' },
+  ],
   variable: '--font-mono',
   display: 'swap',
 });
@@ -119,7 +132,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${playfair.variable} ${outfit.variable} ${serif.variable} ${sans.variable} ${mono.variable}`}
+      className={`${playfair.variable} ${outfit.variable} ${sourceSerif.variable} ${plexSans.variable} ${plexMono.variable}`}
       suppressHydrationWarning
     >
       <head>
