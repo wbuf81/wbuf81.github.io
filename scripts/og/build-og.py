@@ -5,6 +5,7 @@
     python3 scripts/og/build-og.py health     # just the health card
     python3 scripts/og/build-og.py snes videogames   # the /videogames share cards
     python3 scripts/og/build-og.py top8              # the Top 8 share card and public/snes/top8-example.jpg
+    python3 scripts/og/build-og.py office            # the /office share card
 
 Why a script and not `opengraph-image.tsx`: the health card is built from the
 real numbers in data/health.json, so it has to be regenerated when a week is
@@ -595,12 +596,42 @@ def top8_hub_image():
     return out
 
 
+def office_card():
+    """/office: the 3D model of Wes's office as a taped print on the right (scripts/og/assets/office-room.jpg, a
+    render of the dollhouse view from 3d-model-anything), the title on the left. No tagline: Wes cut "Walk around and
+    click the things I love" from the card and the page (1 Nov 2026)."""
+    room = b64(HERE / 'assets' / 'office-room.jpg')
+    return f"""
+<style>
+{SITE}
+.left {{ position: absolute; left: 72px; top: 170px; width: 520px; }}
+.eyebrow {{ font: 500 16px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); }}
+.title {{ font: 600 82px/1.02 var(--serif); letter-spacing: -.02em; margin-top: 20px; }}
+.foot {{ position: absolute; left: 72px; bottom: 54px; font: 500 15px var(--mono); letter-spacing: .04em; color: var(--ink-3); }}
+.print {{ position: absolute; left: 640px; top: 70px; width: 500px; padding: 12px 12px 46px; background: var(--paper);
+  border: 1px solid var(--rule); box-shadow: 0 18px 32px -20px rgba(0,0,0,.38); transform: rotate(2.2deg); }}
+.print img {{ display: block; width: 100%; }}
+.tape {{ position: absolute; left: 40%; top: -11px; width: 96px; height: 22px; background: var(--tape); transform: rotate(-4deg); }}
+.cap {{ position: absolute; left: 12px; bottom: 12px; font: 500 13px var(--mono); letter-spacing: .02em; color: var(--ink-2); }}
+</style>
+<div class="card">
+  <div class="left">
+    <p class="eyebrow">wesleybard.com/office</p>
+    <p class="title">My office,<br>in 3D.</p>
+  </div>
+  <p class="foot">Inspired by Wes Bos’s 3D office</p>
+  <div class="print"><span class="tape"></span><img src="data:image/jpeg;base64,{room}" alt=""><span class="cap">Wesley’s office</span></div>
+</div>
+"""
+
+
 CARDS = {
     'main': ('og-image.png', main_card),
     'health': ('og-health.png', health_card),
     'snes': ('og-snes.jpg', snes_card),
     'videogames': ('og-videogames.jpg', videogames_card),
     'top8': ('og-top8.jpg', top8_card),
+    'office': ('og-office.jpg', office_card),
 }
 
 

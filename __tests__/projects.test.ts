@@ -43,7 +43,7 @@ test('Mac Tesla Tracker is the featured build, and SNES History is back among th
   expect(featured()).toMatchObject({ name: 'Mac Tesla Tracker', badge: 'Open source', href: 'https://github.com/wbuf81/mac-tesla-tracker', group: 'Mac apps' });
   const keys = (label: string) => personalGroups().find((g) => g.label === label)!.items.map((i) => i.key);
   expect(keys('Mac apps')).toEqual(['tidemark', 'daisy']);
-  expect(keys('Everything else')).toEqual(['snes', 'neo', 'gbforge']);
+  expect(keys('Everything else')).toEqual(['snes', 'office', 'neo', 'gbforge']);
   expect(personal('snes')).toMatchObject({ badge: 'Live on this site', href: '/videogames/snes-history' });
   expect(() => personal('nope')).toThrow();
 });
@@ -86,7 +86,7 @@ test('personal tiles continue the pattern after the work tiles', () => {
 });
 
 test('counts for the strip, in words', () => {
-  expect(buildCounts()).toEqual({ work: 10, home: 12 });
+  expect(buildCounts()).toEqual({ work: 10, home: 13 });
   expect(spelled(9)).toBe('nine');
   expect(spelled(20)).toBe('twenty');
   expect(spelled(21)).toBe('21');

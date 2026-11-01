@@ -162,6 +162,15 @@ export const PERSONAL: Project[] = [
     hardware: M5,
   },
   {
+    key: 'office', name: 'My Office in 3D', group: 'Everything else', kind: 'Three.js · TypeScript', fit: 'shot', badge: 'Live on this site',
+    image: '/projects/wesley-office.jpg', alt: 'My office as a 3D dollhouse',
+    subtitle: 'Inspired by Wes Bos’s 3D office',
+    description: 'My actual office, rebuilt in 3D from an iPhone room scan with Wes Bos’s 3d-model-anything. Walk around it, flip it to night, and click the graded games, the Gators helmet or Daisy for the story behind each one.',
+    href: '/office/',
+    chips: ['Dollhouse', 'Walk around', 'Night mode', 'Knolling'],
+    chipsLabel: 'Ways in',
+  },
+  {
     key: 'neo', name: 'Stream Deck Neo Takeover', group: 'Everything else', kind: 'Node', fit: 'shot', badge: 'Open source',
     image: '/projects/streamdeck-neo.jpg', alt: 'Screenshot of Stream Deck Neo Takeover',
     subtitle: 'wbuf81/streamdeckneoclaude',
