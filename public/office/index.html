@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="data:," />
+    <title>Wesley's office</title>
+    <!-- kept out of search (Wesley, Nov 1); not blocked in robots.txt, so link previews still fetch -->
+    <meta name="robots" content="noindex" />
+    <meta name="description" content="Wesley Bard's office in 3D, inspired by Wes Bos's 3D office and built with his 3d-model-anything project. Walk around and click the things he loves." />
+    <!-- Same rule as wesleybard.com's THEME_BOOT_SCRIPT: a saved light/dark choice applies above 600px; phones follow their own setting. -->
+    <script>try{if(!(window.matchMedia&&matchMedia('(max-width: 600px)').matches)){var t=localStorage.getItem('wb-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}}catch(e){}</script>
+    <script type="module" crossorigin src="/office/assets/main-4BUicd1J.js"></script>
+    <link rel="modulepreload" crossorigin href="/office/assets/three.core-BsZKyGna.js">
+    <link rel="modulepreload" crossorigin href="/office/assets/optional-asset-DVckNdOO.js">
+    <link rel="modulepreload" crossorigin href="/office/assets/materials-DzRMIQm6.js">
+    <link rel="modulepreload" crossorigin href="/office/assets/helpers-D9s8Y5bi.js">
+    <link rel="modulepreload" crossorigin href="/office/assets/shell-CK1luMVB.js">
+    <link rel="modulepreload" crossorigin href="/office/assets/models-ChILvKEy.js">
+    <link rel="stylesheet" crossorigin href="/office/assets/main-J-pgLCWK.css">
+  </head>
+  <body>
+    <header class="viewer-topbar">
+      <a class="brand" href="https://wesleybard.com/"><span class="brand-mark" aria-hidden="true">⌂</span> Wesley Bard</a>
+      <output id="viewer-status" aria-live="polite">Loading room…</output>
+      <button id="controls-toggle" aria-expanded="false" aria-controls="sidebar">Controls</button>
+    </header>
+    <aside id="sidebar" aria-label="Room controls">
+      <div id="hud" hidden>
+        <section class="control-section dev-only">
+          <h2>Rooms <span class="section-note">Explore your space</span></h2>
+          <div class="buttons room-list" data-group="room" aria-label="Choose a room"></div>
+        </section>
+        <section class="control-section">
+          <p class="site-intro">I was inspired by <a href="https://github.com/wesbos" target="_blank" rel="noopener">Wes Bos</a> and his 3D model of his own office, so I modeled mine with his open-source project, <a href="https://github.com/wesbos/3d-model-anything" target="_blank" rel="noopener">3d-model-anything</a>. Walk around and click the things I love; each one has a story.</p>
+          <p class="site-hint">Drag to look around · Click things to see them up close · Click the floor to walk</p>
+          <h2>View</h2>
+          <div class="buttons mode-grid" data-group="mode" aria-label="Viewing mode">
+            <button data-mode="orbit" class="active" aria-pressed="true">Dollhouse</button>
+            <button data-mode="layout" aria-pressed="false">Layout</button>
+            <button data-mode="knolling" aria-pressed="false">Knolling</button>
+            <button data-mode="walk" aria-pressed="false">Walk around</button>
+          </div>
+        </section>
+        <section class="control-section source-section dev-only">
+          <h2>Source</h2>
+          <div class="buttons segmented" data-group="source" aria-label="Model source">
+            <button data-source="model" class="active" aria-pressed="true">Rebuilt</button>
+            <button data-source="scan" aria-pressed="false">Scan</button>
+            <button data-source="overlay" aria-pressed="false">Overlay</button>
+            <button data-source="wireframe" aria-pressed="false">Wireframe</button>
+          </div>
+        </section>
+        <section class="control-section" id="navigation" aria-label="Camera views">
+          <h2>Camera</h2>
+          <div class="camera-grid">
+            <button data-view="home" title="Reset view (Home or 1)">Home</button>
+            <button data-view="top" title="Top view (2)">Top</button>
+            <button data-view="front" title="Front view (3)">Front</button>
+            <button data-view="side" title="Side view (4)">Side</button>
+          </div>
+          <div class="zoom-control"><span>Zoom</span><button data-zoom="out" aria-label="Zoom out" title="Zoom out (−)">−</button><button data-zoom="in" aria-label="Zoom in" title="Zoom in (+)">+</button></div>
+          <div class="camera-location dev-only">
+            <h3>Camera location</h3>
+            <output id="camera-coordinates"></output>
+            <label for="camera-link">Link to this view</label>
+            <input id="camera-link" type="text" readonly spellcheck="false" aria-label="Link to restore this camera view">
+            <button id="copy-camera-link" type="button">Copy view link</button>
+            <span id="camera-copy-status" role="status"></span>
+            <p class="help">Save this link to return to the same position and angle.</p>
+          </div>
+        </section>
+        <section class="control-section quality-section">
+          <label class="quality-control" for="quality">Render quality</label>
+          <select id="quality" aria-label="Rendering quality"><option value="auto">Auto</option><option value="detail">Full detail</option><option value="fast">Fast</option></select>
+        </section>
+        <div class="sidebar-footer">
+          <button class="play-link dev-only" title="Walk around and grab / throw things (physics)">Enter playground <span aria-hidden="true">↗</span></button>
+          <p class="help" data-for="orbit">Drag to orbit · Scroll to zoom<br>Right-drag / two fingers to pan<br>Double-click to focus · Click the floor to step in</p>
+          <p class="help" data-for="layout" hidden>Drag to pan · Scroll to zoom<br>Double-click to fit</p>
+          <p class="help" data-for="walk" hidden>Drag to look · Click the floor to walk there<br>WASD / arrows to move · Scroll to step<br>Esc for the dollhouse</p>
+          <details id="credits" hidden><summary>3D model credits</summary><ul></ul><p></p></details>
+          <a class="site-back" href="https://wesleybard.com/">← Back to wesleybard.com</a>
+        </div>
+      </div>
+    </aside>
+    <main id="viewport" aria-label="Room viewer">
+      <canvas id="scene"></canvas>
+      <section id="intro" aria-label="About this room">
+        <button class="intro-close" type="button" aria-label="Close">×</button>
+        <h2>Hi, I'm Wesley. This is my office, in 3D.</h2>
+        <p>I was inspired by <a href="https://github.com/wesbos" target="_blank" rel="noopener">Wes Bos</a> and his 3D model of his own office, so I modeled mine with his open-source project, <a href="https://github.com/wesbos/3d-model-anything" target="_blank" rel="noopener">3d-model-anything</a>. Walk around and click the things I love; each one has a story.</p>
+      </section>
+      <section id="layout" hidden aria-label="Overhead room layout"></section>
+      <section id="knolling" hidden aria-label="Knolling arrangement"></section>
+
+      <div id="loader"><div class="bar"><div class="fill"></div></div><p>Loading… <span class="pct"></span></p></div>
+    </main>
+  </body>
+</html>
