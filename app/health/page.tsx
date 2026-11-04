@@ -9,6 +9,7 @@ import {
   buildWeeklyTrend,
   buildWeightSeries,
   currentPhase,
+  leadPhase,
   getHealthData,
   groupIntoWeeks,
   summarize,
@@ -83,6 +84,7 @@ export default function HealthPage() {
             weeklyTrend={buildWeeklyTrend(data.days, data.calorieTargets)}
             phases={phases}
             activePhase={currentPhase(phases)}
+            leadPhase={leadPhase(phases, data.days)}
             markers={markers}
             noteMarks={data.noteMarks ?? []}
             calorieTargets={data.calorieTargets ?? []}

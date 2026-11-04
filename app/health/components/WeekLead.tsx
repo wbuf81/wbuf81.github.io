@@ -4,6 +4,8 @@ import { downIsGood, formatDelta, formatNumber } from './format';
 interface Props {
   rows: WeeklyTrendRow[];
   phase: PhaseSummary | null;
+  /** The block that starts after `phase`, when `phase` has closed but the new one has no days yet. */
+  next?: PhaseSummary | null;
   weightUnit: string;
 }
 
@@ -15,7 +17,7 @@ interface Props {
  * Aug 17 ended on 204.6 after starting on 203.0, which read as a gain even though the week's average fell.
  * The page is updated weekly, so the week is the honest unit of progress.
  */
-export default function WeekLead({ rows, phase, weightUnit }: Props) {
+export default function WeekLead({ rows, phase, next = null, weightUnit }: Props) {
   if (rows.length === 0) return null;
 
   const week = rows[rows.length - 1];
@@ -56,7 +58,7 @@ export default function WeekLead({ rows, phase, weightUnit }: Props) {
         <div>
           <div className="h-k">Avg weight this week</div>
           <div className="h-big">{lb(week.avgWeight)}</div>
-          <div className={`h-l ${downIsGood(week.weightChange)}`}>
+          <div className={`h-l ${phase?.type === 'bulk' ? blockTone(week.weightChange) : downIsGood(week.weightChange)}`}>
             {week.weightChange !== null
               ? `${formatDelta(week.weightChange)} ${weightUnit} vs the week before`
               : rows.length === 1
@@ -79,16 +81,18 @@ export default function WeekLead({ rows, phase, weightUnit }: Props) {
         <div className="h-block">
           <div className="h-block-head">
             <div className="eyebrow">
-              The {phase.label.toLowerCase()} so far · since {phase.startLabel} · week {phase.weekCount} ·{' '}
+              {phase.isOngoing
+                ? `The ${phase.label.toLowerCase()} so far · since ${phase.startLabel} · week ${phase.weekCount} · `
+                : `The ${phase.label.toLowerCase()} · ${phase.startLabel} – ${phase.endLabel} · ${phase.weekCount} weeks · `}
               {phase.dayCount} days tracked
             </div>
             {phase.goalWeight !== null && phase.goalRemaining !== null && (
               <div>
                 <span className="h-n">
-                  {formatNumber(phase.goalRemaining, 1)} {weightUnit} to go
+                  {formatNumber(phase.goalRemaining, 1)} {weightUnit} {phase.isOngoing ? 'to go' : 'short'}
                 </span>{' '}
                 <span className="h-aside">
-                  to the {formatNumber(phase.goalWeight, 1)} {weightUnit} goal
+                  {phase.isOngoing ? 'to' : 'of'} the {formatNumber(phase.goalWeight, 1)} {weightUnit} goal
                   {phase.goalPercent !== null && ` · ${Math.round(phase.goalPercent)}%`}
                 </span>
               </div>
@@ -104,9 +108,9 @@ export default function WeekLead({ rows, phase, weightUnit }: Props) {
               <div className="h-l">first reading</div>
             </div>
             <div>
-              <div className="h-k">Now</div>
+              <div className="h-k">{phase.isOngoing ? 'Now' : 'Ended at'}</div>
               <div className="h-n">{lb(phase.currentWeight)}</div>
-              <div className="h-l">week avg</div>
+              <div className="h-l">{phase.isOngoing ? 'week avg' : 'final week avg'}</div>
             </div>
             <div>
               <div className="h-k">Change</div>
@@ -129,7 +133,7 @@ export default function WeekLead({ rows, phase, weightUnit }: Props) {
                 <div className="h-l">last 3 weeks</div>
               </div>
             )}
-            {phase.projectedGoalLabel !== null && (
+            {phase.isOngoing && phase.projectedGoalLabel !== null && (
               <div>
                 <div className="h-k">On pace for</div>
                 <div className="h-n">{phase.projectedGoalLabel}</div>
@@ -139,6 +143,7 @@ export default function WeekLead({ rows, phase, weightUnit }: Props) {
           </div>
 
           <p className="h-l h-lead-note">
+            {next && `The ${next.label.toLowerCase()} starts ${next.startLabel}. `}
             {phase.note && `${phase.note.replace(/\.?$/, '.')} `}
             {phase.goalPercent !== null && 'Each notch is a week’s average: '}
             {phase.goalPercent !== null ? 'a' : 'A'} single day moves a pound or two on water alone, so the week is the
@@ -186,7 +191,7 @@ function Track({ rows, phase, weightUnit }: { rows: WeeklyTrendRow[]; phase: Pha
       ))}
       {now !== null && (
         <span className="h-pin" style={{ left: `${percent}%`, transform: pin }}>
-          {formatNumber(now, 1)} · week avg
+          {formatNumber(now, 1)} · {phase.isOngoing ? 'week avg' : 'final week'}
         </span>
       )}
       <span className="h-end">

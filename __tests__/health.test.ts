@@ -8,6 +8,7 @@ import {
   buildWeeklyGoals,
   goalStreak,
   currentPhase,
+  leadPhase,
   parseHealthTsv,
 } from '@/lib/health';
 import { HealthDay, HealthPhase } from '@/types/health';
@@ -398,6 +399,45 @@ describe('currentPhase', () => {
 
   test('is null when there are no phases', () => {
     expect(currentPhase([])).toBeNull();
+  });
+});
+
+describe('leadPhase', () => {
+  test('stays on the closing block until the new one has a recorded day', () => {
+    // WEEK_ONE ends before Jul 27, so the bulk starting then has no days yet.
+    const phases = buildPhases(WEEK_ONE, [
+      { start: '2026-07-20', type: 'cut' },
+      { start: '2026-07-27', type: 'bulk', goalWeight: 220 },
+    ]);
+
+    expect(currentPhase(phases)?.type).toBe('bulk');
+    expect(leadPhase(phases, WEEK_ONE)?.type).toBe('cut');
+  });
+
+  test('moves to the new block once a day lands in it', () => {
+    const days = [...WEEK_ONE, day({ date: '2026-07-27', day: 'Mon', weight: 206 })];
+    const phases = buildPhases(days, [
+      { start: '2026-07-20', type: 'cut' },
+      { start: '2026-07-27', type: 'bulk', goalWeight: 220 },
+    ]);
+
+    expect(leadPhase(phases, days)?.type).toBe('bulk');
+  });
+
+  test('can be asked about a given day', () => {
+    const days = [...WEEK_ONE, day({ date: '2026-07-27', day: 'Mon', weight: 206 })];
+    const phases = buildPhases(days, [
+      { start: '2026-07-20', type: 'cut' },
+      { start: '2026-07-27', type: 'bulk' },
+    ]);
+
+    expect(leadPhase(phases, days, '2026-07-26')?.type).toBe('cut');
+  });
+
+  test('falls back to the running phase, or null', () => {
+    expect(leadPhase([], WEEK_ONE)).toBeNull();
+    const phases = buildPhases(WEEK_ONE, [{ start: '2026-08-01', type: 'bulk' }]);
+    expect(leadPhase(phases, WEEK_ONE)?.type).toBe('bulk');
   });
 });
 

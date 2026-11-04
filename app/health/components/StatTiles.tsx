@@ -21,6 +21,10 @@ function tone(delta: number | null | undefined, kind: Tile['tone']): string {
 }
 
 export default function StatTiles({ summary, weightUnit }: Props) {
+  const balance =
+    summary.estimatedMaintenance !== null && summary.avgCals !== null
+      ? summary.estimatedMaintenance - summary.avgCals
+      : null;
   const tiles: Tile[] = [
     // The week-over-week average leads the page in WeekLead, so this is only the
     // most recent number on the scale — labelled as the single reading it is,
@@ -62,11 +66,9 @@ export default function StatTiles({ summary, weightUnit }: Props) {
     // "This week" (lifts · cardio) now lives in the WeekLead card, which shows
     // the newest — possibly partial — week; repeating it here said it twice.
     {
-      label: 'Est. deficit',
-      value:
-        summary.estimatedMaintenance !== null && summary.avgCals !== null
-          ? `${formatNumber(summary.estimatedMaintenance - summary.avgCals)} kcal`
-          : '—',
+      // Named for its sign: under maintenance is a deficit, over it a surplus, so a bulk never reads "−158 deficit".
+      label: balance !== null && balance < 0 ? 'Est. surplus' : 'Est. deficit',
+      value: balance !== null ? `${formatNumber(Math.abs(balance))} kcal` : '—',
       detail:
         summary.estimatedMaintenance !== null && summary.avgCals !== null
           ? 'per day, last 3 weeks'

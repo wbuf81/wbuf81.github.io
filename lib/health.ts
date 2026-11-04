@@ -532,6 +532,27 @@ export function currentPhase(phases: PhaseSummary[]): PhaseSummary | null {
 }
 
 /**
+ * The phase a given day falls in: by default the newest recorded day, which is
+ * the phase the lead card and the status share card tell the story of. It is not
+ * simply the running phase: a block that starts on a Monday has no days until
+ * the next import, and for that week the newest data still belongs to the block
+ * that just closed. Falls back to the running phase when no phase covers the day.
+ */
+export function leadPhase(
+  phases: PhaseSummary[],
+  days: HealthDay[],
+  date: string | null = days.length ? [...days].sort((a, b) => a.date.localeCompare(b.date))[days.length - 1].date : null,
+): PhaseSummary | null {
+  if (date !== null) {
+    for (let i = phases.length - 1; i >= 0; i--) {
+      const p = phases[i];
+      if (p.start <= date && (p.end === null || date <= p.end)) return p;
+    }
+  }
+  return currentPhase(phases);
+}
+
+/**
  * Week-by-week summary, oldest first. Each row carries its own averages plus the
  * change in average weight against the week before, which is the number that
  * actually shows whether a week moved things.

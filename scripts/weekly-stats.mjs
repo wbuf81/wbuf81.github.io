@@ -43,6 +43,7 @@ const {
   buildWeeklyGoals,
   buildStepStreaks,
   currentPhase,
+  leadPhase,
   summarize,
 } = health;
 
@@ -54,7 +55,6 @@ const weeks = groupIntoWeeks(data.days);
 const trend = buildWeeklyTrend(data.days, data.calorieTargets);
 const goals = buildWeeklyGoals(data.days, data.targets);
 const phases = buildPhases(data.days, data.phases);
-const phase = currentPhase(phases) ?? phases[phases.length - 1] ?? null;
 
 /** The newest week with all seven days, so a card never reports half a week. */
 function pickIndex() {
@@ -84,6 +84,13 @@ function pickIndex() {
 
 const index = pickIndex();
 const week = weeks[index];
+// The block the drawn week belongs to, not merely the running one: the week a
+// new block starts on a Monday, the week being posted still closes the old one.
+const phase =
+  leadPhase(phases, data.days, week.days[week.days.length - 1].date) ??
+  currentPhase(phases) ??
+  phases[phases.length - 1] ??
+  null;
 const row = trend[index];
 const scored = goals[index];
 
@@ -118,7 +125,10 @@ console.log(
   JSON.stringify(
     {
       week: {
-        number: index + 1,
+        // Counted within the block, so the first week of a bulk is week 1, not week 16 of the log.
+        number: phase
+          ? weeks.slice(0, index + 1).filter((w) => w.days.some((d) => d.date >= phase.start)).length
+          : index + 1,
         of: weeks.length,
         start: week.weekStart,
         end: week.weekEnd,
@@ -193,7 +203,7 @@ console.log(
       goalStreak: summarize(data.days, data.targets).goalStreak,
       // The whole phase's weighed days, for a sparkline across the cut.
       series: data.days
-        .filter((day) => day.weight !== null && (!phase || day.date >= phase.start))
+        .filter((day) => day.weight !== null && (!phase || (day.date >= phase.start && (phase.end === null || day.date <= phase.end))))
         .map((day) => ({ date: day.date, label: shortDate(day.date), weight: day.weight })),
       units: data.units,
     },

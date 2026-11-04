@@ -11,6 +11,7 @@ import {
   buildWeightSeries,
   currentPhase,
   getHealthData,
+  leadPhase,
   groupIntoWeeks,
   summarize,
 } from '@/lib/health';
@@ -76,6 +77,7 @@ function Dashboard({ data }: { data: HealthData }) {
       weeklyTrend={buildWeeklyTrend(data.days, data.calorieTargets)}
       phases={phases}
       activePhase={currentPhase(phases)}
+      leadPhase={leadPhase(phases, data.days)}
       markers={data.markers ?? []}
       noteMarks={data.noteMarks ?? []}
       calorieTargets={data.calorieTargets ?? []}
@@ -170,6 +172,23 @@ describe('/health', () => {
     const { container } = render(<Dashboard data={bare} />);
     expect(container.innerHTML).not.toMatch(/NaN|undefined|Infinity/);
     expect(screen.queryByText('The week, by day')).not.toBeInTheDocument();
+  });
+
+  it('keeps telling the closed block until the new one has a day', () => {
+    // The fixture ends Sun Aug 9; a bulk starting the next Monday has no days yet.
+    const data = fixture();
+    data.phases = [...(data.phases ?? []), { start: '2026-08-10', type: 'bulk', label: 'Lean bulk', goalWeight: 220 }];
+    render(<Dashboard data={data} />);
+    expect(screen.getByText(/The cut · Jul 20 – Aug 9 · 3 weeks ·/)).toBeInTheDocument();
+    expect(screen.getByText(/The lean bulk starts Aug 10\./)).toBeInTheDocument();
+    expect(screen.getByText('Ended at')).toBeInTheDocument();
+    expect(screen.queryByText(/week 0/)).not.toBeInTheDocument();
+  });
+
+  it('names the calorie balance a surplus when intake runs over maintenance', () => {
+    render(<Dashboard data={fixture(21, (_, i) => ({ weight: 200 + i * 0.15 }))} />);
+    expect(screen.getByText('Est. surplus')).toBeInTheDocument();
+    expect(screen.queryByText('Est. deficit')).not.toBeInTheDocument();
   });
 
   it('says so with no days at all', () => {

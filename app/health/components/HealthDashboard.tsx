@@ -32,6 +32,8 @@ interface Props {
   weeklyTrend: WeeklyTrendRow[];
   phases: PhaseSummary[];
   activePhase: PhaseSummary | null;
+  /** The phase the newest recorded day falls in (lib/health › leadPhase): what the lead card tells. */
+  leadPhase?: PhaseSummary | null;
   markers: HealthMarker[];
   noteMarks: HealthNoteMark[];
   calorieTargets: HealthCalorieTarget[];
@@ -56,6 +58,7 @@ export default function HealthDashboard({
   weeklyTrend,
   phases,
   activePhase,
+  leadPhase = activePhase,
   markers,
   noteMarks,
   calorieTargets,
@@ -75,7 +78,12 @@ export default function HealthDashboard({
 
   return (
     <>
-      <WeekLead rows={weeklyTrend} phase={activePhase} weightUnit={weightUnit} />
+      <WeekLead
+        rows={weeklyTrend}
+        phase={leadPhase}
+        next={leadPhase && activePhase && leadPhase !== activePhase ? activePhase : null}
+        weightUnit={weightUnit}
+      />
       <StatTiles summary={summary} weightUnit={weightUnit} />
       <WeightCalories
         days={days}

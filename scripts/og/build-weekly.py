@@ -26,6 +26,7 @@ Requires: Google Chrome, Pillow, and Node (for the stats step).
 import datetime
 import importlib.util
 import json
+import re
 import os
 import pathlib
 import subprocess
@@ -200,8 +201,13 @@ def status_card(d):
     )
     last_reading = series[-1]['weight'] if series else now
 
-    span = start - goal
-    lost = start - now
+    # A cut climbs down to its goal, a bulk climbs up to it. `up` signs the same
+    # arithmetic both ways: `done` is pounds moved toward the goal, and a week
+    # that moved the wrong way counts as none rather than as negative blocks.
+    up = goal > start
+    good = 1 if up else -1  # the sign of a change in the right direction
+    span = abs(goal - start)
+    lost = max((now - start) * good, 0)
     total_blocks = round(span)
     full = int(lost)
     frac = lost - full
@@ -218,6 +224,12 @@ def status_card(d):
         else:
             style = f'background: {HOLLOW};'
         blocks += f'<li style="{style}"></li>'
+    # A bulk's ladder fills from the bottom, start below and goal on top, so it
+    # rises the way the weight does; a cut's fills from the top and descends.
+    if up:
+        blocks = ''.join(reversed(re.findall(r'<li[^>]*></li>', blocks)))
+    top_cap = ('goal', n(goal)) if up else ('start', n(start, 1))
+    bot_cap = ('start', n(start, 1)) if up else ('goal', n(goal))
 
 
     # The week's move, in the good color when it fell. A first week has no
@@ -227,7 +239,7 @@ def status_card(d):
         week_move = 'first week on the books'
     else:
         shown = round(move, 1)  # colour what is printed, not the unrounded value
-        color = GREEN if shown < 0 else ORANGE if shown > 0 else PAPER
+        color = GREEN if shown * good > 0 else ORANGE if shown != 0 else PAPER
         week_move = f'<b style="color:{color}">{delta(move)} lb</b> vs last week\u2019s avg'
 
     # The recent rate, once the block is old enough to have one — the all-time
@@ -256,7 +268,7 @@ def status_card(d):
     for i, wk in enumerate(recents):
         ch = wk['weightChange']
         shown = round(ch or 0, 1)
-        ch_color = GREEN if shown < 0 else ORANGE if shown > 0 else MUTED
+        ch_color = GREEN if shown * good > 0 else ORANGE if shown != 0 else MUTED
         ch_text = delta(ch) if ch is not None else '—'
         # Older rows fade in steps toward the week being posted, so five rows
         # read as one motion rather than a wall of equal numbers.
@@ -360,9 +372,9 @@ def status_card(d):
 
   <div class="body">
     <div class="ladder">
-      <div class="cap is-top"><span>start</span><b>{n(start, 1)}</b></div>
+      <div class="cap is-top"><span>{top_cap[0]}</span><b>{top_cap[1]}</b></div>
       <ul>{blocks}</ul>
-      <div class="cap is-bot"><span>goal</span><b>{n(goal)}</b></div>
+      <div class="cap is-bot"><span>{bot_cap[0]}</span><b>{bot_cap[1]}</b></div>
     </div>
 
     <div class="mid">
