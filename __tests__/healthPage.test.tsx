@@ -17,6 +17,9 @@ import {
 } from '@/lib/health';
 import { HealthData, HealthDay, WeeklyTrendRow } from '@/types/health';
 import WeekTable from '@/app/health/components/WeekTable';
+import HealthNav from '@/app/health/components/HealthNav';
+import { SECTIONS, type HealthSection } from '@/app/health/sections';
+import { buildCalendarDays } from '@/lib/healthCalendar';
 
 const NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
@@ -66,28 +69,36 @@ function fixture(n = 21, patch: (day: HealthDay, i: number) => Partial<HealthDay
   };
 }
 
-function Dashboard({ data }: { data: HealthData }) {
+/** Every section, in menu order (or just `only`): the five /health pages stacked. */
+function Dashboard({ data, only }: { data: HealthData; only?: HealthSection }) {
+  if (data.days.length === 0) return <p className="h-note">No data recorded yet.</p>;
   const phases = buildPhases(data.days, data.phases);
+  const props = {
+    calendarDays: buildCalendarDays(data.days, { ...data, phases }),
+    days: data.days,
+    weeks: groupIntoWeeks(data.days),
+    summary: summarize(data.days, data.targets),
+    weightSeries: buildWeightSeries(data.days),
+    weeklyTrend: buildWeeklyTrend(data.days, data.calorieTargets),
+    phases,
+    activePhase: currentPhase(phases),
+    leadPhase: leadPhase(phases, data.days),
+    markers: data.markers ?? [],
+    noteMarks: data.noteMarks ?? [],
+    calorieTargets: data.calorieTargets ?? [],
+    targets: data.targets ?? [],
+    weeklyGoals: buildWeeklyGoals(data.days, data.targets),
+    changeLog: buildChangeLog(data),
+    stepStreaks: buildStepStreaks(data.days, data.targets),
+    lastUpdated: data.lastUpdated,
+    weightUnit: data.units.weight,
+  };
   return (
-    <HealthDashboard
-      days={data.days}
-      weeks={groupIntoWeeks(data.days)}
-      summary={summarize(data.days, data.targets)}
-      weightSeries={buildWeightSeries(data.days)}
-      weeklyTrend={buildWeeklyTrend(data.days, data.calorieTargets)}
-      phases={phases}
-      activePhase={currentPhase(phases)}
-      leadPhase={leadPhase(phases, data.days)}
-      markers={data.markers ?? []}
-      noteMarks={data.noteMarks ?? []}
-      calorieTargets={data.calorieTargets ?? []}
-      targets={data.targets ?? []}
-      weeklyGoals={buildWeeklyGoals(data.days, data.targets)}
-      changeLog={buildChangeLog(data)}
-      stepStreaks={buildStepStreaks(data.days, data.targets)}
-      lastUpdated={data.lastUpdated}
-      weightUnit={data.units.weight}
-    />
+    <>
+      {SECTIONS.filter((s) => !only || s.id === only).map((s) => (
+        <HealthDashboard key={s.id} section={s.id} {...props} />
+      ))}
+    </>
   );
 }
 
@@ -97,19 +108,65 @@ function layOut(el: Element) {
 }
 
 describe('/health', () => {
-  it('draws every section of the page, in order', () => {
-    render(<Dashboard data={fixture()} />);
-    const headings = screen.getAllByRole('heading', { level: 2 }).map((h) => h.textContent);
-    expect(headings).toEqual([
+  it('draws each page’s own sections, in order', () => {
+    const headings = (only: HealthSection) => {
+      const { unmount } = render(<Dashboard data={fixture()} only={only} />);
+      const out = screen.queryAllByRole('heading', { level: 2 }).map((h) => h.textContent);
+      unmount();
+      return out;
+    };
+    expect(headings('week')).toEqual(['The log']);
+    expect(headings('calendar')).toEqual(['August 2026']);
+    expect(headings('trends')).toEqual([
       'Weight and calories',
       'What a day’s calories do to the next morning',
       'The week, by day',
       'Steps',
       'Macros',
-      'Consistency',
-      'The log',
-      'Records',
     ]);
+    expect(headings('habits')).toEqual(['Consistency']);
+    expect(headings('records')).toEqual(['Records']);
+  });
+
+  it('marks the page it is on in the menu, and links every section', () => {
+    render(<HealthNav current="calendar" />);
+    const links = screen.getAllByRole('link');
+    expect(links.map((a) => a.getAttribute('href'))).toEqual(['/health', '/health/calendar', '/health/trends', '/health/habits', '/health/records']);
+    expect(screen.getByRole('link', { current: 'page' })).toHaveAttribute('href', '/health/calendar');
+  });
+
+  it('opens the calendar on the newest month and steps back a month', () => {
+    render(<Dashboard data={fixture()} only="calendar" />);
+    expect(screen.getByRole('heading', { name: 'August 2026' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Next month' })).toBeDisabled();
+    fireEvent.click(screen.getByRole('button', { name: 'Previous month' }));
+    expect(screen.getByRole('heading', { name: 'July 2026' })).toBeInTheDocument();
+    // Jul 20 opens the log: the 1st to the 19th are drawn but empty, so 12 days carry a reading.
+    expect(screen.getAllByRole('button', { name: /^Jul \d+:/ })).toHaveLength(12);
+  });
+
+  it('names each day’s lights in words, and shows the picked day’s numbers', () => {
+    render(<Dashboard data={fixture()} only="calendar" />);
+    // Saturdays run 3,000 kcal against a 2,400 target: a miss on a cut, said in words, not by colour alone.
+    const sat = screen.getByRole('button', { name: /^Aug 8:.*calories 3,000 missed/ });
+    fireEvent.click(sat);
+    expect(sat).toHaveAttribute('aria-pressed', 'true');
+    expect(screen.getByRole('heading', { level: 3, name: /Saturday, Aug 8/ })).toBeInTheDocument();
+    expect(screen.getByText('+600 vs the 2,400 target')).toBeInTheDocument();
+  });
+
+  it('opens the calendar on the month the newest week began in, not a month holding one day', () => {
+    const data = fixture(13); // Mon Jul 20 – Sat Aug 1: the newest week began Jul 27
+    render(<Dashboard data={data} only="calendar" />);
+    expect(screen.getByRole('heading', { name: 'July 2026' })).toBeInTheDocument();
+  });
+
+  it('switches the calendar between lights and numbers', () => {
+    const { container } = render(<Dashboard data={fixture()} only="calendar" />);
+    expect(container.querySelectorAll('.h-cal-dot').length).toBeGreaterThan(0);
+    fireEvent.click(screen.getByRole('button', { name: 'Numbers' }));
+    expect(container.querySelector('.h-cal-lights')).toBeNull();
+    expect(container.querySelectorAll('.h-cal-wt').length).toBe(9);
   });
 
   it('reads the day under the pointer on the weight-and-calories chart, and clears on leaving', () => {

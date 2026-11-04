@@ -20,6 +20,7 @@ export const TOKENS: { name: string; job: string; group: TokenGroup }[] = [
   { name: '--on-accent', job: 'Text on an accent fill', group: 'Accent' },
   { name: '--core', job: 'Up, on, playing', group: 'Meaning' },
   { name: '--over', job: 'The worse direction: over a target, a gain on a cut', group: 'Meaning' },
+  { name: '--warn', job: 'Close but not there: the middle light on the health calendar', group: 'Meaning' },
   { name: '--tape', job: 'Tape on a print', group: 'Prints' },
   { name: '--screen', job: "Tetris's screen, dark in both themes", group: 'Arcade' },
   { name: '--screen-ink', job: 'Figures on the screen', group: 'Arcade' },
