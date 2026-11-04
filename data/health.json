@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-10-26",
+  "lastUpdated": "2026-11-04",
   "units": {
     "weight": "lb"
   },
@@ -42,6 +42,18 @@
       "label": "Florida vs Baylor · basketball",
       "icon": "🏀🐊",
       "note": "At the Gators’ basketball game against Baylor."
+    },
+    {
+      "date": "2026-10-31",
+      "label": "Icemen game",
+      "icon": "🏒",
+      "note": "At the Icemen game."
+    },
+    {
+      "date": "2026-11-01",
+      "label": "Jaguars game",
+      "icon": "🏈",
+      "note": "At the Jaguars game."
     }
   ],
   "targets": [
@@ -1551,6 +1563,111 @@
       "cardioMinutes": null,
       "cardioNote": "",
       "notes": "Church"
+    },
+    {
+      "date": "2026-10-26",
+      "day": "Mon",
+      "cals": 2392,
+      "protein": 201,
+      "carbs": 253,
+      "fat": 62,
+      "weight": 202.5,
+      "steps": 13930,
+      "workout": "Lee - Legs A",
+      "cardio": false,
+      "cardioMinutes": null,
+      "cardioNote": "",
+      "notes": ""
+    },
+    {
+      "date": "2026-10-27",
+      "day": "Tue",
+      "cals": 2225,
+      "protein": 197,
+      "carbs": 235,
+      "fat": 53,
+      "weight": 202,
+      "steps": 15855,
+      "workout": "Lee - Push",
+      "cardio": true,
+      "cardioMinutes": 30,
+      "cardioNote": "30",
+      "notes": ""
+    },
+    {
+      "date": "2026-10-28",
+      "day": "Wed",
+      "cals": 2879,
+      "protein": 222,
+      "carbs": 317,
+      "fat": 93,
+      "weight": 202.5,
+      "steps": 17306,
+      "workout": "Lee - Pull",
+      "cardio": true,
+      "cardioMinutes": 30,
+      "cardioNote": "30",
+      "notes": ""
+    },
+    {
+      "date": "2026-10-29",
+      "day": "Thu",
+      "cals": 2789,
+      "protein": 219,
+      "carbs": 344,
+      "fat": 76,
+      "weight": 201.1,
+      "steps": 13350,
+      "workout": "",
+      "cardio": true,
+      "cardioMinutes": 60,
+      "cardioNote": "60 mins Orange Theory",
+      "notes": ""
+    },
+    {
+      "date": "2026-10-30",
+      "day": "Fri",
+      "cals": 3109,
+      "protein": 220,
+      "carbs": 329,
+      "fat": 102,
+      "weight": 200.2,
+      "steps": 14606,
+      "workout": "Lee - Legs B",
+      "cardio": false,
+      "cardioMinutes": null,
+      "cardioNote": "",
+      "notes": ""
+    },
+    {
+      "date": "2026-10-31",
+      "day": "Sat",
+      "cals": 3374,
+      "protein": 128,
+      "carbs": 405,
+      "fat": 146,
+      "weight": 202.5,
+      "steps": 22308,
+      "workout": "Lee - Upper",
+      "cardio": true,
+      "cardioMinutes": 30,
+      "cardioNote": "30",
+      "notes": "Iceman Game"
+    },
+    {
+      "date": "2026-11-01",
+      "day": "Sun",
+      "cals": 2423,
+      "protein": 125,
+      "carbs": 315,
+      "fat": 81,
+      "weight": 202.4,
+      "steps": 19036,
+      "workout": "",
+      "cardio": false,
+      "cardioMinutes": null,
+      "cardioNote": "",
+      "notes": "Jags Game"
     }
   ]
 }
