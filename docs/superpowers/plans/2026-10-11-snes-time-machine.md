@@ -13,7 +13,7 @@
 - Scripts: Node `.mjs` scripts that load the TS through ts-node (`loadTs`).
 - Images: Pillow through `scripts/snes/webp.py`.
 
-**Spec:** `docs/superpowers/specs/2026-10-11-snes-time-machine-design.md`. The approved prototype is https://claude.ai/artifact/MmJ2p8m5h1sZGY1s4LLyEf. Its working source is at `/private/tmp/claude-501/-Users-wes-Documents-Claude/c709f3f4-5f2b-48c6-9705-f69cc5882242/scratchpad/tm/template.html`, which is reference only and may be gone.
+**Spec:** `docs/superpowers/specs/2026-10-11-snes-time-machine-design.md`. The approved prototype is https://claude.ai/artifact/MmJ2p8m5h1sZGY1s4LLyEf.
 
 ## Global Constraints
 

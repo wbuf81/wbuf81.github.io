@@ -2,7 +2,7 @@
 
 A MySpace "Top 8" for Super Nintendo games, in the spirit of my9games.net. Any visitor picks 8 SNES games and drags them into order. MySpace-style "friend requests" suggest more games. The visitor picks one of six themes and saves a 1080×1080 picture to share, or copies a link that rebuilds the list.
 
-Approved prototype (12 Oct 2026): https://claude.ai/artifact/LQAeVS1Uiuth7JgWwLSQpT (version 2, the 3×3 layout). Its source is at `/private/tmp/claude-501/-Users-wes-Documents-Claude/c709f3f4-5f2b-48c6-9705-f69cc5882242/scratchpad/top8/template.html`; it's a reference only and may be gone.
+Approved prototype (12 Oct 2026): https://claude.ai/artifact/LQAeVS1Uiuth7JgWwLSQpT (version 2, the 3×3 layout).
 
 ## Decisions (from Wes)
 

@@ -184,7 +184,7 @@ lib/snes/
 
 ## Gameplay video, logos and 3D boxes (Wes's media)
 
-Wes supplied a scraped media set, now kept at **`/Users/wes/Vibecoding/snes-media/`**. It sits outside the repo and is never committed raw. It was first dropped in `out/snes/`, which every `npm run build` wipes, so it was moved.
+Wes supplied a scraped media set, now kept at **`../snes-media`**, beside the repo. It sits outside the repo and is never committed raw. It was first dropped in `out/snes/`, which every `npm run build` wipes, so it was moved.
 
 The set is named like the No-Intro box art, e.g. `7th Saga, The (USA)-video.mp4`:
 

@@ -10,7 +10,7 @@
 
 **Spec:** `docs/superpowers/specs/2026-10-03-legcom-style-homepage-design.md` (approved 3 Oct 2026, plus: redraw the favicon in Source Serif 4; `/uses` just 404s; daily refresh of the GitHub map).
 
-**Visual source of truth:** the mockup canvas https://claude.ai/artifact/GLGp39JPxCKYSZ8dRwCRKd, artboard "Picked · A with A2's top"; its local file is `/private/tmp/claude-502/-Users-wbard-Vibecoding-personal-website/893f90b1-f733-442c-8ddd-a4ad3cb0dc86/scratchpad/canvas/project/Main.dc.html`. Its `<style>` block is the starting point for the stylesheet.
+**Visual source of truth:** the mockup canvas https://claude.ai/artifact/GLGp39JPxCKYSZ8dRwCRKd, artboard "Picked · A with A2's top". Its `<style>` block is the starting point for the stylesheet.
 
 ## Global Constraints
 
