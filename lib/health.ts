@@ -514,7 +514,13 @@ export function buildPhases(days: HealthDay[], phases?: HealthPhase[]): PhaseSum
       goalRemaining,
       goalPercent,
       projectedGoalDate,
-      projectedGoalLabel: projectedGoalDate === null ? null : shortLabel(projectedGoalDate),
+      // A goal months away crosses into another year more often than not on a bulk: name the year then.
+      projectedGoalLabel:
+        projectedGoalDate === null
+          ? null
+          : projectedGoalDate.slice(0, 4) === inRange[inRange.length - 1].date.slice(0, 4)
+            ? shortLabel(projectedGoalDate)
+            : `${shortLabel(projectedGoalDate)}, ${projectedGoalDate.slice(0, 4)}`,
       avgCals: mean(inRange.map((d) => d.cals)),
       avgProtein: mean(inRange.map((d) => d.protein)),
       avgSteps: mean(inRange.map((d) => d.steps)),
@@ -563,7 +569,8 @@ export function leadPhase(
  */
 export function buildWeeklyTrend(
   days: HealthDay[],
-  calorieTargets?: HealthCalorieTarget[]
+  calorieTargets?: HealthCalorieTarget[],
+  phases: PhaseSummary[] = []
 ): WeeklyTrendRow[] {
   const weeks = groupIntoWeeks(days);
 
@@ -603,8 +610,18 @@ export function buildWeeklyTrend(
       workouts: week.workouts,
       cardioSessions: week.cardioSessions,
       cardioMinutes: week.cardioMinutes,
+      phase: blockOn(phases, week.days[week.days.length - 1].date),
     };
   });
+}
+
+/** The block a date falls in, by type and label, or null outside every block. */
+function blockOn(phases: PhaseSummary[], date: string): WeeklyTrendRow['phase'] {
+  for (let i = phases.length - 1; i >= 0; i--) {
+    const p = phases[i];
+    if (p.start <= date && (p.end === null || date <= p.end)) return { type: p.type, label: p.label, start: p.start };
+  }
+  return null;
 }
 
 /**

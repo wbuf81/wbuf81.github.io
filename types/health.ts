@@ -282,6 +282,11 @@ export interface WeeklyTrendRow {
   workouts: number;
   cardioSessions: number;
   cardioMinutes: number;
+  /**
+   * The block in force on the week's last recorded day (the same rule targets use), or null outside every block.
+   * Every colour on the row reads it, so cuts and bulks can alternate without a week being judged by the wrong one.
+   */
+  phase: { type: PhaseType; label: string; start: string } | null;
 }
 
 /** A run of days meeting one threshold. */

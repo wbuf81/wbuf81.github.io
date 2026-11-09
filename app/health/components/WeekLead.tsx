@@ -1,5 +1,5 @@
 import { PhaseSummary, WeeklyTrendRow } from '@/types/health';
-import { downIsGood, formatDelta, formatNumber } from './format';
+import { calsTone, formatDelta, formatNumber, weightTone } from './format';
 
 interface Props {
   rows: WeeklyTrendRow[];
@@ -24,15 +24,16 @@ export default function WeekLead({ rows, phase, next = null, weightUnit }: Props
   const lb = (v: number | null) => (v === null ? '—' : `${formatNumber(v, 1)} ${weightUnit}`);
   const signedLb = (v: number | null) => (v === null ? '—' : `${formatDelta(v)} ${weightUnit}`);
 
-  // A cut wants the number down, a bulk wants it up; the block's own arithmetic is signed that way.
-  const blockTone = (v: number | null) => (v === null || !phase ? '' : downIsGood(phase.type === 'bulk' ? -v : v));
+  // A cut wants the number down, a bulk wants it up: the block's figures, and the week's, are coloured by their block.
+  const blockTone = (v: number | null) => (!phase ? '' : weightTone(v, phase.type));
+  const weekBlock = week.phase?.type ?? phase?.type ?? null;
 
   const supporting = [
     {
       label: 'Avg calories',
       value: week.avgCals !== null ? formatNumber(week.avgCals) : '—',
       detail: week.calsVsGoal !== null ? `${formatDelta(week.calsVsGoal, 0)} vs target` : 'per day',
-      tone: downIsGood(week.calsVsGoal, 0),
+      tone: calsTone(week.calsVsGoal, week.avgCals, weekBlock),
     },
     { label: 'Avg protein', value: week.avgProtein !== null ? `${formatNumber(week.avgProtein)} g` : '—', detail: 'per day', tone: '' },
     { label: 'Avg steps', value: week.avgSteps !== null ? formatNumber(week.avgSteps) : '—', detail: 'per day', tone: '' },
@@ -58,7 +59,7 @@ export default function WeekLead({ rows, phase, next = null, weightUnit }: Props
         <div>
           <div className="h-k">Avg weight this week</div>
           <div className="h-big">{lb(week.avgWeight)}</div>
-          <div className={`h-l ${phase?.type === 'bulk' ? blockTone(week.weightChange) : downIsGood(week.weightChange)}`}>
+          <div className={`h-l ${weightTone(week.weightChange, weekBlock)}`}>
             {week.weightChange !== null
               ? `${formatDelta(week.weightChange)} ${weightUnit} vs the week before`
               : rows.length === 1

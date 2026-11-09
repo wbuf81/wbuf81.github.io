@@ -21,6 +21,7 @@ function row(overrides: Partial<WeeklyTrendRow> & { weekStart: string }): Weekly
     workouts: 5,
     cardioSessions: 4,
     cardioMinutes: 135,
+    phase: null,
     ...overrides,
   };
 }

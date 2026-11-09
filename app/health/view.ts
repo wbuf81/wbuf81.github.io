@@ -24,7 +24,7 @@ export function getHealthView() {
     weeks: groupIntoWeeks(data.days),
     summary: summarize(data.days, data.targets),
     weightSeries: buildWeightSeries(data.days),
-    weeklyTrend: buildWeeklyTrend(data.days, data.calorieTargets),
+    weeklyTrend: buildWeeklyTrend(data.days, data.calorieTargets, phases),
     phases,
     activePhase: currentPhase(phases),
     leadPhase: leadPhase(phases, data.days),

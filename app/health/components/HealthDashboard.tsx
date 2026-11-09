@@ -97,7 +97,7 @@ export default function HealthDashboard({
           next={leadPhase && activePhase && leadPhase !== activePhase ? activePhase : null}
           weightUnit={weightUnit}
         />
-        <StatTiles summary={summary} weightUnit={weightUnit} />
+        <StatTiles summary={summary} phase={leadPhase} weightUnit={weightUnit} />
         <WeekLog
           weeks={weeks}
           trend={weeklyTrend}

@@ -1,6 +1,6 @@
 import { HealthMarker, HealthNoteMark, WeekSummary, WeeklyGoals, WeeklyTrendRow } from '@/types/health';
 import { Marks, dayMarks } from './ConsistencyGrid';
-import { downIsGood, formatDelta, formatNumber, shortDate } from './format';
+import { calsTone, formatDelta, formatNumber, shortDate, weightTone } from './format';
 
 interface Props {
   weeks: WeekSummary[];
@@ -52,7 +52,8 @@ export default function WeekLog({ weeks, trend, weeklyGoals, markers, noteMarks,
           <article className="h-card h-week" key={week.weekStart} aria-label={`Week ending ${week.label}`}>
             <div className="h-wk-head">
               <div>
-                <div className="eyebrow">Week ending</div>
+                {/* The block the week was in, so alternating cuts and bulks read at a glance. */}
+                <div className="eyebrow">Week ending{row?.phase ? ` · ${row.phase.label}` : ''}</div>
                 <h3>{week.label}</h3>
                 <div className="h-l">
                   {week.days.length === 1 ? '1 day' : `${week.days.length} days`} recorded
@@ -64,7 +65,7 @@ export default function WeekLog({ weeks, trend, weeklyGoals, markers, noteMarks,
                 <div className="h-n is-accent">
                   {row?.avgWeight != null ? `${formatNumber(row.avgWeight, 1)} ${weightUnit}` : '—'}
                 </div>
-                <div className={`h-l ${downIsGood(row?.weightChange ?? null)}`}>
+                <div className={`h-l ${weightTone(row?.weightChange ?? null, row?.phase?.type ?? null)}`}>
                   {row?.weightChange != null ? `${formatDelta(row.weightChange)} ${weightUnit}` : isOldest ? 'first week' : '—'}
                 </div>
               </div>
@@ -75,7 +76,7 @@ export default function WeekLog({ weeks, trend, weeklyGoals, markers, noteMarks,
                     {row.calsVsGoal !== null && (
                       <>
                         {' · '}
-                        <span className={downIsGood(row.calsVsGoal, 0)}>{formatDelta(row.calsVsGoal, 0)}</span>
+                        <span className={calsTone(row.calsVsGoal, row.avgCals, row.phase?.type ?? null)}>{formatDelta(row.calsVsGoal, 0)}</span>
                       </>
                     )}
                   </span>

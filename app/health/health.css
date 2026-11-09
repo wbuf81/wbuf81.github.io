@@ -171,6 +171,8 @@
 .wb .h-table td, .wb .h-table tbody th { padding: 9px 8px; border-bottom: 1px solid var(--rule-soft); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .wb .h-table tbody th.is-week { font: 600 13.5px var(--sans); letter-spacing: 0; text-transform: none; color: var(--ink); }
 .wb .h-table .is-num { text-align: right; }
+/* Records › By week: a heading row where each block (a cut, a bulk) begins. */
+.wb .h-table tbody th.is-block { padding: 16px 8px 6px; font: 500 11px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); border-bottom: 1px solid var(--rule); }
 .wb .h-table .is-partial { margin-left: 6px; font: 500 10px var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); }
 .wb .h-table .is-notes { color: var(--ink-2); white-space: normal; min-width: 18ch; }
 .wb .h-table .is-rest, .wb .h-table .is-was { color: var(--ink-3); }

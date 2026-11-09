@@ -9,7 +9,7 @@ exactly the audience it is kept away from. Don't add attribution back.
     npm run weekly:cards -- status      # just one
 
 Two cards, meant to be posted together:
-  status    where the cut stands overall — start, now, goal, pace.
+  status    where the block (a cut or a bulk) stands overall — start, now, goal, pace.
   activity  what the week actually contained, day by day.
 
 Both are 1080x1350 so they pair as a 2-up on X and take the full height of a
@@ -142,7 +142,7 @@ def delta(value, digits=1):
 
 
 # --------------------------------------------------------------------------- #
-# status — where the cut stands                                               #
+# status — where the block stands                                             #
 # --------------------------------------------------------------------------- #
 
 def trend_svg(series, width, height):
@@ -268,7 +268,11 @@ def status_card(d):
     for i, wk in enumerate(recents):
         ch = wk['weightChange']
         shown = round(ch or 0, 1)
-        ch_color = GREEN if shown * good > 0 else ORANGE if shown != 0 else MUTED
+        # Each week in its own block's colours: Wes alternates cuts and bulks, so a cut week's gain stays orange
+        # beside a bulk week's green. Maintenance is neutral; a week outside any block reads as the tracker began, a cut.
+        block = wk.get('blockType')
+        row_good = 1 if block == 'bulk' else -1
+        ch_color = MUTED if block == 'maintain' or shown == 0 else GREEN if shown * row_good > 0 else ORANGE
         ch_text = delta(ch) if ch is not None else '—'
         # Older rows fade in steps toward the week being posted, so five rows
         # read as one motion rather than a wall of equal numbers.
@@ -419,6 +423,12 @@ DAY_NAMES = {'Mon': 'MON', 'Tue': 'TUE', 'Wed': 'WED', 'Thu': 'THU',
              'Fri': 'FRI', 'Sat': 'SAT', 'Sun': 'SUN'}
 
 
+def block_tag(d):
+    """'week 1 of the lean bulk': the block's own name, never assumed to be a cut (Wes alternates cuts and bulks)."""
+    phase, week = d.get('phase'), d['week']
+    return f"week {week['number']} of the {phase['label'].lower()}" if phase else f"week {week['number']}"
+
+
 def activity_card(d):
     """The week as a log: one row per day, what was trained, how far walked.
 
@@ -541,7 +551,7 @@ def activity_card(d):
 <div class="card">
   <div class="head">
     <p class="tag">The week · {week['rangeLabel']}</p>
-    <p class="tag is-dim">week {week['number']} of the cut</p>
+    <p class="tag is-dim">{block_tag(d)}</p>
   </div>
 
   <div class="sub">
@@ -701,7 +711,7 @@ def macros_card(d):
 <div class="card">
   <div class="head">
     <p class="tag">Macros · {week['rangeLabel']}</p>
-    <p class="tag is-dim">week {week['number']} of the cut</p>
+    <p class="tag is-dim">{block_tag(d)}</p>
   </div>
 
   <div class="sub">

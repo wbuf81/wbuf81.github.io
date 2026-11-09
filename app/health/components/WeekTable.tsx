@@ -1,5 +1,6 @@
+import { Fragment } from 'react';
 import { HealthMarker, WeeklyTrendRow } from '@/types/health';
-import { downIsGood, formatDelta, formatNumber } from './format';
+import { calsTone, formatDelta, formatNumber, weightTone } from './format';
 
 interface Props {
   rows: WeeklyTrendRow[];
@@ -12,10 +13,7 @@ function num(value: number | null, digits = 0): string {
   return value === null ? '—' : formatNumber(value, digits);
 }
 
-/** Losing weight is the goal, so a fall is the good direction; a change that rounds to nothing has none. */
-function changeClass(change: number | null, digits = 1): string {
-  return `is-num ${downIsGood(change, digits)}`.trim();
-}
+const COLUMNS = 12;
 
 export default function WeekTable({ rows, markers = [], weightUnit }: Props) {
   const newestFirst = [...rows].reverse();
@@ -42,8 +40,17 @@ export default function WeekTable({ rows, markers = [], weightUnit }: Props) {
           </tr>
         </thead>
         <tbody>
-          {newestFirst.map((row) => (
-            <tr key={row.weekStart}>
+          {newestFirst.map((row, i) => (
+            <Fragment key={row.weekStart}>
+            {/* A heading where each block begins (newest first), so alternating cuts and bulks read as runs. */}
+            {row.phase && row.phase.start !== newestFirst[i - 1]?.phase?.start && (
+              <tr className="is-block-row">
+                <th scope="row" colSpan={COLUMNS} className="is-block">
+                  {row.phase.label}
+                </th>
+              </tr>
+            )}
+            <tr>
               <th scope="row" className="is-week">
                 {row.label}
                 {row.isPartial && (
@@ -54,12 +61,12 @@ export default function WeekTable({ rows, markers = [], weightUnit }: Props) {
               </th>
               <td className="is-num">{row.dayCount}</td>
               <td className="is-num">{num(row.avgWeight, 1)}</td>
-              <td className={changeClass(row.weightChange)}>
+              <td className={`is-num ${weightTone(row.weightChange, row.phase?.type ?? null)}`.trim()}>
                 {row.weightChange === null ? '—' : `${formatDelta(row.weightChange)} ${weightUnit}`}
               </td>
               <td className="is-num">{num(row.avgCals)}</td>
               {/* Under the calorie goal is the good direction, like losing weight. */}
-              <td className={changeClass(row.calsVsGoal, 0)}>
+              <td className={`is-num ${calsTone(row.calsVsGoal, row.avgCals, row.phase?.type ?? null)}`.trim()}>
                 {row.calsVsGoal === null ? '—' : formatDelta(row.calsVsGoal, 0)}
               </td>
               <td className="is-num">{row.avgProtein === null ? '—' : `${num(row.avgProtein)} g`}</td>
@@ -74,6 +81,7 @@ export default function WeekTable({ rows, markers = [], weightUnit }: Props) {
                   .join(' · ') || '—'}
               </td>
             </tr>
+            </Fragment>
           ))}
         </tbody>
       </table>

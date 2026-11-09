@@ -52,9 +52,9 @@ const wantedWeek = args.includes('--week') ? args[args.indexOf('--week') + 1] : 
 
 const data = getHealthData();
 const weeks = groupIntoWeeks(data.days);
-const trend = buildWeeklyTrend(data.days, data.calorieTargets);
-const goals = buildWeeklyGoals(data.days, data.targets);
 const phases = buildPhases(data.days, data.phases);
+const trend = buildWeeklyTrend(data.days, data.calorieTargets, phases);
+const goals = buildWeeklyGoals(data.days, data.targets);
 
 /** The newest week with all seven days, so a card never reports half a week. */
 function pickIndex() {
@@ -177,6 +177,8 @@ console.log(
         rangeLabel: rangeLabel(r.weekStart, r.weekEnd),
         avgWeight: r.avgWeight,
         weightChange: r.weightChange,
+        // The block the week was in, so the card colours a cut week's gain as a cut would, beside a bulk's.
+        blockType: r.phase?.type ?? null,
         avgCals: r.avgCals,
         avgProtein: r.avgProtein,
         avgSteps: r.avgSteps,

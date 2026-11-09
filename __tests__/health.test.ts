@@ -1148,3 +1148,46 @@ describe('daily chart labels', () => {
     expect(series[0].label).toBe('Sun 02');
   });
 });
+
+describe('weekly rows know their block, so cuts and bulks can alternate', () => {
+  const cutWeek = [
+    day({ date: '2026-10-26', day: 'Mon', weight: 202 }),
+    day({ date: '2026-11-01', day: 'Sun', weight: 201.8 }),
+  ];
+  const bulkWeek = [
+    day({ date: '2026-11-02', day: 'Mon', weight: 202.8 }),
+    day({ date: '2026-11-08', day: 'Sun', weight: 203.7 }),
+  ];
+  const all = [...cutWeek, ...bulkWeek];
+
+  test('each week carries the block in force on its last recorded day', () => {
+    const phases = buildPhases(all, [
+      { start: '2026-07-20', type: 'cut', label: 'Cut' },
+      { start: '2026-11-02', type: 'bulk', label: 'Lean bulk' },
+    ]);
+    const rows = buildWeeklyTrend(all, undefined, phases);
+    expect(rows.map((r) => r.phase)).toEqual([
+      { type: 'cut', label: 'Cut', start: '2026-07-20' },
+      { type: 'bulk', label: 'Lean bulk', start: '2026-11-02' },
+    ]);
+  });
+
+  test('a week outside every block, or with no blocks at all, has none', () => {
+    expect(buildWeeklyTrend(all).map((r) => r.phase)).toEqual([null, null]);
+    const phases = buildPhases(all, [{ start: '2026-11-02', type: 'bulk' }]);
+    expect(buildWeeklyTrend(all, undefined, phases).map((r) => r.phase?.type ?? null)).toEqual([null, 'bulk']);
+  });
+});
+
+describe('a projection a year or more out names its year', () => {
+  test('a goal date in a later year than the newest weigh-in carries the year', () => {
+    const slow = [
+      day({ date: '2026-11-02', day: 'Mon', weight: 202.8 }),
+      day({ date: '2026-11-09', day: 'Mon', weight: 203.2 }),
+    ];
+    const [phase] = buildPhases(slow, [{ start: '2026-11-02', type: 'bulk', goalWeight: 220 }]);
+    expect(phase.projectedGoalDate?.slice(0, 4)).toBe('2027');
+    expect(phase.projectedGoalLabel).toMatch(/^[A-Z][a-z]{2} \d{1,2}, 2027$/);
+  });
+});
+
