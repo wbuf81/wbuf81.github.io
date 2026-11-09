@@ -9,16 +9,24 @@
 import fs from 'fs';
 import path from 'path';
 import { execFileSync } from 'child_process';
-import { POP_DIR, fetchWithRetry, loadTs, popCachePath, refresh, repoRoot, sleep, wikiPageImages } from './lib.mjs';
+import { DATA_DIR, POP_DIR, fetchWithRetry, loadTs, popCachePath, refresh, repoRoot, sleep, wikiPageImages } from './lib.mjs';
 
 // Wikimedia rate-limits upload.wikimedia.org too (429 at ~0.6 s), so image downloads keep the same 2.5 s spacing.
 const POLITE_MS = 2500;
 const { parseChart } = loadTs('lib/snes/pop.ts');
-const { artId } = loadTs('lib/snes/weeks.ts');
+const { artId, weekStarts } = loadTs('lib/snes/weeks.ts');
 const { wikiUrl } = loadTs('lib/snes/routes.ts');
+// Only the weeks the Time Machine shows. They end at the last US game (build-weeks.mjs), and a week takes the chart
+// rows dated up to two days after it starts (lib/snes/weeks.ts › assembleWeeks). Fetching the rest of 1998 left 16
+// covers no week used, served for nothing; they were removed on 9 Nov 2026.
+const games = JSON.parse(fs.readFileSync(path.join(DATA_DIR, 'games.json'), 'utf8'));
+const lastStart = weekStarts(games.map((g) => g.releasedUS).sort().pop()).pop();
+const cutoff = new Date(Date.parse(`${lastStart}T00:00:00Z`) + 2 * 86400000).toISOString().slice(0, 10);
 const articles = new Set();
 for (let y = 1991; y <= 1998; y++) for (const kind of ['hot', 'album', 'box']) {
-  for (const r of parseChart(fs.readFileSync(popCachePath(`${kind}-${y}.wiki`), 'utf8'), y)) if (r.date >= '1991-08-10' && r.article) articles.add(r.article);
+  for (const r of parseChart(fs.readFileSync(popCachePath(`${kind}-${y}.wiki`), 'utf8'), y)) {
+    if (r.date >= '1991-08-10' && r.date <= cutoff && r.article) articles.add(r.article);
+  }
 }
 fs.mkdirSync(POP_DIR, { recursive: true });
 const want = [...articles].sort().filter((a) => refresh || !fs.existsSync(path.join(POP_DIR, `${artId(a)}.webp`)));
