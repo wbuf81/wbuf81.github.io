@@ -12,7 +12,7 @@
       "note": "Goal raised from 190 to 195 on Sep 21, 2026"
     },
     {
-      "start": "2026-11-02",
+      "start": "2026-10-26",
       "type": "bulk",
       "label": "Lean bulk",
       "goalWeight": 220,
@@ -112,9 +112,14 @@
       "note": "Coach Lee's advice — added mostly as carbs pre-workout"
     },
     {
+      "from": "2026-10-26",
+      "cals": 2700,
+      "note": "Refeed week: the bulk’s first, at about 2,700 a day"
+    },
+    {
       "from": "2026-11-02",
       "cals": 2900,
-      "note": "Lean bulk begins"
+      "note": "Up to the bulk’s target after the refeed week"
     }
   ],
   "days": [
