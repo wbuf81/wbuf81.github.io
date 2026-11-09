@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-11-04",
+  "lastUpdated": "2026-11-09",
   "units": {
     "weight": "lb"
   },
@@ -61,6 +61,18 @@
       "label": "Jaguars game",
       "icon": "🏈",
       "note": "At the Jaguars game."
+    },
+    {
+      "date": "2026-11-06",
+      "label": "Golf",
+      "icon": "⛳",
+      "note": "Out on the golf course."
+    },
+    {
+      "date": "2026-11-08",
+      "label": "Icemen game",
+      "icon": "🏒",
+      "note": "At the Icemen game."
     }
   ],
   "targets": [
@@ -1680,6 +1692,111 @@
       "cardioMinutes": null,
       "cardioNote": "",
       "notes": "Jags Game"
+    },
+    {
+      "date": "2026-11-02",
+      "day": "Mon",
+      "cals": 2919,
+      "protein": 206,
+      "carbs": 363,
+      "fat": 80,
+      "weight": 202.8,
+      "steps": 14816,
+      "workout": "Lee - Legs A",
+      "cardio": false,
+      "cardioMinutes": null,
+      "cardioNote": "",
+      "notes": ""
+    },
+    {
+      "date": "2026-11-03",
+      "day": "Tue",
+      "cals": 2695,
+      "protein": 208,
+      "carbs": 308,
+      "fat": 72,
+      "weight": 203.5,
+      "steps": 15696,
+      "workout": "Lee - Push",
+      "cardio": true,
+      "cardioMinutes": 30,
+      "cardioNote": "30",
+      "notes": ""
+    },
+    {
+      "date": "2026-11-04",
+      "day": "Wed",
+      "cals": 2826,
+      "protein": 223,
+      "carbs": 326,
+      "fat": 75,
+      "weight": 202.8,
+      "steps": 15915,
+      "workout": "Lee - Pull",
+      "cardio": true,
+      "cardioMinutes": 30,
+      "cardioNote": "30",
+      "notes": ""
+    },
+    {
+      "date": "2026-11-05",
+      "day": "Thu",
+      "cals": 2778,
+      "protein": 222,
+      "carbs": 319,
+      "fat": 72,
+      "weight": 202.8,
+      "steps": 15197,
+      "workout": "Lee - Legs B",
+      "cardio": false,
+      "cardioMinutes": null,
+      "cardioNote": "",
+      "notes": ""
+    },
+    {
+      "date": "2026-11-06",
+      "day": "Fri",
+      "cals": 2981,
+      "protein": 180,
+      "carbs": 362,
+      "fat": 94,
+      "weight": 202.8,
+      "steps": 16541,
+      "workout": "",
+      "cardio": false,
+      "cardioMinutes": null,
+      "cardioNote": "",
+      "notes": "Golf"
+    },
+    {
+      "date": "2026-11-07",
+      "day": "Sat",
+      "cals": 3145,
+      "protein": 220,
+      "carbs": 320,
+      "fat": 119,
+      "weight": 203.7,
+      "steps": 21039,
+      "workout": "Lee - Upper",
+      "cardio": true,
+      "cardioMinutes": 30,
+      "cardioNote": "30",
+      "notes": ""
+    },
+    {
+      "date": "2026-11-08",
+      "day": "Sun",
+      "cals": 3451,
+      "protein": 184,
+      "carbs": 359,
+      "fat": 146,
+      "weight": 203.7,
+      "steps": 17155,
+      "workout": "",
+      "cardio": false,
+      "cardioMinutes": null,
+      "cardioNote": "",
+      "notes": "Icemen Game"
     }
   ]
 }
