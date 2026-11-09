@@ -1,0 +1,8 @@
+Built-in image_gen tool
+Reference: coastal-family-light.png
+
+Use case: background-extraction.
+Extract the coastal illustration from the bottom of this light-theme footer as a transparent PNG asset.
+Remove ALL text and the empty upper half. Remove the WHITE background everywhere, including within the sand, water, between grass blades, between dither dots, and between boardwalk planks. Keep only the original DARK TEAL ink drawing on actual transparency. Do not recolor the artwork to white. Do not add any white, gray, or colored background.
+Preserve the exact curved boardwalk, beach grasses, ocean waves, mother seated in the chair on the right, and father with exactly two boys in the shallow water. Preserve their positions and the fine pixel-dither texture. The output should be deep teal linework and discrete pixel marks floating on transparency, with clear open gaps throughout the drawing.
+Crop to the landscape artwork with a little transparent space above the grass tips. Full width, short wide banner. No words, no new objects, no layout, no borders, no visual checkerboard, no white backdrop.

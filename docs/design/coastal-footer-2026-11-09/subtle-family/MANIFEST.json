@@ -1,0 +1,30 @@
+{
+  "revision": "subtle-family-2026-11-09",
+  "generator": "Built-in imagegen",
+  "files": {
+    "README.md": {
+      "bytes": 2306,
+      "sha256": "f7ad521b27dc4f48e902432afc00d92856e38e67a72481aa94f1b35311aad2dd"
+    },
+    "IMAGE-PROMPTS.txt": {
+      "bytes": 6916,
+      "sha256": "be8f908f2d2f09c3ab9ac0803193ff94c6d30bf48d771941353eb8eb6325c1eb"
+    },
+    "ARTWORK-EXTRACTION-PROMPT.txt": {
+      "bytes": 1659,
+      "sha256": "7a974536521ca4b3834bed4690977fb01791c56dbc9c8203eafd37e9152cae74"
+    },
+    "coastal-family-light-subtle.png": {
+      "bytes": 2268646,
+      "sha256": "eef86182103fab5c85c14c23e3399745188ac99f4399624d6e1e83c67a5500d8"
+    },
+    "coastal-family-dark-subtle.png": {
+      "bytes": 2099563,
+      "sha256": "e02315cfe4c91b33db460739737af91da7c5c40c119c4a9bc057d6d9b9685d1f"
+    },
+    "coastal-family-art-subtle-crisp.png": {
+      "bytes": 2284028,
+      "sha256": "d3dfe0be62ef0d645717485d99341f8d0fbfb9be64974a57ff9b5b2e3d950231"
+    }
+  }
+}

@@ -1,0 +1,17 @@
+Built-in image_gen — softer dark theme and production mask
+
+coastal-family-dark-soft
+Reference: the earlier charcoal/cyan dark mockup (not kept)
+Use case: precise-object-edit / palette-transfer.
+Edit the supplied footer mockup. The user likes the coastal scene and family but says dark mode feels ominous. Make it calm and relaxed while preserving the EXACT boardwalk geometry, ocean, grass, four family figures, typography, wording, spacing and wide 2:1 crop.
+Use the site's dark accent-soft surface #1b3038 as the uniformly flat background instead of near-black charcoal. Text Wesley stays cool white #e6ebf0, Bard and links muted pale cyan #7ec4d4. Section labels, domain, sentence and copyright use #9aa7b3.
+Reduce the whole illustration's contrast strongly: render its ink in quiet desaturated blue-gray around #688f9a rather than luminous cyan. There must be no neon cyan, glowing outlines or luminous water. Render the four small family figures with the SAME low-contrast ink as nearby waves, as faint marks discovered within the scene: one wife seated in chair on sand at right and father with two boys in shallow water. Do not make figures larger, bolder, black silhouettes, or brighter than the environment. Keep faces unrecognizable and seen from behind.
+Keep footer text readable at full contrast; the softer treatment applies only to decorative artwork. The boardwalk should remain legible but quieter than the words. Retain all fine dither squares and crosses. No new sunset, sun, stars, warm beige, decorative elements or gradient. A restful blue-hour coastal print with minimal contrast, not spooky night vision.
+
+coastal-family-ink-mask
+Reference: selected-teal-composition.png
+Use case: background-extraction.
+Extract ONLY the lower coastal illustration from this image into a true transparent PNG, cropped to a wide banner. Remove all text and the huge empty upper section.
+CRITICAL: the output is a BINARY ALPHA STENCIL, with exactly two kinds of pixel: opaque white DRAWING MARKS (R255 G255 B255 A255) and completely transparent empty space (A0). No opaque gray, no gray haze, no colored ink, no checkerboard pattern, no semiopaque background, no rectangular fill, no continuous solid layer behind the drawing. Every formerly dark teal pixel, including every negative space WITHIN the boardwalk, sea, grasses and people, becomes fully TRANSPARENT. Only the original white dither dots, squares, crosses and lines remain as white opaque marks. This must function as a CSS ALPHA MASK.
+Keep the exact lower scene from the source, with the boardwalk curving from lower left to center, dune grass, horizontal ocean waves, exactly one wife seated in a beach chair on the right and exactly three other people in the surf (one taller father and two shorter sons), in their exact source locations and sizes. Keep the family faint through sparse marks. Preserve the texture. No added objects, no new scene, no text.
+Transparent area surrounds the highest sea-oat tips, goes between EVERY drawing mark, and through all holes. The area beneath the horizon MUST contain thousands of fully transparent pixel gaps, not a gray solid cutout. Output a wide artwork-only banner around 4:1, white ink on actual transparency.

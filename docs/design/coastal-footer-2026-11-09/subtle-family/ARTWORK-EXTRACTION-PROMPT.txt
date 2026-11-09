@@ -1,0 +1,12 @@
+Built-in image_gen tool
+
+Use case: background-extraction.
+Extract ONLY the coastal illustration from the lower half of this supplied light footer mockup as a transparent PNG. This is a precise extraction, NOT a repaint or a new illustration.
+
+Keep the actual existing teal pixels and fine ordered dither texture of the supplied artwork. Retain every sharp square dot, cross, line and checkerboard gap. Do not blur, smooth, denoise, soften, thicken, repaint or photorealistically shade the drawing. The source has CRISP PIXEL PRINT texture; preserve it.
+
+Remove all words, typography and empty upper space. Make all WHITE paper/background pixels fully transparent, including the white gaps inside the waves, grasses, chair, people and boardwalk. Keep original DARK TEAL drawing marks and their existing antialiasing. Do not add a solid teal wash or any opaque background. Do not draw a checkerboard.
+
+Preserve the already revised tiny distant family exactly: the mother seated in a small chair on the right, and the father with two smaller boys in the water. These tiny silhouettes have NO facial details, no white heads or white face highlights, no empty outlined faces. Keep all four figures understated, with their existing small size and faintness, using lower alpha in those marks so a CSS alpha mask preserves the subtlety.
+
+Keep the curved boardwalk entering from lower left, all dunes and grasses, ocean and waves in exactly the source positions. Retain the broad full-width shoreline and foreground. Crop to a wide artwork-only banner with a little transparent space above the tallest sea oats. One transparent PNG, crisp deep-teal ink only, no text.

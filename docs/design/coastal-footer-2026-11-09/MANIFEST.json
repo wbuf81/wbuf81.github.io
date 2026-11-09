@@ -1,0 +1,82 @@
+{
+  "prepared_for": "this repository",
+  "reviewed_commit": "346e669",
+  "generated_with": "built-in image_gen",
+  "files": [
+    {
+      "file": "ARTWORK-PROMPT.txt",
+      "bytes": 1108,
+      "sha256": "5044846dc9a00183fec3dcacbe8d703bd75afef379b416a12441ebebe961ac22"
+    },
+    {
+      "file": "CLAUDE-PROMPT.txt",
+      "bytes": 595,
+      "sha256": "1df04dd9f79a75b061954237155be858d38d76269440c0215603e3bc0edf6f67"
+    },
+    {
+      "file": "IMAGE-PROMPTS-REFINEMENT.txt",
+      "bytes": 3227,
+      "sha256": "a0401a8a77c138103df0334779a5c7842e7c190632f0288327139ee652d83116"
+    },
+    {
+      "file": "IMAGE-PROMPTS.txt",
+      "bytes": 5216,
+      "sha256": "a273e2e28a854874eb684bab98e7e5dcd3b90174fc073395c2c8139e6a1993dd"
+    },
+    {
+      "file": "README.md",
+      "bytes": 6931,
+      "sha256": "a0db7933b56b3589cedbc747a9612a718792760305f01a9f31e3ffe3d118aa3e"
+    },
+    {
+      "file": "coastal-family-art.png",
+      "bytes": 2190842,
+      "sha256": "a52244fbac46a7a6dafe7749516d1963d4374503b1bb9530a2da105612a5b6ca",
+      "dimensions": [
+        2172,
+        724
+      ]
+    },
+    {
+      "file": "coastal-family-dark.png",
+      "bytes": 2160293,
+      "sha256": "a10e690569b1e7f84b8de0f1b02c94eb8b0fa1655fff703971ec80b2293b8c7b",
+      "dimensions": [
+        1774,
+        887
+      ]
+    },
+    {
+      "file": "coastal-family-light.png",
+      "bytes": 2305984,
+      "sha256": "018b9d5f5bf34eb3754e74199d9bf08b191c6b9cb0d3270ef3ddc351a390706d",
+      "dimensions": [
+        1774,
+        887
+      ]
+    },
+    {
+      "file": "selected-teal-composition.png",
+      "bytes": 2500123,
+      "sha256": "152703e9f2ac726d5e8de5f6494b17deeb7b36b2d47fc91fe490eeb74ad34aa9",
+      "dimensions": [
+        1774,
+        887
+      ]
+    }
+  ],
+  "artwork_validation": {
+    "format": "RGBA PNG",
+    "dimensions": [
+      2172,
+      724
+    ],
+    "alpha_range": [
+      0,
+      255
+    ],
+    "transparent_pixel_fraction": 0.4971,
+    "has_transparent_gaps_inside_artwork": true
+  },
+  "implementation_status": "Design handoff only; no production code changed."
+}

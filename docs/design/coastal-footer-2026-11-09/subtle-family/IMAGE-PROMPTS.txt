@@ -1,0 +1,49 @@
+Built-in image_gen — subtle family revision
+
+coastal-family-light-subtle
+Reference: ../coastal-family-light.png
+Use case: precise-object-edit.
+The provided image is the selected coastal family footer. Change ONLY the four people and the wife's chair. Everything else—boardwalk, dune grasses, ocean, waves, typography, text, colors, spacing, crop, all scenery—must remain unchanged.
+
+The user dislikes the white faces, facial detail and overly conspicuous figures. Make the family a quiet, distant, almost hidden detail, not outlined characters.
+- Keep exactly one mother seated in the chair on the right, looking AWAY toward the sea; keep one father with exactly TWO shorter boys together in the shallow water. Keep their respective positions.
+- Reduce each person's visual size to roughly HALF its current size; scale the chair with the seated woman. Anchor the walkers' feet at their existing waterline and the chair's feet on the existing sand, restoring sand/waves where the larger figures used to be.
+- Draw heads as tiny simple unbroken ink silhouettes viewed strictly from BEHIND, at most a few pixels across. Absolutely no visible face, no eyes, noses, mouths, forehead highlights, white face patches, white heads, skull-like outlines, rim light, facial cutouts or empty outlined heads.
+- Body shapes should be anonymous and simple, with NO clothing detail, muscles or figure outlines. Father slightly taller than both sons. Do not add extra people.
+- Use sparse, low-opacity dither ink at only about 20–30 percent of the local foreground's strength; their contrast should be no stronger than faint background waves. Do not merely surround prominent figures with blur or a glow.
+- The eye should notice the boardwalk and ocean first. The family should only become apparent on a closer look.
+
+Keep the original crisp pixel/ASCII print medium. No blur anywhere. Preserve all non-human artwork. This is a subtle targeted edit, not a redesigned scene.
+Keep the pure white background and deep-teal illustration. All four tiny figures use faint deep-teal ink. Retain all footer copy exactly.
+
+coastal-family-dark-subtle
+Reference: ../coastal-family-dark.png
+Use case: precise-object-edit.
+The provided image is the selected coastal family footer. Change ONLY the four people and the wife's chair. Everything else—boardwalk, dune grasses, ocean, waves, typography, text, colors, spacing, crop, all scenery—must remain unchanged.
+
+The user dislikes the white faces, facial detail and overly conspicuous figures. Make the family a quiet, distant, almost hidden detail, not outlined characters.
+- Keep exactly one mother seated in the chair on the right, looking AWAY toward the sea; keep one father with exactly TWO shorter boys together in the shallow water. Keep their respective positions.
+- Reduce each person's visual size to roughly HALF its current size; scale the chair with the seated woman. Anchor the walkers' feet at their existing waterline and the chair's feet on the existing sand, restoring sand/waves where the larger figures used to be.
+- Draw heads as tiny simple unbroken ink silhouettes viewed strictly from BEHIND, at most a few pixels across. Absolutely no visible face, no eyes, noses, mouths, forehead highlights, white face patches, white heads, skull-like outlines, rim light, facial cutouts or empty outlined heads.
+- Body shapes should be anonymous and simple, with NO clothing detail, muscles or figure outlines. Father slightly taller than both sons. Do not add extra people.
+- Use sparse, low-opacity dither ink at only about 20–30 percent of the local foreground's strength; their contrast should be no stronger than faint background waves. Do not merely surround prominent figures with blur or a glow.
+- The eye should notice the boardwalk and ocean first. The family should only become apparent on a closer look.
+
+Keep the original crisp pixel/ASCII print medium. No blur anywhere. Preserve all non-human artwork. This is a subtle targeted edit, not a redesigned scene.
+Use the current chosen pencil-gray dark treatment: background #171f27, readable existing pale text, and all decorative artwork in restrained neutral pencil gray at low contrast, NOT cyan. This palette correction is the only permitted change beyond the family. The family is even fainter than the surrounding gray artwork. Keep all text and layout unchanged.
+
+coastal-family-art-subtle
+Reference: ../coastal-family-art.png
+Use case: precise-object-edit.
+The provided image is the selected coastal family footer. Change ONLY the four people and the wife's chair. Everything else—boardwalk, dune grasses, ocean, waves, typography, text, colors, spacing, crop, all scenery—must remain unchanged.
+
+The user dislikes the white faces, facial detail and overly conspicuous figures. Make the family a quiet, distant, almost hidden detail, not outlined characters.
+- Keep exactly one mother seated in the chair on the right, looking AWAY toward the sea; keep one father with exactly TWO shorter boys together in the shallow water. Keep their respective positions.
+- Reduce each person's visual size to roughly HALF its current size; scale the chair with the seated woman. Anchor the walkers' feet at their existing waterline and the chair's feet on the existing sand, restoring sand/waves where the larger figures used to be.
+- Draw heads as tiny simple unbroken ink silhouettes viewed strictly from BEHIND, at most a few pixels across. Absolutely no visible face, no eyes, noses, mouths, forehead highlights, white face patches, white heads, skull-like outlines, rim light, facial cutouts or empty outlined heads.
+- Body shapes should be anonymous and simple, with NO clothing detail, muscles or figure outlines. Father slightly taller than both sons. Do not add extra people.
+- Use sparse, low-opacity dither ink at only about 20–30 percent of the local foreground's strength; their contrast should be no stronger than faint background waves. Do not merely surround prominent figures with blur or a glow.
+- The eye should notice the boardwalk and ocean first. The family should only become apparent on a closer look.
+
+Keep the original crisp pixel/ASCII print medium. No blur anywhere. Preserve all non-human artwork. This is a subtle targeted edit, not a redesigned scene.
+This input is the standalone ARTWORK-ONLY TRANSPARENT PNG, not a full footer. Preserve its 2172×724 canvas and exact crop. Keep existing real alpha transparency in all background and internal gaps. Keep the original deep-teal ink artwork. Add no text. The four new tiny figures have low alpha and sparse marks, so they remain subtle when the PNG is used as a CSS alpha mask in either theme. The faintness must be in their ALPHA, not only their RGB color. Heads are tiny unbroken ink marks with no facial holes. Do not add any opaque white, gray, colored, or checkerboard background. All non-human pixels should be unchanged.
