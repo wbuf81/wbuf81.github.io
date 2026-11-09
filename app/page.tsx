@@ -17,17 +17,6 @@ import contributions from '@/data/github-contributions.json';
 const INTRO =
   "Hey, I'm Wes. I work in compliance, and before that I spent 12 years as an engineer. These days I'm all in on building with AI agents, using loops and graphs to build AI tools and agents at scale. Here's some of what I've made at work, and what I'm tinkering with at home.";
 
-const BEYOND = [
-  {
-    title: 'STEM Mentoring',
-    description: 'GatorLaunch mentor at the University of Florida and Big Brothers Big Sisters volunteer since 2011.',
-  },
-  {
-    title: 'Autism & Inclusivity Advocate',
-    description: 'Championing neurodiversity awareness and inclusive environments for families and workplaces.',
-  },
-];
-
 export default function HomePage() {
   return (
     <>
@@ -91,28 +80,6 @@ export default function HomePage() {
           </section>
 
           <GitHubMap data={contributions} />
-
-          <section id="connect" className="links" aria-label="Beyond work, and how to reach me">
-            {BEYOND.map((b) => (
-              <div className="card" key={b.title}>
-                <div className="eyebrow">Beyond work</div>
-                <h3>{b.title}</h3>
-                <p>{b.description}</p>
-              </div>
-            ))}
-            <a className="card" href="https://www.linkedin.com/in/wesleybard/" target="_blank" rel="noopener noreferrer">
-              <div className="eyebrow">Connect</div>
-              <h3>Feel free to reach out.</h3>
-              <p>Resume available upon request.</p>
-              <span className="go">LinkedIn →</span>
-            </a>
-            <a className="card" href="https://github.com/wbuf81" target="_blank" rel="noopener noreferrer">
-              <div className="eyebrow">Connect</div>
-              <h3>@wbuf81 on GitHub</h3>
-              <p>The open-source builds above.</p>
-              <span className="go">GitHub →</span>
-            </a>
-          </section>
         </div>
       </main>
       <Footer />

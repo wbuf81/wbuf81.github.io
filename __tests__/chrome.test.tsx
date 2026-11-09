@@ -52,6 +52,17 @@ test('footer links: Explore on the site, Connect out to new tabs', () => {
   }
 });
 
+test('the footer is where Connect lands, and carries the one Beyond work line', () => {
+  const { container } = render(<Footer />);
+  // The header's Connect (/#connect) scrolls to the footer; the homepage's card row is gone (Wes, 9 Nov 2026).
+  expect(container.querySelector('footer#connect.wb-foot')).not.toBeNull();
+  expect(fs.readFileSync('app/page.tsx', 'utf8')).not.toMatch(/id="connect"/);
+  const beyond = screen.getByRole('group', { name: 'Beyond work' });
+  expect(within(beyond).getByText('Autism & Inclusivity Advocate')).toBeInTheDocument();
+  expect(within(beyond).getByText(/neurodiversity awareness/)).toBeInTheDocument();
+  expect(screen.queryByText('STEM Mentoring')).toBeNull();
+});
+
 test('Back to top lands on the header', () => {
   const { container } = render(
     <>
