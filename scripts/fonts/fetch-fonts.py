@@ -13,10 +13,13 @@ Needs fonttools and brotli (pip3 install fonttools brotli).
 Each file is cut from the font in Google's own repo (github.com/google/fonts) the way Google cuts the file it
 sends a Mac browser, so the site draws the same letters it did from Google:
 - variable faces stay variable, one file for every weight, with any other axis fixed where Google fixes it
-  (Source Serif 4's optical size at 14, IBM Plex Sans's width at 100);
+  (IBM Plex Sans's width at 100);
 - Google's "latin" characters, which is what every page drew from Google, plus Latin Extended-A
   (ā … ž, for "Technōs Japan" on the SNES pages);
 - unhinted and keeping their glyph names, as Google sends them.
+
+Geist Serif (app/fonts/geist-serif.woff2) isn't on Google Fonts yet, so it isn't cut here: it's Vercel's own file,
+copied unchanged (see app/fonts/FONTS.md).
 """
 import io
 import urllib.parse
@@ -39,7 +42,6 @@ LATIN_EXT_A = 'U+0100-017F'
 
 # File name, the font in Google's repo, and the axes Google fixes before serving it.
 FONTS = [
-    ('source-serif-4', 'sourceserif4/SourceSerif4[opsz,wght].ttf', {'opsz': 14}),
     ('ibm-plex-sans', 'ibmplexsans/IBMPlexSans[wdth,wght].ttf', {'wdth': 100}),
     ('ibm-plex-mono-400', 'ibmplexmono/IBMPlexMono-Regular.ttf', {}),
     ('ibm-plex-mono-500', 'ibmplexmono/IBMPlexMono-Medium.ttf', {}),

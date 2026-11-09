@@ -11,6 +11,7 @@ export const TOKENS: { name: string; job: string; group: TokenGroup }[] = [
   { name: '--paper', job: 'Cards, prints, the header and footer', group: 'Surfaces' },
   { name: '--rule', job: 'Borders', group: 'Surfaces' },
   { name: '--rule-soft', job: 'Row lines, chips, quiet fills', group: 'Surfaces' },
+  { name: '--grid', job: 'The graph-paper lines on the page, every 24px', group: 'Surfaces' },
   { name: '--ink', job: 'Headings and text', group: 'Ink' },
   { name: '--ink-2', job: 'Secondary text', group: 'Ink' },
   { name: '--ink-3', job: 'Labels and captions', group: 'Ink' },

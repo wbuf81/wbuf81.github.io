@@ -31,9 +31,12 @@ const outfit = localFont({
 
 // The design system's three faces (app/design-system.css reads them as --serif, --sans, --mono).
 // Playfair and Outfit stay for the pages that keep their own look (/health, /lee, /articles).
-const sourceSerif = localFont({
-  src: './fonts/source-serif-4.woff2',
-  weight: '500 600',
+// Geist Serif (Vercel's display serif, Wes's pick on 8 Nov 2026, replacing Source Serif 4) ships one weight,
+// Regular. It's declared across the whole range so the 600 the system's headings ask for draws these outlines
+// as they are; declared as 400 alone, the browser would fake a bold and smear the hairlines.
+const geistSerif = localFont({
+  src: './fonts/geist-serif.woff2',
+  weight: '100 900',
   variable: '--font-serif',
   display: 'swap',
   adjustFontFallback: 'Times New Roman',
@@ -59,7 +62,7 @@ const plexMono = localFont({
 // sentences, in Wes's voice (4 Oct 2026). LinkedIn caches it; re-fetch with its Post Inspector after a change.
 // The homepage card's address. LinkedIn keeps an image by its address, so bump ?v= whenever
 // public/og-image.png is redrawn, or it goes on showing the old one (or a blank box).
-const OG_IMAGE = '/og-image.png?v=3';
+const OG_IMAGE = '/og-image.png?v=4';
 
 const DESCRIPTION =
   "I work in compliance, and before that I spent 12 years as an engineer. These days I'm all in on building with AI agents.";
@@ -132,7 +135,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${playfair.variable} ${outfit.variable} ${sourceSerif.variable} ${plexSans.variable} ${plexMono.variable}`}
+      className={`${playfair.variable} ${outfit.variable} ${geistSerif.variable} ${plexSans.variable} ${plexMono.variable}`}
       suppressHydrationWarning
     >
       <head>

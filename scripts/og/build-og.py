@@ -17,7 +17,7 @@ WhatsApp all ignore SVG previews. That was the original bug.
 Cards are laid out in HTML and rendered by headless Chrome at 2x, then
 downsampled, which is what keeps the serif crisp at thumbnail size. Fonts are
 inlined so the cards match the live pages exactly: the homepage card uses the
-design system's Source Serif 4, IBM Plex Sans and IBM Plex Mono (app/design-system.css);
+design system's Geist Serif, IBM Plex Sans and IBM Plex Mono (app/design-system.css);
 the health card keeps /health's own Playfair Display and Outfit.
 
 Requires: Google Chrome, and Pillow (`pip install pillow`).
@@ -114,6 +114,7 @@ body {{
 
 
 SERIF = b64(HERE / 'source-serif-4-semibold.woff2')
+GEIST_SERIF = b64(HERE / 'geist-serif-regular.woff2')
 SANS_400 = b64(HERE / 'plex-sans-400.woff2')
 SANS_500 = b64(HERE / 'plex-sans-500.woff2')
 MONO = b64(HERE / 'plex-mono-500.woff2')
@@ -121,19 +122,23 @@ HEADSHOT = b64(PUBLIC / 'headshot-thumb.jpg')
 
 # The design system's light tokens (app/design-system.css). Repeated here because the card is rendered
 # outside the site; keep them in step if the tokens change.
+# Geist Serif ships one weight, declared across the range as on the site, so a 600 draws it as it is rather than
+# a faked bold. Source Serif 4 (SERIF) stays for the SNES cards, which haven't been redrawn.
 SITE = f"""
-@font-face {{ font-family: 'Source Serif 4'; src: url(data:font/woff2;base64,{SERIF}) format('woff2'); font-weight: 600; }}
+@font-face {{ font-family: 'Geist Serif'; src: url(data:font/woff2;base64,{GEIST_SERIF}) format('woff2'); font-weight: 100 900; }}
 @font-face {{ font-family: 'IBM Plex Sans'; src: url(data:font/woff2;base64,{SANS_400}) format('woff2'); font-weight: 400; }}
 @font-face {{ font-family: 'IBM Plex Sans'; src: url(data:font/woff2;base64,{SANS_500}) format('woff2'); font-weight: 500; }}
 @font-face {{ font-family: 'IBM Plex Mono'; src: url(data:font/woff2;base64,{MONO}) format('woff2'); font-weight: 500; }}
 :root {{
   --bg: #f4f6f8; --paper: #ffffff; --ink: #1b2430; --ink-2: #566371; --ink-3: #64707c; --rule: #cfd6dd;
-  --accent: #0f4c5c; --on-accent: #ffffff; --tape: rgba(255, 226, 150, .72); --screen: #121a22;
-  --serif: 'Source Serif 4', Georgia, serif; --sans: 'IBM Plex Sans', Arial, sans-serif; --mono: 'IBM Plex Mono', Menlo, monospace;
+  --accent: #0f4c5c; --on-accent: #ffffff; --tape: rgba(255, 226, 150, .72); --screen: #121a22; --grid: #e7e9ec;
+  --serif: 'Geist Serif', Georgia, serif; --sans: 'IBM Plex Sans', Arial, sans-serif; --mono: 'IBM Plex Mono', Menlo, monospace;
 }}
 * {{ margin: 0; padding: 0; box-sizing: border-box; }}
 html, body {{ width: {W}px; height: {H}px; overflow: hidden; }}
-body {{ font-family: var(--sans); -webkit-font-smoothing: antialiased; background: var(--bg); color: var(--ink); }}
+body {{ font-family: var(--sans); -webkit-font-smoothing: antialiased; background: var(--bg); color: var(--ink);
+  background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 24px 24px; background-position: -1px -1px; }}
 .card {{ position: relative; width: {W}px; height: {H}px; overflow: hidden; }}
 """
 

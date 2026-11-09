@@ -1,12 +1,13 @@
 # Fonts used by the card scripts
 
 These WOFF2 files are embedded (base64) into the HTML that `build-og.py`, `build-weekly.py` and `build-favicon.py`
-screenshot. All come from Google Fonts and are licensed under the **SIL Open Font License 1.1**
+screenshot. All but Geist Serif come from Google Fonts, and all are licensed under the **SIL Open Font License 1.1**
 (https://openfontlicense.org), which allows bundling and redistribution with software.
 
 | File | Family | Source |
 | --- | --- | --- |
-| `source-serif-4-semibold.woff2` | Source Serif 4 (SemiBold) | https://fonts.google.com/specimen/Source+Serif+4 |
+| `geist-serif-regular.woff2` | Geist Serif (Regular, its only weight): the site's serif since 8 Nov 2026 | npm `geist@1.9.2` (https://github.com/vercel/geist-font), the same file as `app/fonts/geist-serif.woff2` |
+| `source-serif-4-semibold.woff2` | Source Serif 4 (SemiBold): the SNES cards and the favicon | https://fonts.google.com/specimen/Source+Serif+4 |
 | `plex-sans-400.woff2` | IBM Plex Sans (Regular) | https://fonts.google.com/specimen/IBM+Plex+Sans |
 | `plex-sans-500.woff2` | IBM Plex Sans (Medium) | https://fonts.google.com/specimen/IBM+Plex+Sans |
 | `plex-mono-500.woff2` | IBM Plex Mono (Medium) | https://fonts.google.com/specimen/IBM+Plex+Mono |

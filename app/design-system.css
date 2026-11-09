@@ -8,7 +8,7 @@
 /* ── tokens ─────────────────────────────────────────────────── */
 :root {
   color-scheme: light;
-  --bg: #f4f6f8; --paper: #ffffff; --ink: #1b2430; --ink-2: #566371; --ink-3: #64707c; --rule: #cfd6dd; --rule-soft: #e4e9ee;
+  --bg: #f4f6f8; --paper: #ffffff; --ink: #1b2430; --ink-2: #566371; --ink-3: #64707c; --rule: #cfd6dd; --rule-soft: #e4e9ee; --grid: #e7e9ec;
   --accent: #0f4c5c; --accent-soft: #e2eef1; --accent-deep: #0a3540; --on-accent: #ffffff;
   --core: #1f6f3f; --over: #8b1d14; --warn: #8f5c00;
   --tape: rgba(255, 226, 150, .72);
@@ -27,7 +27,7 @@
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]):has(.wb-page) {
     color-scheme: dark;
-    --bg: #10161c; --paper: #171f27; --ink: #e6ebf0; --ink-2: #9aa7b3; --ink-3: #7f8d9a; --rule: #34414d; --rule-soft: #26313b;
+    --bg: #10161c; --paper: #171f27; --ink: #e6ebf0; --ink-2: #9aa7b3; --ink-3: #7f8d9a; --rule: #34414d; --rule-soft: #26313b; --grid: #1d2329;
     --accent: #7ec4d4; --accent-soft: #1b3038; --accent-deep: #a5dbe7; --on-accent: #0b1e24;
     --core: #7fcf9a; --over: #f08a80; --warn: #e6b450;
     --tape: rgba(224, 176, 90, .40);
@@ -43,7 +43,7 @@
 }
 :root[data-theme="dark"]:has(.wb-page) {
     color-scheme: dark;
-    --bg: #10161c; --paper: #171f27; --ink: #e6ebf0; --ink-2: #9aa7b3; --ink-3: #7f8d9a; --rule: #34414d; --rule-soft: #26313b;
+    --bg: #10161c; --paper: #171f27; --ink: #e6ebf0; --ink-2: #9aa7b3; --ink-3: #7f8d9a; --rule: #34414d; --rule-soft: #26313b; --grid: #1d2329;
     --accent: #7ec4d4; --accent-soft: #1b3038; --accent-deep: #a5dbe7; --on-accent: #0b1e24;
     --core: #7fcf9a; --over: #f08a80; --warn: #e6b450;
     --tape: rgba(224, 176, 90, .40);
@@ -61,6 +61,12 @@
 
 /* ── base ───────────────────────────────────────────────────── */
 .wb { background: var(--bg); color: var(--ink); font: 15px/1.55 var(--sans); }
+/* The page is graph paper (Wes, 8 Nov 2026): a faint 24px grid in --grid, the ink at about 6% over --bg, under
+   every page on the system. Cards, prints, the header and footer are solid, so it shows only between them. */
+.wb.wb-page {
+  background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 24px 24px; background-position: -1px -1px;
+}
 .wb *, .wb *::before, .wb *::after { box-sizing: border-box; }
 .wb a { color: var(--accent); text-decoration: none; }
 .wb a:hover { color: var(--accent-deep); text-decoration: none; }

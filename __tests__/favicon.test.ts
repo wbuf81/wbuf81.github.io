@@ -1,8 +1,9 @@
 import fs from 'fs';
 import path from 'path';
 
-// The tab icon, and the PWA icons, are one letterform: the W from Source Serif 4, the masthead's face,
-// drawn by scripts/og/build-favicon.py. They must never drift apart.
+// The tab icon, and the PWA icons, are one letterform: the W from Source Serif 4 SemiBold (the masthead's face
+// until Nov 2026; Geist Serif's one weight is too thin at 16px), drawn by scripts/og/build-favicon.py. They must
+// never drift apart.
 const read = (p: string) => fs.readFileSync(path.join(process.cwd(), p), 'utf8');
 const ICONS = ['app/icon.svg', 'public/icon-192.svg', 'public/icon-512.svg'];
 const glyph = (svg: string) => svg.match(/<path d="([^"]+)"/)?.[1];

@@ -83,8 +83,9 @@ export default function DesignPage() {
           <section className="ch" aria-labelledby="ds-type">
             <h2 id="ds-type">Type</h2>
             <p>
-              Source Serif 4 for the name, headings, tile names and figures; IBM Plex Sans for text; IBM Plex Mono for
-              eyebrows, captions, tags and the subtitles under tile names.
+              Geist Serif for the name, headings, tile names and figures; IBM Plex Sans for text; IBM Plex Mono for
+              eyebrows, captions, tags and the subtitles under tile names. Geist Serif comes in one weight, so
+              headings stand out by size, not boldness.
             </p>
             <div className="type">
               {TYPE.map((t) => (
