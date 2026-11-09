@@ -66,6 +66,8 @@
 .wb .h-sw.is-over { background: color-mix(in srgb, var(--series-2) 55%, transparent); }
 .wb .h-sw.is-plain { background: var(--mark); }
 .wb .h-sw.is-dashed { width: 14px; height: 0; border-radius: 0; border-top: 2px dashed currentColor; }
+.wb .h-sw.is-goal { width: 18px; height: 0; border-radius: 0; border-top: 2px dashed var(--accent); }
+.wb .h-sw.is-target { width: 18px; height: 0; border-radius: 0; border-top: 2px dotted var(--ink-3); }
 .wb .h-sw.is-s1 { background: var(--series-1); }
 .wb .h-sw.is-s2 { background: var(--series-2); }
 .wb .h-sw.is-s3 { background: var(--series-3); }
@@ -81,6 +83,10 @@
 .wb .h-ax.is-x { bottom: 0; transform: translateX(-50%); }
 .wb .h-ax.is-unit { top: 0; color: var(--ink-2); font-weight: 500; }
 .wb .h-ax.is-note { color: var(--ink-2); font-size: 11.5px; }
+/* Block names and goal labels sit on a scrap of paper, so the block's edge rule, the grid and the bars run behind
+   them rather than through them (a bulk's first weeks are narrower than its name). */
+.wb .h-ax.is-block { margin-top: 3px; padding: 1px 4px; background: var(--paper); color: var(--ink-2); font: 500 10.5px var(--mono); letter-spacing: .08em; text-transform: uppercase; }
+.wb .h-ax.is-goal { padding: 0 4px; background: color-mix(in srgb, var(--paper) 88%, transparent); }
 .wb .h-ax.is-value { transform: translate(-50%, -50%); color: var(--ink-2); font-size: 11.5px; }
 .wb .h-ax.is-end { transform: translateY(-50%); color: var(--ink-2); }
 .wb .h-crosshair { position: absolute; width: 0; border-left: 1px solid var(--ink-2); pointer-events: none; }
@@ -99,8 +105,12 @@
 .wb .g-under { fill: color-mix(in srgb, var(--series-1) 38%, transparent); }
 .wb .g-over { fill: color-mix(in srgb, var(--series-2) 55%, transparent); }
 .wb .g-plain { fill: var(--mark); }
-.wb .g-target, .wb .g-floor { stroke: var(--ink-3); stroke-width: 1.5; stroke-dasharray: 5 4; fill: none; }
-.wb .g-goal { stroke: var(--ink-2); stroke-width: 1.5; stroke-dasharray: 5 4; fill: none; }
+.wb .g-floor { stroke: var(--ink-3); stroke-width: 1.5; stroke-dasharray: 5 4; fill: none; }
+/* The calorie target is dotted grey and a goal weight long teal dashes, the weight line's colour, so the two never
+   read as one line (Wes, 9 Nov 2026). A faint rule marks where each block began. */
+.wb .g-target { stroke: var(--ink-3); stroke-width: 2; stroke-dasharray: 0.5 4.5; stroke-linecap: round; fill: none; }
+.wb .g-goal { stroke: var(--accent); stroke-width: 2; stroke-dasharray: 10 6; fill: none; }
+.wb .g-block { stroke: color-mix(in srgb, var(--ink-3) 70%, transparent); stroke-width: 1; fill: none; }
 .wb .g-line { stroke: var(--ink); stroke-width: 1.5; stroke-dasharray: 5 4; fill: none; }
 .wb .g-daily { stroke: var(--mark); stroke-width: 1; fill: none; }
 .wb .g-avg { stroke: var(--accent); stroke-width: 2.5; fill: none; stroke-linejoin: round; stroke-linecap: round; }

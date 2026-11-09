@@ -59,7 +59,7 @@ export default function NextMorning({ days, calorieTargets, weightUnit }: Props)
           )}
           {target !== null && (
             <span>
-              <i className="h-sw is-dashed" />
+              <i className="h-sw is-target" />
               Target {formatNumber(target)}
             </span>
           )}

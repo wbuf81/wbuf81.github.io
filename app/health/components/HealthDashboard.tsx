@@ -85,8 +85,6 @@ export default function HealthDashboard({
     return <p className="h-note">No data recorded yet.</p>;
   }
 
-  // Only a running block's goal stretches the weight scale; a closed block's goal is history.
-  const goalWeight = activePhase?.isOngoing ? activePhase.goalWeight : null;
 
   if (section === 'week') {
     return (
@@ -127,7 +125,7 @@ export default function HealthDashboard({
           days={days}
           series={weightSeries}
           calorieTargets={calorieTargets}
-          goalWeight={goalWeight}
+          blocks={phases}
           showTrend={summary.showMovingAverage}
           weightUnit={weightUnit}
         />

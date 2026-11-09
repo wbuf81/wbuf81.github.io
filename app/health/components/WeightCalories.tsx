@@ -2,10 +2,10 @@
 
 import { useMemo, useState } from 'react';
 import type { PointerEvent } from 'react';
-import { HealthCalorieTarget, HealthDay, WeightPoint } from '@/types/health';
+import { HealthCalorieTarget, HealthDay, PhaseSummary, WeightPoint } from '@/types/health';
 import { calorieTargetFor } from '@/lib/calorieTarget';
 import { dayTickLabel } from '@/lib/dayLabel';
-import { dayDate, downIsGood, formatDelta, formatNumber } from './format';
+import { calsTone, dayDate, formatDelta, formatNumber, weightTone } from './format';
 import { Frame, VARIANTS, Variant, bands, barPath, cleanTop, dotPath, hline, labelStride, linePath, niceStep, pct, stepPath, sundayLabels, ticks, yScale } from './svg';
 
 interface Props {
@@ -13,8 +13,8 @@ interface Props {
   /** Daily weights with the 7-day trailing average, from buildWeightSeries. */
   series: WeightPoint[];
   calorieTargets: HealthCalorieTarget[];
-  /** The running block's goal weight; the weight scale stretches to keep it in view. */
-  goalWeight: number | null;
+  /** Every block (cut, bulk, maintain): each one's goal is drawn over its own days, and the weight scale keeps it in view. */
+  blocks: PhaseSummary[];
   /** False until two weeks exist: a 7-day average of a few days is noise. */
   showTrend: boolean;
   weightUnit: string;
@@ -27,6 +27,9 @@ const FRAMES: Record<Variant, Frame> = {
 /** The narrowest each frame is drawn at (a 981px desktop; a 360px phone), which sets how far apart the date labels go. */
 const RENDER_PX: Record<Variant, number> = { wide: 873, compact: 300 };
 const TIP_WIDTH = 230;
+/** A block narrower than this share of the plot puts its labels at its right-hand end, so they never run off the chart. */
+const NARROW = 0.22;
+const f1 = (n: number) => n.toFixed(1);
 
 /**
  * Weight and calories on one chart, two scales: the one dual-axis chart on the page, allowed by Wes
@@ -35,16 +38,33 @@ const TIP_WIDTH = 230;
  * line on the left. The note tells the reader to compare shapes, not crossings, because where two scales
  * cross means nothing.
  */
-export default function WeightCalories({ days, series, calorieTargets, goalWeight, showTrend, weightUnit }: Props) {
+export default function WeightCalories({ days, series, calorieTargets, blocks, showTrend, weightUnit }: Props) {
   const [hover, setHover] = useState<{ i: number; x: number; left: number } | null>(null);
 
   const targets = useMemo(() => days.map((d) => calorieTargetFor(d.date, calorieTargets)), [days, calorieTargets]);
   const hasTarget = targets.some((t) => t !== null);
 
+  // Each block the chart's days touch, with the first and last day it covers (Wes alternates cuts and bulks, so a
+  // goal belongs to its block's weeks, never to the whole chart).
+  const spans = useMemo(
+    () =>
+      blocks
+        .map((b) => {
+          const i0 = days.findIndex((d) => d.date >= b.start);
+          let i1 = -1;
+          for (let i = days.length - 1; i >= 0; i--) if (b.end === null || days[i].date <= b.end) { i1 = i; break; }
+          return i0 === -1 || i1 < i0 ? null : { type: b.type, label: b.label, goal: b.goalWeight, i0, i1 };
+        })
+        .filter((s): s is NonNullable<typeof s> => s !== null),
+    [blocks, days],
+  );
+  const goals = spans.map((s) => s.goal).filter((g): g is number => g !== null);
+  const blockAt = (i: number) => spans.find((s) => i >= s.i0 && i <= s.i1)?.type ?? null;
+
   // Scales shared by both frames.
   const scales = useMemo(() => {
     const weights = days.map((d) => d.weight).filter((w): w is number => w !== null);
-    const all = [...weights, ...(goalWeight !== null ? [goalWeight] : [])];
+    const all = [...weights, ...goals];
     const wMin = Math.min(...all);
     const wMax = Math.max(...all);
     const step = niceStep(wMax - wMin + 2, 5);
@@ -54,7 +74,8 @@ export default function WeightCalories({ days, series, calorieTargets, goalWeigh
       wHi: Math.ceil((wMax + 1) / step) * step,
       cHi: cleanTop(Math.max(...days.map((d) => d.cals ?? 0), ...targets.map((t) => t ?? 0)), 1000),
     };
-  }, [days, goalWeight, targets]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [days, goals.join(','), targets]);
 
   const charts = useMemo(() => {
     const build = (v: Variant) => {
@@ -88,8 +109,30 @@ export default function WeightCalories({ days, series, calorieTargets, goalWeigh
         over,
         plain,
         target: hasTarget ? stepPath(F, targets, cy) : '',
-        goal: goalWeight !== null ? hline(F, wy(goalWeight)) : '',
-        goalTop: goalWeight !== null ? pct(wy(goalWeight), F.h) : '0',
+        // Each block's goal, only across its own days; a rule where each block after the first begins.
+        goal: spans
+          .filter((sp) => sp.goal !== null)
+          .map((sp) => `M${f1(F.l + band * sp.i0)} ${f1(wy(sp.goal as number))}H${f1(F.l + band * (sp.i1 + 1))}`)
+          .join(''),
+        edges: spans
+          .filter((sp) => sp.i0 > 0)
+          .map((sp) => `M${f1(F.l + band * sp.i0)} ${F.t}V${F.h - F.b}`)
+          .join(''),
+        marks: spans.map((sp) => {
+          const x0 = F.l + band * sp.i0;
+          const x1 = F.l + band * (sp.i1 + 1);
+          // A narrow block (a bulk in its first weeks) labels from its right-hand end, so the words stay on the chart.
+          const anchor =
+            (x1 - x0) / (F.w - F.l - F.r) < NARROW ? { right: `calc(${pct(F.w - x1, F.w)} + 6px)` } : { left: `calc(${pct(x0, F.w)} + 6px)` };
+          return {
+            key: `${sp.label}-${sp.i0}`,
+            label: sp.label,
+            anchor,
+            top: pct(F.t, F.h),
+            goal: sp.goal,
+            goalTop: sp.goal !== null ? pct(wy(sp.goal), F.h) : '0',
+          };
+        }),
         daily: linePath(points),
         dots: points.map((p) => (p ? dotPath(p.x, p.y, dot) : '')).join(''),
         trend: showTrend ? linePath(trend) : '',
@@ -104,7 +147,7 @@ export default function WeightCalories({ days, series, calorieTargets, goalWeigh
       };
     };
     return VARIANTS.map(build);
-  }, [days, series, targets, hasTarget, goalWeight, showTrend, scales]);
+  }, [days, series, targets, hasTarget, spans, showTrend, scales]);
 
   const move = (e: PointerEvent<HTMLDivElement>, c: (typeof charts)[number]) => {
     const r = e.currentTarget.getBoundingClientRect();
@@ -128,10 +171,7 @@ export default function WeightCalories({ days, series, calorieTargets, goalWeigh
   const target = hover ? targets[hover.i] : null;
   const vs = h && h.cals !== null && target !== null ? h.cals - target : null;
 
-  const dashed = [
-    goalWeight !== null ? `the ${formatNumber(goalWeight, 1)} ${weightUnit} goal` : null,
-    hasTarget ? 'the calorie target in force each day' : null,
-  ].filter((s): s is string => s !== null);
+  const block = hover ? blockAt(hover.i) : null;
 
   return (
     <section className="h-card">
@@ -158,6 +198,18 @@ export default function WeightCalories({ days, series, calorieTargets, goalWeigh
               Over target · right
             </span>
           )}
+          {goals.length > 0 && (
+            <span>
+              <i className="h-sw is-goal" />
+              Goal weight · left
+            </span>
+          )}
+          {hasTarget && (
+            <span>
+              <i className="h-sw is-target" />
+              Calorie target · right
+            </span>
+          )}
           {hasTarget && targets.some((t, i) => t === null && days[i].cals !== null) && (
             <span>
               <i className="h-sw is-plain" />
@@ -168,7 +220,7 @@ export default function WeightCalories({ days, series, calorieTargets, goalWeigh
       </div>
       <p className="h-note">
         Two scales: the line reads against {weightUnit} on the left, the bars against calories on the right. Compare
-        the shapes, not where they cross.{dashed.length > 0 && ` Dashed: ${dashed.join(', and ')}.`}
+        the shapes, not where they cross.{goals.length > 0 && ' Each goal runs over its own block’s weeks, and a rule marks where a block began.'}
       </p>
       {charts.map((c) => (
         <div
@@ -180,6 +232,7 @@ export default function WeightCalories({ days, series, calorieTargets, goalWeigh
         >
           <svg viewBox={`0 0 ${c.F.w} ${c.F.h}`} role="img" aria-label="Daily calories as bars on a right-hand scale, with weight as a line on a left-hand scale">
             <path className="g-grid" d={c.grid} />
+            <path className="g-block" d={c.edges} />
             <path className="g-under" d={c.under} />
             <path className="g-over" d={c.over} />
             <path className="g-plain" d={c.plain} />
@@ -210,11 +263,18 @@ export default function WeightCalories({ days, series, calorieTargets, goalWeigh
               {s.label}
             </span>
           ))}
-          {goalWeight !== null && (
-            <span className="h-ax is-note" style={{ left: pct(c.F.l + 12, c.F.w), top: c.goalTop, transform: 'translateY(-130%)' }}>
-              goal {formatNumber(goalWeight, 1)}
+          {c.marks.map((m) => (
+            <span key={`b-${m.key}`}>
+              <span className="h-ax is-block" style={{ ...m.anchor, top: m.top }}>
+                {m.label}
+              </span>
+              {m.goal !== null && (
+                <span className="h-ax is-note is-goal" style={{ ...m.anchor, top: m.goalTop, transform: 'translateY(-130%)' }}>
+                  goal {formatNumber(m.goal, 1)}
+                </span>
+              )}
             </span>
-          )}
+          ))}
           {hover && h && (
             <>
               <span className="h-crosshair" style={{ left: hover.x, top: pct(c.F.t, c.F.h), bottom: pct(c.F.b, c.F.h) }} />
@@ -226,7 +286,7 @@ export default function WeightCalories({ days, series, calorieTargets, goalWeigh
                 </div>
                 <div className="h-row">
                   <span>Next morning</span>
-                  <b className={downIsGood(nextChange)}>{nextChange !== null ? `${formatDelta(nextChange)} ${weightUnit}` : '—'}</b>
+                  <b className={weightTone(nextChange, block)}>{nextChange !== null ? `${formatDelta(nextChange)} ${weightUnit}` : '—'}</b>
                 </div>
                 <div className="h-row">
                   <span>Calories</span>
@@ -235,7 +295,7 @@ export default function WeightCalories({ days, series, calorieTargets, goalWeigh
                 {vs !== null && (
                   <div className="h-row">
                     <span>Vs target</span>
-                    <b className={downIsGood(vs, 0)}>{formatDelta(vs, 0)}</b>
+                    <b className={calsTone(vs, h.cals, block)}>{formatDelta(vs, 0)}</b>
                   </div>
                 )}
               </div>
