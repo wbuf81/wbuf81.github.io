@@ -1,3 +1,5 @@
+import fs from 'fs';
+import path from 'path';
 import { render, screen, within } from '@testing-library/react';
 import { Nav } from '@/app/components/Nav';
 import Footer from '@/app/components/Footer';
@@ -32,11 +34,61 @@ test('header and footer carry the design system scope', () => {
   expect(container.querySelector('footer.wb.wb-foot')).not.toBeNull();
 });
 
-test('footer links LinkedIn, GitHub and the design system', () => {
+test('footer links: Explore on the site, Connect out to new tabs', () => {
   render(<Footer />);
-  expect(screen.getByRole('link', { name: /Design system/ })).toHaveAttribute('href', '/design');
-  expect(screen.getByRole('link', { name: /LinkedIn/ })).toHaveAttribute('href', 'https://www.linkedin.com/in/wesleybard/');
-  expect(screen.getByRole('link', { name: /GitHub/ })).toHaveAttribute('href', 'https://github.com/wbuf81');
+  within(screen.getByRole('navigation', { name: 'Footer' })).getByRole('list', { name: 'Explore' });
+  const explore = within(screen.getByRole('list', { name: 'Explore' })).getAllByRole('link');
+  expect(explore.map((a) => [a.textContent, a.getAttribute('href')])).toEqual([
+    ['Projects', '/#projects'],
+    ['Games', '/videogames'],
+    ['Design system', '/design'],
+  ]);
+  const connect = within(screen.getByRole('list', { name: 'Connect' })).getAllByRole('link');
+  expect(connect.map((a) => a.getAttribute('href'))).toEqual(['https://github.com/wbuf81', 'https://www.linkedin.com/in/wesleybard/']);
+  for (const a of connect) {
+    expect(a).toHaveAttribute('target', '_blank');
+    expect(a).toHaveAttribute('rel', 'noopener noreferrer');
+    expect(a).toHaveAccessibleName(/^(GitHub|LinkedIn) \(opens in a new tab\)$/);
+  }
+});
+
+test('Back to top lands on the header', () => {
+  const { container } = render(
+    <>
+      <Nav theme />
+      <Footer />
+    </>,
+  );
+  expect(screen.getByRole('link', { name: 'Back to top' })).toHaveAttribute('href', '#top');
+  expect(container.querySelector('#top')).toBe(container.querySelector('header.wb-head'));
+});
+
+test('every page with the footer renders the header first, so Back to top has somewhere to land', () => {
+  const walk = (dir: string): string[] =>
+    fs.readdirSync(dir, { withFileTypes: true }).flatMap((e) => (e.isDirectory() ? walk(path.join(dir, e.name)) : [path.join(dir, e.name)]));
+  const pages = walk('app').filter((f) => f.endsWith('.tsx') && /<Footer\b/.test(fs.readFileSync(f, 'utf8')));
+  expect(pages.length).toBeGreaterThan(5);
+  for (const f of pages) {
+    const src = fs.readFileSync(f, 'utf8');
+    expect(src.indexOf('<Nav')).toBeGreaterThan(-1);
+    expect(src.indexOf('<Nav')).toBeLessThan(src.indexOf('<Footer'));
+  }
+});
+
+test("the footer's drawing is decoration, and the year is the build's", () => {
+  const { container } = render(<Footer />);
+  const art = container.querySelector('.f-art');
+  expect(art).toHaveAttribute('aria-hidden', 'true');
+  expect(art?.textContent).toBe('');
+  expect(screen.getByText(`© ${new Date().getFullYear()} Wesley Bard`)).toBeInTheDocument();
+});
+
+test("the footer's drawing is a local file, masked rather than shown as an image", () => {
+  const css = fs.readFileSync('app/design-system.css', 'utf8');
+  const urls = Array.from(css.matchAll(/url\("(\/footer\/[^"]+)"\)/g), (m) => m[1]);
+  expect(urls.length).toBeGreaterThan(0);
+  for (const u of new Set(urls)) expect(fs.existsSync(path.join('public', u))).toBe(true);
+  expect(css).toMatch(/mask-image: url\("\/footer\/coastal-family\.png"\)/);
 });
 
 test('the nav order is Projects, Games, Connect', () => {

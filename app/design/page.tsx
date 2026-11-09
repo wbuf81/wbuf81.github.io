@@ -108,6 +108,17 @@ export default function DesignPage() {
             </p>
           </section>
 
+          <section className="ch" aria-labelledby="ds-footer">
+            <h2 id="ds-footer">The footer</h2>
+            <p>
+              Paper with a top rule, so the graph paper ends cleanly above it: the name, Explore and Connect, the year
+              and Back to top, then a boardwalk drawing across the full width in a band of its own, so no text ever sits
+              on it. The drawing is one transparent picture used as a mask over <code>--foot-art</code>: the accent in
+              light, a pencil grey in dark. It keeps its whole width on a phone. It&apos;s live at the bottom of this
+              page.
+            </p>
+          </section>
+
           <section className="ch" aria-labelledby="ds-blocks">
             <h2 id="ds-blocks">Building blocks</h2>
             <h3>The page</h3>

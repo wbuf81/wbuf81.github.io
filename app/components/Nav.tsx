@@ -29,7 +29,8 @@ export function Nav({ theme = false }: { theme?: boolean }) {
   };
 
   return (
-    <header className="wb wb-head">
+    // id="top" is where the footer's Back to top lands: a real target, so keyboard focus moves up with the page.
+    <header id="top" className="wb wb-head">
       <div className="in">
         <Link href="/" className="brand" aria-label="Wesley Bard">
           <span className="wm">
