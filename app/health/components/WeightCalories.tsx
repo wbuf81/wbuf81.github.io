@@ -59,7 +59,7 @@ export default function WeightCalories({ days, series, calorieTargets, blocks, s
     [blocks, days],
   );
   const goals = spans.map((s) => s.goal).filter((g): g is number => g !== null);
-  const blockAt = (i: number) => spans.find((s) => i >= s.i0 && i <= s.i1)?.type ?? null;
+  const spanAt = (i: number) => spans.find((s) => i >= s.i0 && i <= s.i1) ?? null;
 
   // Scales shared by both frames.
   const scales = useMemo(() => {
@@ -171,7 +171,8 @@ export default function WeightCalories({ days, series, calorieTargets, blocks, s
   const target = hover ? targets[hover.i] : null;
   const vs = h && h.cals !== null && target !== null ? h.cals - target : null;
 
-  const block = hover ? blockAt(hover.i) : null;
+  const span = hover ? spanAt(hover.i) : null;
+  const block = span?.type ?? null;
 
   return (
     <section className="h-card">
@@ -263,23 +264,29 @@ export default function WeightCalories({ days, series, calorieTargets, blocks, s
               {s.label}
             </span>
           ))}
-          {c.marks.map((m) => (
-            <span key={`b-${m.key}`}>
-              <span className="h-ax is-block" style={{ ...m.anchor, top: m.top }}>
+          {/* A block is named on its goal line ("Cut goal 195.0", Wes 9 Nov 2026); one without a goal, along the top. */}
+          {c.marks.map((m) =>
+            m.goal !== null ? (
+              <span key={`b-${m.key}`} className="h-ax is-note is-goal" style={{ ...m.anchor, top: m.goalTop, transform: 'translateY(-130%)' }}>
+                {m.label} goal {formatNumber(m.goal, 1)}
+              </span>
+            ) : (
+              <span key={`b-${m.key}`} className="h-ax is-block" style={{ ...m.anchor, top: m.top }}>
                 {m.label}
               </span>
-              {m.goal !== null && (
-                <span className="h-ax is-note is-goal" style={{ ...m.anchor, top: m.goalTop, transform: 'translateY(-130%)' }}>
-                  goal {formatNumber(m.goal, 1)}
-                </span>
-              )}
-            </span>
-          ))}
+            ),
+          )}
           {hover && h && (
             <>
               <span className="h-crosshair" style={{ left: hover.x, top: pct(c.F.t, c.F.h), bottom: pct(c.F.b, c.F.h) }} />
               <div className="h-tip" style={{ left: hover.left, width: TIP_WIDTH }}>
                 <div className="h-k">{dayDate(h.date)}</div>
+                {span && (
+                  <div className="h-row">
+                    <span>Phase</span>
+                    <b>{span.label}</b>
+                  </div>
+                )}
                 <div className="h-row">
                   <span>Weight</span>
                   <b>{h.weight !== null ? `${formatNumber(h.weight, 1)} ${weightUnit}` : '—'}</b>
