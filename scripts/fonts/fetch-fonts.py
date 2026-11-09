@@ -45,8 +45,6 @@ FONTS = [
     ('ibm-plex-sans', 'ibmplexsans/IBMPlexSans[wdth,wght].ttf', {'wdth': 100}),
     ('ibm-plex-mono-400', 'ibmplexmono/IBMPlexMono-Regular.ttf', {}),
     ('ibm-plex-mono-500', 'ibmplexmono/IBMPlexMono-Medium.ttf', {}),
-    ('playfair-display', 'playfairdisplay/PlayfairDisplay[wght].ttf', {}),
-    ('outfit', 'outfit/Outfit[wght].ttf', {}),
     ('vt323', 'vt323/VT323-Regular.ttf', {}),
     ('unifraktur-maguntia', 'unifrakturmaguntia/UnifrakturMaguntia-Book.ttf', {}),
     ('press-start-2p', 'pressstart2p/PressStart2P-Regular.ttf', {}),

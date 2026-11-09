@@ -12,8 +12,6 @@ and redistribution with software. Each file keeps its own copyright and licence 
 | `ibm-plex-sans.woff2` | IBM Plex Sans, weights 100–700, width 100 | `ofl/ibmplexsans/IBMPlexSans[wdth,wght].ttf` |
 | `ibm-plex-mono-400.woff2` | IBM Plex Mono Regular | `ofl/ibmplexmono/IBMPlexMono-Regular.ttf` |
 | `ibm-plex-mono-500.woff2` | IBM Plex Mono Medium | `ofl/ibmplexmono/IBMPlexMono-Medium.ttf` |
-| `playfair-display.woff2` | Playfair Display, weights 400–900 | `ofl/playfairdisplay/PlayfairDisplay[wght].ttf` |
-| `outfit.woff2` | Outfit, weights 100–900 | `ofl/outfit/Outfit[wght].ttf` |
 | `vt323.woff2` | VT323 | `ofl/vt323/VT323-Regular.ttf` |
 | `unifraktur-maguntia.woff2` | UnifrakturMaguntia | `ofl/unifrakturmaguntia/UnifrakturMaguntia-Book.ttf` |
 | `press-start-2p.woff2` | Press Start 2P | `ofl/pressstart2p/PressStart2P-Regular.ttf` |

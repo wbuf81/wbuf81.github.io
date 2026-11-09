@@ -12,8 +12,9 @@ const NAV_LINKS = [
 
 // The site header, in the design system (app/design-system.css › the header). On a phone the bar wraps
 // rather than collapsing into a menu: three links and the theme switch fit on two short lines.
-// `theme` shows the light/dark switch: only pages built on the system have a dark look (/, /design), so the
-// page that keeps its own styles (/lee) gets the header without it, always light.
+// `theme` shows the light/dark switch: only pages built on the system have a dark look, so a page that keeps
+// its own styles gets the header without it, always light. Every page is on the system since /lee was retired
+// (9 Nov 2026), so they all pass it.
 export function Nav({ theme = false }: { theme?: boolean }) {
   const pathname = usePathname() ?? '';
   const isHome = pathname === '/';

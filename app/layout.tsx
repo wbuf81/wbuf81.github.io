@@ -11,26 +11,7 @@ import { THEME_BOOT_SCRIPT } from '@/lib/theme';
 // Turbopack names each family after its variable, so none may be called serif, sans or mono: a family named
 // "serif" is the generic serif the moment anything drops its quotes.
 
-// Playfair and Outfit are only for the pages that keep their own look, so they aren't preloaded everywhere.
-const playfair = localFont({
-  src: './fonts/playfair-display.woff2',
-  weight: '400 900',
-  variable: '--font-playfair',
-  display: 'swap',
-  preload: false,
-  adjustFontFallback: 'Times New Roman',
-});
-
-const outfit = localFont({
-  src: './fonts/outfit.woff2',
-  weight: '100 900',
-  variable: '--font-outfit',
-  display: 'swap',
-  preload: false,
-});
-
 // The design system's three faces (app/design-system.css reads them as --serif, --sans, --mono).
-// Playfair and Outfit stay for the pages that keep their own look (/health, /lee, /articles).
 // Geist Serif (Vercel's display serif, Wes's pick on 8 Nov 2026, replacing Source Serif 4) ships one weight,
 // Regular. It's declared across the whole range so the 600 the system's headings ask for draws these outlines
 // as they are; declared as 400 alone, the browser would fake a bold and smear the hairlines.
@@ -135,7 +116,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${playfair.variable} ${outfit.variable} ${geistSerif.variable} ${plexSans.variable} ${plexMono.variable}`}
+      className={`${geistSerif.variable} ${plexSans.variable} ${plexMono.variable}`}
       suppressHydrationWarning
     >
       <head>

@@ -38,7 +38,7 @@ test('no font is named after a generic family', () => {
   const names = LOADERS.flatMap((f) =>
     [...fs.readFileSync(path.join(root, f), 'utf8').matchAll(/const (\w+) = localFont/g)].map((m) => m[1]),
   );
-  expect(names.length).toBe(9);
+  expect(names.length).toBe(7);
   expect(names.filter((n) => /^(serif|sans|sansSerif|mono|monospace|cursive|fantasy|math|emoji|fangsong)$/i.test(n))).toEqual([]);
 });
 

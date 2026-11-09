@@ -2,8 +2,8 @@
    Colours by name only: every colour is a token below, light first, with a dark twin in BOTH dark blocks
    (the computer's setting, and data-theme on <html> from the theme switch). Dark applies only to pages built on
    the system (:has(.wb-page)), so the shared header stays light over the pages that keep their own look. A new token also gets an entry in
-   app/design/tokens.ts, or __tests__/design-system.test.ts fails. Every block is scoped under .wb, so pages
-   that keep their own styles (/lee) are untouched. */
+   app/design/tokens.ts, or __tests__/design-system.test.ts fails. Every block is scoped under .wb, so a page
+   that keeps its own styles is untouched. */
 
 /* ── tokens ─────────────────────────────────────────────────── */
 :root {
