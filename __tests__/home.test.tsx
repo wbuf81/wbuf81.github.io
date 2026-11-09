@@ -3,10 +3,11 @@ import path from 'path';
 import { render, screen, fireEvent, act } from '@testing-library/react';
 import ProjectTile from '@/app/components/home/ProjectTile';
 import FeaturedBuild from '@/app/components/home/FeaturedBuild';
+import Highlights from '@/app/components/home/Highlights';
 import ThenNowStill from '@/app/components/home/ThenNowStill';
 import TetrisPrint from '@/app/components/home/TetrisPrint';
 import GitHubMap from '@/app/components/home/GitHubMap';
-import { place, PERSONAL, TOOLS, featured, personal } from '@/lib/projects';
+import { place, PERSONAL, TOOLS, personal } from '@/lib/projects';
 import type { Contributions } from '@/lib/githubContributions';
 
 const data: Contributions = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'data/github-contributions.json'), 'utf8'));
@@ -58,12 +59,28 @@ test('the featured build shows what it runs on and its chips', () => {
   expect(screen.getByRole('link', { name: 'View on GitHub →' })).toHaveAttribute('target', '_blank');
 });
 
-test('the featured Mac Tesla Tracker opens on GitHub, with its chips', () => {
-  render(<FeaturedBuild project={featured()} />);
-  expect(screen.getByRole('heading', { level: 2, name: 'Mac Tesla Tracker' })).toBeInTheDocument();
-  expect(screen.getByRole('link', { name: 'View on GitHub →' })).toHaveAttribute('href', 'https://github.com/wbuf81/mac-tesla-tracker');
-  expect(screen.getByRole('link', { name: 'Open Mac Tesla Tracker on GitHub' })).toHaveAttribute('target', '_blank');
-  expect(screen.getByText('Leave and arrive alerts')).toBeInTheDocument();
+test('the highlights row: two picks, then the latest with its label', () => {
+  const { container } = render(<Highlights />);
+  expect(screen.getByRole('region', { name: 'Highlights' })).toBeInTheDocument();
+  expect(screen.getAllByRole('heading', { level: 3 }).map((h) => h.textContent)).toEqual(['My Office in 3D', 'Mac Tesla Tracker', 'Tidemark']);
+  expect(screen.getAllByText('Highlight')).toHaveLength(2);
+  expect(screen.getAllByText('Latest')).toHaveLength(1);
+
+  const cards = container.querySelectorAll('article.hl');
+  expect(cards).toHaveLength(3);
+  expect(cards[2]).toHaveClass('is-latest');
+  // The label-maker strip is on the latest card's print only.
+  expect(container.querySelectorAll('.label-tape')).toHaveLength(1);
+  expect(cards[2].querySelector('.print .label-tape')?.textContent).toBe('New');
+
+  // A build on this site opens in the same tab; a repo opens GitHub in a new one.
+  const office = screen.getByRole('link', { name: 'Explore it →' });
+  expect(office).toHaveAttribute('href', '/office/');
+  expect(office).not.toHaveAttribute('target');
+  const github = screen.getAllByRole('link', { name: 'View on GitHub →' });
+  expect(github.map((a) => a.getAttribute('href'))).toEqual(['https://github.com/wbuf81/mac-tesla-tracker', 'https://github.com/wbuf81/tidemark']);
+  for (const a of github) expect(a).toHaveAttribute('target', '_blank');
+  expect(screen.getByRole('link', { name: 'Open Tidemark on GitHub' })).toHaveAttribute('href', 'https://github.com/wbuf81/tidemark');
 });
 
 test('a build on this site opens in the same tab, featured or as a tile', () => {

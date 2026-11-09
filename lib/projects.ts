@@ -26,7 +26,7 @@ export interface Project {
   href?: string;
   hardware?: Hardware;
   group?: (typeof GROUPS)[number];
-  /** Shown when the project is the featured build, under `chipsLabel`. */
+  /** Shown when the project is in the big featured block (the /videogames hub's SNES History), under `chipsLabel`. */
   chips?: string[];
   chipsLabel?: string;
 }
@@ -46,8 +46,13 @@ export interface Placed extends Project {
 /** Personal work reads in these groups, in this order. */
 export const GROUPS = ['Mac apps', 'Omarchy Linux', 'Microcontrollers', 'Everything else'] as const;
 
-/** The build in the big block at the top. Any personal project with chips fits. */
-export const FEATURED = 'tesla';
+/**
+ * The highlights row at the top of the homepage (Wes, 9 Nov 2026): the two builds he picks, left to right, then the
+ * newest, marked Latest. Each leaves its group below. Whenever a project is added, ask Wes whether it should become
+ * the Latest card (CLAUDE.md); the one it replaces goes back into its group unless he moves it into HIGHLIGHTS.
+ */
+export const HIGHLIGHTS: string[] = ['office', 'tesla'];
+export const LATEST = 'tidemark';
 
 const M5: Hardware = {
   label: 'M5Stack Core Basic v2.7',
@@ -263,15 +268,18 @@ export function personal(key: string): Project {
   return p;
 }
 
-export function featured(): Project {
-  return personal(FEATURED);
+/** The highlights row, left to right: the two picks, then the latest. */
+export function highlights(): { project: Project; latest: boolean }[] {
+  return [...HIGHLIGHTS.map((k) => ({ project: personal(k), latest: false })), { project: personal(LATEST), latest: true }];
 }
 
-/** The personal groups in order, the featured build left out; positions carry on after the work tiles. */
+const ON_TOP = new Set([...HIGHLIGHTS, LATEST]);
+
+/** The personal groups in order, the highlights row left out; positions carry on after the work tiles. */
 export function personalGroups(): { label: (typeof GROUPS)[number]; items: Placed[] }[] {
   let n = AGENTS.length + TOOLS.length;
   return GROUPS.map((label) => {
-    const items = PERSONAL.filter((p) => p.group === label && p.key !== FEATURED);
+    const items = PERSONAL.filter((p) => p.group === label && !ON_TOP.has(p.key));
     const placed = place(items, n);
     n += items.length;
     return { label, items: placed };

@@ -191,6 +191,19 @@
 .wb .fcopy .btn { align-self: flex-start; }
 .wb .fdata { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
 
+/* ── the highlights row: two picks, then the latest (Wes, 9 Nov 2026) ──
+   Three cards a size up from the tiles, each a taped print over its card. The latest wears a filled tag and a strip
+   from a label maker on its print, which flips light in dark mode with the tokens. */
+.wb .hls { position: relative; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 30px; margin: 0 0 44px; }
+.wb .hl { display: flex; flex-direction: column; min-width: 0; }
+.wb .hl > .print { margin: 12px 14px -30px; }
+.wb .hl-body { background: var(--paper); border: 1px solid var(--rule); padding: 46px 22px 20px; display: flex; flex-direction: column; gap: 7px; flex: 1; min-width: 0; }
+.wb .hl h3 { font: 600 27px/1.08 var(--serif); margin: 4px 0 0; letter-spacing: -.012em; color: var(--ink); }
+.wb .hl-body p { margin: 4px 0 0; font-size: 14px; line-height: 1.58; color: var(--ink-2); }
+.wb .hl-go { margin-top: auto; padding-top: 12px; }
+.wb .tag.fill { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+.wb .label-tape { position: absolute; z-index: 4; top: 26px; right: -10px; padding: 4px 10px 4px 12px; border-radius: 2px; background: var(--ink); color: var(--paper); font: 500 11.5px/1.2 var(--mono); letter-spacing: .26em; text-transform: uppercase; transform: rotate(4deg); box-shadow: 0 5px 10px -6px rgba(0, 0, 0, .6); pointer-events: none; }
+
 /* ── section card and the GitHub map ────────────────────────── */
 .wb .ch { background: var(--paper); border: 1px solid var(--rule); padding: 18px 22px; margin-top: 52px; min-width: 0; }
 .wb .ch-h { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 6px 16px; margin-bottom: 14px; }
@@ -229,7 +242,7 @@
 .wb .ds-top { padding: 30px 0 6px; }
 .wb .ds .ch { margin-top: 18px; }
 .wb .ds .ch .ch { margin-top: 0; }
-.wb .ds .feat { margin: 0; }
+.wb .ds .feat, .wb .ds .hls { margin: 0; }
 .wb .ds .tiles { grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 340px)); }
 .wb .spec-print { max-width: 320px; padding: 12px 8px 0; }
 /* only the page's own prose, so the specimens inside keep their real styles */
@@ -266,6 +279,10 @@
 .wb.s-live:is(body:has(.ds-snes > .s-tray) *) { bottom: calc(20px + env(safe-area-inset-bottom, 0px)); }
 
 /* ── layout ─────────────────────────────────────────────────── */
+@media (max-width: 900px) {
+  /* three across gets too tight for the titles: one column, no wider than a card reads well */
+  .wb .hls { grid-template-columns: minmax(0, 1fr); max-width: 640px; }
+}
 @media (max-width: 860px) {
   .wb .feat { grid-template-columns: 1fr; }
   .wb .feat > .print { margin: 12px 12px -26px; }
@@ -275,6 +292,9 @@
   /* the two prints stack: Tetris first, the headshot tucked under its bottom-right corner */
   .wb .duo { flex: 1 1 100%; flex-wrap: wrap; padding: 14px 4px 0; }
   .wb .print.hs { width: 170px; margin: -36px 0 0 auto; }
+  .wb .hl-body { padding: 46px 18px 18px; }
+  .wb .hl h3 { font-size: 25px; }
+  .wb .label-tape { right: -6px; }
   .wb .type > div { grid-template-columns: 1fr; gap: 4px; }
   /* no theme switch on a phone (Wes, 4 Oct 2026): it wrapped onto a second header row, and a phone follows its own setting */
   .wb-head .tools { display: none; }

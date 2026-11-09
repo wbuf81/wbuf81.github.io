@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { AGENTS, TOOLS, PERSONAL, GROUPS, FEATURED, place, personalGroups, featured, personal, spelled, buildCounts } from '@/lib/projects';
+import { AGENTS, TOOLS, PERSONAL, GROUPS, HIGHLIGHTS, LATEST, place, personalGroups, highlights, personal, spelled, buildCounts } from '@/lib/projects';
 
 const all = [...AGENTS, ...TOOLS, ...PERSONAL];
 const inPublic = (p: string) => fs.existsSync(path.join(process.cwd(), 'public', p));
@@ -38,12 +38,17 @@ test('private repos have no link, open ones link to GitHub, live ones to a page 
   }
 });
 
-test('Mac Tesla Tracker is the featured build, and SNES History is back among the tiles', () => {
-  expect(FEATURED).toBe('tesla');
-  expect(featured()).toMatchObject({ name: 'Mac Tesla Tracker', badge: 'Open source', href: 'https://github.com/wbuf81/mac-tesla-tracker', group: 'Mac apps' });
+test('the highlights row: Office in 3D and Mac Tesla Tracker, then Tidemark as the latest', () => {
+  expect(HIGHLIGHTS).toEqual(['office', 'tesla']);
+  expect(LATEST).toBe('tidemark');
+  expect(highlights().map((h) => [h.project.name, h.latest])).toEqual([
+    ['My Office in 3D', false],
+    ['Mac Tesla Tracker', false],
+    ['Tidemark', true],
+  ]);
   const keys = (label: string) => personalGroups().find((g) => g.label === label)!.items.map((i) => i.key);
-  expect(keys('Mac apps')).toEqual(['tidemark', 'daisy']);
-  expect(keys('Everything else')).toEqual(['snes', 'office', 'neo', 'gbforge']);
+  expect(keys('Mac apps')).toEqual(['daisy']);
+  expect(keys('Everything else')).toEqual(['snes', 'neo', 'gbforge']);
   expect(personal('snes')).toMatchObject({ badge: 'Live on this site', href: '/videogames/snes-history' });
   expect(() => personal('nope')).toThrow();
 });
@@ -58,13 +63,14 @@ test('public copy rules', () => {
   }
 });
 
-test('featured is a real personal project and is left out of its group', () => {
-  expect(PERSONAL.some((p) => p.key === FEATURED)).toBe(true);
-  expect(featured().key).toBe(FEATURED);
-  expect(featured().chips?.length).toBeGreaterThan(0);
+test('every card in the row is a real personal project, none twice, and each leaves its group', () => {
+  const keys = [...HIGHLIGHTS, LATEST];
+  for (const k of keys) expect(PERSONAL.some((p) => p.key === k)).toBe(true);
+  expect(new Set(keys).size).toBe(keys.length);
+  for (const h of highlights()) expect(h.project.href).toBeTruthy();
   const grouped = personalGroups().flatMap((g) => g.items.map((i) => i.key));
-  expect(grouped).not.toContain(FEATURED);
-  expect(grouped.length).toBe(PERSONAL.length - 1);
+  for (const k of keys) expect(grouped).not.toContain(k);
+  expect(grouped.length).toBe(PERSONAL.length - keys.length);
   expect(personalGroups().map((g) => g.label)).toEqual([...GROUPS]);
 });
 

@@ -2,8 +2,8 @@ import type { Project } from '@/lib/projects';
 import Print from './Print';
 import { HardwareLink } from './ProjectTile';
 
-// The featured build (design system › the featured build): a big print over the left edge of its panel.
-// lib/projects.ts › FEATURED picks it.
+// The featured build (design system › the featured build): a big print over the left edge of its panel. The
+// /videogames hub shows SNES History in it; the homepage moved to the highlights row (Highlights.tsx) on 9 Nov 2026.
 export default function FeaturedBuild({ project: p }: { project: Project }) {
   const internal = !!p.href?.startsWith('/');
   return (

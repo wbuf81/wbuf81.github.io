@@ -15,11 +15,13 @@ interface PrintProps {
   className?: string;
   /** In place of the photo (the arcade print holds the Tetris screen). */
   children?: ReactNode;
+  /** Stuck on over the photo, like the tape (the Latest card's label-maker strip). */
+  sticker?: ReactNode;
   eager?: boolean;
 }
 
 // A taped print (design system › prints): a photo on a paper border with a wide bottom lip, tilted, with tape.
-export default function Print({ image, alt = '', fit = 'photo', caption, tilt, tapes, href, label, className, children, eager }: PrintProps) {
+export default function Print({ image, alt = '', fit = 'photo', caption, tilt, tapes, href, label, className, children, sticker, eager }: PrintProps) {
   const cls = className ? `print ${className}` : 'print';
   const style = { transform: `rotate(${tilt}deg)` };
   const inner = (
@@ -32,6 +34,7 @@ export default function Print({ image, alt = '', fit = 'photo', caption, tilt, t
           style={{ left: t.left, top: t.top, width: t.width, transform: `rotate(${t.angle})` }}
         />
       ))}
+      {sticker}
       {children ?? (
         // eslint-disable-next-line @next/next/no-img-element -- static export, images are served as they are
         <img

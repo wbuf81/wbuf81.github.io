@@ -6,10 +6,11 @@ import Footer from '../components/Footer';
 import Print from '../components/home/Print';
 import ProjectTile from '../components/home/ProjectTile';
 import FeaturedBuild from '../components/home/FeaturedBuild';
+import Highlights from '../components/home/Highlights';
 import ThenNowStill from '../components/home/ThenNowStill';
 import TetrisPrint from '../components/home/TetrisPrint';
 import GitHubMap from '../components/home/GitHubMap';
-import { AGENTS, PERSONAL, place, featured, buildCounts } from '@/lib/projects';
+import { AGENTS, PERSONAL, place, personal, buildCounts } from '@/lib/projects';
 import contributions from '@/data/github-contributions.json';
 import { TOKENS, tokenValues, type TokenGroup } from './tokens';
 import SnesKit from './SnesKit';
@@ -109,6 +110,13 @@ export default function DesignPage() {
 
           <section className="ch" aria-labelledby="ds-blocks">
             <h2 id="ds-blocks">Building blocks</h2>
+            <h3>The page</h3>
+            <p>
+              Graph paper: a faint 24px grid in <code>--grid</code> under every page on the system, scrolling with it.
+              Cards, prints, the header and the footer are solid, so the grid only shows in the space between them,
+              as it does around this card.
+            </p>
+
             <h3>Buttons, tags and chips</h3>
             <div className="spec-row">
               <button type="button" className="btn">
@@ -121,7 +129,8 @@ export default function DesignPage() {
                 Small
               </button>
               <span className="tag">Private repo</span>
-              <span className="tag acc">Featured build</span>
+              <span className="tag acc">Highlight</span>
+              <span className="tag fill">Latest</span>
               <span className="chip">Claude Code sessions</span>
             </div>
 
@@ -159,12 +168,21 @@ export default function DesignPage() {
               <ProjectTile project={knobdeck} footer />
             </div>
 
+            <h3>The highlights row</h3>
+            <p>
+              The top of the homepage: two builds I pick, then the newest. Each is a print over its card, a size up from
+              the tiles, with a button. The newest wears a filled Latest tag and a strip from a label maker on its print.{' '}
+              <code>HIGHLIGHTS</code> and <code>LATEST</code> in <code>lib/projects.ts</code> choose them, and each is
+              left out of its group below. On a phone, or under 900px, the three stack.
+            </p>
+            <Highlights />
+
             <h3>The featured build</h3>
             <p>
-              A big print over the left edge of its panel. <code>FEATURED</code> in <code>lib/projects.ts</code> picks
-              it, and it is left out of its group below.
+              A big print over the left edge of its panel, with the project&apos;s chips beside the words. The{' '}
+              <code>/videogames</code> hub shows SNES History in it.
             </p>
-            <FeaturedBuild project={featured()} />
+            <FeaturedBuild project={personal('snes')} />
 
             <h3>The arcade print</h3>
             <p>

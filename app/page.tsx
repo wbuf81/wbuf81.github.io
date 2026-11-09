@@ -2,10 +2,10 @@ import { Nav } from './components/Nav';
 import Footer from './components/Footer';
 import TetrisPrint from './components/home/TetrisPrint';
 import ThenNowStill from './components/home/ThenNowStill';
-import FeaturedBuild from './components/home/FeaturedBuild';
+import Highlights from './components/home/Highlights';
 import ProjectTile from './components/home/ProjectTile';
 import GitHubMap from './components/home/GitHubMap';
-import { AGENTS, TOOLS, place, personalGroups, featured, buildCounts } from '@/lib/projects';
+import { AGENTS, TOOLS, place, personalGroups, buildCounts } from '@/lib/projects';
 import contributions from '@/data/github-contributions.json';
 
 /*
@@ -45,7 +45,7 @@ export default function HomePage() {
 
           <ThenNowStill counts={buildCounts()} />
 
-          <FeaturedBuild project={featured()} />
+          <Highlights />
 
           <section id="projects" aria-labelledby="work-h">
             <div className="sec-h">
