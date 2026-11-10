@@ -2,6 +2,7 @@
 
 ## Deploy
 Pushes to `main` auto-deploy to GitHub Pages via `.github/workflows/deploy.yml`. Build: `npm run build` (outputs to `./out`).
+- **Failure emails** come from this workflow. Before 9 Nov 2026 they were real breakages (Google Fonts on 14 and 25 Oct, fixed by moving the fonts into the repo). On 9 Nov a deploy timed out twice in Pages' "syncing_files" step, with the same ~350 MB upload that deployed in minutes all day, so the deploy step now waits 30 minutes instead of the default 10, and a new push no longer cancels a deploy in progress (cancelling mid-sync can leave Pages stuck; GitHub's template doesn't). If a deploy still times out, re-run just the failed job (`gh run rerun <id> --failed`): the build is fine, and the site stays on the previous version until it lands.
 
 ## Setting up a new machine
 A clone carries the playbook (this file), the scripts and the data, but not the tools they run on. Install:

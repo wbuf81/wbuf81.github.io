@@ -13,9 +13,11 @@ permissions:
   pages: write
   id-token: write
 
+# One deploy at a time, but never cut one off mid-sync: a Pages deployment cancelled while it is syncing files can
+# leave Pages stuck. A newer push waits in the queue instead (GitHub's own Pages template does the same).
 concurrency:
   group: "pages"
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   build:
@@ -81,3 +83,8 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v5
+        with:
+          # The site is ~350 MB (mostly the SNES clips and art), and Pages sometimes takes far longer than usual to
+          # sync it: on 9 Nov 2026 the same upload that deployed in under 4 minutes all day timed out twice at the
+          # 10-minute default ("syncing_files"), each a failure email. 30 minutes rides that out.
+          timeout: 1800000
