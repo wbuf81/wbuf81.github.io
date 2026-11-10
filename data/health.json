@@ -120,6 +120,11 @@
       "from": "2026-11-02",
       "cals": 2900,
       "note": "Up to the bulk’s target after the refeed week"
+    },
+    {
+      "from": "2026-11-09",
+      "cals": 2700,
+      "note": "Coach Lee: start the bulk at 2,700 a day"
     }
   ],
   "days": [
