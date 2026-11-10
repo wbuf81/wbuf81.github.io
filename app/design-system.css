@@ -12,7 +12,6 @@
   --accent: #0f4c5c; --accent-soft: #e2eef1; --accent-deep: #0a3540; --on-accent: #ffffff;
   --core: #1f6f3f; --over: #8b1d14; --warn: #8f5c00;
   --tape: rgba(255, 226, 150, .72);
-  --foot-art: rgba(15, 76, 92, .72);
   --screen: #121a22; --screen-ink: #e6ebf0; --screen-ink-2: #8d9aa7;
   --snes: #4f3d8f; --snes-glow: #8a7cc4; --snes-soft: #ebe7f7; --screen-2: #1b2530; --screen-rule: #2a3640; --snes-h1: #d9d3ef; --snes-h2: #ab9fd8; --snes-h3: #7a69bd; --snes-h4: #4f3d8f; --booklet: #fbfaf6; --shelf: #e9dcc6; --plank: #8b6a42;
   --snes-hof: rgba(214, 160, 20, .14); --snes-bin: rgba(100, 110, 125, .10);
@@ -32,7 +31,6 @@
     --accent: #7ec4d4; --accent-soft: #1b3038; --accent-deep: #a5dbe7; --on-accent: #0b1e24;
     --core: #7fcf9a; --over: #f08a80; --warn: #e6b450;
     --tape: rgba(224, 176, 90, .40);
-    --foot-art: rgba(230, 235, 240, .22);
     --screen: #121a22; --screen-ink: #e6ebf0; --screen-ink-2: #8d9aa7;
     --snes: #b3a6ea; --snes-glow: #8a7cc4; --snes-soft: #2b2546; --screen-2: #1b2530; --screen-rule: #2a3640; --snes-h1: #2b2546; --snes-h2: #4a3d80; --snes-h3: #8b7cd3; --snes-h4: #b9aded; --booklet: #1d222a; --shelf: #2a241d; --plank: #5a4329;
     --snes-hof: rgba(240, 200, 90, .12); --snes-bin: rgba(0, 0, 0, .28);
@@ -49,7 +47,6 @@
     --accent: #7ec4d4; --accent-soft: #1b3038; --accent-deep: #a5dbe7; --on-accent: #0b1e24;
     --core: #7fcf9a; --over: #f08a80; --warn: #e6b450;
     --tape: rgba(224, 176, 90, .40);
-    --foot-art: rgba(230, 235, 240, .22);
     --screen: #121a22; --screen-ink: #e6ebf0; --screen-ink-2: #8d9aa7;
     --snes: #b3a6ea; --snes-glow: #8a7cc4; --snes-soft: #2b2546; --screen-2: #1b2530; --screen-rule: #2a3640; --snes-h1: #2b2546; --snes-h2: #4a3d80; --snes-h3: #8b7cd3; --snes-h4: #b9aded; --booklet: #1d222a; --shelf: #2a241d; --plank: #5a4329;
     --snes-hof: rgba(240, 200, 90, .12); --snes-bin: rgba(0, 0, 0, .28);
@@ -236,17 +233,13 @@
 .wb .card .go { display: inline-block; margin-top: 10px; font: 500 13px var(--sans); color: var(--accent); }
 
 /* ── the footer ─────────────────────────────────────────────── */
-/* The coastal footer (Wes, 9 Nov 2026: option B on the mockup canvas, with B4's pencil dark; the handoff is in
-   docs/design/coastal-footer-2026-11-09/). Solid --paper, so the graph paper ends at its top rule. The name and a
-   line, Beyond work, two groups of links, the year and Back to top over a thin rule, then the boardwalk drawing in
-   a band of its own below, so text can never sit on it. Trimmed the same day (Wes: "too tall"; it was 726px at
-   1440): the name went from 64px to 44px and the gaps closed up, and the homepage's card row folded in (Beyond
-   work keeps one line; its Connect cards repeated these links). The drawing is one transparent PNG used as a mask over --foot-art: the accent in light,
-   a pencil grey in dark (light lines on dark read as a photo negative of an ink drawing, so it isn't the accent
-   there). The band keeps the drawing's shape at every width and never crops it, so the boardwalk, the chair and
-   the three in the water are always in view (a height cap was tried: on a 2,560px window it clipped the sea oats). */
+/* The footer (Wes, 9 Nov 2026, from a mockup canvas; the handoff is in docs/design/coastal-footer-2026-11-09/).
+   Solid --paper, so the graph paper ends at its top rule. The name and a line, Beyond work, two groups of links, then
+   the year and Back to top over a thin rule. Trimmed the same day (Wes: "too tall"; it was 726px at 1440): the name
+   went from 64px to 44px and the gaps closed up, and the homepage's card row folded in (Beyond work keeps one line;
+   its Connect cards repeated these links). The boardwalk drawing that ran under it all was removed on 10 Nov 2026. */
 .wb-foot { border-top: 1px solid var(--rule); background: var(--paper); color: var(--ink); }
-.wb-foot .in { max-width: 1380px; margin: 0 auto; padding: clamp(28px, 3.4vw, 40px) clamp(16px, 3vw, 40px) 0; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: 18px 48px; }
+.wb-foot .in { max-width: 1380px; margin: 0 auto; padding: clamp(28px, 3.4vw, 40px) clamp(16px, 3vw, 40px) clamp(14px, 2vw, 22px); display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: 18px 48px; }
 .wb-foot .eyebrow { font-size: 12px; }
 .wb-foot .f-name { font: 600 clamp(34px, 3.2vw, 44px)/1 var(--serif); letter-spacing: -.02em; margin: 8px 0 0; color: var(--ink); }
 .wb-foot .f-name i { font-style: normal; color: var(--accent); }
@@ -263,15 +256,6 @@
 .wb-foot .f-base { flex: 1 1 100%; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 4px 24px; margin-top: 6px; padding-top: 6px; border-top: 1px solid var(--rule-soft); font-size: 13.5px; color: var(--ink-2); }
 .wb-foot .f-base small { font-size: inherit; }
 .wb-foot .f-top { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; }
-.wb-foot .f-art { width: 100%; aspect-ratio: 2172 / 536; margin-top: 18px; pointer-events: none; }
-/* Without mask support the band stays empty rather than becoming a solid block of colour. */
-@supports (mask-image: none) or (-webkit-mask-image: none) {
-  .wb-foot .f-art {
-    background-color: var(--foot-art);
-    -webkit-mask-image: url("/footer/coastal-family.png"); -webkit-mask-repeat: no-repeat; -webkit-mask-size: cover; -webkit-mask-position: 50% 100%;
-    mask-image: url("/footer/coastal-family.png"); mask-mode: alpha; mask-repeat: no-repeat; mask-size: cover; mask-position: 50% 100%;
-  }
-}
 
 /* ── /design's specimens ────────────────────────────────────── */
 .wb .ds-top { padding: 30px 0 6px; }

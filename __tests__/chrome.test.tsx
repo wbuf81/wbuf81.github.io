@@ -86,20 +86,13 @@ test('every page with the footer renders the header first, so Back to top has so
   }
 });
 
-test("the footer's drawing is decoration, and the year is the build's", () => {
+test("the footer has no drawing any more, and the year is the build's", () => {
+  // Wes removed the boardwalk drawing on 10 Nov 2026 ("not crazy about the footer image anymore"); the rest stayed.
   const { container } = render(<Footer />);
-  const art = container.querySelector('.f-art');
-  expect(art).toHaveAttribute('aria-hidden', 'true');
-  expect(art?.textContent).toBe('');
+  expect(container.querySelector('.f-art')).toBeNull();
+  expect(fs.readFileSync('app/design-system.css', 'utf8')).not.toMatch(/\/footer\/|--foot-art|\.f-art/);
+  expect(fs.existsSync(path.join('public', 'footer'))).toBe(false);
   expect(screen.getByText(`© ${new Date().getFullYear()} Wesley Bard`)).toBeInTheDocument();
-});
-
-test("the footer's drawing is a local file, masked rather than shown as an image", () => {
-  const css = fs.readFileSync('app/design-system.css', 'utf8');
-  const urls = Array.from(css.matchAll(/url\("(\/footer\/[^"]+)"\)/g), (m) => m[1]);
-  expect(urls.length).toBeGreaterThan(0);
-  for (const u of new Set(urls)) expect(fs.existsSync(path.join('public', u))).toBe(true);
-  expect(css).toMatch(/mask-image: url\("\/footer\/coastal-family\.png"\)/);
 });
 
 test('the nav order is Projects, Games, Connect', () => {

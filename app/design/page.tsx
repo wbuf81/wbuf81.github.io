@@ -112,10 +112,8 @@ export default function DesignPage() {
             <h2 id="ds-footer">The footer</h2>
             <p>
               Paper with a top rule, so the graph paper ends cleanly above it: the name, a Beyond work line, Explore and
-              Connect, the year and Back to top over a thin rule, then a boardwalk drawing across the full width in a
-              band of its own, so no text ever sits on it. The header&apos;s Connect lands here. The drawing is one transparent picture used as a mask over <code>--foot-art</code>: the accent in
-              light, a pencil grey in dark. It keeps its whole width on a phone. It&apos;s live at the bottom of this
-              page.
+              Connect, then the year and Back to top over a thin rule. The header&apos;s Connect lands here. It&apos;s live
+              at the bottom of this page.
             </p>
           </section>
 

@@ -1,8 +1,8 @@
 import Link from 'next/link';
 
 // The site footer, the coastal one (Wes, 9 Nov 2026; app/design-system.css › the footer): the name and a line,
-// Beyond work, Explore and Connect, the year and Back to top, then the boardwalk drawing in a band of its own. The
-// drawing is decoration only (aria-hidden; no words in it). It is id="connect": the header's Connect lands here, since
+// Beyond work, Explore and Connect, the year and Back to top (the boardwalk drawing that sat under them was removed
+// on 10 Nov 2026). It is id="connect": the header's Connect lands here, since
 // the homepage's Beyond work and Connect cards folded into it. Back to top lands on the header's id="top" (Nav), which
 // every page with this footer renders first. The year is fixed at build time (static export).
 
@@ -90,7 +90,6 @@ export default function Footer() {
           </a>
         </div>
       </div>
-      <div className="f-art" aria-hidden="true" />
     </footer>
   );
 }

@@ -23,7 +23,6 @@ export const TOKENS: { name: string; job: string; group: TokenGroup }[] = [
   { name: '--over', job: 'The worse direction: over a target, a gain on a cut', group: 'Meaning' },
   { name: '--warn', job: 'Close but not there: the middle light on the health calendar', group: 'Meaning' },
   { name: '--tape', job: 'Tape on a print', group: 'Prints' },
-  { name: '--foot-art', job: 'The boardwalk drawing in the footer: the accent at 72% in light, a pencil grey in dark', group: 'Prints' },
   { name: '--screen', job: "Tetris's screen, dark in both themes", group: 'Arcade' },
   { name: '--screen-ink', job: 'Figures on the screen', group: 'Arcade' },
   { name: '--screen-ink-2', job: 'Labels on the screen', group: 'Arcade' },
