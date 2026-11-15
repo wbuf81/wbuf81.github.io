@@ -7347,7 +7347,1354 @@ window.RWArt = api;
 
 </script>
 <script>
-/* intro3d not shipped in this build */
+/* ROB'S WALLET ROYALE :: intro3d.js : THE DROP-IN (RULINGS 14; storyboard wallet/INTRO3D.md)
+ *
+ * window.RWIntro = {
+ *   available()  -> bool    true only when three.js is loaded, the scene is built and its shaders are warm, WebGL works,
+ *                            motion is allowed and nothing failed this page load. Never waits on the network.
+ *   preload()    -> Promise<bool>  lazily imports vendor/three.module.min.js (three r170, self-hosted, MIT), builds
+ *                            every object, uploads and compiles everything with one hidden render. Call on the title.
+ *   play({ short, onCue, sprites, match }) -> Promise   ALWAYS resolves: on handoff, skip, or any failure.
+ *   dispose()    frees every GPU object, listener and DOM node (also runs on pagehide and after any failure)
+ *   base         vendor folder URL. Default: '../vendor/' beside an external src/intro3d.js, else 'vendor/' (built page).
+ *                Also settable with window.RW_INTRO_BASE before this script runs.
+ * }
+ *
+ * onCue(name, t, opts)
+ *   events: start jump chute slam dropin handoff skip fail      (called with no opts)
+ *   sounds: every other name, always with opts.sound = 1, e.g. ('gravy', t, { sound: 1, loud: 1 }), ('royale', t,
+ *           { sound: 1, short: 1 }). 'slam' is BOTH an event and a sound: the sound is ('slam', t, { sound: 1 }).
+ *           Loops (gravy, windFall) are only started when onCue.handles === true (or play option cueHandles), because
+ *           the intro has to stop() them (and set(k) windFall); the forwarder must then return the audio handle.
+ *
+ * Look: three renders into an offscreen low-res canvas (1 px = 2 lpx), which is drawn nearest-neighbour onto one
+ * full-screen 2D overlay canvas per frame; text is drawn on top at full resolution with RWArt.text.
+ * The last frame is authored in stage coordinates (world x = lpx x, world y = 640 - lpx y, z = 0 picture plane) and
+ * seen through a 12-degree camera placed so the z = 0 plane lands exactly on core's stage; the wallet and the counter
+ * carry the game's own art, projected from that final camera, so the flash cut lands on the 2D game.
+ *
+ * Debug: ?introdebug=1 logs renderer.info per shot and the frame-time stats. ?introT=<s> freezes the intro at that
+ * time (reproducible stills; no cues, no watchdog). RWIntro._debug() returns the last run's stats.
+ * Deterministic: everything is a pure function of the intro clock; layout uses a fixed hash, never Math.random.
+ */
+(function () {
+'use strict';
+var W = typeof window !== 'undefined' ? window : null;
+if (!W || !W.document || W.RWIntro) return;
+var D = W.document;
+
+var SCRIPT_SRC = '';
+try { SCRIPT_SRC = (D.currentScript && D.currentScript.src) || ''; } catch (e) { SCRIPT_SRC = ''; }
+var QS = null;
+try { QS = new URLSearchParams(W.location.search || ''); } catch (e) { QS = null; }
+function q(k) { try { return QS ? QS.get(k) : null; } catch (e) { return null; } }
+function qOn(k) { var v = q(k); return v != null && v !== '0' && v !== 'false'; }
+var DEBUG = qOn('introdebug');
+
+var THREE_FILE = 'three.module.min.js';
+var LOAD_MS = 2500, SKIP_AFTER = 0.6, WATCH_MS = 26;
+
+/* ---------------------------------------------------------------- palette (the game's) */
+var C = {
+  ink: '#0B0B0C', cloth: '#F4EFE6', cream: '#FFF3D6', lemon: '#FFE14D', candle: '#FFC94A', hot: '#FF2E88', cyan: '#3DF2FF',
+  birds: '#004C54', silver: '#A5ACAF', lea: '#7A4A22', leaD: '#4A2A12', leaL: '#A86A35', leaO: '#1A0E06', stitch: '#E8C27A',
+  brass: '#D9A520', storm: '#6B2FBF', gold: '#FFD23F', sky: '#0A1030', brick1: '#5A2A2A', brick2: '#3A1C24', gravy: '#8A5A1E',
+  rim: '#3D8BFF', skin: '#DDA27C', skinD: '#BC7B5B', khaki: '#B49A6A', shoe: '#4A2C1C'
+};
+var TIER = { common: '#9AA0A6', uncommon: '#3FBF5A', rare: '#3D8BFF', epic: '#9B4DFF', legendary: '#FFD23F', cursed: '#FF3B30' };
+
+/* ---------------------------------------------------------------- world layout (world units = lpx at the counter) */
+var GY = 1500, ROOF = 1700, DX = 180, DZ = -60;          // street level, Rob's roof, the drop axis (over the counter)
+var DAV = { x: -1500, z: 900, w: 400, roof: 2270 };       // DAVID'S: a corner tower with a rooftop table
+var WS = 0.45;                                             // wallet scale in the sky (it is still enormous on Rob)
+var BW = 300, ZSF = 0.1;                                   // counter-set depth, and its final z squash (flat at FOV 12)
+var STAR_ITEMS = [ // INTRO3D.md §3: plate first, Krug last. ids resolved from RW.ITEMS by name, these are the fallbacks
+  { id: 'leg.plate', re: /GEKKOJR/i, kind: 'plate' }, { id: 'leg.fakeid', re: /FAKE ID/i, kind: 'card' },
+  { id: 'star.angela', re: /ANGELA/i, kind: 'card' }, { id: 'leg.stock', re: /CELL PATHWAYS/i, kind: 'card' },
+  { id: 'leg.vbucks', re: /V-BUCKS/i, kind: 'card' }, { id: 'leg.covid', re: /COVID VACCINE/i, kind: 'covid' },
+  { id: 'leg.krug', re: /BOTTLE OF KRUG/i, kind: 'krug' }
+];
+
+/* ---------------------------------------------------------------- tiny maths */
+function c01(x) { return x < 0 ? 0 : x > 1 ? 1 : x; }
+function clamp(v, a, b) { return v < a ? a : v > b ? b : v; }
+function lerp(a, b, k) { return a + (b - a) * k; }
+function kOf(t, a, b) { return c01((t - a) / (b - a)); }
+function eIO(x) { x = c01(x); return x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2; }
+function eOut(x) { x = c01(x); return 1 - Math.pow(1 - x, 3); }
+function eIn(x) { x = c01(x); return x * x; }
+function eBack(x) { x = c01(x); var c1 = 1.6, c3 = c1 + 1; return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2); }
+function hash(n) { var x = Math.sin(n * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); }
+function noise(t, s) { return Math.sin(t * 71.3 + s) * 0.5 + Math.sin(t * 113.7 + 1.3 * s) * 0.3 + Math.sin(t * 41.9 + 2.1 * s) * 0.2; }
+function frac(x) { return x - Math.floor(x); }
+function now() { try { return W.performance.now(); } catch (e) { return Date.now(); } }
+function dbg() { if (DEBUG) { try { W.console.log.apply(W.console, ['[RWIntro]'].concat(Array.prototype.slice.call(arguments))); } catch (e) {} } }
+function warn(e) { if (DEBUG) { try { W.console.warn('[RWIntro]', e); } catch (_) {} } S.lastErr = String(e && e.message || e); }
+
+/* ---------------------------------------------------------------- state */
+var S = { phase: 'idle', T: null, w: null, failed: false, preloadP: null, run: null, glOK: null, lastErr: '', last: null, probe: null };
+var TEST = { reducedMotion: false, noWebGL: false, badBase: false, hangLoad: false, throwAt: null, slowMs: 0, loseAt: null, hideAt: null, forceHidden: false, timer: null };
+function isHidden() { return !!(TEST.forceHidden || D.hidden); }
+/* frame scheduler: rAF; the test harness can pump with a 16 ms timer instead (throttled embedded browsers) */
+function schedule(fn) { if (TEST.timer === 'timeout') { var id = setTimeout(function () { fn(now()); }, 16); return { t: id }; } return { r: W.requestAnimationFrame(fn) }; }
+function unschedule(h) { if (!h) return; try { if (h.t != null) clearTimeout(h.t); if (h.r != null) W.cancelAnimationFrame(h.r); } catch (e) {} }
+
+/* ---------------------------------------------------------------- environment gates */
+function reducedMotion() {
+  if (TEST.reducedMotion) return true;
+  try { return !!(W.matchMedia && W.matchMedia('(prefers-reduced-motion: reduce)').matches); } catch (e) { return false; }
+}
+function blockedByUrl() { return qOn('nointro') || qOn('debug') || qOn('headless') || q('auto') != null; }
+function webglOK() {
+  if (TEST.noWebGL) return false;
+  if (S.glOK != null) return S.glOK;
+  var ok = false;
+  try {
+    var c = D.createElement('canvas'), g = c.getContext('webgl2') || c.getContext('webgl');
+    ok = !!g;
+    if (g) { var lx = g.getExtension('WEBGL_lose_context'); if (lx) lx.loseContext(); }
+  } catch (e) { ok = false; }
+  return (S.glOK = ok);
+}
+function available() {
+  try { return !S.failed && S.phase === 'ready' && !!S.w && !blockedByUrl() && !reducedMotion() && webglOK(); } catch (e) { return false; }
+}
+function basePath() {
+  var b = API.base;
+  if (b == null && W.RW_INTRO_BASE != null) b = W.RW_INTRO_BASE;
+  if (b == null && SCRIPT_SRC) { try { b = new URL('../vendor/', SCRIPT_SRC).href; } catch (e) { b = null; } }
+  if (b == null) b = 'vendor/';
+  b = String(b); if (b && b.charAt(b.length - 1) !== '/') b += '/';
+  if (TEST.badBase) b = 'nope-not-here/';
+  return b;
+}
+function importThree() {
+  if (TEST.hangLoad) return new Promise(function () {}); // never settles: the 2.5 s timeout must win
+  var url = basePath() + THREE_FILE;
+  try { url = new URL(url, W.location.href).href; } catch (e) {}
+  var imp;
+  try { imp = new Function('u', 'return import(u);'); } catch (e) { return Promise.reject(e); }
+  try { return Promise.resolve(imp(url)); } catch (e) { return Promise.reject(e); }
+}
+function frameP() { return new Promise(function (r) { var done = false, f = function () { if (!done) { done = true; r(); } }; try { W.requestAnimationFrame(f); } catch (e) {} setTimeout(f, 50); }); }
+
+/* ---------------------------------------------------------------- 2D helpers + sprites from RWArt */
+function mk(w, h) { var c = D.createElement('canvas'); c.width = Math.max(1, Math.round(w)); c.height = Math.max(1, Math.round(h)); return c; }
+function c2(c) { var g = c.getContext('2d'); g.imageSmoothingEnabled = false; return g; }
+function A() { return W.RWArt || null; }
+function okC(c) { return !!(c && c.width > 1 && c.height > 1); }
+function artCall(name) {
+  var a = A(); if (!a || typeof a[name] !== 'function') return undefined;
+  try { return a[name].apply(a, Array.prototype.slice.call(arguments, 1)); } catch (e) { return undefined; }
+}
+function txt(g, s, x, y, size, color, align, outline) {
+  var a = A();
+  if (a && typeof a.text === 'function') { try { a.text(g, s, x, y, { size: size, color: color, align: align || 'left', outline: outline || null }); return; } catch (e) {} }
+  g.save(); g.fillStyle = color; g.font = 'bold ' + Math.round(7 * size) + 'px monospace'; g.textAlign = align === 'center' ? 'center' : (align || 'left'); g.textBaseline = 'top';
+  if (outline) { g.strokeStyle = outline === true ? C.ink : outline; g.lineWidth = Math.max(1, size); g.strokeText(s, x, y); }
+  g.fillText(s, x, y); g.restore();
+}
+function fallbackFace(w, h, col, label) {
+  var c = mk(w, h), g = c2(c); g.fillStyle = C.ink; g.fillRect(0, 0, w, h); g.fillStyle = col || C.silver; g.fillRect(2, 2, w - 4, h - 4);
+  g.fillStyle = C.cloth; g.fillRect(4, 4, w - 8, h - 8); if (label) txt(g, label, w / 2, h / 2 - 4, 1, C.ink, 'center'); return c;
+}
+var SPR = null; // core's sprites object for this run (fallback when RWArt is missing)
+function sprGet(kind, id, size) { try { if (SPR && typeof SPR.get === 'function') { var c = SPR.get(kind, id, size); if (okC(c)) return c; } } catch (e) {} return null; }
+function itemFace(id) { var c = artCall('item', id); if (okC(c)) return c; c = sprGet('item', id); if (okC(c)) return c; return fallbackFace(96, 36, TIER.legendary, String(id || '').split('.').pop().toUpperCase()); }
+function robFace(frame) { var c = artCall('rob', frame, 48); if (okC(c)) return c; c = sprGet('rob', frame, 48); if (okC(c)) return c; var f = mk(48, 48), g = c2(f); g.fillStyle = '#E8B48A'; g.fillRect(12, 6, 24, 28); g.fillStyle = C.cloth; g.fillRect(4, 34, 40, 14); return f; }
+function catLoaf() { var c = artCall('cat', 'loaf'); if (okC(c)) return c; c = sprGet('cat', 'loaf'); if (okC(c)) return c; var f = mk(44, 32), g = c2(f); g.fillStyle = '#141018'; g.fillRect(4, 10, 36, 20); g.fillRect(6, 4, 12, 10); return f; }
+function catBlink(src) { // the loaf with her eyes shut: greenish/yellow eye pixels painted over with the fur next to them
+  var c = mk(src.width, src.height), g = c2(c); g.drawImage(src, 0, 0);
+  try {
+    var id = g.getImageData(0, 0, c.width, c.height), d = id.data, w = c.width;
+    for (var i = 0; i < d.length; i += 4) {
+      var r = d[i], gg = d[i + 1], b = d[i + 2], a = d[i + 3];
+      if (a > 0 && gg > 110 && gg > b + 30 && r < 240) { var j = i - 4 * 2; if (j < 0) j = i; d[i] = 26; d[i + 1] = 20; d[i + 2] = 30; }
+    }
+    g.putImageData(id, 0, 0);
+    g.fillStyle = '#3A3040'; // a closed-eye line where the eyes were is enough at 1 px = 2 lpx
+  } catch (e) {}
+  return c;
+}
+
+/* ================================================================ BUILD (preload; play() allocates nothing on the GPU) */
+function buildWorld(T) {
+  var w = { T: T, geos: [], mats: [], texs: [], lines: [] };
+  function G(g) { w.geos.push(g); return g; }
+  function Mt(m) { w.mats.push(m); return m; }
+  function Tx(c, rep) {
+    var t = new T.CanvasTexture(c); t.colorSpace = T.SRGBColorSpace; t.magFilter = T.NearestFilter; t.minFilter = T.NearestFilter;
+    t.generateMipmaps = false; if (rep) { t.wrapS = t.wrapT = T.RepeatWrapping; } w.texs.push(t); return t;
+  }
+  var col = new T.Color(), m4 = new T.Matrix4(), qq = new T.Quaternion(), eu = new T.Euler(), v3 = new T.Vector3(), sc3 = new T.Vector3();
+  function mtx(x, y, z, rx, ry, rz, sx, sy, sz) { eu.set(rx || 0, ry || 0, rz || 0); qq.setFromEuler(eu); sc3.set(sx == null ? 1 : sx, sy == null ? (sx == null ? 1 : sx) : sy, sz == null ? (sx == null ? 1 : sx) : sz); v3.set(x || 0, y || 0, z || 0); return new T.Matrix4().compose(v3, qq, sc3); }
+  /* merge parts into one flat-shaded vertex-coloured geometry. part = { g, m, c | f(cx,cy,cz,nx,ny,nz,i) | v(x,y,z,nx,ny,nz) } */
+  function merge(parts, withUV) {
+    var pos = [], nor = [], cl = [], uv = [];
+    for (var i = 0; i < parts.length; i++) {
+      var p = parts[i], g = p.g.index ? p.g.toNonIndexed() : p.g.clone();
+      if (p.m) g.applyMatrix4(p.m);
+      g.computeVertexNormals();
+      var P = g.attributes.position.array, N = g.attributes.normal.array, U = g.attributes.uv ? g.attributes.uv.array : null, n = P.length / 3;
+      for (var f = 0; f < n; f += 3) {
+        var hex = p.c, cx = (P[f * 3] + P[f * 3 + 3] + P[f * 3 + 6]) / 3, cy = (P[f * 3 + 1] + P[f * 3 + 4] + P[f * 3 + 7]) / 3, cz = (P[f * 3 + 2] + P[f * 3 + 5] + P[f * 3 + 8]) / 3;
+        if (p.f) hex = p.f(cx, cy, cz, N[f * 3], N[f * 3 + 1], N[f * 3 + 2], f / 3);
+        for (var k = 0; k < 3; k++) {
+          var vi = f + k;
+          pos.push(P[vi * 3], P[vi * 3 + 1], P[vi * 3 + 2]); nor.push(N[vi * 3], N[vi * 3 + 1], N[vi * 3 + 2]);
+          if (p.v) col.set(p.v(P[vi * 3], P[vi * 3 + 1], P[vi * 3 + 2], N[vi * 3], N[vi * 3 + 1], N[vi * 3 + 2])); else col.set(hex || '#FFFFFF');
+          cl.push(col.r, col.g, col.b);
+          if (withUV) uv.push(U ? U[vi * 2] : 0, U ? U[vi * 2 + 1] : 0);
+        }
+      }
+      g.dispose(); if (p.tmp !== false) p.g.dispose();
+    }
+    var out = new T.BufferGeometry();
+    out.setAttribute('position', new T.Float32BufferAttribute(pos, 3));
+    out.setAttribute('normal', new T.Float32BufferAttribute(nor, 3));
+    out.setAttribute('color', new T.Float32BufferAttribute(cl, 3));
+    if (withUV) out.setAttribute('uv', new T.Float32BufferAttribute(uv, 2));
+    out.computeBoundingSphere();
+    return G(out);
+  }
+  function box(x0, y0, z0, x1, y1, z1) { var g = new T.BoxGeometry(x1 - x0, y1 - y0, z1 - z0); g.translate((x0 + x1) / 2, (y0 + y1) / 2, (z0 + z1) / 2); return g; }
+  function mesh(geo, mat, parent) { var m = new T.Mesh(geo, mat); m.matrixAutoUpdate = true; if (parent) parent.add(m); return m; }
+
+  /* ---- renderer on an offscreen canvas ---- */
+  var L0 = layoutFor(null);
+  var cv = mk(L0.RW, L0.RH);
+  var renderer = new T.WebGLRenderer({ canvas: cv, antialias: false, alpha: false, depth: true, stencil: false, premultipliedAlpha: false, preserveDrawingBuffer: false, powerPreference: 'high-performance', failIfMajorPerformanceCaveat: true });
+  renderer.setPixelRatio(1); renderer.setSize(L0.RW, L0.RH, false); renderer.setClearColor(C.sky, 1);
+  renderer.info.autoReset = true;
+  w.cv = cv; w.renderer = renderer; w.size = { w: L0.RW, h: L0.RH };
+  w.onLost = function (e) { try { e.preventDefault(); } catch (_) {} contextLost(); };
+  cv.addEventListener('webglcontextlost', w.onLost, false);
+
+  var scene = new T.Scene(); w.scene = scene;
+  w.fog = new T.Fog(C.sky, 400, 5000); scene.fog = w.fog;
+  var hemi = new T.HemisphereLight('#3A4FA0', '#2A1C34', 0.9 * Math.PI); scene.add(hemi);
+  var sun = new T.DirectionalLight(C.candle, 1.1 * Math.PI); sun.position.set(-700, 900, 600); scene.add(sun); scene.add(sun.target);
+  var cam = new T.PerspectiveCamera(70, L0.aspect, 2, 14000); w.cam = cam; scene.add(cam);
+
+  /* ---- materials ---- */
+  var M = w.M = {
+    lam: Mt(new T.MeshLambertMaterial({ vertexColors: true, flatShading: true })),
+    lamI: Mt(new T.MeshLambertMaterial({ flatShading: true })), // instanced meshes coloured per instance only
+    lam2: Mt(new T.MeshLambertMaterial({ vertexColors: true, flatShading: true, side: T.DoubleSide, emissive: '#2C241C' })),
+    bas: Mt(new T.MeshBasicMaterial({ vertexColors: true })),
+    basNF: Mt(new T.MeshBasicMaterial({ vertexColors: true, fog: false })),
+    basNF2: Mt(new T.MeshBasicMaterial({ vertexColors: true, fog: false, side: T.DoubleSide })),
+    add: Mt(new T.MeshBasicMaterial({ vertexColors: true, transparent: true, blending: T.AdditiveBlending, depthWrite: false, fog: false, side: T.DoubleSide })),
+    line: Mt(new T.LineBasicMaterial({ color: '#C8C2B4' }))
+  };
+  function texMat(tex, o) { o = o || {}; return Mt(new T.MeshBasicMaterial({ map: tex, alphaTest: 0.5, side: o.single ? T.FrontSide : T.DoubleSide, fog: o.fog !== false })); }
+  function sprite(tex, wdt, hgt, parent) { var m = Mt(new T.SpriteMaterial({ map: tex, alphaTest: 0.5, transparent: false, fog: true })); var s = new T.Sprite(m); s.scale.set(wdt, hgt, 1); if (parent) parent.add(s); return s; }
+
+  /* ---- canvases from the game's art ---- */
+  var cz = w.canv = {};
+  cz.robYell = robFace('outraged'); cz.robSmug = robFace('smug');
+  cz.cat = catLoaf(); cz.catBlink = catBlink(cz.cat);
+  cz.banner = (function () { var c = mk(132, 30), g = c2(c); g.fillStyle = C.ink; g.fillRect(0, 0, 132, 30); g.fillStyle = C.cloth; g.fillRect(2, 2, 128, 26); g.fillStyle = C.hot; g.fillRect(2, 2, 128, 3); g.fillRect(2, 25, 128, 3); txt(g, 'LOOT DROP', 66, 8, 2, C.ink, 'center'); return c; })();
+  cz.sign = (function () { var c = mk(104, 26), g = c2(c); g.fillStyle = C.ink; g.fillRect(0, 0, 104, 26); g.fillStyle = '#2A0A18'; g.fillRect(2, 2, 100, 22); txt(g, "DAVID'S", 52, 6, 2, C.hot, 'center'); for (var i = 0; i < 13; i++) { g.fillStyle = i % 2 ? C.candle : C.lemon; g.fillRect(4 + i * 8, 2, 2, 2); g.fillRect(4 + i * 8, 22, 2, 2); } return c; })();
+  cz.napkin = (function () { var c = mk(16, 16), g = c2(c); g.fillStyle = C.cloth; g.fillRect(0, 0, 16, 16); g.fillStyle = '#E8DCC4'; for (var y = 0; y < 16; y += 4) for (var x = 0; x < 16; x += 4) if (((x + y) / 4) % 2 === 0) g.fillRect(x, y, 4, 4); g.fillStyle = C.hot; g.fillRect(0, 7, 16, 1); g.fillRect(7, 0, 1, 16); g.fillStyle = C.silver; g.fillRect(0, 0, 16, 1); g.fillRect(0, 0, 1, 16); return c; })();
+  cz.bolt = (function () { var c = mk(16, 64), g = c2(c); g.fillStyle = '#000000'; g.fillRect(0, 0, 16, 64); var x = 8; for (var y = 0; y < 64; y += 4) { var nx = clamp(x + (hash(y * 3.1) < 0.5 ? -3 : 3), 2, 13); g.fillStyle = '#C8B0FF'; g.fillRect(Math.min(x, nx) - 1, y, Math.abs(nx - x) + 3, 5); g.fillStyle = '#FFFFFF'; g.fillRect(Math.min(x, nx), y, Math.abs(nx - x) + 1, 4); x = nx; } return c; })();
+  cz.label = (function () { var c = mk(44, 18), g = c2(c); g.fillStyle = C.ink; g.fillRect(0, 0, 44, 18); g.fillStyle = C.cream; g.fillRect(1, 1, 42, 16); txt(g, 'KRUG', 22, 2, 1, C.ink, 'center'); txt(g, 'ROSE', 22, 10, 1, C.hot, 'center'); return c; })();
+  cz.mask = (function () { var c = artCall('particle', 'mask', 0); if (okC(c)) return c; var f = mk(24, 22), g = c2(f); g.fillStyle = '#5A9AD8'; g.fillRect(4, 6, 16, 12); return f; })();
+  var TX = w.tx = {
+    robYell: Tx(cz.robYell), robSmug: Tx(cz.robSmug), cat: Tx(cz.cat), catBlink: Tx(cz.catBlink), banner: Tx(cz.banner), sign: Tx(cz.sign),
+    napkin: Tx(cz.napkin, true), bolt: Tx(cz.bolt), label: Tx(cz.label), mask: Tx(cz.mask)
+  };
+
+  /* ================= CITY (street level GY, Rob's roof ROOF) ================= */
+  var city = w.city = new T.Group(); scene.add(city);
+  var houses = [], lights = [], units = [];
+  function inDowntown(x, z) { return x > -2300 && x < -300 && z < -1000; }
+  function nearDav(x0, x1, z0, z1) { return x1 > DAV.x - DAV.w / 2 - 30 && x0 < DAV.x + DAV.w / 2 + 30 && z1 > DAV.z - DAV.w / 2 - 30 && z0 < DAV.z + DAV.w / 2 + 30; }
+  for (var r = -5; r <= 4; r++) {
+    var rz = DZ + r * 560, x = -2500 + ((r * 173 + 400) % 300), j = 0;
+    while (x < 2800) {
+      var hw = 300 + Math.floor(hash(r * 31 + j * 7.3) * 130), hh = 150 + Math.floor(hash(r * 17 + j * 3.7) * 85), x1 = x + hw;
+      j++;
+      if (r === 0 && x1 > DX - 160 && x < DX + 160) { x = DX + 160; continue; } // Rob's house is built by hand
+      if (inDowntown(x + hw / 2, rz) || nearDav(x, x1, rz - 180, rz + 180)) { x = x1; continue; }
+      houses.push({ x: x + hw / 2, z: rz, w: hw - 4, h: hh, d: 360, c: (r + j) % 3 === 0 ? C.brick2 : C.brick1, i: houses.length });
+      x = x1;
+    }
+  }
+  /* rowhouses: one InstancedMesh, roofs darker by vertex colour */
+  (function () {
+    var g = new T.BoxGeometry(1, 1, 1); g.translate(0, 0.5, 0); var gn = g.toNonIndexed(); g.dispose(); gn.computeVertexNormals();
+    var N = gn.attributes.normal.array, cl = [];
+    var cb = new T.Color(C.brick1), cr = new T.Color('#4E5266');
+    for (var i = 0; i < N.length; i += 3) { if (N[i + 1] > 0.5) cl.push(cr.r, cr.g, cr.b); else cl.push(cb.r, cb.g, cb.b); }
+    gn.setAttribute('color', new T.Float32BufferAttribute(cl, 3)); G(gn);
+    var im = new T.InstancedMesh(gn, M.lam, houses.length);
+    for (var k = 0; k < houses.length; k++) {
+      var hs = houses[k]; im.setMatrixAt(k, mtx(hs.x, GY, hs.z, 0, 0, 0, hs.w, hs.h, hs.d));
+      if (hs.c === C.brick2) col.setRGB(0.64, 0.66, 0.85); else col.setRGB(1, 1, 1); col.multiplyScalar(0.85 + hash(k * 5.1) * 0.35); im.setColorAt(k, col);
+      // lit windows on the street front (+z): one or two per house (~200 in all, INTRO3D.md §3)
+      var nWin = hash(k * 13.1) < 0.5 ? 2 : 1;
+      for (var wi = 0; wi < nWin; wi++) {
+        var fl = hash(k * 3.3 + wi) < 0.5 ? 0 : 1, wx = hs.x - hs.w / 2 + 40 + Math.floor(hash(k * 7.7 + wi * 5.1) * (hs.w - 80));
+        lights.push({ x: wx, y: GY + 38 + fl * 62, z: hs.z + hs.d / 2 + 1, w: 18, h: 24, c: hash(k + wi) < 0.25 ? C.candle : C.lemon });
+      }
+      if (hash(k * 2.7) < 0.1) units.push({ x: hs.x + (hash(k * 9.1) - 0.5) * hs.w * 0.6, y: GY + hs.h, z: hs.z + (hash(k * 4.3) - 0.5) * 200, s: 22 + hash(k) * 16 });
+      if (hash(k * 6.1) < 0.15) lights.push({ x: hs.x + (hash(k * 1.9) - 0.5) * hs.w * 0.5, y: GY + hs.h + 1, z: hs.z + (hash(k * 8.8) - 0.5) * 160, w: 34, h: 22, rx: -Math.PI / 2, c: '#B88A30' });
+    }
+    im.instanceMatrix.needsUpdate = true; if (im.instanceColor) im.instanceColor.needsUpdate = true; im.computeBoundingSphere();
+    city.add(im); w.houses = im;
+  })();
+  /* street lamps along the streets (dots from above) */
+  for (var sr = -5; sr <= 4; sr++) for (var sx = -2400; sx < 2800; sx += 230) {
+    var lz = DZ + sr * 560 + 280; if (inDowntown(sx, lz)) continue;
+    lights.push({ x: sx + (sr % 2) * 115, y: GY + 2, z: lz + ((sx / 230) % 2 ? 70 : -70), w: 16, h: 16, rx: -Math.PI / 2, c: C.candle });
+  }
+  /* Rob's house (by hand: a shaft under the skylight), DAVID'S, the river, the ground: one static Lambert mesh */
+  var stat = [];
+  stat.push({ g: new T.PlaneGeometry(16000, 16000), m: mtx(0, GY, 0, -Math.PI / 2), c: '#100E16' });
+  stat.push({ g: new T.PlaneGeometry(16000, 190), m: mtx(0, GY + 1, DZ + 2 * 560 + 280, -Math.PI / 2), c: '#1C5C6C' });
+  var rob = { x0: DX - 150, x1: DX + 150, z0: DZ - 180, z1: DZ + 180, ox0: DX - 110, ox1: DX + 110, oz0: DZ - 70, oz1: DZ + 70 };
+  function roofish(hex) { return function (cx, cy, cz, nx, ny) { if (ny > 0.5) { col.set(hex); col.r *= 0.42; col.g *= 0.40; col.b *= 0.52; return '#' + col.getHexString(); } return hex; }; }
+  [[rob.x0, rob.ox0, rob.z0, rob.z1], [rob.ox1, rob.x1, rob.z0, rob.z1], [rob.ox0, rob.ox1, rob.z0, rob.oz0], [rob.ox0, rob.ox1, rob.oz1, rob.z1]].forEach(function (b) {
+    stat.push({ g: box(b[0], GY, b[2], b[1], ROOF, b[3]), f: roofish(C.brick1) });
+  });
+  // the skylight frame: ink, raised on the roof
+  [[rob.ox0 - 14, rob.ox0, rob.oz0 - 14, rob.oz1 + 14], [rob.ox1, rob.ox1 + 14, rob.oz0 - 14, rob.oz1 + 14], [rob.ox0, rob.ox1, rob.oz0 - 14, rob.oz0], [rob.ox0, rob.ox1, rob.oz1, rob.oz1 + 14]].forEach(function (b) {
+    stat.push({ g: box(b[0], ROOF, b[2], b[1], ROOF + 12, b[3]), c: '#1A1418' });
+  });
+  // the shaft walls inside, warm
+  stat.push({ g: box(rob.ox0, ROOF - 120, rob.oz0, rob.ox1, ROOF - 119, rob.oz1), c: '#3A2418' });
+  // DAVID'S: a corner tower with a parapet, the rooftop table, chairs
+  var dx0 = DAV.x - DAV.w / 2, dx1 = DAV.x + DAV.w / 2, dz0 = DAV.z - DAV.w / 2, dz1 = DAV.z + DAV.w / 2;
+  stat.push({ g: box(dx0, GY, dz0, dx1, DAV.roof, dz1), f: function (cx, cy, cz, nx, ny) { return ny > 0.5 ? '#2A2630' : (nx > 0.5 ? '#4A2A3A' : '#3A2230'); } });
+  [[dx0, dx1, dz0, dz0 + 10], [dx0, dx1, dz1 - 10, dz1], [dx0, dx0 + 10, dz0, dz1], [dx1 - 10, dx1, dz0, dz1]].forEach(function (b) { stat.push({ g: box(b[0], DAV.roof, b[2], b[1], DAV.roof + 16, b[3]), c: '#5A3A4A' }); });
+  var TB = w.table = { x: DAV.x - 34, z: DAV.z - 70, y: DAV.roof };
+  stat.push({ g: box(TB.x - 30, TB.y, TB.z - 22, TB.x + 30, TB.y + 26, TB.z + 22), f: function (cx, cy, cz, nx, ny) { return ny > 0.5 ? C.cloth : '#D8CFC0'; } });
+  stat.push({ g: box(TB.x - 2, TB.y + 26, TB.z - 2, TB.x + 2, TB.y + 36, TB.z + 2), c: C.cream });
+  stat.push({ g: box(TB.x - 52, TB.y, TB.z - 10, TB.x - 36, TB.y + 30, TB.z + 10), c: '#6A4A3A' });
+  stat.push({ g: box(TB.x + 36, TB.y, TB.z - 10, TB.x + 52, TB.y + 30, TB.z + 10), c: '#6A4A3A' });
+  // sign posts
+  stat.push({ g: box(DAV.x + 60, DAV.roof, dz0 + 20, DAV.x + 66, DAV.roof + 70, dz0 + 26), c: '#2A2630' });
+  stat.push({ g: box(DAV.x + 170, DAV.roof, dz0 + 20, DAV.x + 176, DAV.roof + 70, dz0 + 26), c: '#2A2630' });
+  w.cityStatic = mesh(merge(stat), M.lam, city);
+  // David's facade windows
+  for (var dy = 0; dy < 9; dy++) for (var dxw = 0; dxw < 4; dxw++) { if (hash(dy * 7 + dxw) < 0.7) continue; lights.push({ x: dx0 + 60 + dxw * 90, y: GY + 60 + dy * 78, z: dz1 + 1, w: 22, h: 30, c: hash(dy + dxw * 3) < 0.3 ? C.candle : C.lemon }); lights.push({ x: dx1 + 1, y: GY + 60 + dy * 78, z: dz0 + 60 + dxw * 90, w: 22, h: 30, ry: Math.PI / 2, c: C.lemon }); }
+  // Rob's front windows
+  lights.push({ x: DX - 70, y: GY + 50, z: rob.z1 + 1, w: 20, h: 26, c: C.candle }, { x: DX + 70, y: GY + 120, z: rob.z1 + 1, w: 20, h: 26, c: C.lemon });
+  /* the lights: one instanced emissive quad mesh */
+  (function () {
+    var g = G(new T.PlaneGeometry(1, 1)), im = new T.InstancedMesh(g, Mt(new T.MeshBasicMaterial({ side: T.DoubleSide })), lights.length);
+    for (var k = 0; k < lights.length; k++) { var l = lights[k]; im.setMatrixAt(k, mtx(l.x, l.y, l.z, l.rx || 0, l.ry || 0, 0, l.w, l.h, 1)); col.set(l.c); im.setColorAt(k, col); }
+    im.instanceMatrix.needsUpdate = true; im.instanceColor.needsUpdate = true; im.computeBoundingSphere(); city.add(im); w.lights = im;
+  })();
+  (function () { // rooftop units
+    var g = new T.BoxGeometry(1, 1, 1); g.translate(0, 0.5, 0); G(g);
+    var im = new T.InstancedMesh(g, M.lamI, units.length);
+    for (var k = 0; k < units.length; k++) { var u = units[k]; im.setMatrixAt(k, mtx(u.x, u.y, u.z, 0, hash(k) * 3, 0, u.s, u.s * 0.7, u.s * 0.8)); col.set(k % 3 ? '#6A6E7A' : '#8A8E98'); im.setColorAt(k, col); }
+    im.instanceMatrix.needsUpdate = true; im.instanceColor.needsUpdate = true; im.computeBoundingSphere(); city.add(im);
+  })();
+  /* the lit room under the skylight (emissive) and the sign */
+  w.skyGlow = mesh(G(new T.PlaneGeometry(rob.ox1 - rob.ox0, rob.oz1 - rob.oz0)), Mt(new T.MeshBasicMaterial({ color: C.candle })), city);
+  w.skyGlow.rotation.x = -Math.PI / 2; w.skyGlow.position.set(DX, ROOF - 118, DZ);
+  w.signM = mesh(G(new T.PlaneGeometry(116, 30)), texMat(TX.sign, { fog: false }), city);
+  w.signM.position.set(DAV.x + 118, DAV.roof + 58, dz0 + 27);
+  (function () { var fg = new T.ConeGeometry(3.2, 11, 5), fn = fg.toNonIndexed(); fg.dispose(); var fc = [], cc = new T.Color(C.candle); for (var k = 0; k < fn.attributes.position.count; k++) fc.push(cc.r, cc.g * 0.85, cc.b * 0.5); fn.setAttribute('color', new T.Float32BufferAttribute(fc, 3)); G(fn);
+    w.candle = mesh(fn, M.add, city); w.candle.position.set(TB.x, TB.y + 42, TB.z);
+    var hg = new T.CircleGeometry(9, 8), hn = hg.toNonIndexed(); hg.dispose(); var hc = []; for (var k2 = 0; k2 < hn.attributes.position.count; k2++) { var r2 = Math.hypot(hn.attributes.position.getX(k2), hn.attributes.position.getY(k2)) / 9, a2 = 0.45 * (1 - r2); hc.push(1 * a2, 0.6 * a2, 0.2 * a2); } hn.setAttribute('color', new T.Float32BufferAttribute(hc, 3)); G(hn);
+    w.candleGlow = mesh(hn, M.add, city); w.candleGlow.position.set(TB.x, TB.y + 40, TB.z); })();
+  /* downtown: nine towers with stepped tops in birds-green uplight (unlit, baked gradient), William on the tallest */
+  (function () {
+    var parts = [], tw = [[-1900, -1400, 170, 1000], [-1600, -1750, 200, 1300], [-1250, -1350, 150, 900], [-1350, -2000, 230, 1500], [-950, -1600, 180, 1150], [-650, -1950, 160, 1000], [-2050, -2150, 150, 850], [-900, -2350, 200, 1250], [-600, -1300, 140, 800]];
+    tw.forEach(function (a, i) {
+      var x = a[0], z = a[1], s = a[2], h = a[3], top = GY + h;
+      function grad(px, py, pz, nx, ny, nz) {
+        var k = c01((py - GY) / h), base = new T.Color('#0E7480'), mid = new T.Color('#1A2240'), hi = new T.Color(i % 2 ? '#2C3358' : '#262C4C');
+        var c = k < 0.35 ? base.lerp(mid, k / 0.35) : mid.lerp(hi, (k - 0.35) / 0.65);
+        var shade = ny > 0.5 ? 0.75 : Math.abs(nx) > 0.5 ? 0.82 : 1.0; c.multiplyScalar(shade); return c;
+      }
+      parts.push({ g: box(x - s / 2, GY, z - s / 2, x + s / 2, top, z + s / 2), v: grad });
+      parts.push({ g: box(x - s * 0.36, top, z - s * 0.36, x + s * 0.36, top + 70, z + s * 0.36), v: function () { return '#2A3052'; } });
+      parts.push({ g: box(x - s * 0.2, top + 70, z - s * 0.2, x + s * 0.2, top + 120, z + s * 0.2), v: function () { return '#323A60'; } });
+      for (var b = 0; b < 6; b++) { var by = GY + 120 + b * (h - 200) / 6; if (hash(i * 11 + b) < 0.35) continue; parts.push({ g: box(x - s / 2 - 1, by, z + s / 2, x + s / 2 + 1, by + 10, z + s / 2 + 2), v: function () { return '#E8C860'; } }); }
+      if (i === 3) { // the statue on the tallest (a hat, a body, an arm)
+        parts.push({ g: box(x - 10, top + 120, z - 10, x + 10, top + 150, z + 10), v: function () { return '#3A4470'; } });
+        var cone = new T.ConeGeometry(9, 34, 4); cone.translate(x, top + 167, z); parts.push({ g: cone, v: function () { return '#6A76A8'; } });
+        parts.push({ g: box(x + 6, top + 172, z - 2, x + 22, top + 176, z + 2), v: function () { return '#6A76A8'; } });
+      }
+    });
+    w.towers = mesh(merge(parts), M.bas, city);
+  })();
+  /* ================= SKY: storm ring, lightning, stars, moon, clouds ================= */
+  var sky = w.sky = new T.Group(); scene.add(sky);
+  (function () {
+    var g = new T.CylinderGeometry(4500, 4500, 1600, 24, 1, true), gn = g.toNonIndexed(); g.dispose();
+    var P = gn.attributes.position.array, cl = [], st = new T.Color(C.storm);
+    for (var i = 0; i < P.length; i += 3) { var k = c01((P[i + 1] + 800) / 1600), a = Math.pow(1 - k, 1.6); cl.push(st.r * a * 1.4, st.g * a * 1.4, st.b * a * 1.4); }
+    gn.setAttribute('color', new T.Float32BufferAttribute(cl, 3)); G(gn);
+    w.storm = mesh(gn, M.add, sky); w.storm.position.set(DX, GY + 800, DZ);
+    var lg = [], lm = Mt(new T.MeshBasicMaterial({ map: TX.bolt, transparent: true, blending: T.AdditiveBlending, depthWrite: false, fog: false, side: T.DoubleSide }));
+    var bolts = new T.Group(); sky.add(bolts); w.bolts = bolts;
+    [[0.35, 900], [0.62, 1300], [5.6, 1000]].forEach(function (b) { var m = mesh(G(new T.PlaneGeometry(90, b[1])), lm, bolts); var a = b[0]; m.position.set(DX + Math.cos(a) * 4300, GY + b[1] / 2 + 100, DZ - Math.sin(a) * 4300); m.lookAt(DX, GY + b[1] / 2 + 100, DZ); });
+  })();
+  (function () { // 60 stars
+    var g = G(new T.PlaneGeometry(1, 1)), im = new T.InstancedMesh(g, Mt(new T.MeshBasicMaterial({ fog: false, side: T.DoubleSide })), 60), o = new T.Object3D();
+    for (var i = 0; i < 60; i++) {
+      var az = hash(i * 3.1) * Math.PI * 2, el = 0.12 + hash(i * 5.7) * 1.1, rr = 4300;
+      o.position.set(DX + Math.cos(az) * Math.cos(el) * rr, GY + Math.sin(el) * rr, DZ + Math.sin(az) * Math.cos(el) * rr); o.lookAt(DX, GY, DZ);
+      var s = 10 + hash(i * 7.3) * 14; o.scale.set(s, s, 1); o.updateMatrix(); im.setMatrixAt(i, o.matrix); col.set(hash(i) < 0.3 ? C.lemon : C.cloth); im.setColorAt(i, col);
+    }
+    im.instanceMatrix.needsUpdate = true; im.instanceColor.needsUpdate = true; im.computeBoundingSphere(); sky.add(im);
+  })();
+  w.moonPos = new T.Vector3(-560, 4300, -2050);
+  (function () { var m = mesh(G(new T.CircleGeometry(230, 8)), Mt(new T.MeshBasicMaterial({ color: C.cloth, fog: false })), sky); m.position.copy(w.moonPos); m.lookAt(DX, GY, DZ);
+    var h = mesh(G(new T.CircleGeometry(300, 8)), Mt(new T.MeshBasicMaterial({ color: '#1E2550', fog: false })), sky); h.position.copy(w.moonPos).multiplyScalar(1.01); h.lookAt(DX, GY, DZ); w.moon = m; })();
+  function cloudGeo(seed, wdt, dep) {
+    var g = new T.CircleGeometry(1, 10); var P = g.attributes.position.array;
+    for (var i = 3; i < P.length; i += 3) { var r = 0.75 + hash(seed + i) * 0.5; P[i] *= r; P[i + 1] *= r; }
+    g.scale(wdt, dep, 1); return g;
+  }
+  var cloudCol = new T.Color(C.sky).lerp(new T.Color(C.cream), 0.35).getStyle();
+  w.clouds = [];
+  (function () {
+    var parts = [[-2600, 2900, -2200, 1400, 500], [3200, 3100, 400, 1600, 600], [-900, 2700, -3400, 1300, 500]].map(function (c, i) { return { g: cloudGeo(i * 13, c[3], c[4]), m: mtx(c[0], c[1], c[2], -Math.PI / 2), c: cloudCol }; });
+    mesh(merge(parts), M.basNF2, sky);
+    for (var i = 0; i < 2; i++) { var cm = mesh(merge([{ g: cloudGeo(40 + i * 9, 520, 420), c: cloudCol }]), M.basNF2, scene); cm.visible = false; w.clouds.push(cm); }
+  })();
+
+  /* ================= THE GRAVY BOAT (heading -x; origin = hull bottom centre) ================= */
+  var boat = w.boat = new T.Group(); scene.add(boat);
+  (function () {
+    var parts = [];
+    var prof = [[0, 0], [46, 3], [68, 14], [80, 32], [85, 50], [86, 62]].map(function (p) { return new T.Vector2(p[0], p[1]); });
+    var hull = new T.LatheGeometry(prof, 8); hull.scale(1.8, 1, 1); parts.push({ g: hull, f: function (cx, cy, cz, nx, ny) { return ny < -0.6 ? '#C8C2B4' : C.cloth; } });
+    var rimG = new T.TorusGeometry(86, 3.5, 3, 8); rimG.rotateX(Math.PI / 2); rimG.scale(1.8, 1, 1); rimG.translate(0, 62, 0); parts.push({ g: rimG, c: C.rim });
+    var rim2 = new T.TorusGeometry(70, 2.5, 3, 8); rim2.rotateX(Math.PI / 2); rim2.scale(1.8, 1, 1); rim2.translate(0, 18, 0); parts.push({ g: rim2, c: C.rim });
+    var sp = new T.ConeGeometry(30, 84, 4); sp.rotateY(Math.PI / 4); sp.scale(1, 1, 0.6); sp.rotateZ(Math.PI / 2 + 0.42); sp.translate(-172, 66, 0); parts.push({ g: sp, c: C.cloth });
+    var hd = new T.TorusGeometry(42, 9, 4, 6, Math.PI); hd.rotateZ(-Math.PI / 2); hd.translate(152, 40, 0); parts.push({ g: hd, c: C.cloth });
+    [-34, 34].forEach(function (z) { var p = new T.CylinderGeometry(7, 9, 46, 6); p.rotateZ(Math.PI / 2); p.translate(150, 12, z); parts.push({ g: p, c: C.brass }); });
+    var bl = new T.SphereGeometry(170, 8, 6); bl.scale(1, 1.25, 1); bl.translate(0, 534, 0);
+    parts.push({ g: bl, f: function (cx, cy, cz) { var a = Math.atan2(cz, cx) + Math.PI; return Math.floor(a / (Math.PI / 4)) % 2 ? C.hot : C.cream; } });
+    var sk = new T.TorusGeometry(46, 6, 3, 8); sk.rotateX(Math.PI / 2); sk.translate(0, 330, 0); parts.push({ g: sk, c: C.brass });
+    var bk = box(-30, 300, -30, 30, 316, 30); parts.push({ g: bk, c: '#6A4A2A' }); // the burner basket
+    w.boatMesh = mesh(merge(parts), M.lam2, boat);
+    // gravy: an 8-gon that bobs (9 vertices, updated per frame)
+    var gg = new T.BufferGeometry(), gp = new Float32Array(8 * 9), gi = [];
+    for (var i = 0; i < 8; i++) gi.push(0, 1 + i, 1 + (i + 1) % 8);
+    gg.setAttribute('position', new T.BufferAttribute(new Float32Array(9 * 3), 3)); gg.setIndex(gi); G(gg);
+    w.gravy = mesh(gg, Mt(new T.MeshLambertMaterial({ color: C.gravy, flatShading: true, side: T.DoubleSide })), boat);
+    w.gravy.frustumCulled = false;
+    // burner flame (additive), ropes, banner, Dolce, exhaust puffs
+    var fl = new T.ConeGeometry(16, 46, 6), fln = fl.toNonIndexed(); fl.dispose(); var fc = []; for (var k = 0; k < fln.attributes.position.count; k++) { col.set(C.candle); fc.push(col.r, col.g * 0.9, col.b * 0.5); }
+    fln.setAttribute('color', new T.Float32BufferAttribute(fc, 3)); G(fln);
+    w.flame = mesh(fln, M.add, boat); w.flame.position.set(0, 336, 0);
+    var rp = [], ends = [[-34, -34, -120, -58], [34, -34, 120, -58], [-34, 34, -120, 58], [34, 34, 120, 58]];
+    ends.forEach(function (e) { rp.push(e[0], 330, e[1], e[2], 62, e[3]); });
+    rp.push(160, 40, 0, 330, 140, 0); // the tow line
+    var rg = G(new T.BufferGeometry()); rg.setAttribute('position', new T.Float32BufferAttribute(rp, 3));
+    w.ropes = new T.LineSegments(rg, M.line); boat.add(w.ropes);
+    var bn = G(new T.PlaneGeometry(240, 54, 6, 1)); w.bannerBase = Float32Array.from(bn.attributes.position.array);
+    w.banner = mesh(bn, texMat(TX.banner), boat); w.banner.position.set(452, 140, 0); w.banner.frustumCulled = false;
+    w.dolce = sprite(TX.cat, 52, 38, boat); w.dolce.position.set(178, 82, 0);
+    var pg = G(new T.OctahedronGeometry(1, 0)); w.puffs = new T.InstancedMesh(pg, Mt(new T.MeshLambertMaterial({ color: C.cloth, flatShading: true })), 6); w.puffs.frustumCulled = false; boat.add(w.puffs);
+  })();
+
+  /* ================= ROB (low-poly body, the approved face on a camera-facing quad) ================= */
+  var robG = w.rob = new T.Group(); scene.add(robG);
+  (function () {
+    var parts = [];
+    parts.push({ g: box(-17, 6, -10, 17, 42, 10), f: function (cx, cy, cz, nx, ny, nz) { return nz > 0.5 ? C.cloth : '#DCD6CA'; } });
+    parts.push({ g: box(-5, 34, 9.5, 5, 42, 10.5), c: C.skin }); // the open collar
+    parts.push({ g: box(-15, -6, -9, 15, 6, 9), c: C.khaki });
+    parts.push({ g: box(-16, 2, -10, 16, 6, 10), c: '#3A2A1A' }); // the belt
+    w.robBody = mesh(merge(parts), M.lam, robG);
+    var armG = merge([{ g: box(-5, -16, -5, 5, 0, 5), c: C.cloth }, { g: box(-4.5, -32, -4.5, 4.5, -16, 4.5), c: C.skin }, { g: box(-5, -17, -5, 5, -15, 5), c: '#DCD6CA' }]);
+    var legG = merge([{ g: box(-6, -34, -6, 6, 0, 6), c: C.khaki }, { g: box(-6.5, -40, -6, 6.5, -34, 9), c: C.shoe }]);
+    w.limbs = {};
+    [['armL', -21, 38, armG], ['armR', 21, 38, armG], ['legL', -8, -5, legG], ['legR', 8, -5, legG]].forEach(function (a) {
+      var p = new T.Group(); p.position.set(a[1], a[2], 0); robG.add(p); mesh(a[3], M.lam, p); w.limbs[a[0]] = p;
+    });
+    w.robHead = sprite(TX.robYell, 50, 50, robG); w.robHead.position.set(0, 60, 0);
+  })();
+
+  /* ================= ROB'S WALLET (origin = pocket bottom-centre; counter pose = stage coords) ================= */
+  var wal = w.wal = new T.Group(); scene.add(wal);
+  (function () {
+    // pocket: x 80..280, y lpx 484..511 (brick + bottom leather), z -120..-0.5 (squashed at the end)
+    w.pocketBox = mesh(merge([{ g: box(-100, 0, -120, 100, 27, -0.6), f: function (cx, cy, cz, nx, ny, nz) { return ny > 0.5 ? '#2A1A10' : ny < -0.5 ? C.leaD : nx < -0.5 ? C.leaL : C.lea; } }]), M.lam, wal);
+    w.flapPivot = new T.Group(); w.flapPivot.position.set(-100, 27, 0); wal.add(w.flapPivot);
+    var fp = [{ g: box(0, 3, -120, 205, 16, -0.6), f: function (cx, cy, cz, nx, ny, nz) { return ny > 0.5 ? C.lea : ny < -0.5 ? '#5A1A22' : C.leaD; } }];
+    [[6, 199, -114, -111], [6, 199, -9, -6], [6, 9, -114, -6], [196, 199, -114, -6]].forEach(function (s) { fp.push({ g: box(s[0], 16, s[2], s[1], 17, s[3]), c: C.stitch }); });
+    var snap = new T.CylinderGeometry(10, 10, 4, 6); snap.translate(184, 18, -60); fp.push({ g: snap, c: C.brass });
+    w.flapBox = mesh(merge(fp), M.lam, w.flapPivot);
+    // the art quads (UVs projected from the final pose in fitWallet)
+    w.walArtCanv = { pocket: mk(340, 252), flap: mk(340, 252) };
+    w.tx.pocket = Tx(w.walArtCanv.pocket); w.tx.flap = Tx(w.walArtCanv.flap);
+    w.pocketArt = mesh(G(new T.PlaneGeometry(1, 1)), texMat(w.tx.pocket, { single: true }), wal);
+    w.flapArt = mesh(G(new T.PlaneGeometry(1, 1)), texMat(w.tx.flap, { single: true }), w.flapPivot);
+    w.brickNow = -1;
+  })();
+  /* napkin chutes (wallet + Rob) and their lines */
+  (function () {
+    var g = new T.PlaneGeometry(1, 1, 5, 5); g.rotateX(-Math.PI / 2); var P = g.attributes.position.array;
+    for (var i = 0; i < P.length; i += 3) { var rr = (P[i] * P[i] + P[i + 2] * P[i + 2]) / 0.5; P[i + 1] = 0.32 * (1 - rr) + (Math.abs(P[i]) > 0.45 && Math.abs(P[i + 2]) > 0.45 ? -0.04 : 0); }
+    g.computeVertexNormals(); G(g);
+    var m = Mt(new T.MeshLambertMaterial({ map: TX.napkin, flatShading: true, side: T.DoubleSide, emissive: '#3A2C24' }));
+    TX.napkin.repeat.set(3, 3);
+    w.chuteW = mesh(g, m, scene); w.chuteR = mesh(g, m, scene); w.chuteW.visible = w.chuteR.visible = false;
+    var lg = G(new T.BufferGeometry()); lg.setAttribute('position', new T.BufferAttribute(new Float32Array(16 * 3), 3));
+    w.cLines = new T.LineSegments(lg, M.line); w.cLines.frustumCulled = false; scene.add(w.cLines);
+  })();
+
+  /* ================= 99 OTHER WALLETS (instanced boxes, 2-tri chutes) ================= */
+  (function () {
+    var g = G(new T.BoxGeometry(1, 1, 1)), crowd = new T.InstancedMesh(g, M.lamI, 99);
+    var cg = new T.BufferGeometry(); cg.setAttribute('position', new T.Float32BufferAttribute([-1, 0, 0.7, 1, 0, 0.7, 0, 0.75, 0, -1, 0, -0.7, 0, 0.75, 0, 1, 0, -0.7], 3)); cg.computeVertexNormals(); G(cg);
+    var chutes = new T.InstancedMesh(cg, Mt(new T.MeshLambertMaterial({ color: C.cloth, side: T.DoubleSide, flatShading: true })), 99);
+    var cols = ['#7A4A22', '#A86A35', '#C8432E', '#2E7D9A', '#E8C27A', '#5A3A8A'];
+    for (var i = 0; i < 99; i++) { col.set(cols[i % 6]); crowd.setColorAt(i, col); col.set(i % 4 ? C.cloth : '#E8DCC4'); chutes.setColorAt(i, col); }
+    crowd.instanceColor.needsUpdate = true; chutes.instanceColor.needsUpdate = true;
+    crowd.frustumCulled = chutes.frustumCulled = false; scene.add(crowd); scene.add(chutes); w.crowd = crowd; w.crowdChutes = chutes;
+  })();
+
+  /* ================= THE STAR ITEMS (freefall), trails, cork spark ================= */
+  w.items = [];
+  (function () {
+    var ITEMS = (W.RW && W.RW.ITEMS) || [];
+    STAR_ITEMS.forEach(function (s, i) {
+      var it = null;
+      for (var k = 0; k < ITEMS.length; k++) { var x = ITEMS[k]; if (x && x.name && s.re.test(x.name) && !/decoy/i.test(x.id) && !/RECEIPT/i.test(x.name)) { it = x; break; } }
+      var id = it ? it.id : s.id, tier = it ? it.tier : (s.id.indexOf('leg.') === 0 ? 'legendary' : 'epic');
+      if (ITEMS.length && !it) return; // INTRO3D.md: skip any that is missing
+      var face = itemFace(id), tx = Tx(face), sc = 0.62, fw = face.width * sc, fh = face.height * sc, grp = new T.Group(), body;
+      if (s.kind === 'krug') {
+        var prof = [[0, -60], [17, -60], [19, -54], [19, 14], [15, 30], [8, 40], [7, 62], [8, 66], [0, 66]].map(function (p) { return new T.Vector2(p[0], p[1]); });
+        var lg = new T.LatheGeometry(prof, 8); lg.rotateZ(-Math.PI / 2);
+        body = mesh(merge([{ g: lg, v: function (x) { return x > 34 ? C.hot : x > 26 ? '#C8487A' : '#E89AB0'; } }]), M.lam, grp);
+        var lab = mesh(G(new T.PlaneGeometry(40, 17)), texMat(TX.label), grp); lab.position.set(-14, 0, 19.5);
+      } else {
+        var bg = new T.BoxGeometry(fw, fh, s.kind === 'plate' ? 4 : 2);
+        var faceM = texMat(tx), mats = faceM;
+        if (s.kind === 'plate') { bg.clearGroups(); bg.addGroup(0, 30, 0); bg.addGroup(30, 6, 1); mats = [faceM, Mt(new T.MeshLambertMaterial({ color: C.birds, flatShading: true }))]; }
+        G(bg); body = mesh(bg, mats, grp);
+        if (s.kind === 'covid') { var mg = merge([{ g: new T.PlaneGeometry(26, 24), c: '#FFFFFF' }, { g: new T.PlaneGeometry(26, 24), m: mtx(0, 0, 0, 0, Math.PI / 2, 0), c: '#FFFFFF' }], true); var mk2 = mesh(mg, texMat(TX.mask), grp); mk2.position.set(fw * 0.42, fh * 0.45, 4); mk2.rotation.z = 0.5; }
+      }
+      grp.visible = false; scene.add(grp);
+      w.items.push({ id: id, tier: tier, kind: s.kind, g: grp, size: Math.max(fw, s.kind === 'krug' ? 126 : fw), t: 1.75 + 0.2 * w.items.length, side: [[-0.55, 1], [0.7, -0.8], [-0.9, -0.5], [0.6, 0.95], [0.35, -0.75], [1, 0.3], [-0.85, 0.7]][w.items.length % 7] });
+    });
+    // re-time so the last (Krug) lands at 2.95 whatever was skipped
+    var n = w.items.length; w.items.forEach(function (it, i) { it.t = 2.95 - 0.2 * (n - 1 - i); });
+    var nQ = w.items.length * 6 + 2, tg = new T.BufferGeometry();
+    tg.setAttribute('position', new T.BufferAttribute(new Float32Array(nQ * 6 * 3), 3).setUsage(T.DynamicDrawUsage));
+    tg.setAttribute('color', new T.BufferAttribute(new Float32Array(nQ * 6 * 3), 3).setUsage(T.DynamicDrawUsage)); G(tg);
+    w.trails = mesh(tg, M.add, scene); w.trails.frustumCulled = false; w.trailQ = nQ;
+  })();
+
+  /* ================= THE COUNTER SET (stage coordinates; the last frame) ================= */
+  var ctr = w.ctr = new T.Group(); scene.add(ctr);
+  (function () {
+    w.bdCanv = mk(L0.RW, L0.RH); w.tx.bd = Tx(w.bdCanv); w.tx.bd.wrapS = w.tx.bd.wrapT = T.ClampToEdgeWrapping;
+    var g = new T.BufferGeometry(); // wall quad + counter front + counter top: 3 quads, positions/uvs set by fitCounter
+    g.setAttribute('position', new T.BufferAttribute(new Float32Array(18 * 3), 3)); g.setAttribute('uv', new T.BufferAttribute(new Float32Array(18 * 2), 2)); G(g);
+    w.set = mesh(g, Mt(new T.MeshBasicMaterial({ map: w.tx.bd, fog: false, side: T.DoubleSide })), ctr); w.set.frustumCulled = false;
+    w.floor = mesh(G(new T.PlaneGeometry(4000, 3000)), Mt(new T.MeshLambertMaterial({ color: '#1E140E' })), ctr); w.floor.rotation.x = -Math.PI / 2; w.floor.position.set(DX, -300, 600);
+    var dg = G(new T.BoxGeometry(1, 1, 1)); w.dust = new T.InstancedMesh(dg, Mt(new T.MeshLambertMaterial({ color: C.cloth, flatShading: true })), 8); w.dust.frustumCulled = false; scene.add(w.dust);
+    w.glCanv = mk(256, 256); w.tx.glider = Tx(w.glCanv);
+    w.glider = mesh(G(new T.PlaneGeometry(256, 256)), texMat(w.tx.glider, { single: true, fog: false }), scene); w.glider.visible = false;
+  })();
+
+  w.scratch = { v: new T.Vector3(), v2: new T.Vector3(), v3: new T.Vector3(), v4: new T.Vector3(), q: new T.Quaternion(), q2: new T.Quaternion(), m: new T.Matrix4(), e: new T.Euler(), o: new T.Object3D(), up: new T.Vector3(0, 1, 0), down: new T.Vector3(0, 0, -1), fwd: new T.Vector3(), right: new T.Vector3(), upv: new T.Vector3(), col: new T.Color() };
+  w.pose = { pos: new T.Vector3(), q: new T.Quaternion(), fov: 60, near: 2, far: 14000 };
+  w.L = null;
+  return w;
+}
+
+/* ================================================================ LAYOUT (match -> final camera, texture fits) */
+var PROBE = null, PROBE_OWN = false;
+function insets() {
+  try {
+    if (!PROBE) PROBE = D.getElementById('probe'); // core's safe-area probe, when the page has one
+    if (!PROBE) { PROBE_OWN = true; PROBE = D.createElement('div'); PROBE.style.cssText = 'position:fixed;left:0;top:0;width:0;height:0;visibility:hidden;pointer-events:none;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inset-right,0px)'; D.body.appendChild(PROBE); }
+    var cs = W.getComputedStyle(PROBE);
+    return { t: parseFloat(cs.paddingTop) || 0, b: parseFloat(cs.paddingBottom) || 0, l: parseFloat(cs.paddingLeft) || 0, r: parseFloat(cs.paddingRight) || 0 };
+  } catch (e) { return { t: 0, b: 0, l: 0, r: 0 }; }
+}
+function layoutFor(m) {
+  var cssW = Math.max(1, W.innerWidth || 360), cssH = Math.max(1, W.innerHeight || 640), st;
+  if (m && m.stage && +m.cssW > 0 && +m.cssH > 0 && +m.stage.scale > 0) { cssW = +m.cssW; cssH = +m.cssH; st = { x: +m.stage.x || 0, y: +m.stage.y || 0, scale: +m.stage.scale }; }
+  else { var ins = insets(), sw = Math.max(1, cssW - ins.l - ins.r), sh = Math.max(1, cssH - ins.t - ins.b), s = Math.min(sw / 360, sh / 640); st = { x: ins.l + (sw - 360 * s) / 2, y: ins.t + (sh - 640 * s) * 0.35, scale: s }; }
+  var dpr = Math.min(W.devicePixelRatio || 1, 2), inches = m && isFinite(+m.inches) ? +m.inches : 0.6;
+  var RW = clamp(Math.round(cssW / (2 * st.scale)), 48, 640), RH = clamp(Math.round(cssH / (2 * st.scale)), 48, 1100);
+  var Hl = cssH / st.scale, Wl = cssW / st.scale, cxL = (cssW / 2 - st.x) / st.scale, cyL = (cssH / 2 - st.y) / st.scale;
+  return { cssW: cssW, cssH: cssH, dpr: dpr, inches: inches, st: st, RW: RW, RH: RH, Hl: Hl, Wl: Wl, cx: cxL, cyw: 640 - cyL, aspect: cssW / cssH };
+}
+function distFor(L, fov) { return (L.Hl / 2) / Math.tan(fov * Math.PI / 360); }
+/* project a final-pose world point (z already squashed) to the backdrop texture's uv */
+function projUV(L, x, y, z, out, i) {
+  var d = distFor(L, 12), depth = d - z, th = Math.tan(6 * Math.PI / 180);
+  var nx = (x - L.cx) / (depth * th * L.aspect), ny = (y - L.cyw) / (depth * th);
+  out[i] = (nx + 1) / 2; out[i + 1] = (ny + 1) / 2;
+}
+function fitCounter(w, L) {
+  var g = w.set.geometry, P = g.attributes.position.array, U = g.attributes.uv.array, d = distFor(L, 12), th = Math.tan(6 * Math.PI / 180);
+  var zW = -BW, depW = d + BW * ZSF, hh = depW * th * 2.6, hw = hh * L.aspect * 1.6;
+  var hh0 = d * th, hw0 = hh0 * L.aspect, yTop = 640 - 511, yBot = L.cyw - hh0 * 3, xl = L.cx - hw0 * 2.6, xr = L.cx + hw0 * 2.6;
+  var quads = [
+    [[L.cx - hw, L.cyw - hh, zW], [L.cx + hw, L.cyw - hh, zW], [L.cx + hw, L.cyw + hh, zW], [L.cx - hw, L.cyw + hh, zW]], // back wall
+    [[xl, yBot, 0], [xr, yBot, 0], [xr, yTop, 0], [xl, yTop, 0]],                                                             // counter front
+    [[xl, yTop, 0], [xr, yTop, 0], [xr, yTop, zW], [xl, yTop, zW]]                                                            // counter top
+  ];
+  var idx = [0, 1, 2, 0, 2, 3], pi = 0, ui = 0, edge = [0, 0];
+  projUV(L, 330, yTop - 2.5, 0, edge, 0); // one texel just under the counter edge, for the whole top face
+  quads.forEach(function (qd, qi) {
+    idx.forEach(function (k) { var p = qd[k]; P[pi++] = p[0]; P[pi++] = p[1]; P[pi++] = p[2]; if (qi === 2) { U[ui] = edge[0]; U[ui + 1] = edge[1]; } else projUV(L, p[0], p[1], p[2] * ZSF, U, ui); ui += 2; });
+  });
+  g.attributes.position.needsUpdate = true; g.attributes.uv.needsUpdate = true; g.computeBoundingSphere();
+}
+/* the backdrop texture: core's kitchen, full-bleed at the game's stage, at 1 texel = 1 render pixel */
+function paintBackdrop(w, L) {
+  var c = w.bdCanv, resized = false; if (c.width !== L.RW || c.height !== L.RH) { c.width = L.RW; c.height = L.RH; resized = true; }
+  var g = c2(c), k = L.RW / L.cssW;
+  g.setTransform(1, 0, 0, 1, 0, 0); g.fillStyle = '#1A1420'; g.fillRect(0, 0, c.width, c.height);
+  var st = { x: L.st.x * k, y: L.st.y * k, w: 360 * L.st.scale * k, h: 640 * L.st.scale * k, scale: L.st.scale * k };
+  artCall('drawBackdrop', g, 'kitchen', c.width, c.height, 0, { stage: st, parallax: 0 });
+  // core's tape measure stands at the stage's right edge in the opening frame (drawRuler(340, 130, 380, inches, 20))
+  g.setTransform(st.scale, 0, 0, st.scale, st.x, st.y); g.imageSmoothingEnabled = false;
+  artCall('drawRuler', g, 340, 130, 380, L.inches != null ? L.inches : 0.6, 20);
+  g.setTransform(1, 0, 0, 1, 0, 0);
+  if (resized) w.tx.bd.dispose(); // re-allocated at the new size on next use
+  w.tx.bd.needsUpdate = true;
+}
+/* the wallet's front faces carry the 2D wallet, split into flap / pocket by the flap's outline at 110 degrees */
+var ART0 = { x: -24, y: 268, w: 340, h: 252 };
+function flapCorners(hingeY) { // pivot-local quad (world-up), and the same corners in lpx at the open pose
+  var a = 110 * Math.PI / 180, ca = Math.cos(a), sa = Math.sin(a), loc = [[-5, -6], [209, -6], [209, 22], [-5, 22]], lp = [];
+  loc.forEach(function (p) { lp.push([80 + p[0] * ca - p[1] * sa, hingeY - (p[0] * sa + p[1] * ca)]); });
+  return { loc: loc, lpx: lp };
+}
+function fitWallet(w, brick) {
+  brick = clamp(Math.round(brick), 0, 64);
+  if (w.brickNow === brick) return;
+  w.brickNow = brick;
+  var hingeY = 500 - brick, fc = flapCorners(hingeY);
+  ['pocket', 'flap'].forEach(function (which) {
+    var c = w.walArtCanv[which], g = c2(c);
+    g.setTransform(1, 0, 0, 1, 0, 0); g.clearRect(0, 0, c.width, c.height);
+    g.save(); g.translate(-ART0.x, -ART0.y);
+    g.beginPath();
+    if (which === 'pocket') g.rect(ART0.x, ART0.y, ART0.w, ART0.h);
+    g.moveTo(fc.lpx[0][0], fc.lpx[0][1]); for (var i = 1; i < 4; i++) g.lineTo(fc.lpx[i][0], fc.lpx[i][1]); g.closePath();
+    g.clip(which === 'pocket' ? 'evenodd' : 'nonzero');
+    var o = { flap: 0, pileTop: hingeY, squeeze: 0, brick: brick, strata: [], stitches: 0, gold: false, hungry: false, bite: 0, strain: 0, stubs: [], level: 0, bulge: 0, hop: 0 };
+    if (A() && typeof A().drawWallet === 'function') {
+      artCall('drawWallet', g, 180, 500, Object.assign({ layer: 'back' }, o));
+      artCall('drawWallet', g, 180, 500, Object.assign({ layer: 'front' }, o));
+    } else {
+      g.fillStyle = C.lea; g.fillRect(78, 500, 205, 11); g.fillStyle = '#9AA0A6'; g.fillRect(81, hingeY, 198, brick);
+      g.save(); g.translate(80, hingeY); g.rotate(-110 * Math.PI / 180); g.fillStyle = C.leaD; g.fillRect(-2, -16, 205, 13); g.restore();
+    }
+    g.restore();
+    w.tx[which].needsUpdate = true;
+  });
+  // pocket quad: x 56..304, lpx y 466..516, at z = 0 (group-local: origin (180, 129))
+  setQuad(w.pocketArt.geometry, [[56 - 180, 640 - 516 - 129], [304 - 180, 640 - 516 - 129], [304 - 180, 640 - 466 - 129], [56 - 180, 640 - 466 - 129]], function (p) { return [p[0] + 180, 640 - (p[1] + 129)]; });
+  // flap quad: pivot-local corners; its lpx at the open pose
+  w.flapPivot.position.set(-100, 640 - hingeY - 129, 0);
+  w.pocketBox.scale.y = (brick + 11) / 27; w.pocketBox.position.y = 0;
+  setQuad(w.flapArt.geometry, fc.loc, function (p, i) { return fc.lpx[i]; });
+}
+function setQuad(g, corners, toLpx) {
+  var P = g.attributes.position.array, U = g.attributes.uv.array;
+  // PlaneGeometry(1,1) vertex order: (-,+), (+,+), (-,-), (+,-)
+  var order = [3, 2, 0, 1];
+  for (var i = 0; i < 4; i++) {
+    var c = corners[order[i]], lp = toLpx(c, order[i]);
+    P[i * 3] = c[0]; P[i * 3 + 1] = c[1]; P[i * 3 + 2] = 0;
+    U[i * 2] = (lp[0] - ART0.x) / ART0.w; U[i * 2 + 1] = 1 - (lp[1] - ART0.y) / ART0.h;
+  }
+  g.attributes.position.needsUpdate = true; g.attributes.uv.needsUpdate = true; g.computeBoundingSphere();
+}
+/* the first glider, drawn exactly as core draws it (RWArt.drawGlider at core's scale) */
+function paintGlider(w, gm) {
+  var c = w.glCanv, g = c2(c), x = 128, y = 128;
+  g.setTransform(1, 0, 0, 1, 0, 0); g.clearRect(0, 0, c.width, c.height);
+  var a = A(), it = null, ITEMS = (W.RW && W.RW.ITEMS) || [];
+  for (var i = 0; i < ITEMS.length; i++) if (ITEMS[i] && ITEMS[i].id === gm.id) { it = ITEMS[i]; break; }
+  var tier = it ? it.tier : 'common', sc = gm.sc, words = (a && a.TIER_WORDS) || {};
+  // exactly core's drawGliderV2 options for the first glider (the frozen frame under the curtain)
+  var opts = { beamTo: gm.brickTop, gold: !!(it && it.cat === 'legend'), decoy: false, hop: false, hidden: false, cursed: tier === 'cursed', scale: sc,
+    tab: tier !== 'common' ? (words[tier] || String(tier).toUpperCase()) : null, tier: tier, glow: tier !== 'common', isNew: !!gm.isNew, dir: gm.dir };
+  if (a && typeof a.drawGlider === 'function') {
+    g.save();
+    if (a.GLIDER_V2) artCall('drawGlider', g, gm.id, x, y, 0, opts);
+    else { if (sc !== 1) { g.translate(x, y); g.scale(sc, sc); g.translate(-x, -y); } artCall('drawGlider', g, gm.id, x, y, 0, opts); }
+    g.restore();
+  } else {
+    var f = itemFace(gm.id); g.drawImage(f, Math.round(x - f.width / 2), Math.round(y - f.height / 2));
+  }
+  w.tx.glider.needsUpdate = true;
+}
+
+/* ================================================================ POSES (pure functions of t) */
+function boatAt(t, v, shotOne) {
+  if (shotOne) { // a pass over David's roof, from far right to near left
+    var u = (t - 0.6) * 1100; v.set(SH1.px - 0.85 * u, SH1.py + 6 * Math.sin(t * 3), SH1.pz + 0.527 * u);
+  } else v.set(980 - 600 * t, 2550 + 8 * Math.sin(t * 2.3), DZ - 40);
+  return v;
+}
+function boatYaw(shotOne) { return shotOne ? Math.atan2(0.527, 0.85) : 0; }
+var SH1 = { cx: DAV.x - 60, cy: DAV.roof + 50, cz: DAV.z + 170, px: DAV.x - 60, py: DAV.roof + 50 + 250, pz: DAV.z + 170 - 430 };
+function robFallY(t) { var u = t - 1.6; return 2390 - 200 * u - 100 * u * u; }
+function walletSkyY(t) { var k = kOf(t, 3.2, 3.6); return lerp(robFallY(3.2) - 8, ROOF - 112, 0.55 * k + 0.45 * eOut(k)); }
+function counterTimes(R) {
+  return R.short ? { wipe: 0.25, s0: 0.25, s1: 0.55, land: 0.6, flap: 0.6, glide0: 0.8, drop: 0.8, end: 1.5, logo: false }
+                 : { wipe: 3.6, s0: 3.6, s1: 3.9, land: 4.2, flap: 4.25, glide0: 4.3, drop: 4.7, end: 5.2, logo: true };
+}
+function counterFov(R, t) {
+  if (R.short) return lerp(42, 12, eIO(kOf(t, 0.25, 0.6)));
+  if (t < 3.9) return lerp(50, 34, eOut(kOf(t, 3.6, 3.9)));
+  return lerp(34, 12, eIn(kOf(t, 3.9, 4.3)));
+}
+function walletH(R, t) { // height of the wallet's bottom above the counter top (counter phase)
+  var P = R.P, k = (P.land - t) / 0.3;
+  return k <= 0 ? 0 : 300 * Math.pow(k, 1.15);
+}
+function zSquash(R, t) { return R.short ? lerp(1, ZSF, eIO(kOf(t, 0.3, 0.6))) : lerp(1, ZSF, eIO(kOf(t, 3.9, 4.3))); }
+
+/* camera pose for time t (no allocation) */
+function camPose(R, t, out) {
+  var w = S.w, s = w.scratch, P = R.P;
+  out.near = 2; out.far = 14000;
+  if (t >= P.wipe) { counterCam(R, t, out); return out; }
+  if (R.short) { // the roof beside the skylight, looking up past the falling wallet at the moon
+    shortCam(w, s.v2); out.pos.copy(s.v2); s.v3.copy(w.moonPos).sub(s.v2).normalize();
+    var tgt = s.v4.copy(s.v2).addScaledVector(s.v3, 400);
+    lookQ(out.q, s.v2, tgt, s.up, 0); out.fov = 58; return out;
+  }
+  if (t < 0.9) { // 1 FLYOVER from David's roof
+    var bp = boatAt(t, s.v, true), cpos = out.pos.set(SH1.cx, SH1.cy, SH1.cz);
+    var fixed = s.v2.set(SH1.cx + 60, SH1.cy + 330, SH1.cz - 700), tg = s.v3.copy(fixed).lerp(bp.setY(bp.y + 120), 0.6);
+    var shk = 5 * Math.exp(-Math.pow((t - 0.6) / 0.13, 2));
+    cpos.x += noise(t, 1) * shk; cpos.y += noise(t, 2) * shk;
+    lookQ(out.q, cpos, tg, s.up, 0); out.fov = lerp(70, 62, eOut(t / 0.9)); return out;
+  }
+  if (t < 1.6) { // 2 THE JUMP: off the port quarter, Dutch tilt
+    var b2 = boatAt(t, s.v, false);
+    out.pos.set(b2.x + 390, b2.y + 190, b2.z + 860);
+    lookQ(out.q, out.pos, s.v2.set(b2.x + 70, b2.y + 120, b2.z), s.up, -6 * Math.PI / 180); out.fov = 45; return out;
+  }
+  if (t < 3.2) { // 3 FREEFALL: 260 above Rob, straight down at the skylight, rolling 40 degrees
+    var u = (t - 1.6) / 1.6, e = eOut(u), ry = robFallY(t);
+    out.pos.set(DX + 46 * (1 - e), ry + 260, DZ + 26 * (1 - e) + 80);
+    lookQ(out.q, out.pos, s.v2.set(DX, ROOF, DZ), s.down, 40 * Math.PI / 180 * eIO(u)); out.fov = 85; return out;
+  }
+  // 4 CHUTE (city half): follow the wallet down, FOV 85 -> 50, dive to the frame, unroll
+  var k = kOf(t, 3.2, 3.6), wy = walletSkyY(t), cy = lerp(robFallY(3.2) + 260, ROOF + 2, Math.pow(k, 3));
+  out.pos.set(DX, cy, DZ + lerp(110, 230, eOut(kOf(t, 3.2, 3.42))) - 184 * eIn(kOf(t, 3.42, 3.6)));
+  lookQ(out.q, out.pos, s.v2.set(DX, wy - 60, DZ), s.down, 40 * Math.PI / 180 * (1 - eIO(k)));
+  out.fov = lerp(85, 50, eOut(k)); return out;
+}
+function shortCam(w, out) { // on the line through the wallet (at ~0.12 s) to the moon, 20 above the roof
+  var mx = w.moonPos.x - DX, my = w.moonPos.y - (ROOF + 340), mz = w.moonPos.z - DZ, l = Math.sqrt(mx * mx + my * my + mz * mz), k = 320 / (my / l);
+  return out.set(DX - mx / l * k, ROOF + 20, DZ - mz / l * k);
+}
+function counterCam(R, t, out) {
+  var w = S.w, s = w.scratch, L = R.L, P = R.P, fov = counterFov(R, t), ks = eIO(kOf(t, P.s0, P.s1));
+  var wy = 129 + walletH(R, t);
+  // top-down above the wallet (screen-up = the back wall), and the front-on stage pose at this fov
+  var tp = s.v.set(180, wy + 300, -60 + 440), d = distFor(L, fov), fp = s.v3.set(L.cx, L.cyw, d);
+  out.pos.copy(tp).lerp(fp, ks); out.pos.y += Math.sin(ks * Math.PI) * 60;
+  if (ks >= 1) lookQ(out.q, fp, s.v4.set(L.cx, L.cyw, 0), s.up, 0);
+  else { // aim between the wallet and the stage centre; up turns from the back wall to the sky
+    var tgt = s.v4.set(lerp(180, L.cx, ks), lerp(wy + 10, L.cyw, eIn(ks)), lerp(-60, 0, ks)), up = s.v2.set(0, ks, -(1 - ks)).normalize();
+    lookQ(out.q, out.pos, tgt, up, 0);
+  }
+  out.fov = fov;
+  // impact shake (6 u for 0.15 s)
+  var sk = kOf(t, P.land, P.land + 0.15);
+  if (t >= P.land && sk < 1) { var a = 6 * (1 - sk); out.pos.x += noise(t, 4) * a; out.pos.y += noise(t, 5) * a; }
+  out.near = 4; out.far = 14000;
+  return out;
+}
+function lookQ(outQ, eye, target, up, roll) {
+  var s = S.w.scratch; s.m.lookAt(eye, target, up); outQ.setFromRotationMatrix(s.m);
+  if (roll) { s.e.set(0, 0, roll); s.q2b = s.q2b || new S.T.Quaternion(); s.q2b.setFromEuler(s.e); outQ.multiply(s.q2b); }
+  return outQ;
+}
+
+/* ================================================================ UPDATE (sets every object for time t) */
+function update(R, t) {
+  var w = S.w, T = S.T, s = w.scratch, P = R.P, sh = R.short, inCity = t < P.wipe;
+  w.city.visible = inCity; w.sky.visible = inCity; w.ctr.visible = !inCity;
+  w.fog.near = inCity ? 400 : 1e6; w.fog.far = inCity ? 5000 : 2e6;
+  var flash = !sh && ((t >= 0.4 && t < 0.46) || (t >= 0.52 && t < 0.56) || (t >= 2.2 && t < 2.26) || (t >= 2.3 && t < 2.33));
+  w.bolts.visible = flash;
+  w.renderer.setClearColor(inCity ? (flash ? '#1E1440' : C.sky) : C.ink, 1);
+  w.storm.rotation.y = 0.1 * t;
+  if (w.candle && inCity) { // the candle on David's table flutters in the boat's wash
+    var wash = Math.exp(-Math.pow((t - 0.62) / 0.16, 2));
+    w.candle.scale.set(1 + 0.25 * wash * Math.sin(t * 41), 0.85 + 0.15 * Math.sin(t * 23) + 0.5 * wash * Math.abs(Math.sin(t * 31)), 1);
+    w.candle.rotation.set(0, 0, wash * 0.9 * Math.sin(t * 17) - 0.3 * wash); w.candleGlow.scale.setScalar(0.9 + 0.2 * Math.sin(t * 19) + 0.4 * wash);
+    w.candleGlow.lookAt(w.cam.position);
+  }
+
+  /* ---- the boat ---- */
+  var showBoat = sh ? t < 0.3 : t < 1.6;
+  w.boat.visible = showBoat;
+  if (showBoat) {
+    if (sh) { // silhouette crossing the moon
+      var cp = shortCam(w, s.v2), dir = s.v3.copy(w.moonPos).sub(cp).normalize();
+      var side = s.v4.crossVectors(dir, s.up).normalize();
+      w.boat.position.copy(cp).addScaledVector(dir, 2600).addScaledVector(side, lerp(520, -520, t / 0.3)).addScaledVector(s.up, -120);
+      w.boat.rotation.set(0, Math.atan2(-side.z, side.x), 0);
+    } else {
+      boatAt(t, w.boat.position, t < 0.9);
+      w.boat.rotation.set(0.05 * Math.sin(t * 1.3 + 1), boatYaw(t < 0.9), 0.04 * Math.sin(t * 1.7));
+    }
+    // gravy bob
+    var gp = w.gravy.geometry.attributes.position.array; gp[0] = 0; gp[1] = 52 + 2 * Math.sin(t * 7); gp[2] = 0;
+    for (var i = 0; i < 8; i++) { var a = i / 8 * Math.PI * 2; gp[3 + i * 3] = Math.cos(a) * 78 * 1.8; gp[4 + i * 3] = 52 + 3 * Math.sin(t * 6 + i * 1.7); gp[5 + i * 3] = Math.sin(a) * 78; }
+    w.gravy.geometry.attributes.position.needsUpdate = true;
+    w.flame.scale.set(1, 0.8 + 0.4 * Math.abs(Math.sin(t * 12 * Math.PI)), 1);
+    // banner snaps
+    var bp = w.banner.geometry.attributes.position.array, b0 = w.bannerBase;
+    for (var bi = 0; bi < bp.length; bi += 3) { var bx = b0[bi]; bp[bi + 2] = Math.sin(bx * 0.04 - t * 14) * (6 + (bx + 120) * 0.08); bp[bi + 1] = b0[bi + 1] + Math.sin(bx * 0.03 - t * 9) * 3; }
+    w.banner.geometry.attributes.position.needsUpdate = true;
+    w.dolce.material.map = (t > 1.2 && t < 1.32) ? w.tx.catBlink : w.tx.cat;
+    for (var pi = 0; pi < 6; pi++) {
+      var ph = frac(t * 3.2 + pi / 3), pz = pi < 3 ? -34 : 34;
+      s.o.position.set(176 + ph * 90, 12 + ph * 26, pz + Math.sin(pi * 2.1) * 6); var ps = 5 + ph * 16; s.o.scale.set(ps, ps, ps); s.o.rotation.set(ph * 3, pi, 0);
+      s.o.updateMatrix(); w.puffs.setMatrixAt(pi, s.o.matrix);
+    }
+    w.puffs.instanceMatrix.needsUpdate = true;
+  }
+
+  /* ---- Rob ---- */
+  var showRob = !sh && t >= 0.9 && t < 3.62;
+  w.rob.visible = showRob;
+  var walletOnRob = !sh && t < 3.2;
+  if (showRob) poseRob(R, t);
+  /* ---- the wallet ---- */
+  poseWallet(R, t, walletOnRob);
+  /* ---- the crowd: 99 wallets pour off the stern from 1.25 ---- */
+  var showCrowd = !sh && t >= 1.25 && t < 1.6;
+  w.crowd.visible = w.crowdChutes.visible = showCrowd;
+  if (showCrowd) poseCrowd(t);
+  /* ---- the star items, trails, cork, clouds ---- */
+  poseItems(R, t);
+  /* ---- the counter set ---- */
+  if (!inCity) poseCounter(R, t);
+  else { w.dust.visible = false; w.glider.visible = false; }
+}
+function poseRob(R, t) {
+  var w = S.w, s = w.scratch, lim = w.limbs, rg = w.rob;
+  var swing = Math.sin(t * 10 * Math.PI * 2);
+  w.robHead.material.map = t >= 3.2 ? w.tx.robSmug : w.tx.robYell;
+  rg.scale.set(1, 1, 1); lim.armL.scale.set(1, 1, 1); lim.armR.scale.set(1, 1, 1);
+  if (t < 1.6) { // on the rim, hugging the wallet; crouch, LEAP at 1.10 (back), arc away
+    var b = boatAt(t, s.v, false);
+    var rim = s.v2.set(-20, 66, 66);
+    if (t < 1.1) {
+      var crouch = kOf(t, 0.98, 1.1); rg.position.set(b.x + rim.x, b.y + rim.y + 40 - 8 * eIn(crouch), b.z + rim.z);
+      rg.rotation.set(0, 0.25, 0); rg.scale.set(1, 1 - 0.12 * eIn(crouch), 1);
+      lim.armL.rotation.set(-1.2, 0, 0.5); lim.armR.rotation.set(-1.2, 0, -0.5); lim.legL.rotation.set(0.35 * crouch, 0, 0.05); lim.legR.rotation.set(-0.35 * crouch, 0, -0.05);
+    } else {
+      var tau = t - 1.1, b0 = boatAt(1.1, s.v3, false), pop = eBack(c01(tau / 0.18));
+      rg.position.set(b0.x + rim.x - 260 * tau, b0.y + rim.y + 40 + 320 * tau * pop - 1300 * tau * tau, b0.z + rim.z + 190 * tau);
+      rg.rotation.set(-0.6 * c01(tau / 0.3), 0.25, 0.4 * Math.sin(tau * 9));
+      lim.armL.rotation.set(-2.6, 0, 0.6 + 0.3 * swing); lim.armR.rotation.set(-2.6, 0, -0.6 - 0.3 * swing);
+      lim.legL.rotation.set(0.5 * swing, 0, 0.4); lim.legR.rotation.set(-0.5 * swing, 0, -0.4);
+    }
+    return;
+  }
+  if (t < 3.2) { // spread-eagle, belly up, yelling at us; limbs flap at 10 Hz
+    var u = (t - 1.6) / 1.6, e = eOut(u);
+    rg.position.set(DX + 46 * (1 - e), robFallY(t), DZ + 26 * (1 - e) + 80);
+    rg.rotation.set(-Math.PI / 2, 0, 0.25 * Math.sin(t * 2.1));
+    lim.armL.rotation.set(0.25 * swing, 0, -2.75 + 0.12 * swing); lim.armR.rotation.set(-0.25 * swing, 0, 2.75 - 0.12 * swing);
+    lim.armL.scale.set(1, 1.5, 1); lim.armR.scale.set(1, 1.5, 1);
+    lim.legL.rotation.set(0.35 * swing, 0, 0.75 + 0.2 * swing); lim.legR.rotation.set(-0.35 * swing, 0, -0.75 - 0.2 * swing);
+    return;
+  }
+  // 3.20: he lets go, salutes, and drifts up-left out of frame under his own napkin
+  var k = eOut(kOf(t, 3.2, 3.6)), wy = walletSkyY(t);
+  rg.position.set(DX - 210 * k, wy + 20 + 240 * k, DZ - 170 * k);
+  rg.rotation.set(-Math.PI / 2 + 0.9 * k, 0, 0.3);
+  lim.armR.rotation.set(-2.9, 0, -0.9); lim.armL.rotation.set(-0.4, 0, 0.8);
+  lim.legL.rotation.set(0.2, 0, 0.3); lim.legR.rotation.set(-0.2, 0, -0.3);
+}
+var Q90 = null;
+/* the wallet hugged to Rob's chest (Rob must already be posed for this t) */
+function walletOnRob(out, outQ, t) {
+  var w = S.w, s = w.scratch;
+  w.rob.updateMatrixWorld(true);
+  if (t >= 1.6) out.set(0, 118, 6).applyMatrix4(w.rob.matrixWorld); else out.set(0, 24, 22).applyMatrix4(w.rob.matrixWorld);
+  outQ.copy(w.rob.quaternion).multiply(Q90);
+  s.v2.set(0, -13 * WS, 60 * WS).applyQuaternion(outQ); out.add(s.v2);
+}
+function poseWallet(R, t, onRob) {
+  var w = S.w, T = S.T, s = w.scratch, wal = w.wal, P = R.P, sh = R.short;
+  if (!Q90) { Q90 = new T.Quaternion().setFromEuler(new T.Euler(Math.PI / 2, 0, 0)); }
+  w.chuteW.visible = false; w.chuteR.visible = false;
+  var ang = 0, lines = false;
+  wal.visible = true;
+  if (onRob && t >= 0.9) { // hugged to Rob's chest
+    walletOnRob(wal.position, wal.quaternion, t); wal.scale.set(WS, WS, WS);
+  } else if (!sh && t < 0.9) {
+    wal.visible = false;
+  } else if (t < P.wipe) { // under its napkin, into the skylight
+    var wy = sh ? lerp(ROOF + 470, ROOF + 210, t / 0.25) : walletSkyY(t);
+    s.v.set(DX, wy, DZ + 60 * WS); if (sh) s.v.y = lerp(ROOF + 520, ROOF + 170, t / 0.25); s.e.set(0.12 * Math.sin(t * 5), 0, 0.1 * Math.sin(t * 4)); s.q.setFromEuler(s.e);
+    if (!sh) { // blend out of Rob's arms over 0.15 s (the hug pose at 3.2 is computed, not remembered: stills stay exact)
+      if (!R.w32) { R.w32 = { p: new T.Vector3(), q: new T.Quaternion() }; poseRob(R, 3.1999); walletOnRob(R.w32.p, R.w32.q, 3.1999); poseRob(R, t); }
+      var b = eOut(kOf(t, 3.2, 3.36)); s.v.lerpVectors(R.w32.p, s.v, b); s.q.slerpQuaternions(R.w32.q, s.q, b);
+    }
+    wal.position.copy(s.v); wal.quaternion.copy(s.q); wal.scale.set(WS, WS, WS);
+    var ok = sh ? 1 : eBack(kOf(t, 3.2, 3.45)) * (1 - 0.8 * eIn(kOf(t, 3.42, 3.58))); chute(w.chuteW, wal, ok, 210 * WS, 150 * WS * (sh ? 1 : 1 - 0.7 * kOf(t, 3.42, 3.58)), 0); lines = true;
+  } else { // the counter set: stage coordinates
+    var h = walletH(R, t), zs = zSquash(R, t), land = t >= P.land;
+    var sq = land ? kOf(t, P.land, P.land + 0.15) : 0, sy = land ? 0.7 + 0.3 * eBack(sq) : 1, sx = land ? 1 + 0.15 * (1 - eOut(sq)) : 1;
+    wal.position.set(180, 129 + h, 0); wal.rotation.set(0, 0, land ? 0 : 0.05 * Math.sin(t * 6)); wal.scale.set(sx, sy, zs);
+    if (t >= P.flap) { var fk = kOf(t, P.flap, P.flap + 0.24); ang = 110 * eBack(fk); }
+    // the napkin: open on the way down; after the slam it drifts up and shrinks away
+    var up = land ? eOut(kOf(t, P.land, P.land + 0.4)) : 0;
+    if (up < 1) { chute(w.chuteW, wal, 1 - up * 0.85, 250, 150 + up * 160, up); lines = up < 0.5; }
+  }
+  w.flapPivot.rotation.set(0, 0, ang * Math.PI / 180);
+  var Lp = w.cLines.geometry.attributes.position.array;
+  if (!lines) for (var i = 0; i < 24; i++) Lp[i] = 0;
+  // Rob's napkin after the let-go: lines to his shoulders
+  if (!sh && t >= 3.2 && t < 3.62) {
+    var rk = eBack(kOf(t, 3.22, 3.45)), cs = 96 * Math.max(0.08, rk), m = w.chuteR;
+    m.visible = true; w.rob.updateMatrixWorld(true);
+    m.position.copy(w.rob.position).add(s.v.set(0, 80, 0)); m.scale.set(cs, cs * 0.9, cs); m.rotation.set(0.3, 0, 0.2); m.updateMatrixWorld(true);
+    var rc = [[-0.46, -0.46, -21], [0.46, -0.46, 21], [-0.46, 0.46, -21], [0.46, 0.46, 21]];
+    for (var c = 0; c < 4; c++) {
+      s.v2.set(rc[c][0], -0.02, rc[c][1]).applyMatrix4(m.matrixWorld); s.v3.set(rc[c][2], 40, 0).applyMatrix4(w.rob.matrixWorld);
+      var o = 24 + c * 6; Lp[o] = s.v2.x; Lp[o + 1] = s.v2.y; Lp[o + 2] = s.v2.z; Lp[o + 3] = s.v3.x; Lp[o + 4] = s.v3.y; Lp[o + 5] = s.v3.z;
+    }
+  } else for (var j = 24; j < 48; j++) Lp[j] = 0;
+  w.cLines.geometry.attributes.position.needsUpdate = true;
+  w.cLines.visible = lines || (!sh && t >= 3.2 && t < 3.62);
+}
+function chute(m, wal, k, size, above, fade) { // napkin over the wallet, four lines to its corners
+  var w = S.w, s = w.scratch, sc = Math.max(0.1, k) * size;
+  m.visible = true;
+  wal.updateMatrixWorld(true);
+  s.v.set(0, 27 + above / Math.max(0.05, wal.scale.y), -60).applyMatrix4(wal.matrixWorld);
+  m.position.copy(s.v); m.quaternion.copy(wal.quaternion); m.scale.set(sc, sc * 0.9, sc);
+  m.updateMatrixWorld(true);
+  var Lp = w.cLines.geometry.attributes.position.array, cc = [[-0.46, -0.46], [0.46, -0.46], [-0.46, 0.46], [0.46, 0.46]], wc = [[-92, -112], [92, -112], [-92, -8], [92, -8]];
+  for (var c = 0; c < 4; c++) {
+    s.v2.set(cc[c][0], -0.02, cc[c][1]).applyMatrix4(m.matrixWorld); s.v3.set(wc[c][0], 27, wc[c][1]).applyMatrix4(wal.matrixWorld);
+    var o = c * 6; Lp[o] = s.v2.x; Lp[o + 1] = s.v2.y; Lp[o + 2] = s.v2.z; Lp[o + 3] = s.v3.x; Lp[o + 4] = s.v3.y; Lp[o + 5] = s.v3.z;
+  }
+}
+function poseCrowd(t) {
+  var w = S.w, s = w.scratch, o = s.o;
+  for (var i = 0; i < 99; i++) {
+    var ti = 1.25 + i * 0.0034, tau = t - ti;
+    if (tau < 0) { o.scale.set(0.001, 0.001, 0.001); o.position.set(0, -9999, 0); o.updateMatrix(); w.crowd.setMatrixAt(i, o.matrix); w.crowdChutes.setMatrixAt(i, o.matrix); continue; }
+    var b = boatAt(ti, s.v, false), sp = (hash(i * 3.7) - 0.5) * 90, pop = eBack(c01((tau - 0.15) / 0.1));
+    var fall = tau < 0.16 ? 2600 * tau * tau : 66 + (tau - 0.16) * 170, back = -200 * (1 - Math.exp(-3 * tau));
+    o.position.set(b.x + 175 + back - 600 * tau + sp * 0.4, b.y + 60 - fall + hash(i) * 26, b.z + sp + 160 * tau * (hash(i * 1.3) - 0.2));
+    o.rotation.set(Math.sin(i + t * 4) * 0.4, i, Math.sin(i * 2 + t * 5) * 0.3); o.scale.set(40, 10, 26); o.updateMatrix(); w.crowd.setMatrixAt(i, o.matrix);
+    o.position.y += 34; var cs = 34 * pop + 0.001; o.scale.set(cs, cs, cs); o.rotation.set(Math.sin(i + t * 4) * 0.2, i, 0); o.updateMatrix(); w.crowdChutes.setMatrixAt(i, o.matrix);
+  }
+  w.crowd.instanceMatrix.needsUpdate = true; w.crowdChutes.instanceMatrix.needsUpdate = true;
+}
+/* item i's world position at time t: camera-relative path past the lens */
+function itemPath(R, it, t, out, pose) {
+  var w = S.w, s = w.scratch, k = (t - (it.t - 0.3)) / 0.42;
+  camPose(R, t, pose);
+  s.fwd.set(0, 0, -1).applyQuaternion(pose.q); s.right.set(1, 0, 0).applyQuaternion(pose.q); s.upv.set(0, 1, 0).applyQuaternion(pose.q);
+  var depth = 36 + 820 * Math.pow(1 - c01(k), 2), lat = 14 + 150 * Math.pow(c01(k), 3);
+  out.copy(pose.pos).addScaledVector(s.fwd, depth).addScaledVector(s.right, it.side[0] * lat * 0.55).addScaledVector(s.upv, it.side[1] * lat);
+  return k;
+}
+var TP = null;
+function poseItems(R, t) {
+  var w = S.w, T = S.T, s = w.scratch, P = w.trails.geometry.attributes.position.array, Cc = w.trails.geometry.attributes.color.array, qn = 0;
+  if (!TP) TP = { pos: new T.Vector3(), q: new T.Quaternion(), fov: 60, near: 2, far: 1 };
+  var cam = w.cam, active = !R.short && t >= 1.6 && t < 3.25, tv = w.tv || (w.tv = new T.Vector3()), tv2 = w.tv2 || (w.tv2 = new T.Vector3()), tv2b = w.tv3 || (w.tv3 = new T.Vector3());
+  function quad(cx, cy, cz, size, hex, a) {
+    var c = s.col.set(hex).multiplyScalar(a), rx = cam.matrixWorld.elements[0], ry = cam.matrixWorld.elements[1], rz = cam.matrixWorld.elements[2], ux = cam.matrixWorld.elements[4], uy = cam.matrixWorld.elements[5], uz = cam.matrixWorld.elements[6], h = size / 2;
+    var vx = [[-1, -1], [1, -1], [1, 1], [-1, -1], [1, 1], [-1, 1]];
+    for (var i = 0; i < 6; i++) { var o = (qn * 6 + i) * 3; P[o] = cx + (rx * vx[i][0] + ux * vx[i][1]) * h; P[o + 1] = cy + (ry * vx[i][0] + uy * vx[i][1]) * h; P[o + 2] = cz + (rz * vx[i][0] + uz * vx[i][1]) * h; Cc[o] = c.r; Cc[o + 1] = c.g; Cc[o + 2] = c.b; }
+    qn++;
+  }
+  function beam(x0, y0, z0, x1, y1, z1, wd, hex, a) {
+    var c = s.col.set(hex).multiplyScalar(a), ax = tv2.set(x1 - x0, y1 - y0, z1 - z0), cp = cam.position;
+    var tx = cp.x - x0, ty = cp.y - y0, tz = cp.z - z0, sx = ax.y * tz - ax.z * ty, sy = ax.z * tx - ax.x * tz, sz = ax.x * ty - ax.y * tx, sl = Math.sqrt(sx * sx + sy * sy + sz * sz) || 1, h = wd / 2;
+    sx = sx / sl * h; sy = sy / sl * h; sz = sz / sl * h;
+    var pts = [[x0 - sx, y0 - sy, z0 - sz], [x0 + sx, y0 + sy, z0 + sz], [x1 + sx, y1 + sy, z1 + sz], [x0 - sx, y0 - sy, z0 - sz], [x1 + sx, y1 + sy, z1 + sz], [x1 - sx, y1 - sy, z1 - sz]];
+    for (var i = 0; i < 6; i++) { var o = (qn * 6 + i) * 3; P[o] = pts[i][0]; P[o + 1] = pts[i][1]; P[o + 2] = pts[i][2]; var f = i === 2 || i === 4 || i === 5 ? 0.25 : 1; Cc[o] = c.r * f; Cc[o + 1] = c.g * f; Cc[o + 2] = c.b * f; }
+    qn++;
+  }
+  w.items.forEach(function (it, idx) {
+    var k = (t - (it.t - 0.3)) / 0.42;
+    it.g.visible = active && k >= 0 && k <= 1;
+    if (!it.g.visible) return;
+    itemPath(R, it, t, it.g.position, TP);
+    var spinA = it.kind === 'krug' ? 2.4 : 1.6;
+    it.g.quaternion.copy(TP.q);
+    s.e.set(Math.sin(k * 5 + idx) * 0.75, Math.sin(k * 3.3 + idx * 2) * 0.9, (k - 0.6) * spinA * (idx % 2 ? 1 : -1));
+    s.q.setFromEuler(s.e); it.g.quaternion.multiply(s.q);
+    var tc = TIER[it.tier] || TIER.legendary;
+    var pv = tv2b.copy(it.g.position);
+    for (var j = 1; j <= 5; j++) { itemPath(R, it, Math.max(1.6, t - j * 0.018), tv, TP); /* never sample another shot's camera */ beam(pv.x, pv.y, pv.z, tv.x, tv.y, tv.z, it.size * (0.15 - j * 0.022), tc, (0.55 - j * 0.09) * (1 - eOut(kOf(k, 0.62, 0.8)))); pv.copy(tv); }
+    if (it.tier === 'legendary') { var gp = it.g.position; beam(gp.x, gp.y, gp.z, gp.x, gp.y + 40, gp.z, 2, C.gold, 0.25); }
+    if (it.kind === 'krug' && t >= 2.95 && t < 3.1) { var ck = kOf(t, 2.95, 3.1); s.v.set(70, 0, 0).applyQuaternion(it.g.quaternion).add(it.g.position); quad(s.v.x, s.v.y, s.v.z, 14 + 34 * ck, C.hot, 0.9 * (1 - ck)); quad(s.v.x, s.v.y, s.v.z, 6 + 14 * ck, C.cream, 1 - ck); }
+  });
+  for (; qn < w.trailQ; qn++) for (var z = 0; z < 18; z++) P[qn * 18 + z] = 0;
+  w.trails.geometry.attributes.position.needsUpdate = true; w.trails.geometry.attributes.color.needsUpdate = true;
+  w.trails.visible = active;
+  // the two cloud slabs whipping up past the lens at 1.9 and 2.5
+  [1.9, 2.5].forEach(function (tc, ci) {
+    var cl = w.clouds[ci], k = kOf(t, tc - 0.1, tc);
+    cl.visible = !R.short && t >= tc - 0.1 && t < tc;
+    if (!cl.visible) return;
+    camPose(R, t, TP); s.fwd.set(0, 0, -1).applyQuaternion(TP.q);
+    cl.position.copy(TP.pos).addScaledVector(s.fwd, lerp(900, 8, k)); cl.position.x += (ci ? -60 : 80) * (1 - k);
+    cl.quaternion.copy(TP.q);
+  });
+}
+function poseCounter(R, t) {
+  var w = S.w, s = w.scratch, P = R.P, zs = zSquash(R, t);
+  w.ctr.scale.set(1, 1, zs);
+  // dust at the slam
+  var dk = kOf(t, P.land, P.land + 0.45), o = s.o;
+  w.dust.visible = t >= P.land && dk < 1;
+  if (w.dust.visible) {
+    for (var i = 0; i < 8; i++) {
+      var side = i < 4 ? -1 : 1, j = i % 4, x = side < 0 ? 84 + j * 6 : 276 - j * 6;
+      o.position.set(x + side * (30 + j * 22) * eOut(dk), 132 + (24 + j * 10) * Math.sin(dk * Math.PI) * (1 - dk * 0.4), -20 * zs - j * 8 * zs);
+      var sz = (8 - j) * (1 - dk) + 0.01; o.scale.set(sz, sz, sz); o.rotation.set(dk * 4 + j, j, dk * 3); o.updateMatrix(); w.dust.setMatrixAt(i, o.matrix);
+    }
+    w.dust.instanceMatrix.needsUpdate = true;
+  }
+  // the first glider, at exactly match.v, reaching match.x on the handoff
+  var gm = R.gm, show = t >= P.glide0;
+  w.glider.visible = show;
+  if (show) {
+    var x = gm.x - gm.dir * gm.v * (P.end - Math.min(t, P.end));
+    w.glider.position.set(x, 640 - gm.laneY, 1); // the canvas is centred on the face // face centre on the lane; the canvas is centred on it
+  }
+}
+
+/* ================================================================ RUN */
+var API = {};
+function stats() { return S.last; }
+function callCue(R, name, opts) {
+  if (!R || !R.onCue || R.freeze != null) return undefined;
+  try { return opts ? R.onCue(name, +R.t.toFixed(3), opts) : R.onCue(name, +R.t.toFixed(3)); } catch (e) { warn(e); return undefined; }
+}
+function sound(R, name, opts, loop) {
+  if (loop && !R.handles) return null;
+  var o = { sound: 1 }; if (opts) for (var k in opts) o[k] = opts[k];
+  var h = callCue(R, name, o);
+  return (h && typeof h.stop === 'function') ? h : null;
+}
+function stopLoop(R, k) { var h = R.loops[k]; if (h) { try { h.stop(); } catch (e) {} R.loops[k] = null; } }
+function stopLoops(R) { for (var k in R.loops) stopLoop(R, k); }
+function cueList(R) {
+  var L = [], ev = function (t, n) { L.push({ t: t, f: function () { callCue(R, n); } }); }, sf = function (t, n, o) { L.push({ t: t, f: function () { sound(R, n, o); } }); };
+  if (R.short) {
+    ev(0, 'start'); L.push({ t: 0, f: function () { R.loops.gravy = sound(R, 'gravy', null, true); } }); L.push({ t: 0.3, f: function () { stopLoop(R, 'gravy'); } });
+    sf(0, 'chuteOpen'); sf(0.25, 'wipe');
+    sf(0.6, 'slam'); sf(0.6, 'land', { wt: 3 }); sf(0.6, 'flipUp'); ev(0.6, 'slam');
+    sf(0.8, 'banner'); ev(0.8, 'dropin');
+  } else {
+    ev(0, 'start'); L.push({ t: 0, f: function () { R.loops.gravy = sound(R, 'gravy', { loud: 1 }, true); } });
+    sf(0.1, 'boatHorn');
+    for (var i = 0; i < 9; i++) sf(0.15 + i * 0.05, 'tick');
+    sf(1.1, 'cannon'); ev(1.1, 'jump'); sf(1.25, 'crowd');
+    L.push({ t: 1.5, f: function () { stopLoop(R, 'gravy'); } });
+    L.push({ t: 1.6, f: function () { R.loops.wind = sound(R, 'windFall', { k: 0 }, true); } });
+    S.w.items.forEach(function (it, j) { sf(it.t, 'drop', { quiet: 1, step: j }); });
+    sf(2.95, 'cork');
+    L.push({ t: 3.2, f: function () { stopLoop(R, 'wind'); } }); sf(3.2, 'chuteOpen'); ev(3.2, 'chute');
+    sf(3.6, 'wipe');
+    sf(4.2, 'slam'); sf(4.2, 'land', { wt: 3 }); sf(4.2, 'royale', { short: 1 }); ev(4.2, 'slam');
+    sf(4.25, 'flipUp');
+    sf(4.7, 'banner'); ev(4.7, 'dropin');
+  }
+  L.sort(function (a, b) { return a.t - b.t; });
+  return L;
+}
+function freezeT() { var v = q('introT'); if (v == null) return null; v = parseFloat(v); return isFinite(v) ? Math.max(0, v) : null; }
+
+function play(o) {
+  o = o || {};
+  return new Promise(function (resolve) {
+    var done = false;
+    function fin() { if (!done) { done = true; resolve(); } }
+    try { begin(o, fin); } catch (e) { warn(e); try { if (typeof o.onCue === 'function') o.onCue('fail', 0); } catch (_) {} hardStop(); fin(); }
+  });
+}
+function begin(o, fin) {
+  var onCue = typeof o.onCue === 'function' ? o.onCue : null;
+  if (S.run) { fin(); return; } // never two at once
+  var bail = function (why) { dbg('no intro:', why); S.lastWhy = why; try { if (onCue) onCue('fail', 0); } catch (e) {} fin(); };
+  if (S.failed) return bail('failed earlier this page load');
+  if ((blockedByUrl() && !o.force) || reducedMotion()) return bail('reduced motion / url');
+  if (!webglOK()) return bail('no webgl');
+  if (S.phase === 'ready' && S.w) return start(o, fin);
+  var waited = false, timer = setTimeout(function () { if (!waited) { waited = true; bail('three.js not ready within 2.5 s'); } }, LOAD_MS);
+  preload().then(function (ok) {
+    if (waited) return; waited = true; clearTimeout(timer);
+    if (ok && S.phase === 'ready' && S.w && !S.failed) start(o, fin); else bail('preload failed: ' + S.lastErr);
+  }, function () { if (!waited) { waited = true; clearTimeout(timer); bail('preload threw'); } });
+}
+function start(o, fin) {
+  var w = S.w, T = S.T;
+  SPR = o.sprites || null;
+  var m = o.match || null, L = layoutFor(m);
+  var R = S.run = {
+    o: o, fin: fin, short: !!o.short, onCue: typeof o.onCue === 'function' ? o.onCue : null, L: L, t: 0, lastT: -1, t0: null, lastNow: null,
+    frames: 0, dts: [], cpu: [], loops: {}, flashing: false, flashN: 0, finished: false, freeze: o.freezeAt != null ? +o.freezeAt : freezeT(),
+    wipeN: 0, wipeCol: null, wipeDone: {}, lineN: 0, info: {}, maxTris: 0, maxCalls: 0, reason: 'end'
+  };
+  R.handles = !!(o.cueHandles || (R.onCue && R.onCue.handles === true));
+  R.P = counterTimes(R);
+  var gm = R.gm = {
+    id: (m && m.itemId) || 'card.gym1', x: m && isFinite(+m.x) ? +m.x : 40, laneY: m && isFinite(+m.laneY) ? +m.laneY : 400,
+    dir: m && +m.dir < 0 ? -1 : 1, v: m && isFinite(+m.v) ? Math.abs(+m.v) : 180, sc: m && +m.drawScale > 0 ? +m.drawScale : 1.5,
+    brickTop: m && isFinite(+m.brickTop) ? +m.brickTop : 484, isNew: !!(m && m.isNew)
+  };
+  var brick = m && isFinite(+m.brickTop) ? (m.baseY != null ? +m.baseY : 500) - +m.brickTop : 16;
+  // size the renderer, refit everything that depends on the stage
+  if (w.size.w !== L.RW || w.size.h !== L.RH) { w.renderer.setSize(L.RW, L.RH, false); w.size = { w: L.RW, h: L.RH }; }
+  w.cam.aspect = L.aspect;
+  paintBackdrop(w, L); fitCounter(w, L); fitWallet(w, brick); paintGlider(w, gm);
+  R.cues = cueList(R); R.ci = 0;
+  // overlay
+  var cv = R.ov = D.createElement('canvas');
+  cv.setAttribute('aria-hidden', 'true');
+  sizeOverlay(R);
+  D.body.appendChild(cv);
+  R.g = cv.getContext('2d'); R.g.imageSmoothingEnabled = false;
+  // input: a tap or key after 0.6 s skips; every tap is swallowed while the curtain is up
+  R.onInput = function (e) {
+    try { if (e.cancelable) e.preventDefault(); e.stopImmediatePropagation(); e.stopPropagation(); } catch (_) {}
+    if (e.type === 'keydown' && e.repeat) return;
+    if (e.type === 'pointerdown' || e.type === 'keydown') { if (R.t >= SKIP_AFTER && !R.flashing && R.freeze == null) beginFlash(R, 'skip'); }
+  };
+  ['pointerdown', 'pointerup', 'click', 'keydown', 'keyup'].forEach(function (ev) { W.addEventListener(ev, R.onInput, { capture: true, passive: false }); });
+  R.onVis = function () { if (isHidden()) failRun(R, 'hidden', true); };
+  D.addEventListener('visibilitychange', R.onVis);
+  R.onResize = function () { try { var L2 = layoutFor(null); if (Math.abs(L2.cssW - R.L.cssW) > 1 || Math.abs(L2.cssH - R.L.cssH) > 1) { R.L = L2; sizeOverlay(R); if (w.size.w !== L2.RW || w.size.h !== L2.RH) { w.renderer.setSize(L2.RW, L2.RH, false); w.size = { w: L2.RW, h: L2.RH }; } w.cam.aspect = L2.aspect; paintBackdrop(w, L2); fitCounter(w, L2); } } catch (e) { warn(e); } };
+  W.addEventListener('resize', R.onResize);
+  if (isHidden()) { failRun(R, 'hidden', true); return; }
+  dbg('play', R.short ? 'short' : 'full', 'render', L.RW + 'x' + L.RH, 'css', L.cssW + 'x' + L.cssH, 'stage', JSON.stringify(L.st), 'handles', R.handles);
+  R.raf = schedule(function (ts) { tick(R, ts); });
+}
+function sizeOverlay(R) {
+  var L = R.L, cv = R.ov;
+  cv.width = Math.round(L.cssW * L.dpr); cv.height = Math.round(L.cssH * L.dpr);
+  cv.style.cssText = 'position:fixed;left:0;top:0;width:' + L.cssW + 'px;height:' + L.cssH + 'px;z-index:2147483000;touch-action:none;display:block;background:#0B0B0C;pointer-events:auto;';
+  if (R.g) R.g.imageSmoothingEnabled = false;
+}
+function tick(R, ts) {
+  if (S.run !== R || R.finished) return;
+  R.raf = schedule(function (n) { tick(R, n); });
+  try {
+    if (R.t0 == null) R.t0 = ts;
+    var dt = R.lastNow != null ? ts - R.lastNow : 16.7; R.lastNow = ts; R.frames++;
+    if (R.flashing) { drawFlash(R); return; }
+    if (R.freeze == null && R.frames >= 10 && R.frames <= 40) R.dts.push(dt);
+    if (R.freeze == null && R.frames === 40) { var mean = R.dts.reduce(function (a, b) { return a + b; }, 0) / Math.max(1, R.dts.length); R.meanDt = mean; dbg('frames 10-40 mean', mean.toFixed(2), 'ms'); if (mean > WATCH_MS) { failRun(R, 'watchdog'); drawFlash(R); return; } }
+    var t = R.freeze != null ? R.freeze : (ts - R.t0) / 1000;
+    if (TEST.throwAt != null && t >= TEST.throwAt) { TEST.throwAt = null; throw new Error('test exception'); }
+    if (TEST.loseAt != null && t >= TEST.loseAt) { TEST.loseAt = null; try { var lx = S.w.renderer.getContext().getExtension('WEBGL_lose_context'); if (lx) lx.loseContext(); } catch (_) {} }
+    if (TEST.hideAt != null && t >= TEST.hideAt) { TEST.hideAt = null; TEST.forceHidden = true; try { D.dispatchEvent(new Event('visibilitychange')); } catch (_) {} TEST.forceHidden = false; return; }
+    if (R.freeze == null && t >= R.P.end) { R.t = R.P.end; beginFlash(R, 'end'); drawFlash(R); return; }
+    R.t = t;
+    var c0 = now();
+    while (R.ci < R.cues.length && R.cues[R.ci].t <= t) { var cu = R.cues[R.ci++]; if (R.freeze == null) { try { cu.f(); } catch (e) { warn(e); } } }
+    if (R.loops.wind && typeof R.loops.wind.set === 'function') { try { R.loops.wind.set(kOf(t, 1.6, 3.2)); } catch (e) {} }
+    renderFrame(R, t);
+    if (TEST.slowMs) { var bw = now() + TEST.slowMs; while (now() < bw) { /* simulated slow GPU */ } }
+    R.cpu.push(now() - c0);
+    R.lastT = t;
+  } catch (e) { warn(e); failRun(R, 'exception'); try { drawFlash(R); } catch (_) {} }
+}
+function renderFrame(R, t) {
+  var w = S.w, cam = w.cam, pose = w.pose;
+  camPose(R, t, pose);
+  cam.position.copy(pose.pos); cam.quaternion.copy(pose.q); cam.fov = pose.fov; cam.near = pose.near; cam.far = pose.far; cam.aspect = R.L.aspect;
+  cam.updateProjectionMatrix(); cam.updateMatrixWorld(true);
+  update(R, t);
+  w.renderer.render(w.scene, cam);
+  var inf = w.renderer.info.render, shot = shotName(R, t);
+  if (inf.triangles > R.maxTris) R.maxTris = inf.triangles; if (inf.calls > R.maxCalls) R.maxCalls = inf.calls;
+  var si = R.info[shot] || (R.info[shot] = { tris: 0, calls: 0 }); if (inf.triangles > si.tris) si.tris = inf.triangles; if (inf.calls > si.calls) si.calls = inf.calls;
+  drawOverlay(R, t);
+}
+function shotName(R, t) {
+  if (R.short) return t < 0.25 ? 'S1 roof' : t < 0.6 ? 'S2 swing' : 'S3 drop in';
+  return t < 0.9 ? '1 flyover' : t < 1.6 ? '2 jump' : t < 3.2 ? '3 freefall' : t < 3.9 ? '4 chute' : t < 4.3 ? '5 slam' : '6 drop in';
+}
+/* frame-counted flashes: at least 2 frames, whatever the refresh rate (time window when frozen) */
+function wipeOn(R, key, t, at, frames) {
+  if (t < at) return false;
+  if (R.freeze != null) return t < at + frames / 60;
+  var st = R.wipeDone[key]; if (st == null) { st = R.wipeDone[key] = { n: 0 }; }
+  if (st.n < frames) { st.n++; return true; }
+  return false;
+}
+function drawOverlay(R, t) {
+  var g = R.g, L = R.L, cv = R.ov, w = S.w, P = R.P;
+  g.setTransform(1, 0, 0, 1, 0, 0); g.imageSmoothingEnabled = false; g.globalAlpha = 1;
+  g.drawImage(w.cv, 0, 0, w.size.w, w.size.h, 0, 0, cv.width, cv.height);
+  // full-frame wipes: cream cloud slabs, the ink skylight frame
+  var wipe = null;
+  if (!R.short) { if (wipeOn(R, 'c1', t, 1.9, 2) || wipeOn(R, 'c2', t, 2.5, 2)) wipe = C.cream; }
+  if (wipeOn(R, 'sky', t, P.wipe, 2)) wipe = C.ink;
+  if (wipe) { g.fillStyle = wipe; g.fillRect(0, 0, cv.width, cv.height); }
+  // text, in stage lpx at full resolution
+  var s = L.st.scale * L.dpr; g.setTransform(s, 0, 0, s, L.st.x * L.dpr, L.st.y * L.dpr);
+  if (!R.short) {
+    if (t >= 0.15 && t < 1.5) { var full = '100 WALLETS ABOARD', n = Math.min(full.length, Math.floor((t - 0.15) / 0.025) + 1); txt(g, full.slice(0, n), 180, 132, 3, C.lemon, 'center', true); }
+    if (t >= SKIP_AFTER && t < 3.9) txt(g, 'TAP TO SKIP', 180, 622, 1.5, C.silver, 'center', true);
+    if (P.logo && t >= P.land && t < 5.0) {
+      var lg = artCall('logo', 300) || sprGet('logo', null, 300);
+      if (okC(lg)) { var k = kOf(t, P.land, P.land + 0.1), sc = lerp(1.4, 1, k), lw = lg.width * sc, lh = lg.height * sc; g.drawImage(lg, Math.round(180 - lw / 2), Math.round(250 - lh / 2), Math.round(lw), Math.round(lh)); }
+      else { txt(g, "ROB'S WALLET", 180, 214, 3, C.lemon, 'center', true); txt(g, 'ROYALE', 180, 246, 6, C.gold, 'center', true); }
+    }
+  }
+  if (t >= P.drop && t < P.end) {
+    txt(g, 'DROP IN.', 180, 330 - 17, 5, C.hot, 'center', true);
+    if (wipeOn(R, 'underline', t, P.drop, 1)) { g.fillStyle = '#FFFFFF'; g.fillRect(180 - 122, 330 + 22, 244, 4); }
+  }
+  g.setTransform(1, 0, 0, 1, 0, 0);
+}
+function beginFlash(R, reason) {
+  if (R.flashing) return;
+  R.flashing = true; R.flashN = 0; R.reason = reason;
+  stopLoops(R);
+  if (reason === 'skip') { sound(R, 'slam'); callCue(R, 'skip'); }
+}
+function drawFlash(R) {
+  var g = R.g, cv = R.ov;
+  if (R.flashN >= 2) { finish(R); return; }
+  g.setTransform(1, 0, 0, 1, 0, 0); g.globalAlpha = 1; g.fillStyle = C.cloth; g.fillRect(0, 0, cv.width, cv.height);
+  R.flashN++;
+  if (R.flashN === 2) callCue(R, 'handoff'); // core unfreezes under the second white frame; the glider keeps moving
+}
+function failRun(R, why, immediate) {
+  if (R.finished) return;
+  dbg('fail:', why); R.reason = 'fail:' + why; S.failed = true;
+  stopLoops(R); callCue(R, 'fail');
+  if (immediate || !R.g) { callCue(R, 'handoff'); finish(R); return; }
+  R.flashing = true; R.flashN = 0;
+}
+function finish(R) {
+  if (R.finished) return;
+  R.finished = true;
+  unschedule(R.raf);
+  stopLoops(R);
+  try { ['pointerdown', 'pointerup', 'click', 'keydown', 'keyup'].forEach(function (ev) { W.removeEventListener(ev, R.onInput, { capture: true }); }); } catch (e) {}
+  try { D.removeEventListener('visibilitychange', R.onVis); W.removeEventListener('resize', R.onResize); } catch (e) {}
+  try { if (R.ov && R.ov.parentNode) R.ov.parentNode.removeChild(R.ov); } catch (e) {}
+  if (R.ov) { R.ov.width = R.ov.height = 1; }
+  var cpuMean = R.cpu.length ? R.cpu.reduce(function (a, b) { return a + b; }, 0) / R.cpu.length : 0, cpuMax = R.cpu.length ? Math.max.apply(null, R.cpu) : 0;
+  S.last = { short: R.short, reason: R.reason, frames: R.frames, meanDt10to40: R.meanDt || null, cpuMeanMs: +cpuMean.toFixed(2), cpuMaxMs: +cpuMax.toFixed(2), maxTris: R.maxTris, maxCalls: R.maxCalls, perShot: R.info, render: R.L.RW + 'x' + R.L.RH, handles: R.handles };
+  dbg('done', JSON.stringify(S.last));
+  S.run = null; SPR = null;
+  var fin = R.fin; R.g = null; R.ov = null;
+  if (S.failed) dispose();
+  try { fin(); } catch (e) {}
+}
+function hardStop() { if (S.run) { try { finish(S.run); } catch (e) {} } }
+function contextLost() {
+  dbg('webglcontextlost'); S.failed = true;
+  if (S.run && !S.run.finished) failRun(S.run, 'contextlost');
+  else dispose();
+}
+
+/* ================================================================ PRELOAD / DISPOSE */
+function preload() {
+  if (S.preloadP) return S.preloadP;
+  if (S.failed || blockedByUrl() || reducedMotion() || !webglOK()) return (S.preloadP = Promise.resolve(false));
+  S.phase = 'loading';
+  var t0 = now();
+  S.preloadP = new Promise(function (resolve) {
+    var settled = false, to = setTimeout(function () { if (!settled) { settled = true; dbg('three.js not ready in 2.5 s; still loading'); resolve(false); } }, LOAD_MS);
+    importThree().then(function (mod) {
+      var T = mod && mod.WebGLRenderer ? mod : (mod && mod.default && mod.default.WebGLRenderer ? mod.default : null);
+      if (!T) throw new Error('three.js module has no WebGLRenderer');
+      S.T = T; dbg('three r' + T.REVISION + ' loaded in', (now() - t0).toFixed(0), 'ms');
+      return frameP().then(function () { var b0 = now(); S.w = buildWorld(T); dbg('built in', (now() - b0).toFixed(0), 'ms'); return frameP(); });
+    }).then(function () {
+      warm(); S.phase = 'ready'; dbg('ready in', (now() - t0).toFixed(0), 'ms');
+      clearTimeout(to); if (!settled) { settled = true; resolve(true); }
+    }).catch(function (e) {
+      warn(e); S.failed = true; S.phase = 'failed'; dispose(); clearTimeout(to); if (!settled) { settled = true; resolve(false); }
+    });
+  });
+  return S.preloadP;
+}
+/* compile every program and upload every buffer and texture with one hidden render, everything visible, no culling */
+function warm() {
+  var w = S.w, T = S.T, saved = [];
+  w.scene.traverse(function (o) { saved.push([o, o.visible, o.frustumCulled]); o.visible = true; o.frustumCulled = false; });
+  var R0 = { short: false, L: layoutFor(null), P: null }; R0.P = counterTimes(R0);
+  w.cam.position.set(DX, ROOF + 600, DZ + 1200); w.cam.lookAt(DX, GY, DZ); w.cam.updateMatrixWorld(true);
+  paintBackdrop(w, R0.L); fitCounter(w, R0.L); fitWallet(w, 16); paintGlider(w, { id: 'card.gym1', x: 40, laneY: 400, dir: 1, v: 180, sc: 1.5, brickTop: 484 });
+  w.renderer.compile(w.scene, w.cam);
+  w.renderer.render(w.scene, w.cam);
+  saved.forEach(function (s) { s[0].visible = s[1]; s[0].frustumCulled = s[2]; });
+  w.clouds.forEach(function (c) { c.visible = false; }); w.items.forEach(function (it) { it.g.visible = false; }); w.glider.visible = false;
+  var inf = w.renderer.info; dbg('warm render: programs', inf.programs ? inf.programs.length : '?', 'geometries', inf.memory.geometries, 'textures', inf.memory.textures);
+}
+function dispose() {
+  if (S.run && !S.run.finished) { try { finish(S.run); } catch (e) {} }
+  var w = S.w; S.w = null; if (S.phase === 'ready' || S.phase === 'loading') S.phase = S.failed ? 'failed' : 'disposed';
+  if (!w) return;
+  try { w.cv.removeEventListener('webglcontextlost', w.onLost, false); } catch (e) {}
+  try { w.scene.traverse(function (o) { if (o.isInstancedMesh && o.dispose) o.dispose(); }); } catch (e) {}
+  w.geos.forEach(function (g) { try { g.dispose(); } catch (e) {} });
+  w.mats.forEach(function (m) { try { m.dispose(); } catch (e) {} });
+  w.texs.forEach(function (t) { try { t.dispose(); } catch (e) {} });
+  try { var gl = w.renderer.getContext(), lost = !gl || (gl.isContextLost && gl.isContextLost()); w.renderer.dispose(); if (!lost) w.renderer.forceContextLoss(); } catch (e) {}
+  try { w.cv.width = w.cv.height = 1; } catch (e) {}
+  try { if (PROBE && PROBE_OWN && PROBE.parentNode) PROBE.parentNode.removeChild(PROBE); } catch (e) {} PROBE = null; PROBE_OWN = false;
+  dbg('disposed');
+}
+try { W.addEventListener('pagehide', function () { try { dispose(); } catch (e) {} }); } catch (e) {}
+
+API.available = function () { return available(); };
+API.preload = function () { try { return preload(); } catch (e) { warn(e); return Promise.resolve(false); } };
+API.play = play;
+API.dispose = function () { try { dispose(); } catch (e) {} };
+API.base = null;
+API.REVISION = '170';
+API._debug = function () { return { phase: S.phase, failed: S.failed, running: !!S.run, t: S.run ? S.run.t : null, lastErr: S.lastErr, lastWhy: S.lastWhy || null, last: stats(), base: basePath(), three: S.T ? S.T.REVISION : null }; };
+API._test = TEST;
+/* frame-cost benchmark: renders every 1/60 s of the timeline synchronously and forces a GPU sync (readPixels) per frame */
+API._bench = function (short, match) {
+  if (S.run || S.phase !== 'ready') return null;
+  play({ short: !!short, freezeAt: 0, match: match || null, force: true }); // starts synchronously (frozen, no cues)
+  var R = S.run; if (!R) return null;
+  var gl = S.w.renderer.getContext(), px = new Uint8Array(4), times = [], per = {}, end = R.P.end;
+  for (var t = 0; t < end; t += 1 / 60) {
+    var t0 = now(); renderFrame(R, t); gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, px); var dt = now() - t0; times.push(dt);
+    var sn = shotName(R, t), ps = per[sn] || (per[sn] = { n: 0, sum: 0, max: 0 }); ps.n++; ps.sum += dt; if (dt > ps.max) ps.max = dt;
+  }
+  times.sort(function (x, y) { return x - y; });
+  var out = { frames: times.length, render: R.L.RW + 'x' + R.L.RH, meanMs: +(times.reduce(function (x, y) { return x + y; }, 0) / times.length).toFixed(2), p95Ms: +times[Math.floor(times.length * 0.95)].toFixed(2), maxMs: +times[times.length - 1].toFixed(2), maxTris: R.maxTris, maxCalls: R.maxCalls, perShot: {} };
+  for (var k in per) out.perShot[k] = { meanMs: +(per[k].sum / per[k].n).toFixed(2), maxMs: +per[k].max.toFixed(2), tris: R.info[k] ? R.info[k].tris : null, calls: R.info[k] ? R.info[k].calls : null };
+  R.reason = 'bench'; finish(R); return out;
+};
+API._stop = function () { if (S.run) { S.run.reason = 'stopped'; finish(S.run); } }; // test harness: end a frozen still
+API._reset = function () { // test harness only: forget a failure so the next case can run
+  try { dispose(); } catch (e) {}
+  S.failed = false; S.phase = 'idle'; S.preloadP = null; S.glOK = null; S.lastErr = ''; S.lastWhy = null;
+  for (var k in TEST) TEST[k] = (k === 'throwAt' || k === 'loseAt' || k === 'hideAt' || k === 'timer') ? null : (k === 'slowMs' ? 0 : false);
+};
+W.RWIntro = API;
+})();
+
 </script>
 <script>
 /* ROB'S WALLET ROYALE :: audio.js
