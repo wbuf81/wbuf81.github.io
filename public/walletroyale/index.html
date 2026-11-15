@@ -8760,10 +8760,11 @@ const STEP = 1 / 120;
 const TUNE = {
   // §5.0 ramp. Linear 0..60 s between the *0 and *60 values, then the ceiling.
   // tuned against the §13.4 bot bars (every change logged in DESIGN_QUESTIONS.md; spec values in brackets)
+  rampPow: 1,
   v0: 240, v60: 781, vUp: 14, vMax: 950,                    // [220, 610]
-  L0: 178, L60: 67, LDown: 1.5, LMin: 50,                    // [260, 92]
-  b0: 4.44, bDiv: 2.33, bKnee: 35, bDiv2: 19.83, bEvery: 3,  // [5 + t/6, no knee]
-  T0: 1.98, TSlope: 0.005, TMin: 1.96, T60: 1.8,             // [2.2, 1.9]
+  L0: 178, L60: 56, LDown: 1.5, LMin: 50,                    // [260, 92]
+  b0: 4.44, bDiv: 2.9, bKnee: 42, bDiv2: 4.5, bEvery: 3,  // [5 + t/6, no knee]
+  T0: 2.15, TSlope: 0.006, TMin: 1.96, T60: 1.8,             // [2.2, 1.9]
   in0: 100, inFrom: 45, in60: 80, inDown: 1.5, inMin: 40,
   firstV: 180, firstNeed: 5, firstT: 3.0,
   perfect: 6, stickK: 0.64, plateStick: 24, floorK: 0.6, autoPasses: 2, // [3]
@@ -8790,8 +8791,10 @@ const TUNE = {
   shakeDecay: 0.25, partCap: 220,
 };
 
-function vAt(t) { return t <= 60 ? TUNE.v0 + (TUNE.v60 - TUNE.v0) * Math.max(0, t) / 60 : Math.min(TUNE.vMax, TUNE.v60 + TUNE.vUp * (t - 60)); }
-function LmaxAt(t) { return t <= 60 ? TUNE.L0 + (TUNE.L60 - TUNE.L0) * Math.max(0, t) / 60 : Math.max(TUNE.LMin, TUNE.L60 - TUNE.LDown * (t - 60)); }
+/* user: 'a little bit easier ... hard time getting past 60': the 0..60 ramp is convex (rampPow > 1), so the middle of a run is gentler while 60 s is exactly as hard as before */
+function rampP(t) { return Math.pow(Math.max(0, t) / 60, TUNE.rampPow || 1); }
+function vAt(t) { return t <= 60 ? TUNE.v0 + (TUNE.v60 - TUNE.v0) * rampP(t) : Math.min(TUNE.vMax, TUNE.v60 + TUNE.vUp * (t - 60)); }
+function LmaxAt(t) { return t <= 60 ? TUNE.L0 + (TUNE.L60 - TUNE.L0) * rampP(t) : Math.max(TUNE.LMin, TUNE.L60 - TUNE.LDown * (t - 60)); }
 function baseRaw(t) { t = Math.max(0, t); const k = TUNE.bKnee; return t <= k ? TUNE.b0 + t / TUNE.bDiv : TUNE.b0 + k / TUNE.bDiv + (t - k) / TUNE.bDiv2; }
 function baseAt(t) { return t <= 60 ? Math.round(baseRaw(t)) : Math.round(baseRaw(60)) + Math.floor((t - 60) / TUNE.bEvery); }
 function TAt(t) { return t <= 60 ? Math.max(TUNE.TMin, TUNE.T0 - TUNE.TSlope * Math.max(0, t)) : TUNE.T60; }
