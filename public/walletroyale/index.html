@@ -155,6 +155,9 @@ function xform(ctx) {
   try { if (ctx.getTransform) return ctx.getTransform(); } catch (e) {}
   return null;
 }
+/* RULINGS 16B: presentation strength set by core (RWArt.setFx): rays (ray-bursts) and glow (glider glow radius), 0..1, default 1 */
+var FXK = { rays: 1, glow: 1 };
+function setFx(o) { o = o || {}; if (o.rays != null && isFinite(+o.rays)) FXK.rays = Math.max(0, Math.min(1, +o.rays)); if (o.glow != null && isFinite(+o.glow)) FXK.glow = Math.max(0, Math.min(1, +o.glow)); return { rays: FXK.rays, glow: FXK.glow }; }
 /* the never-throw wrapper */
 function safe(fn, fallback) {
   return function () {
@@ -3294,7 +3297,7 @@ function drawSlam(ctx, str, sub, t, opts) {
   if (opts.dim) { ctx.fillStyle = 'rgba(11,11,12,' + (+opts.dim) + ')'; ctx.fillRect(-200, -200, 760, 1040); }
   /* rays, slowly turning */
   var rc = raysCanvas(), rs = 1.1 + 0.15 * Math.sin(t * 3);
-  ctx.save(); ctx.translate(180, cy); ctx.rotate(t * 0.6); ctx.scale(rs, rs); ctx.drawImage(rc, -rc.width / 2, -rc.height / 2); ctx.restore();
+  ctx.save(); ctx.globalAlpha *= FXK.rays; ctx.translate(180, cy); ctx.rotate(t * 0.6); ctx.scale(rs, rs); ctx.drawImage(rc, -rc.width / 2, -rc.height / 2); ctx.restore();
   /* the band: a slanted ink stripe with candle edges */
   var bh = blockH + 28 + (sub ? 34 : 0), bk = easeOut(t / 0.1);
   ctx.save(); ctx.translate(180, cy + (sub ? 16 : 0)); ctx.rotate(-0.06); ctx.scale(bk, 1);
@@ -4901,7 +4904,7 @@ function drawShowcase(ctx, id, x, y, w, h, opts) {
   ctx.save(); ctx.imageSmoothingEnabled = false;
   ctx.fillStyle = 'rgba(11,11,12,0.78)'; ctx.fillRect(x, y, w, h);
   ctx.save(); ctx.beginPath(); ctx.rect(x + 2, y + 2, w - 4, h - 4); ctx.clip();
-  var rc = tierRays(tier); ctx.globalAlpha *= tier === 'common' ? 0.35 : 0.6; ctx.translate(x + 105, y + h / 2); ctx.rotate(t * 0.25); ctx.drawImage(rc, -rc.width / 2, -rc.height / 2);
+  var rc = tierRays(tier); ctx.globalAlpha *= (tier === 'common' ? 0.35 : 0.6) * FXK.rays; ctx.translate(x + 105, y + h / 2); ctx.rotate(t * 0.25); ctx.drawImage(rc, -rc.width / 2, -rc.height / 2);
   ctx.restore();
   ctx.fillStyle = col; ctx.fillRect(x, y, w, 2); ctx.fillRect(x, y + h - 2, w, 2); ctx.fillRect(x, y, 2, h); ctx.fillRect(x + w - 2, y, 2, h);
   ctx.fillStyle = K.ink; ctx.fillRect(x + 2, y + 2, w - 4, 1); ctx.fillRect(x + 2, y + h - 3, w - 4, 1);
@@ -5026,7 +5029,8 @@ function drawGlider(ctx, id, cx, cy, t, opts) {
   }
   /* the glow behind uncommon-or-better */
   var glowOn = opts.glow != null ? !!opts.glow : true;
-  if (glowOn && tier !== 'common') { var pul = 0.65 + 0.35 * Math.sin(t * 5); drawGlow(ctx, cx, cy, fw + 46, fh + 40, tier, (tier === 'uncommon' ? 0.55 : 0.85) * pul); }
+  var gk = opts.glowK != null && isFinite(+opts.glowK) ? c01(+opts.glowK) : FXK.glow; /* RULINGS 16B: calm = a smaller glow */
+  if (glowOn && tier !== 'common') { var pul = 0.65 + 0.35 * Math.sin(t * 5); drawGlow(ctx, cx, cy, fw + 46 * gk, fh + 40 * gk, tier, (tier === 'uncommon' ? 0.55 : 0.85) * pul * (0.6 + 0.4 * gk)); }
   if (opts.hop) {
     ctx.fillStyle = 'rgba(255,255,255,0.5)';
     for (var hi = 1; hi < 5; hi++) ctx.fillRect(Math.round(cx - hi * 7 * (opts.dir || 1)), Math.round(cy + hi * hi * 1.2), 2, 2);
@@ -5997,7 +6001,7 @@ function drawSlamRW(ctx, str, sub, t, opts) {
 function drawRoyaleHits(ctx, hits, sub, t, opts) {
   var size = 5, lh = 7 * size + 10, cy = opts.y != null ? +opts.y : 296, top = cy - (hits.length * lh - 10) / 2;
   if (opts.dim) { ctx.fillStyle = 'rgba(11,11,12,' + (+opts.dim) + ')'; ctx.fillRect(-200, -200, 760, 1040); }
-  var rc = raysCanvas(), rs = 1.2 + 0.15 * Math.sin(t * 3); ctx.save(); ctx.translate(180, cy); ctx.rotate(t * 0.6); ctx.scale(rs, rs); ctx.drawImage(rc, -rc.width / 2, -rc.height / 2); ctx.restore();
+  var rc = raysCanvas(), rs = 1.2 + 0.15 * Math.sin(t * 3); ctx.save(); ctx.globalAlpha *= FXK.rays; ctx.translate(180, cy); ctx.rotate(t * 0.6); ctx.scale(rs, rs); ctx.drawImage(rc, -rc.width / 2, -rc.height / 2); ctx.restore();
   var bh = hits.length * lh + 30; ctx.save(); ctx.translate(180, cy); ctx.rotate(-0.06); ctx.fillStyle = 'rgba(11,11,12,0.86)'; ctx.fillRect(-250, -bh / 2, 500, bh); ctx.fillStyle = K.gold; ctx.fillRect(-250, -bh / 2 - 3, 500, 3); ctx.fillRect(-250, bh / 2, 500, 3); ctx.restore();
   for (var i = 0; i < hits.length; i++) {
     var ht = t - i * 0.3; if (ht < 0) continue;
@@ -6233,7 +6237,7 @@ function drawChallengeCard(ctx, t) {
   /* 1 V 1: hot from the left, cyan from the right, a lightning seam */
   ctx.fillStyle = '#3A0A24'; ctx.beginPath(); ctx.moveTo(-200, -200); ctx.lineTo(230, -200); ctx.lineTo(130, 840); ctx.lineTo(-200, 840); ctx.fill();
   ctx.fillStyle = '#062A30'; ctx.beginPath(); ctx.moveTo(230, -200); ctx.lineTo(560, -200); ctx.lineTo(560, 840); ctx.lineTo(130, 840); ctx.fill();
-  var rc = raysCanvas(); ctx.save(); ctx.globalAlpha = 0.6; ctx.translate(180, 300); ctx.rotate(t * 0.3); ctx.drawImage(rc, -240, -240); ctx.restore();
+  var rc = raysCanvas(); ctx.save(); ctx.globalAlpha = 0.6 * FXK.rays; ctx.translate(180, 300); ctx.rotate(t * 0.3); ctx.drawImage(rc, -240, -240); ctx.restore();
   ctx.fillStyle = '#FFFFFF'; for (var y = -10; y < 660; y += 4) { var x = lerp(230, 130, (y + 200) / 1040) + Math.round(Math.sin(y * 0.3 + t * 20) * 3); ctx.fillRect(Math.round(x), y, 2, 4); }
   /* the loot card */
   var cx0 = 24, cy0 = 70, cw = 312, ch = 430;
@@ -6825,7 +6829,7 @@ function drawBurstCard(ctx, x, y, w, h, t) {
   ctx.fillStyle = 'rgba(11,11,12,' + (0.6 * c01(k * 3)).toFixed(3) + ')'; ctx.fillRect(-200, -200, 760, 1040);
   ctx.translate(rc.x + rc.w / 2, rc.y + rc.h / 2); ctx.rotate(-0.04 * (1 - e)); ctx.scale(lerp(0.5, 1, Math.min(1, e)), lerp(0.5, 1, Math.min(1, e)));
   var hw = rc.w / 2, hh = rc.h / 2;
-  var rays = raysCanvas(); ctx.save(); ctx.rotate(t * 0.5); ctx.globalAlpha *= 0.8; ctx.drawImage(rays, -rays.width / 2, -rays.height / 2); ctx.restore();
+  var rays = raysCanvas(); ctx.save(); ctx.rotate(t * 0.5); ctx.globalAlpha *= 0.8 * FXK.rays; ctx.drawImage(rays, -rays.width / 2, -rays.height / 2); ctx.restore();
   ctx.fillStyle = K.ink; ctx.fillRect(-hw - 4, -hh - 4, rc.w + 8, rc.h + 8);
   ctx.fillStyle = K.hot; ctx.fillRect(-hw - 2, -hh - 2, rc.w + 4, rc.h + 4);
   ctx.fillStyle = '#1A0E14'; ctx.fillRect(-hw, -hh, rc.w, rc.h);
@@ -6851,7 +6855,7 @@ function drawReveal(ctx, id, k, data) {
   ctx.save(); ctx.imageSmoothingEnabled = false;
   ctx.fillStyle = 'rgba(11,11,12,' + (0.7 * c01(k * 6)).toFixed(3) + ')'; ctx.fillRect(-200, 94, 760, 424);
   ctx.save(); ctx.beginPath(); ctx.rect(-200, 94, 760, 424); ctx.clip();
-  var rc = tierRays(tier); ctx.globalAlpha *= c01(k * 4); ctx.translate(180, 232); ctx.rotate(t * 0.35); ctx.scale(1.4, 1.4); ctx.drawImage(rc, -rc.width / 2, -rc.height / 2); ctx.restore();
+  var rc = tierRays(tier); ctx.globalAlpha *= c01(k * 4) * FXK.rays; ctx.translate(180, 232); ctx.rotate(t * 0.35); ctx.scale(1.4, 1.4); ctx.drawImage(rc, -rc.width / 2, -rc.height / 2); ctx.restore();
   /* the face */
   var f = itemFace(id), s = Math.min(2.5, 320 / f.width, 120 / f.height);
   if (tier === 'legendary' || tier === 'epic') drawGlow(ctx, 180, 232, f.width * s + 80, f.height * s + 70, tier, 0.9 * e);
@@ -7271,7 +7275,7 @@ function drawCleanFold(ctx, cx, cy, k, t, opts) {
   var slam = c01(k / 0.14), sc = lerp(2.6, 1, easeOut(slam)), fade = 1 - c01((k - 0.82) / 0.18);
   ctx.save(); ctx.imageSmoothingEnabled = false; ctx.globalAlpha *= fade * c01(slam * 3);
   /* the flourish: gold rays and a sweep of sparkles round the stamp */
-  if (slam >= 1) { var rc = tierRays('legendary'); ctx.save(); ctx.translate(cx, cy); ctx.rotate(t * 0.5); ctx.globalAlpha *= 0.55; ctx.scale(0.75, 0.5); ctx.drawImage(rc, -rc.width / 2, -rc.height / 2); ctx.restore(); }
+  if (slam >= 1) { var rc = tierRays('legendary'); ctx.save(); ctx.translate(cx, cy); ctx.rotate(t * 0.5); ctx.globalAlpha *= 0.55 * FXK.rays; ctx.scale(0.75, 0.5); ctx.drawImage(rc, -rc.width / 2, -rc.height / 2); ctx.restore(); }
   ctx.translate(Math.round(cx), Math.round(cy)); ctx.rotate(-0.07); ctx.scale(sc, sc);
   ctx.fillStyle = K.ink; ctx.fillRect(-bw / 2 - 3, -bh / 2 - 3, bw + 6, bh + 6);
   ctx.fillStyle = '#0E3A22'; ctx.fillRect(-bw / 2, -bh / 2, bw, bh);
@@ -7338,6 +7342,7 @@ var api = {
   drawPinnedFace: wrap(drawPinnedFace, null), drawLootCell: wrap(drawLootCell, null), drawLootTab: wrap(drawLootTab, null), lootSilhouette: wrap(lootSilhouette, empty),
   drawLandingGuide: wrap(drawLandingGuide, noop), drawGradePop: wrap(drawGradePop, null), drawCleanFold: wrap(drawCleanFold, null), drawFloorHit: wrap(drawFloorHit, noop),
   GLIDER_V2: true, WALLET_V2: true, GUIDE_V2: true, METER_V2: true, BOAT_SCALE: true, DARK_FX: true, GRADES: GRADE,
+  setFx: wrap(setFx, null), /* RULINGS 16B */
   drawMutationFx: wrap(drawMutationFx, noop), drawSlot: wrap(drawSlot, noop), drawStockCrash: wrap(drawStockCrash, noop), drawMeasureObject: wrap(drawMeasureObject, noop),
   _debug: false
 };
@@ -8724,6 +8729,7 @@ W.RWIntro = API;
   var beatQ = [], beatSubs = [], kicks = [], timer = null, muffleHz = null;
   var duckV = 1, voiceCap = 260, D = null, loops = [];
   var heat = 0, heatC = 0;               // music heat layer (combo): target, and the value latched at the bar line
+  var sameCap = 0, capEnd = 0, ACT = Object.create(null); // RULINGS 16E: at most sameCap voices of one SFX at once (0 = off); capEnd = the last voice end of the call being made
   var MUSIC_G = 0.62, DUCK_G = 0.25;
 
   function warn(e) { errors++; lastErr = String(e && e.message || e) + (e && e.stack ? ' @ ' + String(e.stack).split('\n').slice(1, 7).join(' | ') : ''); }
@@ -8790,7 +8796,7 @@ W.RWIntro = API;
     };
   }
   function overCap() { return !N.spans && N.n > voiceCap; }
-  function rec(t, d) { if (N.spans) N.spans.push([t, t + d + 0.05]); }
+  function rec(t, d) { if (t + d + 0.05 > capEnd) capEnd = t + d + 0.05; if (N.spans) N.spans.push([t, t + d + 0.05]); }
   // oscillator voice. o: f1 slide target, slide secs, det cents, att, sus (release secs), lp/lp1/q, hp, cl (extra nodes to free)
   function tone(dest, type, f, t, dur, g, o) {
     if (overCap() || !(g > 0)) return;
@@ -9884,7 +9890,8 @@ W.RWIntro = API;
 
   // run one SFX through its own trim gain (so levels can be balanced per sound)
   function callSfx(key, fn, o, t) {
-    var out = ctx.createGain(); out.gain.value = TRIM[key] || 1; out.connect(sfxBus);
+    var vol = o && +o.vol > 0 ? Math.min(2, +o.vol) : 1; // RULINGS 16E: an optional per-call volume (calm stings, softer COMMON landings)
+    var out = ctx.createGain(); out.gain.value = (TRIM[key] || 1) * vol; out.connect(sfxBus);
     var prev = D, r; D = out;
     try { r = fn(t, o); } finally { D = prev; }
     var disc = function () { try { out.disconnect(); } catch (_) {} };
@@ -9956,6 +9963,7 @@ W.RWIntro = API;
   });
   API.setIntensity = safe(function (x) { x = +x; if (!(x === x)) return; x = Math.max(0, Math.min(1, x)); if (!unlocked) { intensity = x; return; } pend.I = x; });
   API.setHeat = safe(function (x) { x = +x; if (!(x === x)) return; heat = Math.max(0, Math.min(1, x)); });
+  API.setSameCap = safe(function (n) { n = Math.round(+n || 0); sameCap = n > 0 ? Math.min(8, n) : 0; if (!sameCap) ACT = Object.create(null); }); // RULINGS 16E (0 = off)
   API.setTempoMul = safe(function (m) { m = +m; if (m > 0.2 && m < 4) tempoMul = m; });
   API.setTranspose = safe(function (s) { s = +s; if (s === s) trans = Math.max(-12, Math.min(12, s)); });
   API.setMuffle = safe(function (hz, secs) {
@@ -9967,12 +9975,16 @@ W.RWIntro = API;
   API.sfx = safe(function (name, opts) {
     if (!live() || ctx.state === 'suspended') return;
     var e = SFXL[String(name).toLowerCase()]; if (!e || typeof e.f !== 'function') return;
-    return callSfx(e.k, e.f, opts || {}, now() + 0.01);
+    var t0 = now(), act = null;
+    if (sameCap > 0) { act = ACT[e.k] || (ACT[e.k] = []); for (var i = act.length - 1; i >= 0; i--) if (act[i] <= t0) act.splice(i, 1); if (act.length >= sameCap) return; }
+    capEnd = 0; var r = callSfx(e.k, e.f, opts || {}, t0 + 0.01);
+    if (act && !(r && r._loop) && capEnd > t0) act.push(capEnd);
+    return r;
   });
   API.sting = safe(function (name, opts) {
     if (!live() || ctx.state === 'suspended') return;
     name = String(name).toLowerCase(); if (!Object.prototype.hasOwnProperty.call(STING, name)) return;
-    callSfx('sting_' + name, function (t) { stingFn(name, t, opts && typeof opts === 'object' ? opts : null); }, {}, now() + 0.01);
+    callSfx('sting_' + name, function (t) { stingFn(name, t, opts && typeof opts === 'object' ? opts : null); }, { vol: opts && opts.vol }, now() + 0.01);
   });
   API.tapeStop = safe(function () {
     if (!unlocked || !ctx) return;
@@ -10108,30 +10120,31 @@ const TUNE = {
   // §5.0 ramp. Linear 0..60 s between the *0 and *60 values, then the ceiling.
   // tuned against the §13.4 bot bars (every change logged in DESIGN_QUESTIONS.md; spec values in brackets)
   rampPow: 1,
-  v0: 240, v60: 781, vUp: 14, vMax: 950,                    // [220, 610]
-  L0: 178, L60: 56, LDown: 1.5, LMin: 50,                    // [260, 92]
-  b0: 4.44, bDiv: 2.9, bKnee: 42, bDiv2: 4.5, bEvery: 3,  // [5 + t/6, no knee]
+  v0: 240, v60: 800, vUp: 14, vMax: 950,                    // [220, 610]; RULINGS 16H: v60 781 -> 800
+  L0: 178, L60: 52, LDown: 1.5, LMin: 50,                    // [260, 92]; RULINGS 16H: L60 56 -> 52
+  b0: 4.44, bDiv: 2.5, bKnee: 42, bDiv2: 9, bEvery: 3,  // [5 + t/6, no knee]; RULINGS 16H: bDiv 2.9 -> 2.5, bDiv2 4.5 -> 9 (more taps at every t >= 42 s, see DESIGN_QUESTIONS)
   T0: 2.15, TSlope: 0.006, TMin: 1.96, T60: 1.8,             // [2.2, 1.9]
-  in0: 100, inFrom: 45, in60: 80, inDown: 1.5, inMin: 40,
+  in0: 100, inFrom: 50, in60: 80, inDown: 1.5, inMin: 40, // RULINGS 16D: the storm (the narrowing pocket and its walls) from 50 s [45]
   firstV: 180, firstNeed: 5, firstT: 3.0,
   perfect: 6, stickK: 0.64, plateStick: 24, floorK: 0.6, autoPasses: 2, // [3]
   quota: [5, 6, 7, 8],
   hamzahK: 0.6, bonusN: 10, bonusDur: 4.0, catchW: 90, bonusFirst: 2, bonusEvery: 3, bonusV0: 260, bonusV1: 340, bonusKeys: 420, // hamzahK [0.5]
-  legVals: [5, 8, 12, 15], royaleBonus: 10, cursedP: 0.35, cursedFrom: 12, fishBonus: 3, dolceP: 0.6, dolceFrom: 14, tiltDeg: 18, // V2: dolceFrom 20 -> 14
+  legVals: [5, 8, 12, 15], royaleBonus: 10, cursedP: 0.35, cursedFrom: 15, fishBonus: 3, dolceP: 0.6, dolceFrom: 20, dolceGap: 12, tiltDeg: 18, // RULINGS 16D: cursed 12 -> 15, Dolce 14 -> 20 and one act per 12 s
   fall: 0.12, overrun: 0.12, stuffIgnore: 0.5, closeIn: 0.45, snapStop: 0.22, snapFlop: 0.4, hugT: 1.0, dieT: 1.1,    // V2: closeIn 0.25 -> 0.45 (the CLOSE IT! cut), snapStop 0.2 -> 0.28
   slamLeg: 1.0, slamMut: 0.5, slamGen: 0.55, slamFirstSnap: 0.9, measureStop: 0.25, royaleStop: 1.4, royaleIgnore: 0.5, // V2: MEASURE lite 0.25; three-hit royale 1.4; freeze budget: slamMut 0.75 -> 0.5, slamGen 0.7 -> 0.55
   // V2 feel / loot / close / rules (DESIGN_V2 §3–§7)
   perfectStop: 0.045, legStop: 0.10, plateStop: 0.14, nice: 20, revealT: 2.4, revealSkip: 0.6, approveStop: 0.7, swellT: 0.25,
   burstCardT: 1.2, burstCardSkip: 0.4, revealMax: 14.4, practiceNeed: 5, secondTMul: 1.5, teeter: 0.40, slotW: 10, slotBonus: 2, feedEvery: 7,
-  measureGap: 1.0, giftSlam: 0.6, boxCardT: 2.8, satBy: 9.5, laneMin: 264, // laneMin: V2 §2.4 said 250; art's 1.5x canopy + tier tab needs 264 to stay below y 186
+  measureGap: 1.0, giftSlam: 0.6, boxCardT: 2.8, laneMin: 264, // laneMin: V2 §2.4 said 250; art's 1.5x canopy + tier tab needs 264 to stay below y 186
   // RULINGS 15: aim is the core skill. Grades are fractions of the narrower width (clamped wMin..wMax); lean comes from SLOPPY/MISS only
   gPerfect: 0.08, gNice: 0.22, gSloppy: 0.50, gWMin: 48, gWMax: 120, firstWide: 1.6, perfectBonus: 1, perfectLeanK: 0.8,
   sloppyK: 1.5, missShove: 70, satLean: 8, cleanBonus: 2, stickTaps: 3, leanTaps: 6, cleanDiscount: 4,
   swayL: 22, swayF: 2.0, swayZeta: 0.18, swayDrive: 5, swayImp: 70,
   wipeSlap: 0.3, wipeNapkin: 0.35, readyT: 0.6, handT: 0.45,
   flutter: 14, roll: 12, greasyNext: 10, grease: 18, spey: 10, satShift: 3, birdsShift: 8, birdsEvery: 4.0, birdsTele: 0.6,
-  hungryEvery: 1.8, hungryShut: 0.45, hungryGrowl: 0.3, mutFrom: 7, // V2: 12 -> 7 (fold 3 is HE SAT ON IT)
-  twoMutFrom: 40, stormFrom: 30,
+  hungryEvery: 1.8, hungryShut: 0.45, hungryGrowl: 0.3,
+  // RULINGS 16D: none before 15 s; the disorienting ones (MUT_HARD) not before 30 s; never two at once before 50 s; >= 6 s of plain stacking between; the storm from 50 s
+  mutFrom: 15, mutHardFrom: 30, twoMutFrom: 50, mutGap: 6, stormFrom: 50, oneThing: 1,
   serveOnDrop: 1, enterGuard: 0.12, hugFromClose: 1, squirtFromClose: 1, stockDur: 2.0, laneL: 40, laneR: 320, laneGap: 40, shadowOn: 10, shadowOff: 15,
   catWalk: 110, catTele: 0.6, catSit: 3.0, catPaw: 1.2, catChase: 3.2, catWatch: 20,
   payoutT: 1.6, payoutSkip: 0.8, receiptPrint: 0.9, danceT: 2.0,
@@ -10514,9 +10527,12 @@ function au(name) {
   try { return A[name].apply(A, args); } catch (e) { AUERR.n++; if (DEBUG && AUERR.n < 20) console.warn('RWAudio.' + name, e); return undefined; }
 }
 function sfx(name, opts) { if (HEADLESS) return undefined; return au('sfx', name, opts || {}); }
-function sting(n, o) { if (HEADLESS) return; if (o) au('sting', n, o); else au('sting', n); }
+function sting(n, o) { if (HEADLESS) return; if (!fxWild()) o = Object.assign({}, o || {}, { vol: 0.7 }); if (o) au('sting', n, o); else au('sting', n); } // RULINGS 16E: calm stings -30%
 const MUS = { scene: null, intensity: -1, tempo: 1, transpose: 0, muffle: null };
 function music(scene, opts) { if (MUS.scene === scene && scene !== 'close' && scene !== 'bonus') return; MUS.scene = scene; au('setScene', scene, opts); }
+// RULINGS 16E (CALM): the run music tops out near 0.7 before 45 s and reaches full only for the last stretch; the heat layer waits for combo 8
+function runIntensity(t) { if (fxWild()) return t / 60; return t < 45 ? 0.7 * Math.min(1, t / 45) : t < 60 ? 0.7 + 0.3 * (t - 45) / 15 : 1; }
+function heatFor(combo) { return fxWild() ? Math.min(1, combo / 6) : combo >= 8 ? Math.min(1, (combo - 6) / 6) : 0; }
 function musicIntensity(x) { x = clamp(x, 0, 1); if (Math.abs(MUS.intensity - x) < 0.01) return; MUS.intensity = x; au('setIntensity', x); }
 function musicTempo(m) { if (Math.abs(MUS.tempo - m) < 0.002) return; MUS.tempo = m; au('setTempoMul', m); }
 function musicTranspose(s) { if (MUS.transpose === s) return; MUS.transpose = s; au('setTranspose', s); }
@@ -10533,7 +10549,7 @@ function loopsOff() { for (const k of Object.keys(LOOPS)) loopOff(k); }
 const SAVE_KEY = 'walletroyale.v1';
 // V2 adds seen flags (teach-once lines) and met / loot / boardSeen. Same key, v: 1; new keys are merged over freshSave() (DESIGN_V2 §11.4).
 const SEEN_KEYS = ['tap', 'mash', 'stick', 'cursed', 'bonus', 'meter', 'tiltHint', 'legend', 'lean', 'slot', 'perfect', 'burst'];
-function freshSave() { return { v: 1, name: '', best: 0, bestTenths: 0, bestSecs: 0, royales: 0, runs: 0, muted: false, tilt: false, scores: [], rivals: [], daily: { day: 0, best: 0, first: null }, seen: { tap: 0, mash: 0, stick: 0, cursed: 0, bonus: 0, meter: 0, tiltHint: 0, legend: 0, lean: 0, slot: 0, perfect: 0, burst: 0 }, stock: 0, met: {}, loot: {}, boardSeen: { t: 0, above: [] } }; }
+function freshSave() { return { v: 1, name: '', best: 0, bestTenths: 0, bestSecs: 0, royales: 0, runs: 0, muted: false, tilt: false, scores: [], rivals: [], daily: { day: 0, best: 0, first: null }, seen: { tap: 0, mash: 0, stick: 0, cursed: 0, bonus: 0, meter: 0, tiltHint: 0, legend: 0, lean: 0, slot: 0, perfect: 0, burst: 0 }, stock: 0, met: {}, loot: {}, boardSeen: { t: 0, above: [] }, fx: 'calm' }; }
 const isObj = (o) => !!o && typeof o === 'object' && !Array.isArray(o);
 function loadSave() {
   try {
@@ -10541,12 +10557,18 @@ function loadSave() {
     if (s && s.v === 1) {
       const f = freshSave();
       return Object.assign(f, s, { seen: Object.assign(f.seen, s.seen || {}), daily: Object.assign(f.daily, s.daily || {}), scores: Array.isArray(s.scores) ? s.scores : [], rivals: Array.isArray(s.rivals) ? s.rivals : [],
-        met: isObj(s.met) ? s.met : {}, loot: isObj(s.loot) ? s.loot : {}, boardSeen: isObj(s.boardSeen) ? { t: +s.boardSeen.t || 0, above: Array.isArray(s.boardSeen.above) ? s.boardSeen.above : [] } : { t: 0, above: [] } });
+        fx: s.fx === 'wild' ? 'wild' : 'calm', met: isObj(s.met) ? s.met : {}, loot: isObj(s.loot) ? s.loot : {}, boardSeen: isObj(s.boardSeen) ? { t: +s.boardSeen.t || 0, above: Array.isArray(s.boardSeen.above) ? s.boardSeen.above : [] } : { t: 0, above: [] } });
     }
   } catch (e) { }
   return freshSave();
 }
 let SAVE = loadSave();
+/* RULINGS 16F: FX intensity, CALM (default) or WILD, saved as SAVE.fx. Cosmetic only: no gameplay, timing, run clock, score,
+   RW.log or seeded thing ever reads it, so both settings share one leaderboard. ?fx=wild|calm overrides it for one page load. */
+const FX_Q = (QS.get('fx') || '').toLowerCase();
+function fxWild() { return FX_Q === 'wild' ? true : FX_Q === 'calm' ? false : SAVE.fx === 'wild'; }
+function applyFx() { const w = fxWild(); artX('setFx', { rays: w ? 1 : 0.5, glow: w ? 1 : 0.6 }); au('setSameCap', w ? 0 : 2); }
+function toggleFx() { SAVE.fx = fxWild() ? 'calm' : 'wild'; persist(); applyFx(); if (G.scene === 'title') titleButtons(); }
 function persist() { try { localStorage.setItem(SAVE_KEY, JSON.stringify(SAVE)); } catch (e) { } }
 function isSeen(k) { return OPT.skip || !!SAVE.seen[k]; }
 function markSeen(k) { if (!SAVE.seen[k]) { SAVE.seen[k] = 1; persist(); } }
@@ -10565,12 +10587,13 @@ const G = {
   boardTab: 0, boardSel: -1, tilt: { state: 'off', avail: false, gamma: null, lastEvT: -1, waitT: 0, listening: false, blocked: false, simGamma: 0 },
   keys: {}, pointerX: null, pointerDown: false, titleIdle: 0,
   reveal: null, approve: null, stopAfter: [], lootPage: 0, lootTab: 0, lootView: null, rivalQ: [], rivalT: -9, tick: 0,
+  fxSlam: null, fxQ: [], fxT: 0, logT: 0, // RULINGS 16F: WILD-only SLAMs (a pure presentation pause) and the clock RW.log's t reads (sim time minus those pauses)
 };
 let R = null; // the live run
 const LOG = [];
 const RIVAL_LOG = []; // V2 §8: rivalry is cosmetic and never writes RW.log
 function rivalEv(ev, data) { RIVAL_LOG.push({ t: R ? +R.clock.toFixed(3) : 0, ev, data: data || {} }); if (RIVAL_LOG.length > 400) RIVAL_LOG.shift(); }
-function logEv(ev, data) { LOG.push({ t: +G.simT.toFixed(3), c: R ? +R.clock.toFixed(3) : 0, lt: R ? +R.liveT.toFixed(3) : 0, ev, data: data || {} }); if (LOG.length > 6000) LOG.shift(); if (DEBUG && ev !== 'serve' && ev !== 'land') console.log('[RW]', ev, JSON.stringify(data || {})); }
+function logEv(ev, data) { LOG.push({ t: +G.logT.toFixed(3), c: R ? +R.clock.toFixed(3) : 0, lt: R ? +R.liveT.toFixed(3) : 0, ev, data: data || {} }); if (LOG.length > 6000) LOG.shift(); if (DEBUG && ev !== 'serve' && ev !== 'land') console.log('[RW]', ev, JSON.stringify(data || {})); }
 
 const cv = typeof document !== 'undefined' && document.getElementById ? document.getElementById('cv') : null;
 const ctx = cv && cv.getContext ? cv.getContext('2d') : null;
@@ -10745,8 +10768,16 @@ function tiltLive() { return (G.tilt.state === 'on' || OPT.tiltSim) && portrait(
    Minimum on screen: announcer 1.2 s, small 1.8 s, bubble 1.5 s. Queued lines older than 2.5 s are dropped.
    Rob's bubbles live in the commentary box's lower half, so they share it with the small line (never both).
    ===================================================================== */
-const CO = { ann: { cur: null, q: [] }, sm: { cur: null, q: [] }, bub: { cur: null, q: [] } };
+const CO = { ann: { cur: null, q: [] }, sm: { cur: null, q: [] }, bub: { cur: null, q: [] }, lineAt: -99, banAt: -99 };
 const CO_MIN = { ann: 1.2, sm: 1.8, bub: 1.5 }, CO_MAXAGE = 2.5;
+/* RULINGS 16C (CALM): the announcer slot shows at most one line every 3.5 s and one banner every 5 s, each for >= 2.0 s.
+   Priority: 3 = the death line (always at once), 2 = what just happened to the PLAYER (grade consequences, why, the rule a
+   moment brings, a star's own line), 1 = colour. A waiting higher-priority item cuts the current one to its 2.0 s minimum;
+   colour that cannot get on within 2.5 s is dropped, player lines wait up to 6 s. WILD keeps the V2 director. */
+const CALM = { annMin: 2.0, lineGap: 3.6, banGap: 5.2, age: [2.5, 2.5, 6.0, 99], cardAge: 8.0 }; // gaps carry a frame or two of margin over 3.5 / 5.0
+const isBan = (x) => !!x && (x.style === 'banner' || x.style === 'measure' || x.style === 'rival' || x.style === 'calm' || x.col === 'gold');
+function annMin() { return fxWild() ? CO_MIN.ann : CALM.annMin; }
+function calmCovered() { return !fxWild() && G.scene === 'play' && !!R && ((!!G.slam && G.hitstop > 0.002) || !!G.reveal); }
 function durOf(text, kind) { const n = String(text).length; return kind === 'ann' ? clamp(0.8 + 0.045 * n, 1.3, 2.4) : kind === 'sm' ? clamp(1.2 + 0.05 * n, 1.9, 3.2) : clamp(1.0 + 0.05 * n, 1.6, 2.8); }
 function inClose() { return !!(R && G.scene === 'play' && (R.phase === 'closing' || R.phase === 'close')); }
 function boxCardUp() { return !!(CO.ann.cur && CO.ann.cur.style === 'card'); }
@@ -10765,46 +10796,73 @@ function coPush(kind, it) {
   coPump(kind);
 }
 function coPump(kind) {
-  const ch = CO[kind]; if (ch.cur) return;
+  const ch = CO[kind];
+  if (kind === 'ann' && !fxWild()) { coPumpCalm(ch); return; }
+  if (ch.cur) return;
   while (ch.q.length && G.simT - ch.q[0].born > CO_MAXAGE) ch.q.shift();
   if (ch.q.length && !coBlocked(kind, ch.q[0])) { ch.cur = ch.q.shift(); ch.cur.t = 0; if (kind === 'ann' && ch.cur.sfx) sfx(ch.cur.sfx); }
 }
+function annAge(x) { return x.style === 'card' ? CALM.cardAge : isBan(x) ? CALM.age[Math.max(2, x.pri || 1)] : CALM.age[x.pri || 1]; }
+function coPumpCalm(ch) {
+  for (let j = ch.q.length - 1; j >= 0; j--) if (G.simT - ch.q[j].born > annAge(ch.q[j]) + 1e-9) ch.q.splice(j, 1);
+  if (ch.cur) { // a waiting higher-priority item cuts the current one to its minimum
+    const top = ch.q.reduce((m, x) => Math.max(m, x.pri || 1), 0);
+    if (top > (ch.cur.pri || 1) && ch.cur.dur > CALM.annMin && ch.cur.style !== 'card') ch.cur.dur = Math.max(CALM.annMin, Math.min(ch.cur.dur, ch.cur.t + 0.001));
+    return;
+  }
+  if (!ch.q.length || coBlocked('ann', ch.q[0])) return;
+  const order = ch.q.map((x, i) => ({ x, i })).sort((a, b) => (b.x.pri || 1) - (a.x.pri || 1) || a.i - b.i);
+  for (const o of order) {
+    const x = o.x, ban = isBan(x);
+    if ((x.pri || 1) < 3 && x.style !== 'card' && G.simT - (ban ? CO.banAt : CO.lineAt) < (ban ? CALM.banGap : CALM.lineGap) - 1e-9) continue;
+    ch.q.splice(ch.q.indexOf(x), 1); ch.cur = x; x.t = 0; x.dur = Math.max(CALM.annMin, x.dur);
+    if (x.style !== 'card') { if (ban) CO.banAt = G.simT; else CO.lineAt = G.simT; }
+    if (x.sfx) sfx(x.sfx, x.sfxO);
+    return;
+  }
+}
 // V2 §3.4: during the close the countdown owns the announcer slot, so announce() is demoted to small()
-function announce(text, o) { o = o || {}; if (inClose() && !o.force) { small(text, { front: o.front }); return; } coPush('ann', { text: String(text), dur: Math.max(CO_MIN.ann, o.dur || durOf(text, 'ann')), size: o.size, style: o.style, front: !!o.front, sfx: o.sfx, id: o.id, col: o.col }); }
+function announce(text, o) { o = o || {}; if (inClose() && !o.force) { small(text, { front: o.front }); return; } coPush('ann', { text: String(text), dur: Math.max(annMin(), o.dur || durOf(text, 'ann')), size: o.size, style: o.style, front: !!o.front, sfx: o.sfx, id: o.id, col: o.col, pri: o.pri || (o.front ? 2 : 1) }); }
 function small(text, o) { o = o || {}; coPush('sm', { text: String(text), dur: Math.max(CO_MIN.sm, o.dur || durOf(text, 'sm')), front: !!o.front, col: o.col }); }
-function banner(text, o) { o = o || {}; if (inClose() && !o.force) { small(text, { front: o.front }); return; } coPush('ann', { text: String(text), dur: Math.max(CO_MIN.ann, o.dur || 1.4), style: o.style || 'banner', front: !!o.front, col: o.col }); }
+function banner(text, o) { o = o || {}; if (inClose() && !o.force) { small(text, { front: o.front }); return; } coPush('ann', { text: String(text), dur: Math.max(annMin(), o.dur || 1.4), style: o.style || 'banner', front: !!o.front, col: o.col, pri: o.pri || 2 }); }
+// RULINGS 16A (CALM): a moment that used to SLAM is a calm banner in the commentary box: a small icon, the line and its sub, a soft cue
+function calmBanner(text, sub, icon) { if (inClose()) { small(text + (sub ? ' ' + sub : ''), { front: true }); return; } coPush('ann', { text: String(text), sub: sub ? String(sub) : '', icon: icon || 'stuff', dur: 2.6, style: 'calm', front: true, pri: 2, sfx: 'lootNew', sfxO: { soft: 1 } }); }
 // V2 §4: a star's landing line as a box card (its face at 2x + the line) for 1.8 s
-function boxCard(id, text) { if (inClose()) { small(text); return; } coPush('ann', { text: String(text), dur: TUNE.boxCardT, style: 'card', id, front: true }); }
+function boxCard(id, text) { if (inClose()) { small(text); return; } coPush('ann', { text: String(text), dur: TUNE.boxCardT, style: 'card', id, front: true, pri: 2 }); }
 // the lowest-priority small line (the elimination feed): dropped if anything else is up or queued
 function smallIdle(text, o) { if (CO.sm.cur || CO.sm.q.length || (CO.bub.cur && CO.bub.cur.who === 'rob') || boxCardUp()) return false; small(text, o); return true; }
-function bubble(who, text, o) { o = o || {}; coPush('bub', { who, text: String(text), dur: Math.max(CO_MIN.bub, o.dur || durOf(text, 'bub')), side: o.side, front: !!o.front }); }
-function clearText() { for (const k in CO) { CO[k].cur = null; CO[k].q = []; } }
+function bubble(who, text, o) { o = o || {};
+  if (!fxWild() && R && G.scene === 'play') { if (R.bubFold === R.fold) return; R.bubFold = R.fold; } // RULINGS 16C: one bubble a fold (CALM)
+  coPush('bub', { who, text: String(text), dur: Math.max(CO_MIN.bub, o.dur || durOf(text, 'bub')), side: o.side, front: !!o.front }); }
+function clearText() { for (const k of ['ann', 'sm', 'bub']) { CO[k].cur = null; CO[k].q = []; } CO.lineAt = -99; CO.banAt = -99; }
 function updateText(dt) {
   for (const kind of ['ann', 'sm', 'bub']) {
     const ch = CO[kind];
     if (ch.cur) {
-      const hold = (kind === 'bub' && ch.cur.who !== 'rob' && (G.slam || G.measure || G.reveal || G.approve || inClose() || (R && G.scene === 'play' && R.phase === 'hug'))) || (kind === 'ann' && R && G.scene === 'play' && R.hint)
+      const hold = (kind === 'bub' && ch.cur.who !== 'rob' && (G.slam || G.fxSlam || G.measure || G.reveal || G.approve || inClose() || (R && G.scene === 'play' && R.phase === 'hug'))) || (kind === 'ann' && R && G.scene === 'play' && R.hint)
         || ((kind === 'sm' || (kind === 'bub' && ch.cur.who === 'rob')) && boxCardUp()) || (kind === 'bub' && ch.cur.who === 'rob' && inClose());
-      if (!hold) ch.cur.t += dt; if (ch.cur.t >= ch.cur.dur) ch.cur = null;
+      if (!hold && !calmCovered()) ch.cur.t += dt; if (ch.cur && ch.cur.t >= ch.cur.dur) ch.cur = null;
     }
-    coPump(kind);
+    if (!calmCovered()) coPump(kind);
   }
 }
 
 /* ---------- particles, floaters, shake, flash, hit-stop, SLAM, wipes ---------- */
 const PARTS = [];
-function spawn(p) { p.age = 0; if (p.g == null) p.g = 220; PARTS.push(p); if (PARTS.length > TUNE.partCap) PARTS.shift(); return p; }
+function spawn(p) { p.age = 0; if (p.g == null) p.g = 220; PARTS.push(p); if (PARTS.length > (fxWild() ? TUNE.partCap : TUNE.partCap / 2)) PARTS.shift(); return p; } // RULINGS 16B: CALM halves the cap
 // score floaters: size 2, ink outline, rise 24 lpx in 0.6 s, gold for >= 5 (screen space, always upright)
 // V2 §1: the floater column. One spawned within 0.3 s and 40 lpx of a live one goes above the highest of them.
 function floater(x, y, text, color, o) {
-  o = o || {}; const v = parseInt(String(text).replace(/[^0-9]/g, ''), 10) || 0, size = o.size || 2;
+  o = o || {}; const v = parseInt(String(text).replace(/[^0-9]/g, ''), 10) || 0, calm = !fxWild() && !o.grade;
+  const size = calm ? Math.max(1.5, (o.size || 2) - 0.5) : (o.size || 2); // RULINGS 16B: CALM score pops are smaller and shorter, two on screen at most
+  if (!fxWild()) { const live = PARTS.filter((q) => q.kind === 'text'); while (live.length >= 2) { const old = live.find((q) => !q.grade) || live[0]; live.splice(live.indexOf(old), 1); PARTS.splice(PARTS.indexOf(old), 1); } }
   let top = null; for (const p of PARTS) if (p.kind === 'text' && p.age < 0.3 && Math.abs(p.x - x) <= 40 && Math.abs(p.y - y) <= 40) { if (!top || p.y < top.y) top = p; }
   if (top) y = Math.min(y, top.y - Math.max(14, top.h || 7 * (top.size || 2) + 2));
-  return spawn({ kind: 'text', x, y, vx: 0, vy: -40, g: 0, life: o.life || 0.6, text: String(text), color: color || (v >= 5 ? PAL.gold : PAL.cloth), size });
+  return spawn({ kind: 'text', x, y, vx: 0, vy: -40, g: 0, life: (o.life || 0.6) * (calm ? 0.75 : 1), text: String(text), color: color || (v >= 5 ? PAL.gold : PAL.cloth), size });
 }
 // RULINGS 15: the grade pops (art's drawGradePop when present; text otherwise)
-function gradePop(grade, x, y, sub) { for (const q of PARTS) if (q.grade) q.life = Math.min(q.life, q.age + 0.08); // one grade pop at a time
-  const p = floater(x, y + 12, grade.toUpperCase(), GRADE_COL[grade], { size: grade === 'miss' ? 2.5 : grade === 'nice' ? 1.5 : 2, life: 0.75 }); p.grade = grade; p.sub = sub || null; p.vy = -16; p.h = 7 * p.size + 12 + (sub ? 16 : 0); return p; }
+function gradePop(grade, x, y, sub) { for (let j = PARTS.length - 1; j >= 0; j--) { const q = PARTS[j]; if (q.grade) { if (fxWild()) q.life = Math.min(q.life, q.age + 0.08); else PARTS.splice(j, 1); } } // one grade pop at a time
+  const p = floater(x, y + 12, grade.toUpperCase(), GRADE_COL[grade], { size: grade === 'miss' ? 2.5 : grade === 'nice' ? 1.5 : 2, life: 0.75, grade: true }); p.grade = grade; p.sub = sub || null; p.vy = -16; p.h = 7 * p.size + 12 + (sub ? 16 : 0); return p; }
 // V2 §5: score pops are tier-coloured and tier-sized
 function tierPop(tier, n, x, y) {
   if (tier === 'legendary') { floater(x, y, '+' + n + ' LEGENDARY!', TIER_COL.legendary, { size: 3, life: 0.9 }); ring(x, y + 10, TIER_COL.legendary, 0.3, 70); }
@@ -10818,10 +10876,12 @@ const RINGS = [];
 function ring(x, y, col, dur, r1, r0, lw) { RINGS.push({ x, y, col: col || PAL.cream, t: 0, dur: dur || 0.2, r0: r0 == null ? 6 : r0, r1: r1 || 40, lw: lw || 3 }); if (RINGS.length > 12) RINGS.shift(); }
 // V2 §6: haptics. iOS has no navigator.vibrate; never when muted, under autoplay or headless
 function vibrate(p) { if (G.muted || G.auto || G.everAuto || HEADLESS) return; try { if (navigator.vibrate) navigator.vibrate(p); } catch (e) { } }
-function burst(kind, x, y, n, o) { o = o || {}; for (let i = 0; i < n; i++) { const a = vrand() * Math.PI * 2, v = (o.v || 60) * (0.5 + vrand()); spawn({ kind, x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v - (o.up || 40), life: (o.life || 0.6) * (0.7 + vrand() * 0.6), frame: (vrand() * 4) | 0, g: o.g == null ? 220 : o.g, rot: vrand() * 6, vr: (vrand() - 0.5) * 10 }); } }
+function burst(kind, x, y, n, o) { o = o || {}; if (!fxWild()) n = Math.ceil(n / 2); for (let i = 0; i < n; i++) { const a = vrand() * Math.PI * 2, v = (o.v || 60) * (0.5 + vrand()); spawn({ kind, x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v - (o.up || 40), life: (o.life || 0.6) * (0.7 + vrand() * 0.6), frame: (vrand() * 4) | 0, g: o.g == null ? 220 : o.g, rot: vrand() * 6, vr: (vrand() - 0.5) * 10 }); } }
 function updateParts(dt) { for (let i = PARTS.length - 1; i >= 0; i--) { const p = PARTS[i]; p.age += dt; if (p.age >= p.life) { PARTS.splice(i, 1); continue; } p.x += p.vx * dt; p.y += p.vy * dt; p.vy += p.g * dt; if (p.vr) p.rot += p.vr * dt; } }
-function shake(a) { G.shakeA = Math.max(G.shakeA * (1 - G.shakeT / TUNE.shakeDecay), a); G.shakeT = 0; }
-function flash(a, col) { G.flashA = a; G.flashCol = col || '#ffffff'; }
+// RULINGS 16B (CALM): shake x0.35 and only for a MISS, a burst, a topple or a legendary landing; full-screen flashes only for burst / topple / royale, at 40%
+const CALM_SHAKE = { miss: 1, burst: 1, topple: 1, legend: 1 }, CALM_FLASH = { burst: 1, topple: 1, royale: 1 };
+function shake(a, why) { if (!fxWild()) { if (!CALM_SHAKE[why]) return; a *= 0.35; } G.shakeA = Math.max(G.shakeA * (1 - G.shakeT / TUNE.shakeDecay), a); G.shakeT = 0; }
+function flash(a, col, why) { if (!fxWild()) { if (!CALM_FLASH[why]) return; a *= 0.4; } G.flashA = a; G.flashCol = col || '#ffffff'; }
 function hitstop(sec) { G.hitstop = Math.max(G.hitstop, sec); }
 // the end of any hit-stop (or a skipped reveal): SLAM after-callbacks, queued closers, then the next queued SLAM / reveal
 function endHitstop() {
@@ -10843,10 +10903,37 @@ function slam(text, sub, dur, o) {
 }
 function startSlam(s) {
   if (s.reveal) { G.reveal = s; hitstop(s.dur); sfx('lootNew', { tier: tierOf(itemOf(s.reveal)) }); sfx('hitstop', { dur: s.dur }); logEv('reveal', { id: s.reveal }); return; }
-  G.slam = s; hitstop(s.dur); shake(6); sfx('slam'); if (s.sting) sting(s.sting);
+  G.slam = s; hitstop(s.dur); shake(6, 'slam'); sfx('slam'); if (s.sting) sting(s.sting);
   if (s.isNew) { sfx('lootNew', { tier: 'legendary' }); logEv('reveal', { id: s.hero, slam: true }); }
   logEv('slam', { text: s.text });
 }
+/* RULINGS 16A/F: a "moment" (a mutation's first arrival, BONUS STAGE!, MEASURE, ONE HUNDRED, the taped gift card, DOLCE APPROVES,
+   a run's first SNAP) is logged identically in both settings. WILD shows the pre-calm SLAM as a pure presentation pause:
+   the whole game waits at a frame boundary (no gameplay, bot or timer step runs, so RW.log is untouched and its t skips the
+   pause). CALM shows a calm banner instead: no hit-stop, no flash. Gameplay never reads either. */
+function moment(text, sub, o) {
+  o = o || {}; logEv('moment', { text: String(text) });
+  if (fxWild()) { G.fxQ.push(Object.assign({ kind: 'slam', text: String(text), sub: sub ? String(sub) : '', dur: TUNE.slamGen, t: 0 }, o)); return; }
+  calmBanner(o.calm || text, o.calmSub != null ? o.calmSub : sub, o.icon);
+}
+function fxStart(s) {
+  G.fxSlam = s; s.t = 0;
+  if (s.kind === 'measure') { G.measure = { inches: s.inches, object: s.object, t: 0 }; return; }
+  if (s.kind === 'approve') { G.approve = { t: 0, bi: -1, dur: s.dur }; sfx('approves'); sfx('hitstop', { dur: s.dur }); return; }
+  shake(6, 'slam'); sfx('slam'); if (s.sting) sting(s.sting);
+}
+function fxEnd() { const s = G.fxSlam; G.fxSlam = null; if (!s) return; if (s.kind === 'measure') G.measure = null; if (s.kind === 'approve') { G.approve = null; loopOff('purr'); } }
+// a WILD pause step: true when this frame belongs to the pause (the caller then runs cosmetics only)
+function fxPauseStep(dt) {
+  if (G.scene !== 'play' || !R || R.phase === 'dying') { if (G.fxSlam) fxEnd(); G.fxQ.length = 0; return false; }
+  if (!G.fxSlam) { if (!G.fxQ.length || G.wipe || G.slam || G.reveal || G.swell || R.burstCard || R.introHold) return false; fxStart(G.fxQ.shift()); }
+  const s = G.fxSlam; s.t += dt; G.fxT += dt;
+  if (s.kind === 'measure' && G.measure) G.measure.t = s.t;
+  if (s.kind === 'approve' && G.approve) { G.approve.t = s.t; const bi = Math.min(2, Math.floor(s.t / s.dur * 3)); if (bi !== G.approve.bi) { G.approve.bi = bi; sfx('blink', { i: bi }); } }
+  if (s.t >= s.dur - 1e-9) fxEnd();
+  return true;
+}
+function slamUpNow() { return !!((G.slam && G.hitstop > 0.002) || (G.fxSlam && G.fxSlam.kind === 'slam')); }
 function slamSize(text) { const n = String(text).length; for (let s = 5; s >= 2; s -= 0.5) if (ART.textWidth(text, s) <= 336) return s; return 2; }
 function startWipe(kind, mid, end) { G.wipe = { kind, t: 0, dur: kind === 'napkin' ? TUNE.wipeNapkin : TUNE.wipeSlap, mid, end, midDone: false }; sfx('wipe'); }
 function updateWipe(dt) {
@@ -11056,7 +11143,9 @@ function newRun(o) {
     servedFold: 0, slot: null, teeter: null, teeterUsed: false, stubs: [], newIds: {}, revealPending: null, lootRun: {}, lastBigLand: -9, foldInch0: 0.6,
     catElig: false, measureObj: null, showId: null, cause: null, burstCard: null, burstCardDue: false, stormLine: false, count55: 0,
     ladder: [], passed: {}, feedNext: TUNE.feedEvery, feedUsed: {}, chipPop: 0, world1Pace: false,
+    mutEnd: -99, catLast: -99, bubFold: -1, // RULINGS 16D (mutation spacing, Dolce spacing); 16C (one bubble a fold, cosmetic)
   };
+  if (!fxWild()) R.feedNext = 15; // RULINGS 16C: CALM feed: one quiet line every ~15 s
   R.ladder = buildLadder(R);
   for (const s of SEEN_KEYS) if (OPT.skip) SAVE.seen[s] = SAVE.seen[s] || 0;
   logEv('runStart', { seed, daily: R.daily, challenge: R.challenge ? R.challenge.name : null });
@@ -11071,18 +11160,22 @@ function setupFold() {
   R.servedFold = 0; R.slot = null; R.teeter = null; R.teeterUsed = false; R.foldInch0 = R.inches; R.messyFold = 0; R.landedFold = 0;
   const s = foldStartIdx(f); R.queue = [];
   for (let j = 0; j < R.quota; j++) R.queue.push({ type: 'main', idx: s + j });
-  if (R.clock >= TUNE.cursedFrom) { const c = cursedFor(R.seed, f); if (c) R.queue.splice(c.pos, 0, { type: 'cursed', id: c.id }); }
-  // V2 §7.1: Dolce from 14 s; the first eligible fold of a run always has a visit, 60% after
-  const elig = R.clock >= TUNE.dolceFrom, visit = elig && (!R.catElig || dolceVisit(R.seed, f, R.clock)); if (elig) R.catElig = true;
-  R.catPlan = visit ? { after: dolceAfter(R.seed, f) } : null;
+  // RULINGS 16D: one thing at a time. A fold carries at most one interruption: a mutation first, else Dolce, else a cursed thing
+  // (each still dealt from its own stream: 3, 7 and 6; only the timing gates are new)
   decideMutations();
+  // V2 §7.1 + RULINGS 16D: Dolce from 20 s, one act per 12 s; the first eligible fold of a run always has a visit, 60% after
+  const elig = R.clock >= TUNE.dolceFrom && R.clock - R.catLast >= TUNE.dolceGap && !(TUNE.oneThing && R.muts.length), visit = elig && (!R.catElig || dolceVisit(R.seed, f, R.clock)); if (elig) R.catElig = true;
+  R.catPlan = visit ? { after: dolceAfter(R.seed, f) } : null;
+  if (R.clock >= TUNE.cursedFrom && !(TUNE.oneThing && (R.muts.length || R.catPlan))) { const c = cursedFor(R.seed, f); if (c) R.queue.splice(c.pos, 0, { type: 'cursed', id: c.id }); }
   if (R.fizz) loopOn('fizz');
 }
-function okMut(id, got, t) { if (got.indexOf(id) >= 0) return false; if (id === 'storm' && t < TUNE.stormFrom) return false; if ((id === 'double' && got.indexOf('hungry') >= 0) || (id === 'hungry' && got.indexOf('double') >= 0)) return false; return true; }
+const MUT_HARD = { sat: 1, flight: 1, dark: 1, double: 1, grease: 1 }; // RULINGS 16D: the disorienting ones (tilt, upside down, lights out, two at once, greased)
+function okMut(id, got, t) { if (got.indexOf(id) >= 0) return false; if (MUT_HARD[id] && t < TUNE.mutHardFrom) return false; if (id === 'storm' && t < TUNE.stormFrom) return false; if ((id === 'double' && got.indexOf('hungry') >= 0) || (id === 'hungry' && got.indexOf('double') >= 0)) return false; return true; }
 function decideMutations() {
   const t = R.clock; R.mutOn = {}; R.muts = [];
-  if (t >= TUNE.mutFrom) {
-    if (!R.satDone) { R.satDone = true; R.muts = ['sat']; }
+  // RULINGS 16D: from 15 s, one at a time, >= 6 s of plain stacking since the last mutated fold ended; HE SAT ON IT is the first hard one
+  if (t >= TUNE.mutFrom && t - R.mutEnd >= TUNE.mutGap - 1e-9) {
+    if (!R.satDone && t >= TUNE.mutHardFrom) { R.satDone = true; R.muts = ['sat']; }
     else {
       const n = t >= TUNE.twoMutFrom ? 2 : 1, got = []; let guard = 0;
       while (got.length < n && guard++ < 60) {
@@ -11110,7 +11203,7 @@ function foldIntro() {
   const go = () => {
     for (const id of R.muts) {
       logEv('mutation', { id, fold: R.fold });
-      if (!R.seenMut[id]) { R.seenMut[id] = 1; const m = MUT[id]; slam(m.slam, m.sub, TUNE.slamMut, { sting: 'mutation' }); }
+      if (!R.seenMut[id]) { R.seenMut[id] = 1; const m = MUT[id]; moment(m.slam, m.sub, { dur: TUNE.slamMut, sting: 'mutation', icon: 'mut.' + id }); }
       sfx('mutFx', { id }); if (id === 'sat') sfx('chairCreak'); else if (id === 'flight') sfx('flip'); else if (id === 'hungry') sfx('growl'); else if (id === 'storm') loopOn('storm');
       if (id === 'flight') bubble('jason', 'oh. sorry. is this okay?', {});
     }
@@ -11157,7 +11250,7 @@ function serveNext() {
     R.fx.boat = { t: 0, from: 430, to: -300, banner: 'LOOT DROP' }; loopOn('gravy', { loud: 1 }); sfx('beam'); // right to left, unflipped: the tow banner trails and reads
     // V2 §4: the arrival SLAM is the reveal: 1.0 s the first time ever (skippable after 0.35 s), 0.45 s on later first-in-run arrivals
     if (isNew && it.id !== 'leg.fakeid.decoy') { R.legSeen[id] = 1; slam(it.flags.slam, it.flags.sub, TUNE.revealT, { sting: 'legend', gold: true, hero: id, isNew: true, skip: TUNE.revealSkip }); }
-    else if (!R.legSeen[id]) { R.legSeen[id] = 1; slam(it.flags.slam, it.flags.sub, TUNE.slamLeg, { sting: 'legend', gold: true, hero: id }); } else { flash(0.35, PAL.gold); sting('legend'); }
+    else if (!R.legSeen[id]) { R.legSeen[id] = 1; slam(it.flags.slam, it.flags.sub, TUNE.slamLeg, { sting: 'legend', gold: true, hero: id }); } else { flash(0.35, PAL.gold, 'legend'); sting('legend'); }
     if (!isSeen('legend')) { markSeen('legend'); small('GOLD = LEGENDARY. RARER LOOT, MORE POINTS.', { front: true }); }
     return;
   }
@@ -11201,12 +11294,12 @@ function dealSlot() {
 function spawnFreeFish() {
   const it = ITEM['fish.free']; if (!isMet(it.id)) { SAVE.met[it.id] = 1; persist(); }
   R.falling.push({ g: mkGlider(it, 0, { kind: 'fish' }), x: CX, dir: 1, t: 0, y0: 130, dur: 0.4, fish: true });
-  R.fx.beamX = CX; sfx('beam'); flash(0.25, PAL.gold);
+  R.fx.beamX = CX; sfx('beam'); flash(0.25, PAL.gold, 'fish');
 }
 
 /* ---------- the tap: drop (STUFF) or squeeze (CLOSE) through one path (§1.4, §16.4) ---------- */
 function gameTap(src, px, py) {
-  if (!R || G.paused || G.scene !== 'play' || R.introHold) return false;
+  if (!R || G.paused || G.scene !== 'play' || R.introHold || G.fxSlam) return false; // a WILD pause swallows taps like the SLAM it replaces
   // V2: a tap skips a reveal card (or a first-ever legendary SLAM) after 0.35 s and is swallowed; the glider keeps its enter guard
   const sk = G.reveal || (G.slam && G.slam.skip ? G.slam : null);
   if (sk && G.hitstop > 0) { if (sk.t >= sk.skip) { endHitstop(); R.ignoreUntil = Math.max(R.ignoreUntil, R.liveT + TUNE.enterGuard); } return false; }
@@ -11246,8 +11339,6 @@ function stepStuff(dt) {
   if (auto) { dropAll(true); if (!R.lines.impatient) { R.lines.impatient = true; small("HE'S NOT WAITING."); } }
   for (let j = R.falling.length - 1; j >= 0; j--) { const f = R.falling[j]; f.t += dt; if (f.t >= f.dur) { R.falling.splice(j, 1); land(f); if (G.scene !== 'play' || R.phase !== 'stuff') return; } }
   for (let j = R.hands.length - 1; j >= 0; j--) { const h = R.hands[j]; h.t += dt; if (!h.placed && h.t >= TUNE.handT * 0.55) { h.placed = true; placeFromHand(h); if (G.scene !== 'play' || R.phase !== 'stuff') return; } if (h.t >= TUNE.handT) R.hands.splice(j, 1); }
-  // V2 §7.1 variety: if no mutation has landed by 12 s of run clock, HE SAT ON IT arrives mid-fold (deterministic: clock based)
-  if (!R.satDone && R.clock >= TUNE.satBy && R.fold >= 2 && !R.falling.length && !R.hands.length && !R.teeter) { R.satDone = true; R.muts = ['sat']; R.mutOn = { sat: true }; const sign = (R.satCount++ % 2 === 0) ? -1 : 1; R.satSign = sign; rotateTo(sign * 7 * Math.PI / 180, 0.5); logEv('mutation', { id: 'sat', fold: R.fold, mid: true }); R.seenMut.sat = 1; slam(MUT.sat.slam, MUT.sat.sub, TUNE.slamMut, { sting: 'mutation' }); sfx('mutFx', { id: 'sat' }); sfx('chairCreak'); return; }
   updateMutLive(dt); updateStock(dt); updateCat(dt); updateSway(dt);
   if (R.toppleGrace > 0) R.toppleGrace -= dt;
   if (R.phase !== 'stuff') return;
@@ -11257,11 +11348,11 @@ function stepStuff(dt) {
   else if (Math.abs(L) >= Lm && R.toppleGrace <= 0) {
     // V2 §7.4 TEETER: 0.40 s of run clock to save it (once a fold), else TOPPLE as before
     if (R.teeter) { R.teeter.t += dt; if (R.teeter.t >= TUNE.teeter) { loopOff('teeter'); die('topple'); return; } }
-    else if (!R.teeterUsed) { R.teeterUsed = true; R.teeter = { t: 0, side: sgn(L) }; logEv('teeter', { fold: R.fold }); loopOn('teeter'); bust('outraged', 0.6); shake(2); }
+    else if (!R.teeterUsed) { R.teeterUsed = true; R.teeter = { t: 0, side: sgn(L) }; logEv('teeter', { fold: R.fold }); loopOn('teeter'); bust('outraged', 0.6); shake(2, 'teeter'); }
     else { die('topple'); return; }
   } else if (R.teeter) {
     R.teeter = null; loopOff('teeter'); logEv('saved', { fold: R.fold });
-    announce('HOW IS THAT STILL UP?!', { front: true }); floater(CX, pileTopY() - 34, 'SAVED IT!', PAL.hot, { size: 2, life: 0.9 }); sfx('saved'); shake(3);
+    announce('HOW IS THAT STILL UP?!', { front: true }); floater(CX, pileTopY() - 34, 'SAVED IT!', PAL.hot, { size: 2, life: 0.9 }); sfx('saved'); shake(3, 'teeter');
   }
   if (R.pile.length) { const k = clamp(Math.abs(R.sw.y) / 8 + 0.5 * Math.abs(L) / Lm, 0, 1); if (k > 0.08) { loopOn('sway', { k }); loopSet('sway', k); } else loopOff('sway'); } else loopOff('sway');
   if (Math.abs(L) >= 0.7 * Lm) { loopOn('creak', { k: Math.abs(L) / Lm }); loopSet('creak', Math.abs(L) / Lm); if (!R.lines.lean) { R.lines.lean = true; stuffLine(LINES.leaning, true); } if (!isSeen('lean')) { markSeen('lean'); small('IT LEANS. DROP ON THE OTHER SIDE.'); } }
@@ -11289,9 +11380,9 @@ function slabScreen(dx, yTop) { const sh = shearAt(baseY() - yTop); return { x: 
 // V2 §6: every landing has weight: dust from both ends of the spine, the pile dips, heavy things shake the screen
 function landFx(x, y, it, w) {
   const wt = it.wt || 0; w = w || it.w || 40;
-  sfx('land', { w: wt, wt, weight: wt, cat: it.cat === 'legend' ? 'legend' : it.cat === 'punch' || it.cat === 'coupon' || it.cat === 'epic' || it.cat === 'cursed' ? 'card' : it.cat, tier: it.tier });
+  sfx('land', { w: wt, wt, weight: wt, cat: it.cat === 'legend' ? 'legend' : it.cat === 'punch' || it.cat === 'coupon' || it.cat === 'epic' || it.cat === 'cursed' ? 'card' : it.cat, tier: it.tier, vol: !fxWild() && it.tier === 'common' ? 0.6 : 1 }); // RULINGS 16E: softer COMMON landings (CALM)
   const n = 4 + Math.round(3 * wt); burst('dust', x - w / 2, y + 2, Math.ceil(n / 2), { v: 40, up: 30, life: 0.35 }); burst('dust', x + w / 2, y + 2, Math.floor(n / 2), { v: 40, up: 30, life: 0.35 });
-  R.fx.dip = 0.1; if (wt >= 3) shake(3); else if (wt >= 2) shake(2); vibrate(8);
+  R.fx.dip = 0.1; if (wt >= 3) shake(3, 'land'); else if (wt >= 2) shake(2, 'land'); vibrate(8);
 }
 function bankStock(why) {
   const S = R.stock; if (!S || S.banked) return;
@@ -11348,17 +11439,17 @@ function land(f) {
   if (g.kind !== 'cursed') { addScore(value, clamp(sp.x, 40, 320), top - 10, null, it.cat === 'legend' ? 'legendary' : it.tier); ledgerAdd(it, value); inWAdd(it.id); }
   const gx = clamp(sp.x, 60, 300);
   if (perfect && it.tier !== 'cursed') {
-    R.perfects++; R.combo++; R.perfectsFold++; flash(0.3, '#FFFFFF'); sfx('perfect', { combo: Math.min(12, R.combo - 1) });
+    R.perfects++; R.combo++; R.perfectsFold++; flash(0.3, '#FFFFFF', 'perfect'); sfx('perfect', { combo: Math.min(12, R.combo - 1) });
     // V2 §6: PERFECT is a beat: a tiny hit-stop, a white ring from the spine, the spine flashes
-    hitstop(TUNE.perfectStop); ring(sp.x, top + 6, '#FFFFFF', 0.25, 80, 10); slab.flashT = R.liveT; vibrate(15); au('setHeat', Math.min(1, R.combo / 6));
+    hitstop(TUNE.perfectStop); ring(sp.x, top + 6, '#FFFFFF', 0.25, 80, 10); slab.flashT = R.liveT; vibrate(15); au('setHeat', heatFor(R.combo));
     gradePop('perfect', gx, top - 30, value > (it.value || 0) && it.cat !== 'legend' ? '+1 STREAK' : null);
-    if (R.combo >= 3) floater(gx, top - 48, '×' + R.combo + ' NEAT!', PAL.hot, { size: 2, life: 0.8 });
+    if (R.combo >= 3 && (fxWild() || R.combo % 5 === 0)) floater(gx, top - 48, '×' + R.combo + ' NEAT!', PAL.hot, { size: 2, life: 0.8 });
     if (R.combo === 3 && !R.lines.neat) { R.lines.neat = true; stuffLine(LINES.neat, true); }
     if (!isSeen('perfect')) { markSeen('perfect'); small('PERFECT STREAKS = A FREE FISH.'); }
     if (R.combo >= 2) punch(it.flags.punch ? 2 : 1); // the loyalty card punches PERFECT streaks (from the 2nd in a row)
   } else if (it.tier !== 'cursed') {
     if (grade === 'nice') { if (slotted) floater(gx, top - 30, 'SLOTTED!', PAL.gold, { size: 2 }); else gradePop('nice', gx, top - 30); sfx('nice'); }
-    else { if (R.combo) au('setHeat', 0); R.combo = 0; gradePop('sloppy', gx, top - 30, 'STICKING OUT'); sfx('sloppy', { cat: it.cat === 'legend' ? 'legend' : it.cat }); shake(2); vibrate(12); }
+    else { if (R.combo) au('setHeat', 0); R.combo = 0; gradePop('sloppy', gx, top - 30, 'STICKING OUT'); sfx('sloppy', { cat: it.cat === 'legend' ? 'legend' : it.cat }); shake(2, 'sloppy'); vibrate(12); }
   }
   if (slotted) { R.slot = null; addScore(TUNE.slotBonus, null); floater(clamp(sp.x, 70, 290), top - 50, '+' + TUNE.slotBonus, PAL.gold, { size: 2, life: 0.9 }); sfx('slot'); burst('gold', sp.x, top, 8, { v: 60, up: 60, life: 0.6 }); logEv('slotted', { id: it.id }); }
   for (const q of R.pile) if (q.id === 'star.ghin' && q !== slab) q.popT = R.liveT;
@@ -11377,7 +11468,7 @@ function land(f) {
 // RULINGS 15e: the first-ever run says the rule in words on its first fold
 function ruleLines(grade) {
   if (!R.first || R.fold !== 1 || R.ruleSaid >= 2) return;
-  if (grade === 'sloppy' || grade === 'miss' || R.landingsFold >= 3) { R.ruleSaid = 2; announce('OFF-CENTRE = WOBBLE.', { front: true }); }
+  if (grade === 'sloppy' || grade === 'miss' || R.landingsFold >= 3) { R.ruleSaid = 2; announce('OFF-CENTRE = WOBBLE.', { front: true, pri: 2 }); }
 }
 // RULINGS 15b MISS: more than half hanging off. It slides off to the floor: no points, combo resets, a big lean shove that way
 function missOff(g, it, off, xl, f) {
@@ -11388,12 +11479,12 @@ function missOff(g, it, off, xl, f) {
   if (hadPile) { R.leanZero -= dir * TUNE.missShove * Math.max(0.5, it.wt); R.sw.v += dir * TUNE.swayImp * 1.4; }
   const top = pileTopY(), x = clamp(xl, 20, 340);
   spawn({ kind: 'item', id: it.id, x, y: top - 6, vx: dir * 140, vy: -60, g: 900, life: 0.7, rot: 0, vr: dir * 7, scale: 1 });
-  gradePop('miss', clamp(x, 60, 300), top - 30); R.fx.floorHit = { x: clamp(x + dir * 70, 20, 340), t: 0 }; shake(4); vibrate([15, 20, 15]); bust('outraged', 0.6);
-  announce(R.floors % 2 ? 'ON THE FLOOR.' : "THAT ONE'S GONE.", { front: true });
+  gradePop('miss', clamp(x, 60, 300), top - 30); R.fx.floorHit = { x: clamp(x + dir * 70, 20, 340), t: 0 }; shake(4, 'miss'); vibrate([15, 20, 15]); bust('outraged', 0.6);
+  announce(R.floors % 2 ? 'ON THE FLOOR.' : "THAT ONE'S GONE.", { front: true, pri: 2 });
   if (R.cat) catOnLanding(null);
   if (R.stock && !R.stock.banked) bankStock('floor');
   if (it.cat === 'legend') logEv('legend', { id: it.id, lap: legendLap(g.legK), value: 0, floor: true });
-  if (R.mutOn.through && !R.mulliganUsed && g.unit && g.kind === 'main') { R.mulliganUsed = true; R.queue.unshift(Object.assign({}, g.unit, { mulligan: true })); announce('MULLIGAN!'); }
+  if (R.mutOn.through && !R.mulliganUsed && g.unit && g.kind === 'main') { R.mulliganUsed = true; R.queue.unshift(Object.assign({}, g.unit, { mulligan: true })); announce('MULLIGAN!', { pri: 2 }); }
   if (R.mutOn.double && f && f.pairFloor) bubble('nick', "THERE'S ALWAYS NEXT YEAR.");
   ruleLines('miss');
   postLanding();
@@ -11416,13 +11507,14 @@ function postLanding() {
   // V2 §2.7 MEASURE lite: never within 1.0 s of a legendary or star landing, or while a SLAM or reveal is queued (deferred to the next plain landing)
   const m = LINES.measure[R.measureIdx];
   if (m && R.inches >= m[0] && R.liveT - R.lastBigLand >= TUNE.measureGap && !bigComing() && !G.slam && !G.slamQ.length && !G.reveal && !R.revealPending && G.hitstop <= TUNE.perfectStop + 1e-6) {
-    R.measureIdx++; G.measure = { inches: m[0], object: m[1], t: 0 }; R.measureObj = { object: m[1], t: 0 }; hitstop(TUNE.measureStop); sfx('measure'); logEv('measure', { inches: m[0] });
-    banner('THICKER THAN ' + m[1] + '!', { style: 'measure' });
+    R.measureIdx++; R.measureObj = { object: m[1], t: 0 }; logEv('measure', { inches: m[0] });
+    if (fxWild()) { G.fxQ.push({ kind: 'measure', dur: TUNE.measureStop, inches: m[0], object: m[1], t: 0 }); sfx('measure'); banner('THICKER THAN ' + m[1] + '!', { style: 'measure' }); }
+    else { const it = { text: 'THICKER THAN ' + m[1] + '!', sub: m[0] + ' INCHES OF WALLET.', icon: 'stuff', dur: 2.4, style: 'calm', pri: 1, sfx: 'lootNew', sfxO: { soft: 1 } }; if (!inClose()) coPush('ann', it); }
   }
-  if (!R.h100 && R.stuffed >= 100) { R.h100 = true; slam('ONE HUNDRED!', '999,900 TO GO.', TUNE.slamGen, { sting: 'hundred' }); sfx('hundred'); musicTranspose(2); logEv('hundred', {}); burst('confetti', 180, 300, 30, { v: 140, up: 120, life: 1.2 }); }
-  if (!R.h200 && R.stuffed >= 200) { R.h200 = true; slam('IT HAS A ZIP CODE!', '999,800 TO GO.', TUNE.slamGen, { sting: 'hundred' }); }
+  if (!R.h100 && R.stuffed >= 100) { R.h100 = true; moment('ONE HUNDRED!', '999,900 TO GO.', { sting: 'hundred', icon: 'trophy' }); sfx('hundred'); musicTranspose(2); logEv('hundred', {}); burst('confetti', 180, 300, 30, { v: 140, up: 120, life: 1.2 }); }
+  if (!R.h200 && R.stuffed >= 200) { R.h200 = true; moment('IT HAS A ZIP CODE!', '999,800 TO GO.', { sting: 'hundred', icon: 'trophy' }); }
   const T = targetInfo();
-  if (!R.lines.passed && T.score > 0 && R.stuffed > T.score) { R.lines.passed = true; banner(T.who ? T.who + ' ELIMINATED.' : 'NEW BEST!', { front: true }); logEv('passed', { target: T.score }); sfx('banner'); }
+  if (!R.lines.passed && T.score > 0 && R.stuffed > T.score) { R.lines.passed = true; banner(T.who ? T.who + ' ELIMINATED.' : 'NEW BEST!', { front: true }); logEv('passed', { target: T.score }); sfx(fxWild() ? 'banner' : 'lootNew', { soft: 1 }); }
   if (R.royalePending && !R.royale && !R.falling.length && !R.hands.length && !R.teeter) { R.clock = 60; royaleMoment(); }
 }
 // a legendary or star in the air, falling, or next in the queue: MEASURE waits for a plain landing
@@ -11467,10 +11559,10 @@ function toFloor(g, dx, why, f) {
   if (R.cat) catOnLanding(null);
   if (g.kind === 'cursed') { floater(clamp(CX + dx, 40, 320), pileTopY() - 20, 'NOPE.', PAL.hot); sfx('nope'); R.cursedFloored++; lootAdd(it.id); logEv('cursed', { id: it.id, stuffed: false }); postLanding(); return; }
   // V2 §6: the floor is felt (the thing bounces off with one full spin)
-  shake(2); bust('outraged', 0.4); spawn({ kind: 'item', id: it.id, x: clamp(CX + dx, 20, 340), y: pileTopY() - 10, vx: sgn(dx || 1) * 90, vy: -160, g: 600, life: 0.45, rot: 0, vr: sgn(dx || 1) * Math.PI * 2 / 0.45, scale: 1 });
+  shake(2, 'floor'); bust('outraged', 0.4); spawn({ kind: 'item', id: it.id, x: clamp(CX + dx, 20, 340), y: pileTopY() - 10, vx: sgn(dx || 1) * 90, vy: -160, g: 600, life: 0.45, rot: 0, vr: sgn(dx || 1) * Math.PI * 2 / 0.45, scale: 1 });
   if (why === 'bite') { sfx('chomp'); floater(CX, pileTopY() - 24, 'CHOMP!', PAL.hot, { size: 1.5 }); }
   if (why === 'declined') floater(CX, pileTopY() - 24, 'DECLINED', PAL.red, { size: 1.5 });
-  if (R.mutOn.through && !R.mulliganUsed && g.unit && g.kind === 'main') { R.mulliganUsed = true; R.queue.unshift(Object.assign({}, g.unit, { mulligan: true })); announce('MULLIGAN!'); return; }
+  if (R.mutOn.through && !R.mulliganUsed && g.unit && g.kind === 'main') { R.mulliganUsed = true; R.queue.unshift(Object.assign({}, g.unit, { mulligan: true })); announce('MULLIGAN!', { pri: 2 }); return; }
   if (R.mutOn.double && R.falling.length === 0 && f && f.pairFloor) bubble('nick', "THERE'S ALWAYS NEXT YEAR.");
   if (R.stock && !R.stock.banked) bankStock('floor');
   const who = R.hands.length ? HANDS[(R.handN + 1) % 4] : HANDS[R.handN % 4]; R.handN++;
@@ -11506,7 +11598,7 @@ function inWRemove(id) { if (R.inW[id]) R.inW[id]--; }
 function checkSets(id) {
   const W = R.inW;
   if (!R.sets.golf && W['star.ghin'] && W['star.spey']) { R.sets.golf = 1; addScore(4, CX, pileTopY() - 30, PAL.gold); banner('GOLF GUY.'); sfx('golfClap'); small('HE HAS NEVER BEEN TO SCOTLAND.'); logEv('set', { id: 'golf' }); }
-  if (!R.sets.gift && W['star.giftA'] && W['star.giftB'] && W['star.giftC']) { R.sets.gift = 1; addScore(6, CX, pileTopY() - 30, PAL.gold); R.fx.tape = 1.2; sfx('tape'); slam("HE'S GOING BACK THURSDAY!", '+6', TUNE.giftSlam, { hero: 'gift', gold: true }); bubble('rob', 'IT WAS DRY, THOUGH.'); logEv('set', { id: 'gift' }); }
+  if (!R.sets.gift && W['star.giftA'] && W['star.giftB'] && W['star.giftC']) { R.sets.gift = 1; addScore(6, CX, pileTopY() - 30, PAL.gold); R.fx.tape = 1.2; sfx('tape'); moment("HE'S GOING BACK THURSDAY!", '+6', { dur: TUNE.giftSlam, hero: 'gift', gold: true, icon: 'star', calmSub: 'THE TAPED GIFT CARD. +6' }); bubble('rob', 'IT WAS DRY, THOUGH.'); logEv('set', { id: 'gift' }); }
   if (!R.sets.study && W['leg.mba'] && W['star.angela']) { R.sets.study = 1; addScore(5, CX, pileTopY() - 30, PAL.gold); banner('STUDY GROUP: SHE CARRIED IT.'); small('HIS SAYS GPA: N/A.'); sfx('golfClap'); logEv('set', { id: 'study' }); }
 }
 
@@ -11520,17 +11612,17 @@ function legendIn(slab, it, sp, top, g) {
   const lap = legendLap(g.legK);
   if (it.id === 'leg.stock') { slab.value = 1; }
   logEv('legend', { id: it.id, lap, value: slab.value });
-  R.fx.beamX = null; flash(0.25, PAL.gold); R.lastBigLand = R.liveT;
+  R.fx.beamX = null; flash(0.25, PAL.gold, 'legendLand'); R.lastBigLand = R.liveT;
   // V2 §6: a legendary lands with weight
-  hitstop(TUNE.legStop); shake(3); ring(sp.x, top + 6, TIER_COL.legendary, 0.35, 90, 12, 4); burst('gold', sp.x, top, 12, { v: 110, up: 90, life: 0.7 }); vibrate([10, 20, 30]);
-  if (it.id !== 'leg.covid' || !slab.perfect) announce(it.flags.land, { front: true });
+  hitstop(TUNE.legStop); shake(3, 'legend'); ring(sp.x, top + 6, TIER_COL.legendary, 0.35, 90, 12, 4); burst('gold', sp.x, top, 12, { v: 110, up: 90, life: 0.7 }); vibrate([10, 20, 30]);
+  if (it.id !== 'leg.covid' || !slab.perfect) announce(it.flags.land, { front: true, pri: 2 });
   switch (it.id) {
     case 'leg.breakdance':
       R.fx.headspin = 0.8; sfx('headspin'); for (const p of R.pile) if (p !== slab) { p.dx /= 2; p.lc = (p.lc || 0) / 2; }
       if (slab.perfect) { addScore(2, sp.x + 30, top - 30, PAL.gold); floater(clamp(sp.x, 70, 290), top - 48, 'HEADSPIN!', PAL.hot, { size: 1.5, life: 0.9 }); }
       break;
     case 'leg.plate':
-      sfx('clang'); shake(6); hitstop(TUNE.plateStop);
+      sfx('clang'); shake(6, 'legend'); hitstop(TUNE.plateStop);
       if (!slab.stick) { resetLean(); small("IT'S LOAD-BEARING."); }
       break;
     case 'leg.fakeid': R.fx.moustache = { t: 0, x: sp.x, y: top }; if (R.mba) small('ONE OF THESE IS REAL.'); else small('HEIGHT: YES.'); break;
@@ -11542,7 +11634,7 @@ function legendIn(slab, it, sp, top, g) {
     case 'leg.table': R.table = true; bubble('david', '...IS THAT MINE?'); break;
     case 'leg.covid':
       R.maskNudge = true; R.fx.maskHook = 0.3; spawn({ kind: 'mask', x: sp.x + 20, y: top - 8, vx: 30, vy: -60, g: 160, life: 1.2, rot: 0, vr: 3, frame: 0, scale: 2 });
-      if (slab.perfect) { slab.folded = true; slab.w = 52; slab.th = it.th; announce("YOU'RE NOT SUPPOSED TO FOLD THOSE.", { front: true }); small('LAMINATED. ALSO NOT ALLOWED.'); }
+      if (slab.perfect) { slab.folded = true; slab.w = 52; slab.th = it.th; announce("YOU'RE NOT SUPPOSED TO FOLD THOSE.", { front: true, pri: 2 }); small('LAMINATED. ALSO NOT ALLOWED.'); }
       else { R.covidStick++; floater(clamp(sp.x, 70, 290), top - 30, 'TOO BIG', PAL.red, { size: 1.5 }); }
       break;
   }
@@ -11571,15 +11663,15 @@ function cursedIn(slab, it, sp, top) {
   logEv('cursed', { id: it.id, stuffed: true }); sfx('cursed'); bust('outraged', 1.2);
   switch (it.id) {
     case 'cur.check': {
-      announce('HE PAID?!', { front: true }); let n = 0;
+      announce('HE PAID?!', { front: true, pri: 2 }); let n = 0;
       for (let j = R.pile.length - 2; j >= 0 && n < 3; j--) { const p = R.pile[j]; if (p.legend || p.epic || p.cursed) continue; R.pile.splice(j, 1); n++; R.inches -= p.it.inches; inWRemove(p.id); ledgerRemove(p.id); flyOut(p, j % 2 ? 1 : -1); }
       addScore(-3, sp.x, top - 20, PAL.red); break;
     }
-    case 'cur.tip': announce('HE TIPPED?!', { front: true }); addScore(-2, sp.x, top - 20, PAL.red); R.fx.georgeFaint = 1.6; break;
+    case 'cur.tip': announce('HE TIPPED?!', { front: true, pri: 2 }); addScore(-2, sp.x, top - 20, PAL.red); R.fx.georgeFaint = 1.6; break;
     case 'cur.jury': R.jury = true; small('JURY DUTY: EVERYTHING SPEEDS UP.'); break;
     case 'cur.speeding': R.speedFolds = 2; small('SPEEDING TICKET: FASTER FOR TWO FOLDS.'); break;
     case 'cur.gym': small('36 MONTHS. IT WEIGHS A TON.'); break;
-    case 'cur.otherteam': { const s = sgn(leanNow()) || 1; R.leanZero -= s * 0.3 * LmaxNow(); bubble('rob', 'WHO PUT THAT THERE.'); shake(3); break; }
+    case 'cur.otherteam': { const s = sgn(leanNow()) || 1; R.leanZero -= s * 0.3 * LmaxNow(); bubble('rob', 'WHO PUT THAT THERE.'); shake(3, 'cursed'); break; }
     case 'cur.magnet': R.magnet = 2; small('A MAGNET. THE NEXT 2 CARDS WILL BE DECLINED.'); break;
   }
 }
@@ -11587,7 +11679,7 @@ function flyOut(p, dir) { spawn({ kind: 'slab', id: p.id, w: p.w, th: p.th, x: C
 function updateStock(dt) {
   const S = R.stock; if (!S || S.banked) return;
   S.left = Math.max(0, S.max - S.max * (R.clock - S.start) / TUNE.stockDur);
-  if (S.left <= 0 && !S.zero) { S.zero = true; sfx('crash', { zero: true }); announce("AND IT'S GONE."); bubble('rob', "I'M HOLDING. LONG TERM."); S.banked = true; R.stock = null; }
+  if (S.left <= 0 && !S.zero) { S.zero = true; sfx('crash', { zero: true }); announce("AND IT'S GONE.", { pri: 2 }); bubble('rob', "I'M HOLDING. LONG TERM."); S.banked = true; R.stock = null; }
 }
 
 /* =====================================================================
@@ -11605,7 +11697,7 @@ function updateMutLive(dt) {
     R.birdsT += dt;
     if (R.birdsT >= TUNE.birdsEvery - TUNE.birdsTele && !R.birdsTele) { R.birdsTele = true; sfx('crowd'); }
     if (R.birdsT >= TUNE.birdsEvery) {
-      R.birdsT -= TUNE.birdsEvery; R.birdsTele = false; sfx('cannon'); R.fx.jump = 0.4; shake(3);
+      R.birdsT -= TUNE.birdsEvery; R.birdsTele = false; sfx('cannon'); R.fx.jump = 0.4; shake(3, 'birds');
       burst('confetti', 60, 300, 10, { v: 160, up: 140, life: 1.0 }); burst('confetti', 300, 300, 10, { v: 160, up: 140, life: 1.0 });
       for (const p of R.pile) if (p.off && !p.perfect) { p.dx += TUNE.birdsShift * sgn(p.off); if (p.lc) p.lc += sgn(p.lc) * TUNE.birdsShift * p.wt; }
     }
@@ -11618,7 +11710,7 @@ function maybeCat() {
   const k = R.catVisits++, act = dolceAct(R.seed, k), side = dolceSide(R.seed, k);
   R.catPlan = null;
   R.cat = { act, side, k, phase: 'tele', t: 0, x: side < 0 ? 14 : 346, watched: 0, bats: 0, paw: 0, pawState: 'out', sitDx: dolceSitDx(R.seed, k), frame: 'tail0', flip: side > 0, wig: 0, batT: 0, pounceT: 0, hop: 0 };
-  sfx('dolceIn'); sfx('bell'); R.camSfx = false;
+  sfx('dolceIn'); sfx('bell'); R.camSfx = false; R.catLast = R.clock;
   if (k === 0) { announce('WHO LET THE CAT IN?!'); small("THAT'S DOLCE."); }
   logEv('cat', { act, fold: R.fold, visit: k });
 }
@@ -11680,7 +11772,8 @@ function catOnLanding(slab) {
     if (C.watched === 3 && !C.approved) {
       // V2 §7.2: DOLCE APPROVES is a set-piece (hit-stop 0.7 s, her face at 8x, purr swelling), then play resumes with the lean reset
       C.approved = true; R.flags.approves = true; addScore(3, null); resetLean(); loopOn('purr', { swell: true }); setTimeout0(() => loopOff('purr'), 1.6);
-      R.approvals = (R.approvals || 0) + 1; G.approve = { t: 0, bi: -1, dur: R.approvals > 1 ? 0.45 : TUNE.approveStop }; hitstop(G.approve.dur); sfx('approves'); sfx('hitstop', { dur: TUNE.approveStop }); logEv('catApproves', {});
+      R.approvals = (R.approvals || 0) + 1; logEv('catApproves', {});
+      if (fxWild()) G.fxQ.push({ kind: 'approve', dur: R.approvals > 1 ? 0.45 : TUNE.approveStop, t: 0 }); else calmBanner('DOLCE APPROVES.', '+3. THE LEAN RESETS.', 'cat'); // RULINGS 16A
     }
   }
   if (C.act === 'sit' && Math.abs(slab.dx - C.sitDx) <= 30) catLeave();
@@ -11703,9 +11796,9 @@ function startClose() {
   R.close = { need, T, left: T, taps: 0, k: 0, started: true, free: 0, practice, beat: 0, inch0: R.foldInch0, nStick, stickT, leanT, clean: R.messyFold === 0 && R.landedFold > 0 };
   if (nStick >= 2 || leanT >= 4) sfx('messyFold'); for (let i = 0; i < Math.min(nStick, 8); i++) setTimeout0(() => sfx('sticking', { i }), 0.05 + 0.13 * i);
   R.gliders = []; R.slot = null; const annNow = CO.ann.cur; CO.ann.cur = null; CO.ann.q = [];
-  if (annNow && annNow.t < Math.max(annNow.dur - 0.3, CO_MIN.ann)) small(annNow.text, { front: !CO.sm.cur });
+  if (annNow && annNow.t < Math.max(annNow.dur - 0.3, annMin())) small(annNow.text, { front: !CO.sm.cur });
   if (R.teeter) { R.teeter = null; loopOff('teeter'); }
-  sfx('closeHit', { practice: practice ? 1 : 0 }); flash(0.4, PAL.hot); R.fx.cutT = 0; R.fx.zoomK = 0; vibrate(10); if (practice) loopOn('fuse', { practice: 1 });
+  sfx('closeHit', { practice: practice ? 1 : 0 }); flash(0.4, PAL.hot, 'close'); R.fx.cutT = 0; R.fx.zoomK = 0; vibrate(10); if (practice) loopOn('fuse', { practice: 1 });
   if (R.cat && R.cat.phase !== 'leave') { const free = Math.min(2, need - 1); R.close.taps = free; R.close.free = free; R.close.k = free / need; R.cat = { act: 'loaf', phase: 'flap', t: 0, k: R.cat.k, side: R.cat.side, x: CX, frame: 'loaf' }; small("SHE'S HELPING."); }
   else if (R.cat) R.cat = null;
   if (R.mutOn.through) { addScore(1, 300, pileTopY() - 20, PAL.gold); small('CONNIE WROTE DOWN A 4.'); }
@@ -11733,7 +11826,7 @@ function squeeze(px, py) {
   C.started = true; if (R.hint === 'mash') { R.hint = null; markSeen('mash'); }
   C.taps++; C.k = C.taps / C.need;
   // V2 §3.6: each tap is seen and felt (a finger ring per pointerdown, so two thumbs visibly count)
-  sfx('squeeze', { k: C.k, last: C.taps >= C.need ? 1 : 0 }); shake(1 + 2 * C.k); R.fx.flapDip = 0.12; vibrate(5);
+  sfx('squeeze', { k: C.k, last: C.taps >= C.need ? 1 : 0 }); shake(1 + 2 * C.k, 'squeeze'); R.fx.flapDip = 0.12; vibrate(5);
   if (px != null) ring(px, py, PAL.cream, 0.2, 40); else ring(180, 580, PAL.cream, 0.2, 40);
   if (C.k > 0.5) burst('stitch', 90 + vrand() * 180, pileTopY() - 4, 2, { v: 70, up: 60, life: 0.5 });
   if (R.krug) R.krug.pressure = Math.min(1, R.krug.pressure + 0.06);
@@ -11747,25 +11840,28 @@ function squirtOut(p) {
   if (p.value) addScore(-p.value, clamp(CX + p.dx + sgn(p.dx) * 40, 30, 330), pileTopY() - 10, PAL.red);
   sfx(p.id === 'leg.plate' ? 'hubcap' : 'squirt'); flyOut(p, sgn(p.dx) || 1);
   logEv('squirt', { id: p.id });
-  if (!R.lines.squirt) { R.lines.squirt = true; announce("IT'S COMING OUT THE SIDES!"); }
+  if (!R.lines.squirt) { R.lines.squirt = true; announce("IT'S COMING OUT THE SIDES!", { pri: 2 }); }
 }
 function snap() {
-  const C = R.close; au('cut', 60); sfx('snap'); shake(7); shockwave(CX, pileTopY()); flash(0.35, '#FFF3D6'); loopOff('fuse');
+  const C = R.close; au('cut', 60); sfx('snap'); shake(7, 'snap'); shockwave(CX, pileTopY()); flash(0.35, '#FFF3D6', 'snap'); loopOff('fuse');
   vibrate([20, 30, 40]); R.fx.hop = 0.3; R.fx.zoomOut = 0;
   const din = R.inches - (R.foldInch0 || 0); if (din > 0.05) floater(CX, pileTopY() - 30, '+' + din.toFixed(1) + ' IN', PAL.gold, { size: 2, life: 0.9 });
   const firstSnap = R.closes === 0;
   if (C && C.clean) { addScore(TUNE.cleanBonus, null); R.fx.clean = { t: 0 }; sfx('cleanFold'); logEv('clean', { fold: R.fold }); }
-  if (firstSnap) slam('IT. STILL. CLOSES.', '', TUNE.slamFirstSnap, { words: true }); else hitstop(TUNE.snapStop);
+  // RULINGS 16A: the first-ever close keeps its SLAM; a later run's first SNAP is a moment
+  if (firstSnap && R.first) slam('IT. STILL. CLOSES.', '', TUNE.slamFirstSnap, { words: true }); else hitstop(TUNE.snapStop);
   R.phase = 'snapflop'; // announcements from here on are not demoted
+  if (firstSnap && !R.first) moment('IT. STILL. CLOSES.', '', { dur: TUNE.slamFirstSnap, words: true, icon: 'stuff', calmSub: 'FOLD ONE. NOW IT GETS THICKER.' });
   if (C && C.practice) small('NEXT TIME THE FUSE IS LIT.', { front: true });
   if (R.starbucks && R.fx.odo) small('LIFETIME SPEND: $' + Math.round(R.fx.odo).toLocaleString('en-US') + '.');
   if (!firstSnap) { const ls = LINES.snap; let i = R.lines.snapIdx++; const line = i + 1 < ls.length ? ls[i + 1] : ls[2 + ((i + 1 - ls.length) % (ls.length - 2))]; announce(line); }
   for (const p of R.pile) { R.strata.push(p.tier); if ((p.legend || (p.it && p.it.flags.star)) && !p.decoy) R.stubs.push({ id: p.id, n: R.strata.length - 1, side: (R.stubs.length % 2) ? -1 : 1 }); }
   if (R.strata.length > 64) { const cut = R.strata.length - 64; R.strata.splice(0, cut); for (const st of R.stubs) st.n -= cut; R.stubs = R.stubs.filter((st) => st.n >= 0); }
-  if (R.krug) { addScore(3, 120, 240, PAL.gold); R.fx.cork = { t: 0 }; sfx('cork'); announce('SOMEBODY GET A GLASS!'); R.fizzFold = R.fold + 1; R.krug = null; burst('bubble', CX, pileTopY(), 12, { v: 90, up: 100, g: -30, life: 1.0 }); }
+  if (R.krug) { addScore(3, 120, 240, PAL.gold); R.fx.cork = { t: 0 }; sfx('cork'); announce('SOMEBODY GET A GLASS!', { pri: 2 }); R.fizzFold = R.fold + 1; R.krug = null; burst('bubble', CX, pileTopY(), 12, { v: 90, up: 100, g: -30, life: 1.0 }); }
   R.pile = []; R.leanZero = 0; R.mba = null; R.closes++;
   logEv('snap', { fold: R.fold, taps: C ? C.taps : 0, need: C ? C.need : 0 });
   R.phase = 'snapflop'; R.phaseT = 0; R.closeEndLive = R.liveT; R.close = null; R.fx.snapK = 1;
+  if (R.muts.length) R.mutEnd = R.clock; // RULINGS 16D: the plain-stacking gap counts from here
   loopOff('storm'); loopOff('fizz'); rotateTo(0, 0.4);
   if (R.cat && R.cat.phase === 'flap') R.cat = null;
   if (R.hint === 'mash') R.hint = null;
@@ -11778,7 +11874,7 @@ function afterSnap() {
 function nextFold() { setupFold(); foldIntro(); }
 function hug() {
   R.hugUsed = true; R.phase = 'hug'; R.phaseT = 0; sfx('hug');
-  announce('HAMZAH BROUGHT A HUG!', { front: true }); bubble('hamzah', 'I KNOW THE WALLET.');
+  announce('HAMZAH BROUGHT A HUG!', { front: true, pri: 2 }); bubble('hamzah', 'I KNOW THE WALLET.');
   logEv('hug', { fold: R.fold });
 }
 
@@ -11793,7 +11889,7 @@ function startBonus() {
     R.phase = 'bonus'; loopsOff(); music('bonus'); rotateTo(0, 0.01); R.rot = 0; R.rotT = 1;
     logEv('bonusStart', { n: R.bonusN });
   }, () => {
-    if (!R.flags.bonusSlam) { R.flags.bonusSlam = true; slam('BONUS STAGE!', 'KEEP THE CHANGE.', TUNE.slamGen, { sting: 'bonus' }); }
+    if (!R.flags.bonusSlam) { R.flags.bonusSlam = true; moment('BONUS STAGE!', 'KEEP THE CHANGE.', { sting: 'bonus', icon: R.bonus && R.bonus.tiltMode ? 'phoneTilt' : 'thumbSlide', calmSub: R.bonus && R.bonus.tiltMode ? 'TILT TO CATCH THE CHANGE.' : 'SLIDE TO CATCH THE CHANGE.' }); }
     markSeen('bonus');
   });
 }
@@ -11819,11 +11915,11 @@ function stepBonus(dt) {
     const v = TUNE.bonusV0 + (TUNE.bonusV1 - TUNE.bonusV0) * clamp(B.t / TUNE.bonusDur, 0, 1); const y0 = it.y; it.y += v * dt;
     if (y0 < 470 && it.y >= 470 && Math.abs(it.x - B.wx) <= TUNE.catchW / 2) {
       it.state = 'caught';
-      if (it.kind === 'check') { B.how = 'paid'; announce('HE PAID?!', { front: true }); bubble('rob', 'NEVER AGAIN.'); sfx('check'); logEv('catch', { kind: 'check' }); bonusDone(); return; }
+      if (it.kind === 'check') { B.how = 'paid'; announce('HE PAID?!', { front: true, pri: 2 }); bubble('rob', 'NEVER AGAIN.'); sfx('check'); logEv('catch', { kind: 'check' }); bonusDone(); return; }
       B.caught++; addScore(1, clamp(it.x, 30, 330), 446, PAL.gold); sfx('catch', { combo: B.caught }); burst('coin', it.x, 470, 3, { v: 40, up: 60 }); logEv('catch', { kind: it.kind, n: B.caught });
     } else if (it.y >= 540) it.state = 'miss';
   }
-  if (B.t >= TUNE.bonusDur && !B.items.some((x) => x.state === 'fall' || x.state === 'wait')) { B.how = B.caught >= 8 ? 'pen' : B.caught >= 4 ? 'mints' : 'notip'; announce(B.how === 'pen' ? 'HE TOOK THE PEN!' : B.how === 'mints' ? 'HE TOOK THE MINTS!' : 'HE LEFT NO TIP.', { front: true }); bonusDone(); }
+  if (B.t >= TUNE.bonusDur && !B.items.some((x) => x.state === 'fall' || x.state === 'wait')) { B.how = B.caught >= 8 ? 'pen' : B.caught >= 4 ? 'mints' : 'notip'; announce(B.how === 'pen' ? 'HE TOOK THE PEN!' : B.how === 'mints' ? 'HE TOOK THE MINTS!' : 'HE LEFT NO TIP.', { front: true, pri: 2 }); bonusDone(); }
 }
 function bonusDone() { const B = R.bonus; B.ended = true; B.endT = 0; if (B.caught) R.ledger.push({ id: 'bonus.change', name: 'THE CHANGE (KEPT)', tier: 'common', value: B.caught }); logEv('bonusEnd', { caught: B.caught, how: B.how }); }
 function endBonus() {
@@ -11850,12 +11946,12 @@ function die(how) {
   if (!R || R.phase === 'dying') return;
   R.phase = 'dying'; R.phaseT = 0; R.how = how; R.deathL = leanNow();
   R.gliders = []; R.falling = []; R.hands = []; R.hint = null;
-  loopsOff(); au('tapeStop'); au('setHeat', 0); R.teeter = null;
-  shake(how === 'burst' ? 10 : 8); flash(0.5, how === 'burst' ? '#FFFFFF' : '#FF3B30'); vibrate([40, 30, 60]);
+  loopsOff(); au('tapeStop'); au('setHeat', 0); R.teeter = null; G.fxQ.length = 0;
+  shake(how === 'burst' ? 10 : 8, how); flash(0.5, how === 'burst' ? '#FFFFFF' : '#FF3B30', how); vibrate([40, 30, 60]);
   // V2 §3.9: every death says why
   R.cause = causeOf(how);
   if (how === 'topple') { sfx('topple'); sfx('short'); } else sfx('burst', { cause: R.close && R.close.need - R.close.taps <= 3 ? 'short' : 'time' });
-  CO.ann.q = []; CO.sm.q = []; CO.sm.cur = null; announce(LINES.death[how], { front: true }); small(R.cause, { front: true });
+  CO.ann.q = []; CO.sm.q = []; CO.sm.cur = null; if (!fxWild()) CO.ann.cur = null; announce(LINES.death[how], { front: true, pri: 3 }); small(R.cause, { front: true });
   if (how === 'burst' && !isSeen('burst')) { markSeen('burst'); R.burstCardDue = true; }
   if (how === 'burst') { for (const p of R.pile) flyOut(p, vrand() < 0.5 ? -1 : 1); burst('coin', CX, pileTopY(), 18, { v: 180, up: 160, life: 1.3 }); burst('stitch', CX, pileTopY(), 14, { v: 200, up: 120, life: 1.0 }); burst('dust', CX, 500, 10, { v: 120, up: 40, life: 0.8 }); R.fx.snapBullet = { t: 0 }; shockwave(CX, pileTopY(), PAL.hot); shockwave(CX, 500, PAL.cream); }
   R.gameOver = { how, fold: R.fold, stuffed: R.stuffed, clock: +R.clock.toFixed(3), wall: +R.wall.toFixed(3), capped: R.capped || 0 };
@@ -12127,7 +12223,10 @@ function titleButtons() {
     { x: 126, y: 558, w: 108, h: 32, label: 'LOOT ' + lootStr(), opts: { size: 1.5 }, fn: () => openLoot('title') },
     { x: 240, y: 558, w: 108, h: 32, label: (SAVE.name || 'NAME') + ' ▸', opts: { size: 1.5, dim: true }, fn: () => openName('title') },
   ];
-  if (tiltAvailable() || OPT.tiltSim) G.btns.push({ x: 12, y: 596, w: 150, h: 32, label: tiltLabel(), chip: true, opts: { size: 1.5, dim: G.tilt.state !== 'on' }, fn: () => { tiltChipTap(); } });
+  const tiltChip = tiltAvailable() || OPT.tiltSim;
+  if (tiltChip) G.btns.push({ x: 12, y: 596, w: 150, h: 32, label: tiltLabel(), chip: true, opts: { size: 1.5, dim: G.tilt.state !== 'on' }, fn: () => { tiltChipTap(); } });
+  // RULINGS 16F: FX: CALM / FX: WILD (saved; cosmetic only)
+  G.btns.push({ x: tiltChip ? 168 : 12, y: 596, w: tiltChip ? 140 : 150, h: 32, label: fxWild() ? 'FX: WILD' : 'FX: CALM', fxChip: true, opts: { size: 1.5, dim: !fxWild(), hot: fxWild() }, fn: () => { toggleFx(); } });
   G.btns.push({ x: 318, y: 596, w: 32, h: 32, label: '', icon: true, fn: () => toggleMute() });
 }
 function tiltLabel() { const s = G.tilt.state; return s === 'on' ? 'TILT: ON' : s === 'blocked' ? 'TILT: BLOCKED' : s === 'none' ? 'NO TILT ON THIS PHONE' : s === 'waiting' ? 'TILT: ...' : 'TILT: OFF'; }
@@ -12139,13 +12238,13 @@ function startRun(o) {
   if (o.daily != null) seed = dailySeed(o.daily);
   if (seed == null) seed = OPT.seed != null && !G.seedUsed ? OPT.seed : randomSeed();
   G.seedUsed = true;
-  clearText(); PARTS.length = 0; G.slam = null; G.slamQ = []; G.hitstop = 0; G.measure = null; G.wipe = null; G.paused = false; G.royaleFx = null;
+  clearText(); PARTS.length = 0; G.slam = null; G.slamQ = []; G.hitstop = 0; G.measure = null; G.wipe = null; G.paused = false; G.royaleFx = null; G.fxSlam = null; G.fxQ = []; G.approve = null;
   newRun({ seed, daily: o.daily != null ? o.daily : null, challenge: o.challenge || null });
   setScene('play'); setupFold();
   if (o.t != null && o.t > 0) fastStart(o.t);
   R.venue = venueAt(R.clock); if (R.clock >= 60) { R.royale = true; R.gold = true; R.venue = 'void'; R.lastCount = Math.floor(R.clock / 5) * 5; }
   R.phase = 'ready'; R.phaseT = 0;
-  music(R.venue); musicTranspose(R.royale ? 5 : 0); musicIntensity(R.clock / 60); musicTempo(1);
+  music(R.venue); musicTranspose(R.royale ? 5 : 0); musicIntensity(runIntensity(R.clock)); musicTempo(1);
   if (R.first && !isSeen('tap')) R.hint = 'tap'; else R.cue = 'READY?';
   small(R.challenge ? '1 V 1.' : '99 OTHER WALLETS REMAIN.');
   if (G.auto && BOT) botReset();
@@ -12207,7 +12306,7 @@ function fastStart(t) {
   R.stuffed = Math.round(t * 1.45); R.inches = 0.6 + t * 0.19;
   for (let j = 0; j < Math.min(64, (f - 1) * 7); j++) R.strata.push(['common', 'common', 'uncommon', 'rare', 'common', 'epic', 'common', 'rare'][j % 8]);
   R.measureIdx = LINES.measure.filter((m) => m[0] <= R.inches).length;
-  if (t >= 12) { R.satDone = true; R.satCount = 1; let mf = 0; for (let ff = 1; ff < f; ff++) mf++; R.mutK = Math.max(0, Math.floor((t - 12) / 6.5)); }
+  if (t >= TUNE.mutHardFrom) { R.satDone = true; R.satCount = 1; } if (t >= TUNE.mutFrom) R.mutK = Math.max(0, Math.floor((t - TUNE.mutFrom) / 13));
   R.bonusN = R.closes >= TUNE.bonusFirst ? 1 + Math.floor((R.closes - TUNE.bonusFirst) / TUNE.bonusEvery) : 0; R.flags.bonusSlam = R.bonusN > 0;
   R.legSeen = {}; R.lines.passed = R.stuffed > targetInfo().score;
   R.catVisits = t >= 20 ? Math.floor((t - 20) / 9) : 0;
@@ -12273,7 +12372,7 @@ function computeRanks(r) {
   r.allRank = rankIn(GB.all.rows, r);
   r.dailyRank = r.daily != null && GB.daily.day === r.daily ? rankIn(GB.daily.rows, r) : null;
   if (r.allRank === 1 && !r.world1Shown && GB.all.rows && GB.all.rows[0] && GB.all.rows[0].name === r.name && GB.all.rows[0].score === r.score) {
-    r.world1Shown = true; if (G.scene === 'receipt') { G.rc.world1T = 0; sfx('banner'); sting('royale'); shake(6); flash(0.5, PAL.gold); burst('confetti', 180, 120, 40, { v: 200, up: 160, life: 1.6 }); }
+    r.world1Shown = true; if (G.scene === 'receipt') { G.rc.world1T = 0; sfx('banner'); sting('royale'); shake(6, 'world1'); flash(0.5, PAL.gold, 'world1'); burst('confetti', 180, 120, 40, { v: 200, up: 160, life: 1.6 }); }
   }
 }
 function globalLine(r) {
@@ -12328,8 +12427,8 @@ function passCheck() {
 // one rivalry banner per 2.0 s (later ones merge); SLAMs go first; none during CLOSE (they wait for the SNAP)
 function pumpRivals() {
   if (!G.rivalQ.length || !R || G.scene !== 'play') return;
-  if (inClose() || R.phase === 'dying' || G.slam || G.reveal || G.approve || G.slamQ.length || G.hitstop > 0 || G.wipe) return;
-  if (G.simT - G.rivalT < 2.0) return;
+  if (inClose() || R.phase === 'dying' || G.slam || G.fxSlam || G.fxQ.length || G.reveal || G.approve || G.slamQ.length || G.hitstop > 0 || G.wipe) return;
+  if (G.simT - G.rivalT < (fxWild() ? 2.0 : 8.0)) return; // RULINGS 16C: CALM: one YOU JUST PASSED a 8 s
   const q = G.rivalQ.splice(0); G.rivalT = G.simT;
   const big = q.filter((r) => r.kind === 'world' || r.kind === 'rival').sort((a, b) => b.score - a.score), house = q.filter((r) => r.kind === 'house').sort((a, b) => b.score - a.score);
   if (q.some((r) => r.w1)) { R.world1Pace = true; banner('WORLD #1 PACE! HOLD ON!', { front: true, dur: 1.4, col: 'gold' }); sfx('banner'); burst('confetti', 60, 600, 10, { v: 120, up: 160, life: 1.0 }); }
@@ -12337,13 +12436,13 @@ function pumpRivals() {
     const t = big.length === 1 ? 'YOU JUST PASSED ' + big[0].name + '!' : big.length === 2 ? 'YOU JUST PASSED ' + big[0].name + ' AND ' + big[1].name + '!' : 'YOU JUST PASSED ' + big[0].name + ' AND ' + (big.length - 1) + ' MORE!';
     banner(t, { front: true, dur: 1.2, style: 'rival' }); sfx('passBig'); burst('confetti', 60, 610, 10, { v: 120, up: 160, life: 1.0 });
   }
-  if (house.length) { small('PASSED ' + house[0].name + (house.length > 1 ? ' AND ' + (house.length - 1) + ' MORE' : '') + '.', { col: PAL.silver }); sfx('pass'); }
+  if (house.length) { const t = 'PASSED ' + house[0].name + (house.length > 1 ? ' AND ' + (house.length - 1) + ' MORE' : '') + '.'; if (fxWild()) { small(t, { col: PAL.silver }); sfx('pass'); } else if (smallIdle(t, { col: PAL.silver })) sfx('pass'); }
 }
 // V2 §5: the elimination counter (99 -> 50 at 30 s -> 10 at 45 s -> 2 at 59.9 s; 1 at 60)
 function leftAt(t) { if (t >= 60) return 1; if (t <= 30) return Math.round(99 - 49 * t / 30); if (t <= 45) return Math.round(50 - 40 * (t - 30) / 15); return Math.max(2, Math.round(10 - 8 * (t - 45) / 14.9)); }
 function feedTick() {
   if (!R || R.phase !== 'stuff' || R.clock < R.feedNext || R.royale) return;
-  R.feedNext += TUNE.feedEvery;
+  R.feedNext += fxWild() ? TUNE.feedEvery : 15;
   let name = null;
   for (const g of (GB.all.rows || [])) { const n = String(g.name).toUpperCase(); if ((g.secs | 0) <= R.clock && !R.feedUsed[n] && !(SAVE.name && n === SAVE.name)) { name = n; break; } }
   if (!name) for (const n of CAST) if (!R.feedUsed[n] && n !== SAVE.name) { name = n; break; }
@@ -12426,7 +12525,7 @@ function render() {
   if (G.toast) { const a = clamp(Math.min(G.toast.t / 0.15, (G.toast.dur - G.toast.t) / 0.3), 0, 1); ctx.save(); ctx.globalAlpha = a; const y = G.scene === 'title' ? 404 : 470; const sz = fitSize(G.toast.text, 2, 330, 1); const w = tw(G.toast.text, sz) + 20; ctx.fillStyle = G.toast.hot ? PAL.hot : 'rgba(11,11,12,0.88)'; ctx.fillRect(180 - w / 2, y - 6, w, 7 * sz + 12); txt(G.toast.text, 180, y, sz, G.toast.hot ? '#FFFFFF' : PAL.lemon, 'center', { kind: 'ui' }); ctx.restore(); }
   ctx.setTransform(1, 0, 0, 1, 0, 0);
   // V2 §3.7: the last 30% of the fuse: a hot vignette at 3 Hz (RAW)
-  if (G.scene === 'play' && R && ((R.phase === 'close' && R.close && !R.close.practice && R.close.left / R.close.T < 0.3) || (R.teeter && R.phase === 'stuff'))) { const a = 0.35 + 0.35 * Math.max(0, Math.sin(RT * Math.PI * 6)); if (!artDo('drawVignette', ctx, cv.width, cv.height, a, PAL.hot)) drawVignetteRaw(a); }
+  if (G.scene === 'play' && R && ((R.phase === 'close' && R.close && !R.close.practice && R.close.left / R.close.T < 0.3) || (R.teeter && R.phase === 'stuff'))) { const a = (0.35 + 0.35 * Math.max(0, Math.sin(RT * Math.PI * 6))) * (fxWild() ? 1 : 0.5); if (!artDo('drawVignette', ctx, cv.width, cv.height, a, PAL.hot)) drawVignetteRaw(a); }
   ART.drawCRT(ctx, cv.width, cv.height, RT);
   if (dbgOwn) { G.dbgRects = TR; TR = null; }
   if (DEBUG) { ctx.setTransform(st.scale, 0, 0, st.scale, st.x, st.y); drawDebug(); ctx.setTransform(1, 0, 0, 1, 0, 0); }
@@ -12451,17 +12550,17 @@ function drawPlay() {
   if (slide) ctx.restore();
   if (!bonusView) drawShowcaseZone();
   drawBox();
-  const covered = G.reveal || G.approve || (G.slam && G.hitstop > 0.002);
+  const covered = G.reveal || G.approve || slamUpNow();
   if (!covered) { if (R.phase !== 'closing') drawFloaters(); drawBubbles(); }
   if (R.fx.clean && !covered && R.phase !== 'closing') { const k = clamp(R.fx.clean.t / 1.1, 0, 1), txt0 = 'CLEAN FOLD', sub = '+' + TUNE.cleanBonus; const r = artHas('drawCleanFold') ? artX('drawCleanFold', ctx, 180, 300, k, RT, { text: txt0, sub }) : null;
     if (r && r.w) trAdd('floater', r.x, r.y, r.w, r.h, txt0 + ' ' + sub); else { ctx.save(); ctx.globalAlpha = k > 0.8 ? (1 - k) / 0.2 : 1; txt(txt0 + ' ' + sub, 180, 290, 3, PAL.gold, 'center', { outline: PAL.ink, kind: 'floater' }); ctx.restore(); } }
-  if (G.slam && G.hitstop > 0.002) drawSlamOverlay();
+  if (G.slam && G.hitstop > 0.002) drawSlamOverlay(G.slam); else if (G.fxSlam && G.fxSlam.kind === 'slam') drawSlamOverlay(G.fxSlam);
   if (G.reveal) drawRevealOverlay();
   if (G.approve) drawApproveOverlay();
   if (R.burstCard) drawBurstCardOverlay();
   if (G.swell) { ctx.save(); ctx.globalAlpha = 0.6 * clamp(G.swell.t / TUNE.swellT, 0, 1); ctx.fillStyle = '#FFFFFF'; ctx.fillRect(-200, -200, 760, 1040); ctx.restore(); }
   if (R.fx.handoff != null && R.fx.handoff < 0.12) { ctx.save(); ctx.globalAlpha = 1 - R.fx.handoff / 0.12; ctx.fillStyle = PAL.cloth; ctx.fillRect(-200, -200, 760, 1040); ctx.restore(); }
-  if (inClose()) { if (!artDo('drawStageBorder', ctx, RT, PAL.hot)) { ctx.save(); ctx.globalAlpha = 0.55 + 0.45 * Math.sin(RT * 12); ctx.strokeStyle = PAL.hot; ctx.lineWidth = 4; ctx.strokeRect(2, 2, 356, 636); ctx.restore(); } }
+  if (inClose()) { if (!artDo('drawStageBorder', ctx, RT, fxWild() ? PAL.hot : 0.5)) { ctx.save(); ctx.globalAlpha = (0.55 + 0.45 * Math.sin(RT * 12)) * (fxWild() ? 1 : 0.5); ctx.strokeStyle = PAL.hot; ctx.lineWidth = 4; ctx.strokeRect(2, 2, 356, 636); ctx.restore(); } }
 }
 function flapAmount() {
   const p = R.phase;
@@ -12559,7 +12658,7 @@ function drawGliderV2(g, x, y, hidden) {
   let hop = R.mutOn.through ? Math.abs(Math.sin(((g.x - TUNE.laneL) / (TUNE.laneR - TUNE.laneL)) * Math.PI * 3)) * 18 : 0;
   if (hop > 0) hop = Math.min(hop, Math.max(0, y + gliderExtent(g.id, sc, true).top - 187));
   y -= hop;
-  if (!hidden && !g.decoy && tier !== 'common' && tier !== 'cursed' && !artFlag('GLIDER_V2')) { const r = Math.round(Math.max(im.width, im.height) * sc * 0.75); ctx.save(); ctx.globalCompositeOperation = 'lighter'; ctx.globalAlpha = 0.55 + 0.25 * Math.sin(RT * 6); const gc = glowCanvas(tier, Math.min(120, r)); ctx.drawImage(gc, Math.round(x - gc.width / 2), Math.round(y - gc.height / 2)); ctx.restore(); }
+  if (!hidden && !g.decoy && tier !== 'common' && tier !== 'cursed' && !artFlag('GLIDER_V2')) { const r = Math.round(Math.max(im.width, im.height) * sc * (fxWild() ? 0.75 : 0.5)); ctx.save(); ctx.globalCompositeOperation = 'lighter'; ctx.globalAlpha = 0.55 + 0.25 * Math.sin(RT * 6); const gc = glowCanvas(tier, Math.min(120, r)); ctx.drawImage(gc, Math.round(x - gc.width / 2), Math.round(y - gc.height / 2)); ctx.restore(); }
   // two lanes (DOUBLEHEADER, the fake-ID pair): an upper-lane glider whose canopy would reach the showcase rides without one
   const noCanopy = hop > 0 || (twoLane() && g.lane === 1 && y + gliderExtent(g.id, sc).top < 187);
   const opts = { beamTo: pileTopY(), gold: it.cat === 'legend', decoy: g.decoy, hop: noCanopy, hidden, cursed: tier === 'cursed', scale: sc, tab: tier !== 'common' && !g.decoy ? TIER_WORD[tier] : null, tier, glow: tier !== 'common', isNew: !!R.newIds[g.id], dir: g.dir };
@@ -12663,10 +12762,11 @@ function drawField() {
   // falling: the slam-down (stretched, shrinking from glider scale to 1x) with a tier-colour trail
   for (const f of R.falling) {
     const k = clamp(f.t / f.dur, 0, 1), y0 = f.y0, y1 = top - 8, img = ART.item(f.g.id), tier = tierOf(f.g.item);
-    for (let j = 6; j >= 1; j--) { const kk = clamp(k - j * 0.06, 0, 1); if (kk <= 0) continue; const yy = lerp(y0, y1, kk * kk); ctx.save(); ctx.globalAlpha = 0.07 * (7 - j); ctx.drawImage(img, Math.round(f.x - img.width / 2), Math.round(yy - img.height / 2)); ctx.restore(); }
+    const trail = fxWild() || tier === 'epic' || tier === 'legendary'; // RULINGS 16B: CALM trails only for EPIC and LEGENDARY
+    if (trail) for (let j = 6; j >= 1; j--) { const kk = clamp(k - j * 0.06, 0, 1); if (kk <= 0) continue; const yy = lerp(y0, y1, kk * kk); ctx.save(); ctx.globalAlpha = 0.07 * (7 - j); ctx.drawImage(img, Math.round(f.x - img.width / 2), Math.round(yy - img.height / 2)); ctx.restore(); }
     const yy = lerp(y0, y1, k * k), sc = lerp(f.sc || 1, 1, k), sy = sc * (1 + 0.25 * k);
     ctx.drawImage(img, Math.round(f.x - img.width * sc / 2), Math.round(yy - img.height * sy / 2), img.width * sc, img.height * sy);
-    if (tier === 'rare' && vrand() < 0.5) burst('spark', f.x + (vrand() - 0.5) * img.width, yy, 1, { v: 30, up: 10, life: 0.25 });
+    if (tier === 'rare' && fxWild() && vrand() < 0.5) burst('spark', f.x + (vrand() - 0.5) * img.width, yy, 1, { v: 30, up: 10, life: 0.25 });
   }
   for (const h of R.hands) { try { if (window.RWArt) window.RWArt._handTarget = { x: CX + h.side * TUNE.floorK * inHalfAt(R.clock), y: top }; } catch (e) { } ART.drawHand(ctx, h.who, h.side, clamp(h.t / TUNE.handT, 0, 1), h.placed ? null : h.item.id, CX + h.side * TUNE.floorK * inHalfAt(R.clock), top); }
   if (R.cat && R.cat.phase !== 'flap') {
@@ -12687,7 +12787,7 @@ function drawField() {
   ctx.restore();
   // UI over the field stays upright and unzoomed (§16.8, V2 §11.11)
   drawRings();
-  const slamUp = G.slam && G.hitstop > 0.002;
+  const slamUp = slamUpNow();
   if ((R.phase === 'close' || R.phase === 'closing' || R.phase === 'hug') && !slamUp) drawMeter();
   if (R.phase === 'closing' && !slamUp) drawCut();
 }
@@ -12779,8 +12879,11 @@ function drawParts(textOnly) {
 function floaterTop() { const b = CO.bub.cur; if (!b || b.who === 'rob' || inClose() || (R && R.phase === 'hug')) return 188; const an = bubbleAnchor(b), g = bubbleGeom(an.x, an.y, b.text, { size: b.who === 'fish' ? 1.5 : 2, side: an.side, up: false, maxW: 220 }); return Math.max(188, g.y + g.h + 3); }
 function drawFloaters() {
   const fTop = floaterTop();
+  // RULINGS 16B (CALM): two pops on screen at most, counting the live stock counter and CLEAN FOLD; the newest win
+  let show = null;
+  if (!fxWild()) { const other = (R && R.stock && !R.stock.banked && R.phase === 'stuff' ? 1 : 0) + (R && R.fx.clean && R.phase !== 'closing' ? 1 : 0); show = PARTS.filter((q) => q.kind === 'text').sort((a, b) => a.age - b.age).slice(0, Math.max(0, 2 - other)); }
   for (const p of PARTS) {
-    if (p.kind !== 'text') continue;
+    if (p.kind !== 'text' || (show && show.indexOf(p) < 0)) continue;
     const a = clamp(1 - p.age / p.life, 0, 1); const q = rotPt(p.x, p.y); const sz = p.size || 2;
     const w = tw(p.text, sz), xMax = R && (R.phase === 'close' || R.phase === 'hug' || R.phase === 'closing') ? 300 : 356, x = clamp(q.x, w / 2 + 4 + (p.grade ? 16 : 0), xMax - w / 2 - (p.grade ? 22 : 0)), y = clamp(q.y, fTop, (R && R.mutOn.flight ? 436 : 508) - 7 * sz - (p.grade ? 12 : 0));
     if (p.grade && artHas('drawGradePop')) { const r = artX('drawGradePop', ctx, p.grade, x, Math.max(y + 3.5 * sz, fTop + 30), clamp(p.age / p.life, 0, 1), { t: RT, sub: p.sub, text: p.text }); if (r && r.w) trAdd('floater', r.x, r.y, r.w, r.h, p.text); else trAdd('floater', x - w / 2, y, w, 7 * sz, p.text); continue; }
@@ -12885,7 +12988,7 @@ function showValue(it, g) {
 }
 function showcaseBox() { return R.mutOn.flight ? { x: 4, y: 440, w: 352, h: 76 } : { x: 4, y: 98, w: 352, h: 84 }; }
 function drawShowcaseZone() {
-  if ((G.slam && G.hitstop > 0.002) || G.reveal || G.approve) return; // hidden under a SLAM, a reveal card or DOLCE APPROVES
+  if (slamUpNow() || G.reveal || G.approve) return; // hidden under a SLAM, a reveal card or DOLCE APPROVES
   if (R.phase === 'closing' || R.phase === 'close') { drawMashPanel(); return; }
   if (R.phase !== 'stuff' && R.phase !== 'intro') return;
   const real = R.gliders.filter((g) => !g.decoy);
@@ -12969,7 +13072,7 @@ function closeCostLine() {
   return { t: 'A BIT MESSY. MASH IT.', c: PAL.cloth };
 }
 /* ---------- the commentary box (V2 §1: y 522–636; the thumb zone) ---------- */
-function camUp() { return !!(R && R.cat && G.scene === 'play' && !(CO.bub.cur && CO.bub.cur.who === 'rob') && !(CO.ann.cur && (CO.ann.cur.style === 'card' || CO.ann.cur.style === 'banner' || CO.ann.cur.style === 'rival' || CO.ann.cur.style === 'measure')) && !inClose() && R.phase !== 'dying'); }
+function camUp() { return !!(R && R.cat && G.scene === 'play' && !(CO.bub.cur && CO.bub.cur.who === 'rob') && !(CO.ann.cur && (CO.ann.cur.style === 'card' || CO.ann.cur.style === 'banner' || CO.ann.cur.style === 'rival' || CO.ann.cur.style === 'measure' || CO.ann.cur.style === 'calm')) && !inClose() && R.phase !== 'dying'); }
 const UPA = () => (tw('▲', 2) >= 4 ? '▲' : '▸');
 function drawBox() {
   if (!artHas('drawHUDFrame')) { ctx.fillStyle = 'rgba(11,11,12,0.72)'; ctx.fillRect(0, 522, 360, 114); }
@@ -12985,12 +13088,13 @@ function drawBox() {
     const ic = ART.icon(R.hint === 'tap' ? 'tap' : 'mash', Math.floor(RT * (R.hint === 'tap' ? 3 : 10)) % 2); ctx.drawImage(ic, 262, 540, 28, 28);
   } else if (R.cue) {
     const word = R.phaseT < TUNE.readyT / 2 ? 'READY?' : 'STUFF!'; txt(word, 180, 540, 4, word === 'STUFF!' ? PAL.lemon : PAL.cloth, 'center', { kind: 'ui', outline: PAL.ink });
-  } else if (R.phase === 'bonus' && R.bonus && R.bonus.t < 1.0) {
+  } else if (R.phase === 'bonus' && R.bonus && R.bonus.t < 1.0 && !(CO.ann.cur && CO.ann.cur.style === 'calm')) {
     const ic = ART.icon(R.bonus.tiltMode ? 'phoneTilt' : 'thumbSlide', Math.floor(RT * 3) % 2); ctx.drawImage(ic, 16, 536, 36, 36);
   }
-  const a = CO.ann.cur;
+  const a = calmCovered() ? null : CO.ann.cur;
   if (a && !R.hint && !closeUI) {
     if (a.style === 'card') drawBoxCard(a);
+    else if (a.style === 'calm') drawCalmBanner(a);
     else if (a.style === 'banner' || a.style === 'measure') { const bs = tw(a.text, 2) > 280 ? 1.5 : 2, bw = tw(a.text, bs) + 36; ART.drawBanner(ctx, a.text, 554, clamp(a.t / 0.12, 0, 1)); trAdd('announcer', 180 - bw / 2 - 14, 554 - (7 * bs + 12) / 2, bw + 28, 7 * bs + 17, a.text); }
     else if ((a.style === 'rival' || a.col === 'gold') && artHas('drawPassBanner')) { const r = artX('drawPassBanner', ctx, a.text, 180, 554, clamp(a.t / a.dur, 0, 1), { gold: a.col === 'gold', t: RT }); if (r && r.w) trAdd('announcer', r.x, r.y, r.w, r.h, a.text); else trAdd('announcer', 20, 536, 320, 36, a.text); }
     else if (a.style === 'rival' || a.col === 'gold') {
@@ -13009,7 +13113,7 @@ function drawBox() {
       let w = 0; for (const l of ft.lines) w = Math.max(w, tw(l, ft.size)); trAdd('announcer', acx - w / 2, y0, w + ft.size * 0.5, h + ft.size * 0.5, a.text);
     }
   }
-  const s = boxCardUp() && !closeUI ? null : CO.sm.cur;
+  const s = (boxCardUp() && !closeUI) || calmCovered() ? null : CO.sm.cur;
   if (s) {
     const col = s.col || PAL.lemon;
     if (closeUI) { const sz = fitSize(s.text, 1.5, 340, 1); txt(s.text, 180, 603, sz, col, 'center', { kind: 'small', outline: PAL.ink }); }
@@ -13020,9 +13124,22 @@ function drawBox() {
     }
   }
   const b = CO.bub.cur;
-  if (b && b.who === 'rob' && !closeUI && !boxCardUp()) { ART.drawRob(ctx, 'neutral', 8, 584, 26, RT, {}); const g = bubbleGeom(40, 582, b.text, { size: 2, side: 1, up: false, maxW: 300 }); ART.drawBubble(ctx, 40, 582 - g.tail, b.text, b.t, { side: 1, up: false, maxW: 300, color: '#FFFFFF', size: 2 }); trAdd('bubble', g.x, 582, g.w, g.h, b.text); }
+  if (b && b.who === 'rob' && !closeUI && !boxCardUp() && !calmCovered()) { ART.drawRob(ctx, 'neutral', 8, 584, 26, RT, {}); const g = bubbleGeom(40, 582, b.text, { size: 2, side: 1, up: false, maxW: 300 }); ART.drawBubble(ctx, 40, 582 - g.tail, b.text, b.t, { side: 1, up: false, maxW: 300, color: '#FFFFFF', size: 2 }); trAdd('bubble', g.x, 582, g.w, g.h, b.text); }
   if (cam) drawCam();
   drawLadderStrip();
+}
+// RULINGS 16A: the calm banner (an ink plate in the announcer slot: a small icon, the line, its sub; it fades in and out)
+function drawCalmBanner(a) {
+  const k = clamp(Math.min(a.t / 0.18, (a.dur - a.t) / 0.25), 0, 1), x0 = 14, w = 332, y0 = 533, h = 42, tx = 56, mw = x0 + w - 8 - tx;
+  ctx.save(); ctx.globalAlpha *= k; ctx.translate(0, Math.round(4 * (1 - ease(clamp(a.t / 0.18, 0, 1)))));
+  ctx.fillStyle = PAL.ink; ctx.fillRect(x0 - 1, y0 - 1, w + 2, h + 2); ctx.fillStyle = 'rgba(28,26,34,0.96)'; ctx.fillRect(x0, y0, w, h);
+  ctx.fillStyle = PAL.lemon; ctx.fillRect(x0, y0, 3, h);
+  const ic = ART.icon(a.icon || 'stuff', 0); ctx.drawImage(ic, x0 + 9, y0 + 7, 28, 28);
+  const s1 = fitSize(a.text, 2, mw, 1.5), sub = a.sub || '', s2 = sub ? fitSize(sub, 1.5, mw, 1) : 0;
+  const ty = sub ? y0 + 6 : y0 + Math.round((h - 7 * s1) / 2);
+  ART.text(ctx, a.text, tx, ty, { size: s1, color: PAL.cream }); if (sub) ART.text(ctx, sub, tx, y0 + 25, { size: s2, color: PAL.lemon });
+  ctx.restore();
+  trAdd('announcer', x0, y0, w, h, a.text);
 }
 function fitAnnW(text, maxH, maxS, maxW) {
   for (let s = maxS || 4; s >= 2; s -= 0.5) {
@@ -13094,10 +13211,10 @@ function drawLadderStrip() {
 
 /* ---------- overlays ---------- */
 function slamRect(text, sub) { const A = window.RWArt; if (A && A.SLAM_RECT && typeof A.SLAM_RECT === 'object') return A.SLAM_RECT; const sz = slamSize(text); const w = Math.max(tw(text, sz), sub ? tw(sub, fitSize(sub, 2, 340)) : 0); const h = 7 * sz + (sub ? 10 + 14 : 0); return { x: 180 - w / 2, y: 272, w, h }; }
-function drawSlamOverlay() {
-  const s = G.slam; let text = s.text;
-  if (s.words) { const w = text.split(' '); const n = Math.min(w.length, 1 + Math.floor(s.t / (s.dur / w.length))); text = w.slice(0, n).join(' '); if (n !== s.lastN) { s.lastN = n; shake(4); } }
-  if (s.hits) { const n = Math.min(s.hits.length, 1 + Math.floor(s.t / (s.dur * 0.6 / s.hits.length))); if (n !== s.lastN) { s.lastN = n; shake(6); sfx('slam'); } text = s.hits.slice(0, n).join(' '); }
+function drawSlamOverlay(s) {
+  s = s || G.slam; let text = s.text;
+  if (s.words) { const w = text.split(' '); const n = Math.min(w.length, 1 + Math.floor(s.t / (s.dur / w.length))); text = w.slice(0, n).join(' '); if (n !== s.lastN) { s.lastN = n; shake(4, 'slam'); } }
+  if (s.hits) { const n = Math.min(s.hits.length, 1 + Math.floor(s.t / (s.dur * 0.6 / s.hits.length))); if (n !== s.lastN) { s.lastN = n; shake(6, 'slam'); sfx('slam'); } text = s.hits.slice(0, n).join(' '); }
   ART.drawSlam(ctx, text, s.sub, s.t, { hero: s.hero, isNew: s.isNew, gold: s.gold, hits: s.hits });
   if (s.isNew && !artHas('drawReveal')) { const lw = tw('NEW LOOT!', 3); txt('NEW LOOT!', 180, 140, 3, PAL.lemon, 'center', { kind: 'slam', outline: PAL.ink }); void lw; }
   const r = slamRect(text, s.sub); trAdd('slam', r.x, r.y, r.w, r.h, text);
@@ -13111,7 +13228,7 @@ function drawRevealCard(Rv, hint) {
   const nameL = fitLines(it.name, 2, 330, 2), jokeL = fitLines(data.joke, 2, 330, 2);
   if (!artDo('drawReveal', ctx, id, k, data)) {
     ctx.fillStyle = 'rgba(11,11,12,0.7)'; ctx.fillRect(-200, 94, 760, 428);
-    ctx.save(); ctx.globalAlpha = 0.18; ctx.fillStyle = TIER_COL[tier]; for (let j = 0; j < 10; j++) { const a = RT * 0.5 + j * Math.PI / 5; ctx.beginPath(); ctx.moveTo(180, 232); ctx.lineTo(180 + Math.cos(a) * 260, 232 + Math.sin(a) * 260); ctx.lineTo(180 + Math.cos(a + 0.18) * 260, 232 + Math.sin(a + 0.18) * 260); ctx.closePath(); ctx.fill(); } ctx.restore();
+    ctx.save(); ctx.globalAlpha = fxWild() ? 0.18 : 0.09; ctx.fillStyle = TIER_COL[tier]; for (let j = 0; j < 10; j++) { const a = RT * 0.5 + j * Math.PI / 5; ctx.beginPath(); ctx.moveTo(180, 232); ctx.lineTo(180 + Math.cos(a) * 260, 232 + Math.sin(a) * 260); ctx.lineTo(180 + Math.cos(a + 0.18) * 260, 232 + Math.sin(a + 0.18) * 260); ctx.closePath(); ctx.fill(); } ctx.restore();
     txt('NEW LOOT!', 180, 122, 3, PAL.lemon, 'center', { kind: null, outline: PAL.ink });
     const im = ART.item(id), sc = Math.min(2.5, 320 / im.width, 110 / im.height), kk = clamp(Rv.t / 0.3, 0, 1), back = 1 + 2.7 * Math.pow(kk - 1, 3) + 1.7 * Math.pow(kk - 1, 2), rot = (-8 * Math.PI / 180) * (1 - kk);
     ctx.save(); ctx.translate(180, 232); ctx.rotate(rot); ctx.scale(sc * back, sc * back);
@@ -13319,7 +13436,7 @@ function drawChallengeScene() {
   const s2 = (c.tenths / 10).toFixed(1) + ' INCHES · LASTED ' + fmtClock(c.secs) + ' · ' + (c.how === 'topple' ? 'IT TOPPLED' : 'IT BURST'); txt(s2, 180, 232, fitSize(s2, 2, 320), PAL.cloth, 'center', { kind: 'ui' });
   let y = 262; if (c.secs >= 60) { drawSeal(180, 300, c); y = 352; }
   const hits = Math.min(3, Math.floor(G.sceneT / 0.28) + 1), sc = 1 + 0.25 * Math.max(0, 1 - ((G.sceneT % 0.28) / 0.28)) * (G.sceneT < 0.84 ? 1 : 0);
-  if (G.sceneT < 0.84 && Math.floor(G.sceneT / 0.28) !== G.chHit) { G.chHit = Math.floor(G.sceneT / 0.28); shake(4); sfx('slam'); }
+  if (G.sceneT < 0.84 && Math.floor(G.sceneT / 0.28) !== G.chHit) { G.chHit = Math.floor(G.sceneT / 0.28); shake(4, 'challenge'); sfx('slam'); }
   ctx.save(); ctx.translate(180, y + 17); ctx.scale(sc, sc); ctx.translate(-180, -(y + 17)); txt('BEAT IT.', 180, y, 5, PAL.hot, 'center', { kind: null, outline: PAL.ink }); ctx.restore(); trAdd('ui', 180 - tw('BEAT IT.', 5) / 2, y, tw('BEAT IT.', 5), 35, 'BEAT IT.');
   txt('SAME WALLET. SAME ORDER. 1 V 1.', 180, y + 52, 1.5, PAL.cloth, 'center', { kind: 'ui' });
   if (GB.all.state === 'ok') txt('WINNERS GO ON THE GLOBAL LEADERBOARD.', 180, y + 70, fitSize('WINNERS GO ON THE GLOBAL LEADERBOARD.', 1.5, 320), PAL.lemon, 'center', { kind: 'ui' });
@@ -13412,13 +13529,12 @@ function drawDebug() {
 function update(dt) {
   G.simT += dt;
   updateTilt(dt);
-  if (G.paused) return;
+  if (G.paused) { G.logT += dt; return; }
+  // RULINGS 16F: a WILD-only SLAM pauses the whole game at a frame boundary: cosmetics run, nothing that feeds RW.log does
+  if (fxPauseStep(dt)) { updateText(dt); updateParts(dt); updateCosmetics(dt); G.sceneT += dt; return; }
+  G.logT += dt;
   if (G.auto) botTick(dt);
-  updateText(dt); updateParts(dt);
-  for (let i = WAVES.length - 1; i >= 0; i--) { WAVES[i].t += dt; if (WAVES[i].t > 0.35) WAVES.splice(i, 1); }
-  for (let i = RINGS.length - 1; i >= 0; i--) { RINGS[i].t += dt; if (RINGS[i].t > RINGS[i].dur) RINGS.splice(i, 1); }
-  if (G.shakeA > 0) { G.shakeT += dt; if (G.shakeT >= TUNE.shakeDecay) G.shakeA = 0; }
-  if (G.flashA > 0) G.flashA = Math.max(0, G.flashA - dt * 3);
+  updateText(dt); updateParts(dt); updateCosmetics(dt);
   if (G.toast) { G.toast.t += dt; if (G.toast.t >= G.toast.dur) G.toast = null; }
   G.sceneT += dt;
   switch (G.scene) {
@@ -13428,6 +13544,12 @@ function update(dt) {
     case 'receipt': if (G.rc && G.rc.world1T != null) G.rc.world1T += dt; if (G.wipe) updateWipe(dt); break;
     case 'name': case 'board': case 'challenge': case 'loot': if (G.wipe) updateWipe(dt); if (G.lootViewT != null) G.lootViewT += dt; break;
   }
+}
+function updateCosmetics(dt) {
+  for (let i = WAVES.length - 1; i >= 0; i--) { WAVES[i].t += dt; if (WAVES[i].t > 0.35) WAVES.splice(i, 1); }
+  for (let i = RINGS.length - 1; i >= 0; i--) { RINGS[i].t += dt; if (RINGS[i].t > RINGS[i].dur) RINGS.splice(i, 1); }
+  if (G.shakeA > 0) { G.shakeT += dt; if (G.shakeT >= TUNE.shakeDecay) G.shakeA = 0; }
+  if (G.flashA > 0) G.flashA = Math.max(0, G.flashA - dt * 3);
 }
 function decayFx(dt) {
   const F = R.fx;
@@ -13468,14 +13590,14 @@ function updatePlay(dt) {
   if (!R || G.scene !== 'play') return;
   if (R.phase === 'stuff' || R.phase === 'close') {
     if (!R.lines.w45 && R.clock >= 45) { R.lines.w45 = true; announce('TOP 10!'); }
-    if (!R.stormLine && R.clock >= 45 && R.phase === 'stuff') { R.stormLine = true; announce('THE STORM IS CLOSING!'); }
+    if (!R.stormLine && R.clock >= TUNE.inFrom && R.phase === 'stuff') { R.stormLine = true; announce('THE STORM IS CLOSING!', { pri: 2 }); }
     if (R.royale && Math.floor(R.clock) >= R.lastCount + 5) { R.lastCount += 5; small(R.lastCount + '. STILL STANDING.'); }
     // V2 §5 P1: from 55 s the HUD clock counts 5 ... 1
     if (!R.royale && R.clock >= 55) { const n = Math.max(1, 5 - Math.floor(R.clock - 55)); if (n !== R.count55) { R.count55 = n; sfx('count', { n }); if (n === 5) { MUS.muffle = 900; au('setMuffle', 900, 2); } } }
   }
   feedTick(); pumpRivals();
   if (R.chipPop > 0) R.chipPop = Math.max(0, R.chipPop - dt);
-  musicIntensity(R.clock / 60); musicTempo(1 + 0.15 * Math.min(1, R.clock / 60));
+  musicIntensity(runIntensity(R.clock)); musicTempo(1 + 0.15 * Math.min(1, R.clock / 60));
 }
 
 /* =====================================================================
@@ -13573,7 +13695,7 @@ function debugKey(k) {
 
 }
 function stateSnapshot() {
-  const s = { scene: G.scene, phase: R ? R.phase : null, fps: +G.fps.toFixed(1), seed: R ? R.seed : null, simT: +G.simT.toFixed(3), hitstop: +G.hitstop.toFixed(3), slam: G.slam ? G.slam.text : null, wipe: G.wipe ? G.wipe.kind : null, paused: G.paused };
+  const s = { scene: G.scene, phase: R ? R.phase : null, fps: +G.fps.toFixed(1), seed: R ? R.seed : null, simT: +G.simT.toFixed(3), hitstop: +G.hitstop.toFixed(3), slam: G.slam ? G.slam.text : (G.fxSlam && G.fxSlam.kind === 'slam' ? G.fxSlam.text : null), fx: fxWild() ? 'wild' : 'calm', fxPause: G.fxSlam ? G.fxSlam.kind : null, wipe: G.wipe ? G.wipe.kind : null, paused: G.paused };
   if (R) Object.assign(s, {
     clock: +R.clock.toFixed(3), wall: +R.wall.toFixed(3), fold: R.fold, stuffed: R.stuffed, tenths: Math.round(R.inches * 10), L: +leanNow().toFixed(1), Lmax: +LmaxNow().toFixed(1),
     quota: R.quota, inFold: R.inFold, need: R.close ? R.close.need : null, squeeze: R.close ? +R.close.k.toFixed(3) : null, closeT: R.close ? +R.close.left.toFixed(3) : null,
@@ -13614,7 +13736,7 @@ function forceThing(kind, arg) {
   switch (kind) {
     case 'serve': R.gliders = []; R.queue.unshift({ type: 'force', id: arg }); serveNext(); break;
     case 'drop': for (const g of R.gliders) g.x = arg == null ? CX : arg; dropAll(false); break;
-    case 'mut': { R.muts = [arg]; R.mutOn = {}; R.mutOn[arg] = true; let tg = 0; if (arg === 'sat') { R.satSign = -1; tg = -7 * Math.PI / 180; } if (arg === 'flight') tg = Math.PI; R.pivotFlight = arg === 'flight'; rotateTo(tg, 0.5); const m = MUT[arg]; R.seenMut[arg] = 1; slam(m.slam, m.sub, TUNE.slamMut, { sting: 'mutation' }); if (arg === 'storm') loopOn('storm'); break; }
+    case 'mut': { R.muts = [arg]; R.mutOn = {}; R.mutOn[arg] = true; let tg = 0; if (arg === 'sat') { R.satSign = -1; tg = -7 * Math.PI / 180; } if (arg === 'flight') tg = Math.PI; R.pivotFlight = arg === 'flight'; rotateTo(tg, 0.5); const m = MUT[arg]; R.seenMut[arg] = 1; moment(m.slam, m.sub, { dur: TUNE.slamMut, sting: 'mutation', icon: 'mut.' + arg }); if (arg === 'storm') loopOn('storm'); break; }
     case 'cat': R.catPlan = { after: 0 }; R.landingsFold = Math.max(R.landingsFold, 1); { const k = R.catVisits; const P = planOf(R.seed); while (P.acts.length <= k) dolceAct(R.seed, P.acts.length); P.acts[k] = arg; } maybeCat(); break;
     case 'lean': R.leanZero = leanSum() - (arg || 0); break;
     case 'clock': R.clock = arg; break;
@@ -13622,7 +13744,7 @@ function forceThing(kind, arg) {
     case 'teeter': { const Lm = LmaxNow(); R.leanZero = leanSum() - (arg || 1) * Lm * 1.02; R.teeterUsed = false; R.toppleGrace = 0; break; }
     case 'slot': R.slot = { dx: arg == null ? 50 : arg, t: 0 }; break;
     case 'pass': { const nm = String(arg || 'HAMZAH').toUpperCase(); const row = R.ladder.find((x) => x.name === nm) || { name: nm, score: R.stuffed, kind: 'world' }; if (R.ladder.indexOf(row) < 0) { R.ladder.push(row); R.ladder.sort((a, b) => a.score - b.score); } row.score = Math.min(row.score, R.stuffed); delete R.passed[nm]; R.stuffed++; passCheck(); G.rivalT = -9; break; }
-    case 'approve': G.approve = { t: 0, bi: -1 }; hitstop(TUNE.approveStop); break;
+    case 'approve': if (fxWild()) G.fxQ.push({ kind: 'approve', dur: TUNE.approveStop, t: 0 }); else calmBanner('DOLCE APPROVES.', '+3. THE LEAN RESETS.', 'cat'); break;
     case 'burstcard': R.burstCard = { t: 0 }; R.phase = 'dying'; R.how = 'burst'; R.cause = R.cause || '2 TAPS SHORT.'; break;
     case 'close': { const C = R.close; if (C && arg != null) { C.taps = Math.max(0, C.need - arg); C.k = C.taps / C.need; } break; }
     case 'fuse': { const C = R.close; if (C) C.left = C.T * (arg == null ? 0.25 : arg); break; }
@@ -13668,6 +13790,7 @@ const RW = {
   share() { if (G.lastRun) shareRun(G.lastRun); },
   feedGamma(g) { feedGamma(g); },
   BOTCFG,
+  fx(mode) { if (mode === 'wild' || mode === 'calm') { SAVE.fx = mode; persist(); applyFx(); if (G.scene === 'title') titleButtons(); } return fxWild() ? 'wild' : 'calm'; }, // RULINGS 16F (cosmetic)
   get G() { return G; }, get R() { return R; }, get SAVE() { return SAVE; }, get CO() { return CO; },
 };
 window.RW = RW;
@@ -13688,7 +13811,7 @@ function drawChipLevelRaw() { const st = stageRaw(); ctx.setTransform(st.scale, 
 function boot() {
   HEADLESS = !!(window.__RW_HEADLESS || OPT.headless);
   if (OPT.auto) G.everAuto = true;
-  syncPalette(); layout();
+  syncPalette(); layout(); applyFx();
   G.tilt.avail = tiltAvailable();
   if (G.muted) au('setMuted', true);
   if (OPT.c != null) { const c = decode(OPT.c); if (c) openChallenge(c); else { G.badLink = true; toTitle(false); clearChallengeUrl(); } }
