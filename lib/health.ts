@@ -1,6 +1,5 @@
 import fs from 'fs';
 import path from 'path';
-import { dayTickLabel } from './dayLabel.ts';
 import { calorieTargetFor } from './calorieTarget.ts';
 import { targetsFor } from './targets.ts';
 import {
@@ -18,20 +17,14 @@ import {
   PhaseType,
   StepStreak,
   StepStreaks,
-  HealthMarker,
   WeeklyGoals,
   WeekSummary,
   WeeklyTrendRow,
-  WeightPoint,
 } from '@/types/health';
 
 const healthFilePath = path.join(process.cwd(), 'data/health.json');
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-
-const MOVING_AVERAGE_WINDOW = 7;
-/** A 7-day mean drawn from a single window is noise, so the trend line waits for two. */
-const MOVING_AVERAGE_MIN_DAYS = 14;
 
 /** What a cardio session is when the sheet's cardio note doesn't say. */
 const DEFAULT_CARDIO_MINUTES = 30;
@@ -374,7 +367,6 @@ export function summarize(days: HealthDay[], targets?: HealthDatedTargets[]): He
     goalStreak: goalStreak(buildWeeklyGoals(sorted, targets)),
     dayCount: sorted.length,
     weekCount: weeks.length,
-    showMovingAverage: sorted.length >= MOVING_AVERAGE_MIN_DAYS,
   };
 }
 
@@ -813,33 +805,6 @@ export function buildChangeLog(
     .map(({ entry }) => entry);
 }
 
-/**
- * Daily weights plus a trailing 7-day mean. The trend stays null until the
- * window is genuinely full, so a partial average is never drawn as fact.
- */
-export function buildWeightSeries(days: HealthDay[]): WeightPoint[] {
-  const sorted = sortDays(days);
-
-  return sorted.map((day, i) => {
-    let trend: number | null = null;
-
-    if (i >= MOVING_AVERAGE_WINDOW - 1) {
-      const window = sorted.slice(i - MOVING_AVERAGE_WINDOW + 1, i + 1).map((d) => d.weight);
-      const complete = window.every((w) => w !== null);
-      trend = complete ? mean(window) : null;
-    }
-
-    return {
-      date: day.date,
-      // Weekday, matching the steps/macros/calories axes so the four daily
-      // charts read as one column of days down the page.
-      label: dayTickLabel(day),
-      weight: day.weight,
-      trend,
-    };
-  });
-}
-
 /* -------------------------------------------------------------------------- */
 /* TSV import                                                                 */
 /* -------------------------------------------------------------------------- */
@@ -1062,22 +1027,4 @@ export function getHealthData(): HealthData {
     phases: data.phases ?? [],
     markers: data.markers ?? [],
   };
-}
-
-export function getPhases(): PhaseSummary[] {
-  const data = getHealthData();
-  return buildPhases(data.days, data.phases);
-}
-
-export function getMarkers(): HealthMarker[] {
-  const markers = getHealthData().markers ?? [];
-  return [...markers].sort((a, b) => a.date.localeCompare(b.date));
-}
-
-export function getWeeks(): WeekSummary[] {
-  return groupIntoWeeks(getHealthData().days);
-}
-
-export function getSummary(): HealthSummary {
-  return summarize(getHealthData().days);
 }

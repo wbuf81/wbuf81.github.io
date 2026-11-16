@@ -2,7 +2,6 @@ import {
   buildStepStreaks,
   groupIntoWeeks,
   summarize,
-  buildWeightSeries,
   buildWeeklyTrend,
   buildPhases,
   buildWeeklyGoals,
@@ -190,21 +189,6 @@ describe('summarize', () => {
     expect(summary.cardioMinutesThisWeek).toBe(90);
   });
 
-  test('suppresses the moving average until there are 14 days', () => {
-    expect(summarize(WEEK_ONE).showMovingAverage).toBe(false);
-
-    const weekTwoDates = [
-      '2026-07-27', '2026-07-28', '2026-07-29', '2026-07-30',
-      '2026-07-31', '2026-08-01', '2026-08-02',
-    ];
-    const fortnight = [
-      ...WEEK_ONE,
-      ...weekTwoDates.map((date) => day({ date, day: 'Mon' })),
-    ];
-    expect(summarize(fortnight).dayCount).toBe(14);
-    expect(summarize(fortnight).showMovingAverage).toBe(true);
-  });
-
   test('handles an empty dataset without throwing', () => {
     const summary = summarize([]);
 
@@ -212,28 +196,6 @@ describe('summarize', () => {
     expect(summary.dayCount).toBe(0);
     expect(summary.weekCount).toBe(0);
     expect(summary.activeStreak).toBe(0);
-  });
-});
-
-describe('buildWeightSeries', () => {
-  test('leaves the trend null until a full seven-day window exists', () => {
-    const series = buildWeightSeries(WEEK_ONE);
-
-    expect(series).toHaveLength(7);
-    expect(series.slice(0, 6).every((p) => p.trend === null)).toBe(true);
-  });
-
-  test('the seventh point is the mean of the first seven weights', () => {
-    const series = buildWeightSeries(WEEK_ONE);
-    const expected = (210.2 + 208.8 + 208.1 + 207.7 + 208.3 + 208.3 + 207.9) / 7;
-
-    expect(series[6].trend).toBeCloseTo(expected, 5);
-  });
-
-  test('carries the raw weight through, nulls included', () => {
-    const days = [day({ date: '2026-07-20', day: 'Mon', weight: null })];
-
-    expect(buildWeightSeries(days)[0].weight).toBeNull();
   });
 });
 
@@ -1157,22 +1119,6 @@ describe('buildStepStreaks', () => {
       aboveMinimum: { current: 0, best: 0 },
       aboveGoal: { current: 0, best: 0 },
     });
-  });
-});
-
-describe('daily chart labels', () => {
-  test('the weight series labels by weekday, matching the other daily charts', () => {
-    const series = buildWeightSeries(WEEK_ONE);
-
-    expect(series.map((p) => p.label)).toEqual([
-      'Mon 20', 'Tue 21', 'Wed 22', 'Thu 23', 'Fri 24', 'Sat 25', 'Sun 26',
-    ]);
-  });
-
-  test('keeps the leading zero so every label is the same width', () => {
-    const series = buildWeightSeries([day({ date: '2026-08-02', day: 'Sun' })]);
-
-    expect(series[0].label).toBe('Sun 02');
   });
 });
 

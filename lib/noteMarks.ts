@@ -8,8 +8,9 @@ import type { HealthNoteMark } from '@/types/health';
  * church that day", not "it was a Sunday". A week with nothing written gets no
  * mark, which is the honest reading.
  *
- * Lives in its own module for the same reason as `dayLabel`: the consistency
- * grid is a client component, and `lib/health.ts` touches `fs` at module scope.
+ * Lives in its own module for the same reason as `calorieTarget`: the
+ * consistency grid is a client component, and `lib/health.ts` touches `fs` at
+ * module scope.
  */
 export function noteMarksFor(notes: string, marks?: HealthNoteMark[]): HealthNoteMark[] {
   if (!marks || marks.length === 0) return [];

@@ -7,8 +7,9 @@ import type { HealthCalorieTarget } from '@/types/health';
  * inside a block as well as between them — the Aug 2026 cut moved from 2,350 to
  * 2,450 without the cut ending. Each entry runs until the next one starts.
  *
- * Lives in its own module for the same reason as `dayLabel`: the calories chart
- * is a client component, and `lib/health.ts` touches `fs` at module scope.
+ * Lives in its own module because the calories chart is a client component, and
+ * `lib/health.ts` touches `fs` at module scope: importing that into the browser
+ * bundle would break the build.
  */
 export function calorieTargetFor(
   date: string,

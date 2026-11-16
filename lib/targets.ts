@@ -12,8 +12,8 @@ import type { HealthDatedTargets } from '@/types/health';
  * object, raising a goal silently re-scored past weeks against a rule that was
  * not in force then, which could wipe out a streak that had really been earned.
  *
- * Lives in its own module for the same reason as `dayLabel`: the steps chart is
- * a client component, and `lib/health.ts` touches `fs` at module scope.
+ * Lives in its own module for the same reason as `calorieTarget`: the steps
+ * chart is a client component, and `lib/health.ts` touches `fs` at module scope.
  */
 export function targetsFor(
   date: string,

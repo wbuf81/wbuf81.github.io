@@ -45,8 +45,6 @@ export function getHealthView() {
   };
 }
 
-export type HealthView = ReturnType<typeof getHealthView>;
-
 const SITE_TITLE = "Wes's Health";
 const DESCRIPTION = 'Weekly tracker — weight, training, and nutrition.';
 

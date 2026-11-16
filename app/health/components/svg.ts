@@ -29,31 +29,6 @@ export function bands(f: Frame, n: number): { band: number; x: (i: number) => nu
   return { band, x: (i: number) => f.l + band * i + band / 2 };
 }
 
-/** A linear scale from [lo, hi] onto the plot's height, hi at the top. */
-export function yScale(f: Frame, lo: number, hi: number): (v: number) => number {
-  return (v: number) => f.t + ((hi - v) / (hi - lo)) * (f.h - f.t - f.b);
-}
-
-/** A linear scale from [lo, hi] onto the plot's width. */
-export function xScale(f: Frame, lo: number, hi: number): (v: number) => number {
-  return (v: number) => f.l + ((v - lo) / (hi - lo)) * (f.w - f.l - f.r);
-}
-
-/**
- * An upward bar from its base y0 to its top y1 (y1 < y0 on screen), centred on cx, top corners rounded.
- * Empty when too short to see.
- */
-export function barPath(cx: number, width: number, y0: number, y1: number): string {
-  const h = y0 - y1;
-  if (h < 0.6) return '';
-  const x = cx - width / 2;
-  const r = Math.min(2.5, width / 2, h / 2);
-  return (
-    `M${f1(x)} ${f1(y0)}V${f1(y1 + r)}Q${f1(x)} ${f1(y1)} ${f1(x + r)} ${f1(y1)}` +
-    `H${f1(x + width - r)}Q${f1(x + width)} ${f1(y1)} ${f1(x + width)} ${f1(y1 + r)}V${f1(y0)}Z`
-  );
-}
-
 /** A plain rectangle from (x0, y0) to (x1, y1), at least `minH` high so a zero still shows. */
 export function rectPath(x0: number, y0: number, x1: number, y1: number, minH = 1): string {
   const top = Math.min(y0, y1);
@@ -64,11 +39,6 @@ export function rectPath(x0: number, y0: number, x1: number, y1: number, minH = 
 /** A filled circle as a path, so many can share one <path>. */
 export function dotPath(cx: number, cy: number, r: number): string {
   return `M${f1(cx)} ${f1(cy)}m-${r} 0a${r} ${r} 0 1 0 ${2 * r} 0a${r} ${r} 0 1 0 -${2 * r} 0`;
-}
-
-/** A horizontal rule across the plot at y. */
-export function hline(f: Frame, y: number): string {
-  return `M${f.l} ${f1(y)}H${f.w - f.r}`;
 }
 
 /** A polyline through points, skipping nulls (a null breaks the line). */
@@ -106,24 +76,6 @@ export function stepPath(f: Frame, values: (number | null)[], y: (v: number) => 
     prev = v;
   });
   return d;
-}
-
-/** Ticks on a step from lo to hi, inclusive. */
-export function ticks(lo: number, hi: number, step: number): number[] {
-  const out: number[] = [];
-  for (let v = Math.ceil(lo / step) * step; v <= hi + 1e-9; v += step) out.push(Math.round(v * 1000) / 1000);
-  return out;
-}
-
-/** A zero-based axis topped out at a clean multiple of step. */
-export function cleanTop(max: number, step: number): number {
-  return Math.max(Math.ceil(max / step) * step, step);
-}
-
-/** The smallest of the usual steps that splits the range into at most `most` intervals. */
-export function niceStep(range: number, most = 6): number {
-  for (const step of [0.5, 1, 2, 4, 5, 10, 20, 50]) if (range / step <= most) return step;
-  return 100;
 }
 
 /**

@@ -21,9 +21,10 @@ export function formatDelta(value: number, digits = 1): string {
 
 /**
  * A class for a change where down is the good direction (weight on a cut, calories against a target):
- * nothing for no change, good for down, over for up.
+ * nothing for no change, good for down, over for up. Not exported: a component colours a figure through
+ * `weightTone` or `calsTone`, which read the block the figure belongs to.
  */
-export function downIsGood(value: number | null, digits = 1): string {
+function downIsGood(value: number | null, digits = 1): string {
   if (value === null) return '';
   const rounded = Number(value.toFixed(digits));
   return rounded < 0 ? 'is-good' : rounded > 0 ? 'is-over' : '';

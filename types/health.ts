@@ -265,8 +265,6 @@ export interface HealthSummary {
   goalStreak: number;
   dayCount: number;
   weekCount: number;
-  /** False until there are enough days for a 7-day average to mean anything. */
-  showMovingAverage: boolean;
 }
 
 /** One row of the week-by-week summary. */
@@ -336,14 +334,6 @@ export interface HealthChangeEntry {
   to: string;
   /** Why it changed, as written in the data. Empty when none was given. */
   note: string;
-}
-
-export interface WeightPoint {
-  date: string;
-  label: string;
-  weight: number | null;
-  /** 7-day trailing mean, null until the window is full. */
-  trend: number | null;
 }
 
 export interface ParsedImport {
