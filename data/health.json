@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-11-09",
+  "lastUpdated": "2026-11-16",
   "units": {
     "weight": "lb"
   },
@@ -1807,6 +1807,111 @@
       "cardioMinutes": null,
       "cardioNote": "",
       "notes": "Icemen Game"
+    },
+    {
+      "date": "2026-11-09",
+      "day": "Mon",
+      "cals": 2598,
+      "protein": 209,
+      "carbs": 313,
+      "fat": 63,
+      "weight": 204.7,
+      "steps": 13051,
+      "workout": "Lee - Legs A",
+      "cardio": false,
+      "cardioMinutes": null,
+      "cardioNote": "",
+      "notes": ""
+    },
+    {
+      "date": "2026-11-10",
+      "day": "Tue",
+      "cals": 2642,
+      "protein": 218,
+      "carbs": 308,
+      "fat": 63,
+      "weight": 204.1,
+      "steps": 15527,
+      "workout": "Lee - Push",
+      "cardio": true,
+      "cardioMinutes": 30,
+      "cardioNote": "30",
+      "notes": ""
+    },
+    {
+      "date": "2026-11-11",
+      "day": "Wed",
+      "cals": 2677,
+      "protein": 219,
+      "carbs": 329,
+      "fat": 54,
+      "weight": 203.7,
+      "steps": 14204,
+      "workout": "Lee - Pull",
+      "cardio": true,
+      "cardioMinutes": 30,
+      "cardioNote": "30",
+      "notes": ""
+    },
+    {
+      "date": "2026-11-12",
+      "day": "Thu",
+      "cals": 2844,
+      "protein": 209,
+      "carbs": 341,
+      "fat": 73,
+      "weight": 203.5,
+      "steps": 16673,
+      "workout": "",
+      "cardio": true,
+      "cardioMinutes": 30,
+      "cardioNote": "30",
+      "notes": ""
+    },
+    {
+      "date": "2026-11-13",
+      "day": "Fri",
+      "cals": 2683,
+      "protein": 215,
+      "carbs": 289,
+      "fat": 79,
+      "weight": 204.1,
+      "steps": 14369,
+      "workout": "Lee - Legs B",
+      "cardio": false,
+      "cardioMinutes": null,
+      "cardioNote": "",
+      "notes": ""
+    },
+    {
+      "date": "2026-11-14",
+      "day": "Sat",
+      "cals": 3679,
+      "protein": 254,
+      "carbs": 396,
+      "fat": 124,
+      "weight": 204.7,
+      "steps": 19332,
+      "workout": "Lee - Upper",
+      "cardio": false,
+      "cardioMinutes": null,
+      "cardioNote": "",
+      "notes": ""
+    },
+    {
+      "date": "2026-11-15",
+      "day": "Sun",
+      "cals": 2852,
+      "protein": 173,
+      "carbs": 328,
+      "fat": 99,
+      "weight": 203.7,
+      "steps": 17464,
+      "workout": "",
+      "cardio": false,
+      "cardioMinutes": null,
+      "cardioNote": "",
+      "notes": ""
     }
   ]
 }
