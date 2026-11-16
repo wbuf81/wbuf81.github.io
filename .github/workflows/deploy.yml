@@ -85,6 +85,8 @@ jobs:
         uses: actions/deploy-pages@v5
         with:
           # The site is ~350 MB (mostly the SNES clips and art), and Pages sometimes takes far longer than usual to
-          # sync it: on 9 Nov 2026 the same upload that deployed in under 4 minutes all day timed out twice at the
-          # 10-minute default ("syncing_files"), each a failure email. 30 minutes rides that out.
-          timeout: 1800000
+          # sync it: on 9 Nov 2026 the same upload that deployed in under 4 minutes all day timed out twice at
+          # 10 minutes ("syncing_files"), each a failure email. 10 minutes is the most this action allows: a larger
+          # value is cut back to it with a warning on every run (30 minutes was set here from 9 to 16 Nov 2026 and
+          # never took effect). When a deploy times out, re-run the failed job: `gh run rerun <id> --failed`.
+          timeout: 600000
