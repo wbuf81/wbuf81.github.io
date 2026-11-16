@@ -1,0 +1,873 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Health mockup</title>
+<style>
+@font-face { font-family: "Geist Serif"; src: url(fonts/geist-serif.woff2) format("woff2"); font-weight: 100 900; font-display: block; }
+@font-face { font-family: "Plex Sans"; src: url(fonts/ibm-plex-sans.woff2) format("woff2"); font-weight: 100 700; font-display: swap; }
+@font-face { font-family: "Plex Mono"; src: url(fonts/ibm-plex-mono-400.woff2) format("woff2"); font-weight: 400; font-display: swap; }
+@font-face { font-family: "Plex Mono"; src: url(fonts/ibm-plex-mono-500.woff2) format("woff2"); font-weight: 500; font-display: swap; }
+
+/* The site's tokens (app/design-system.css), light then dark. */
+:root {
+  color-scheme: light;
+  --bg: #f4f6f8; --paper: #ffffff; --ink: #1b2430; --ink-2: #566371; --ink-3: #64707c; --rule: #cfd6dd; --rule-soft: #e4e9ee; --grid: #e7e9ec;
+  --accent: #0f4c5c; --accent-soft: #e2eef1; --on-accent: #ffffff; --core: #1f6f3f; --over: #8b1d14;
+  --mark: #b3bcc6; --s1: #2a78d6; --s2: #eb6834; --s3: #1baf7a;
+  --serif: "Geist Serif", Georgia, serif; --sans: "Plex Sans", "Helvetica Neue", Arial, sans-serif; --mono: "Plex Mono", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --bg: #10161c; --paper: #171f27; --ink: #e6ebf0; --ink-2: #9aa7b3; --ink-3: #7f8d9a; --rule: #34414d; --rule-soft: #26313b; --grid: #1d2329;
+    --accent: #7ec4d4; --accent-soft: #1b3038; --on-accent: #0b1e24; --core: #7fcf9a; --over: #f08a80;
+    --mark: #4d5a67; --s1: #3987e5; --s2: #d95926; --s3: #199e70;
+  }
+}
+
+* { box-sizing: border-box; }
+html { background: var(--bg); }
+body {
+  margin: 0; color: var(--ink); font: 15px/1.55 var(--sans);
+  background-color: var(--bg);
+  background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 24px 24px; background-position: -1px -1px;
+}
+p { margin: 0; }
+button { font: inherit; color: inherit; }
+
+/* Mockup ribbon */
+.ribbon { background: var(--ink); color: var(--paper); font: 500 11px var(--mono); letter-spacing: .06em; text-transform: uppercase; padding: 7px clamp(16px, 3vw, 40px); display: flex; flex-wrap: wrap; gap: 6px 18px; align-items: center; justify-content: space-between; }
+.ribbon button { background: none; border: 1px solid color-mix(in srgb, var(--paper) 45%, transparent); border-radius: 999px; color: var(--paper); font: 500 11px var(--mono); letter-spacing: .06em; text-transform: uppercase; padding: 3px 10px; cursor: pointer; }
+
+/* Site header and the health menu, as on the site */
+.head { background: var(--paper); border-bottom: 1px solid var(--rule); }
+.head .in { max-width: 1380px; margin: 0 auto; min-height: 56px; padding: 0 clamp(16px, 3vw, 40px); display: flex; flex-wrap: wrap; align-items: center; gap: 0 28px; }
+.head .wm { font: 600 22px/1 var(--serif); letter-spacing: -.01em; padding: 10px 0; }
+.head .wm i { font-style: normal; color: var(--accent); }
+.head .nav { display: flex; gap: 4px; }
+.head .nav span { font: 500 14px var(--sans); color: var(--ink-2); padding: 0 10px; }
+.hnav { background: var(--accent-soft); position: sticky; top: 0; z-index: 6; }
+.hnav .in { max-width: 1200px; margin: 0 auto; padding: 6px clamp(16px, 3vw, 20px); display: flex; align-items: center; gap: 4px; overflow-x: auto; }
+.hnav .k { font: 500 11px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin-right: 8px; white-space: nowrap; }
+.hnav button { border: 0; background: none; border-radius: 6px; padding: 5px 11px; font: 600 13.5px var(--sans); color: var(--accent); cursor: pointer; white-space: nowrap; }
+.hnav button[aria-current="page"] { background: var(--paper); color: var(--ink); box-shadow: 0 1px 2px rgba(0, 0, 0, .12); }
+.hnav button:disabled { opacity: .5; cursor: default; }
+
+.wrap { max-width: 1200px; margin: 0 auto; padding: 0 clamp(16px, 3vw, 20px) 64px; }
+.eyebrow, .kk { font: 500 11px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); }
+.top { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px 24px; padding: 26px 0 18px; }
+.top h1 { font: 600 clamp(34px, 4.4vw, 46px)/1.02 var(--serif); letter-spacing: -.02em; margin: 6px 0 0; }
+.seg { display: inline-flex; border: 1px solid var(--rule); border-radius: 6px; background: var(--paper); padding: 3px; gap: 2px; }
+.seg button { border: 0; background: none; border-radius: 4px; padding: 6px 13px; font: 500 13.5px var(--sans); color: var(--ink-2); cursor: pointer; min-height: 34px; }
+.seg button[aria-pressed="true"] { background: var(--accent-soft); color: var(--accent); }
+button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.card { background: var(--paper); border: 1px solid var(--rule); padding: 20px 24px 22px; margin-top: 20px; min-width: 0; }
+.card.is-lead { border-top: 3px solid var(--accent); margin-top: 0; }
+.card-h { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 6px 20px; margin-bottom: 4px; }
+.card h2 { font: 600 24px/1.15 var(--serif); letter-spacing: -.01em; margin: 0; }
+.card h3 { font: 500 10.5px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); margin: 0 0 4px; }
+.sub { color: var(--ink-2); font-size: 14px; max-width: 86ch; text-wrap: pretty; }
+.legend { display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: 12.5px; color: var(--ink-2); }
+.legend span { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+.sw { display: inline-block; flex: none; width: 10px; height: 10px; border-radius: 2px; }
+.sw.line { width: 16px; height: 3px; border-radius: 1px; background: var(--accent); }
+.sw.dot { width: 7px; height: 7px; border-radius: 50%; background: var(--mark); }
+.sw.dash { width: 18px; height: 0; border-top: 2px dashed var(--ink-2); border-radius: 0; }
+.sw.dots { width: 18px; height: 0; border-top: 2px dotted var(--ink-3); border-radius: 0; }
+.sw.hit { background: color-mix(in srgb, var(--s1) 42%, transparent); }
+.sw.close { background: color-mix(in srgb, var(--s2) 36%, transparent); }
+.sw.miss { background: color-mix(in srgb, var(--s2) 90%, transparent); }
+.sw.to { background: var(--accent); }
+.sw.away { background: var(--s2); }
+.sw.pband { width: 16px; background: color-mix(in srgb, var(--accent) 22%, transparent); }
+.sw.big { border-radius: 50%; background: var(--s2); }
+.sw.day { border-radius: 50%; background: var(--accent); }
+.sw.aband { width: 16px; background: color-mix(in srgb, var(--s2) 22%, transparent); }
+.sw.p1 { background: var(--s1); } .sw.p2 { background: var(--s2); } .sw.p3 { background: var(--s3); }
+
+.chart { position: relative; margin-top: 10px; touch-action: pan-y; }
+.pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+.pair > .card { margin-top: 20px; }
+.duo { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 28px; margin-top: 6px; }
+@media (max-width: 860px) { .pair, .duo { grid-template-columns: minmax(0, 1fr); } .pair { gap: 0; } }
+
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(190px, 100%), 1fr)); gap: 1px; background: var(--rule-soft); border: 1px solid var(--rule-soft); margin-top: 16px; }
+.stats > div { background: var(--paper); padding: 12px 14px; min-width: 0; }
+.stats .k { font: 500 10px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 5px; }
+.stats .n { font: 600 22px/1.1 var(--serif); color: var(--ink); font-variant-numeric: tabular-nums; }
+.stats .l { font-size: 12.5px; color: var(--ink-2); margin-top: 5px; line-height: 1.35; }
+.stats.tiles { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.stats.tiles .n { font-size: 24px; color: var(--accent); }
+@media (max-width: 760px) { .stats.tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.stats .was { margin-top: 7px; padding-top: 6px; border-top: 1px dashed var(--rule); font: 400 11px/1.35 var(--mono); color: var(--ink-3); }
+.is-good { color: var(--core); } .is-over { color: var(--over); }
+.foot { margin-top: 10px; color: var(--ink-2); font-size: 13.5px; }
+.foot b { color: var(--ink); font-weight: 600; }
+
+/* "What's different" notes, on by default, hidden with the ribbon's switch */
+.note { margin-top: 14px; padding: 9px 12px; border: 1px dashed color-mix(in srgb, var(--accent) 55%, transparent); background: color-mix(in srgb, var(--accent-soft) 55%, transparent); font-size: 13px; color: var(--ink-2); max-width: 100ch; text-wrap: pretty; }
+.note b { font: 500 10px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin-right: 8px; }
+body.no-notes .note, body.no-notes .was { display: none; }
+
+/* Chart marks */
+svg { display: block; width: 100%; overflow: visible; }
+svg text { font: 400 11px var(--mono); fill: var(--ink-3); font-variant-numeric: tabular-nums; }
+.g-grid { stroke: var(--rule-soft); stroke-width: 1; }
+.g-zero { stroke: var(--ink-3); stroke-width: 1; }
+.g-band { fill: color-mix(in srgb, var(--ink) 4.5%, transparent); }
+.g-edge { stroke: color-mix(in srgb, var(--ink-3) 70%, transparent); stroke-width: 1; }
+.g-day { fill: var(--mark); }
+.g-avg { stroke: var(--accent); stroke-width: 2.5; fill: none; stroke-linejoin: round; stroke-linecap: round; }
+.g-wk { fill: var(--accent); stroke: var(--paper); stroke-width: 2; }
+.g-plan { stroke: var(--ink-2); stroke-width: 1.5; stroke-dasharray: 6 4; fill: none; }
+.g-goal { stroke: var(--accent); stroke-width: 2; stroke-dasharray: 10 6; fill: none; }
+.g-dots { stroke: var(--ink-3); stroke-width: 2; stroke-dasharray: .5 4.5; stroke-linecap: round; fill: none; }
+.g-ref { stroke: var(--ink-3); stroke-width: 1.5; stroke-dasharray: 5 4; fill: none; }
+.g-ref.strong { stroke: var(--ink); }
+.c-hit { fill: color-mix(in srgb, var(--s1) 42%, transparent); }
+.c-close { fill: color-mix(in srgb, var(--s2) 36%, transparent); }
+.c-miss { fill: color-mix(in srgb, var(--s2) 90%, transparent); }
+.c-none { fill: color-mix(in srgb, var(--ink-3) 30%, transparent); }
+.p-to { fill: var(--accent); } .p-away { fill: var(--s2); } .p-flat { fill: var(--ink-3); }
+.g-planband { fill: color-mix(in srgb, var(--accent) 16%, transparent); }
+.d-day { fill: var(--accent); stroke: var(--paper); stroke-width: 1; }
+.d-big { fill: var(--s2); stroke: var(--paper); stroke-width: 1; }
+.g-fit { stroke: var(--ink-2); stroke-width: 2; fill: none; stroke-linecap: round; }
+.a-one { stroke: color-mix(in srgb, var(--s2) 26%, transparent); stroke-width: 1; fill: none; }
+.a-band { fill: color-mix(in srgb, var(--s2) 18%, transparent); }
+.a-mean { stroke: var(--s2); stroke-width: 2.5; fill: none; stroke-linejoin: round; stroke-linecap: round; }
+.a-pt { fill: var(--s2); stroke: var(--paper); stroke-width: 2; }
+.a-last { stroke: var(--ink); stroke-width: 1.5; fill: none; }
+.a-lastpt { fill: var(--ink); stroke: var(--paper); stroke-width: 1.5; }
+.b-under { fill: color-mix(in srgb, var(--s1) 38%, transparent); } .b-over { fill: color-mix(in srgb, var(--s2) 55%, transparent); } .b-acc { fill: var(--accent); }
+.l-p1 { stroke: var(--s1); stroke-width: 2.5; fill: none; stroke-linejoin: round; stroke-linecap: round; }
+.l-p2 { stroke: var(--s2); stroke-width: 1.75; fill: none; stroke-linejoin: round; }
+.l-p3 { stroke: var(--s3); stroke-width: 1.75; fill: none; stroke-linejoin: round; }
+.pt-p1 { fill: var(--s1); stroke: var(--paper); stroke-width: 1.5; } .pt-p2 { fill: var(--s2); } .pt-p3 { fill: var(--s3); }
+text.t-lab { font: 500 10.5px var(--mono); letter-spacing: .04em; fill: var(--ink-2); }
+text.t-cap { font: 500 10.5px var(--mono); letter-spacing: .08em; fill: var(--ink-3); }
+text.t-note { font: 400 10.5px var(--mono); fill: var(--ink-2); }
+text.t-val { font: 600 12px var(--sans); fill: var(--ink); }
+text.t-sm { font: 500 11.5px var(--sans); fill: var(--ink-2); }
+text.t-cat { font: 500 13px var(--sans); fill: var(--ink); }
+.g-cross { stroke: var(--ink-3); stroke-width: 1; stroke-dasharray: 2 3; }
+
+.tip { position: absolute; top: 6px; z-index: 3; width: 214px; background: var(--paper); border: 1px solid var(--rule); box-shadow: 0 12px 26px -14px rgba(0, 0, 0, .55); padding: 9px 11px; pointer-events: none; font-size: 12.5px; }
+.tip .k { font: 500 10.5px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 5px; }
+.tip .row { display: flex; justify-content: space-between; gap: 12px; padding: 1.5px 0; }
+.tip .row span { color: var(--ink-2); } .tip .row b { font-weight: 600; font-variant-numeric: tabular-nums; }
+
+/* This week view */
+.loghead { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 6px 20px; margin: 30px 0 0; }
+.loghead h2 { font: 600 26px/1.15 var(--serif); margin: 0; }
+.wk { display: grid; grid-template-columns: minmax(0, auto) minmax(0, auto) minmax(0, 1fr) auto; gap: 10px 28px; align-items: start; }
+.wk h4 { font: 600 24px/1.1 var(--serif); margin: 2px 0 2px; }
+.wk .eyebrow { white-space: nowrap; }
+.wk .big { font: 600 24px/1.1 var(--serif); color: var(--accent); }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { font: 500 11.5px var(--mono); padding: 1px 7px; border-radius: 3px; background: var(--rule-soft); color: var(--ink-2); white-space: nowrap; }
+.goals { font-size: 12.5px; color: var(--core); line-height: 1.7; white-space: nowrap; }
+.days7 { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 8px; margin-top: 14px; }
+.dayc { border: 1px solid var(--rule-soft); background: var(--bg); border-radius: 5px; padding: 7px 8px 8px; min-width: 0; }
+.dayc .d { display: flex; justify-content: space-between; font: 500 10px var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); }
+.dayc .w { font: 600 16px/1.3 var(--serif); }
+.dayc .m { display: flex; gap: 3px; align-items: center; min-height: 10px; margin-top: 3px; }
+.pip { width: 7px; height: 7px; border-radius: 50%; display: inline-block; }
+.pip.lift { background: var(--s1); } .pip.cardio { background: var(--s2); }
+.rest { color: var(--ink-3); font-size: 11px; line-height: 1; }
+@media (max-width: 760px) { .wk { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } .days7 { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+table { width: 100%; border-collapse: collapse; font-size: 13.5px; margin-top: 10px; }
+th { text-align: left; font: 500 10.5px var(--mono); letter-spacing: .07em; text-transform: uppercase; color: var(--ink-3); padding: 8px; border-bottom: 1px solid var(--rule); white-space: nowrap; }
+td { padding: 9px 8px; border-bottom: 1px solid var(--rule-soft); font-variant-numeric: tabular-nums; white-space: nowrap; }
+td.num, th.num { text-align: right; }
+td.wkname { font-weight: 600; }
+.scroll { overflow-x: auto; }
+[hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<div class="ribbon">
+  <span>Mockup · your real data to <span id="rb-date"></span> · nothing here is live</span>
+  <button type="button" id="notes-btn" aria-pressed="true">Notes: on</button>
+</div>
+<div class="head"><div class="in"><span class="wm">Wesley <i>Bard</i></span><span class="nav"><span>Projects</span><span>Games</span><span>Connect</span></span></div></div>
+<nav class="hnav" aria-label="Health"><div class="in">
+  <span class="k">Health ▸</span>
+  <button type="button" data-view="week">This week</button>
+  <button type="button" disabled title="Not part of this mockup">Calendar</button>
+  <button type="button" data-view="trends" aria-current="page">Trends</button>
+  <button type="button" disabled title="Not part of this mockup">Habits</button>
+  <button type="button" disabled title="Not part of this mockup">Records</button>
+</div></nav>
+
+<main class="wrap">
+
+<!-- ───────────── Trends ───────────── -->
+<section id="v-trends">
+  <header class="top">
+    <div><div class="eyebrow" id="eb-trends"></div><h1>Trends</h1></div>
+    <div class="seg" role="group" aria-label="How far back">
+      <button type="button" data-range="w8" aria-pressed="true">8 weeks</button>
+      <button type="button" data-range="block" aria-pressed="false">This block</button>
+      <button type="button" data-range="all" aria-pressed="false">Everything</button>
+    </div>
+  </header>
+
+  <div class="card is-lead">
+    <div class="card-h">
+      <h2>Weight</h2>
+      <div class="legend">
+        <span><i class="sw line"></i>Weekly average</span>
+        <span><i class="sw dot"></i>Daily weigh-in</span>
+        <span><i class="sw dash"></i>Plan</span>
+        <span><i class="sw hit"></i>Calories on target</span>
+        <span><i class="sw close"></i>Close</span>
+        <span><i class="sw miss"></i>Off target</span>
+      </div>
+    </div>
+    <div class="chart" id="c-weight"></div>
+    <div class="stats" id="f-weight"></div>
+    <p class="note"><b>What's different</b>Weight has its own scale, zoomed to the readings, so the goal is a label at the top of its block instead of stretching the chart. The line runs through the weekly averages, the numbers every card quotes. Each cut or bulk is a labelled band, and the dashed line is the pace you planned. Calories sit underneath on the same dates, drawn against each day's target and coloured the way the calendar scores them. The switch at the top changes how far back every chart goes.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-h">
+      <h2>Pounds per week</h2>
+      <div class="legend">
+        <span><i class="sw to"></i>Toward the goal</span>
+        <span><i class="sw away"></i>Away from it</span>
+        <span><i class="sw pband"></i>Planned pace</span>
+      </div>
+    </div>
+    <p class="sub">Each bar is one week's average weight against the week before.</p>
+    <div class="chart" id="c-pace"></div>
+    <div class="stats" id="f-pace"></div>
+    <p class="note"><b>New</b>The question a bulk or a cut asks every week: how fast? The shaded band is the planned pace, a quarter pound either side. Only the bulk has a pace written down, so the cut has no band here.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-h">
+      <h2>What a day's calories do to the next morning</h2>
+      <div class="legend">
+        <span><i class="sw day"></i>A day</span>
+        <span><i class="sw big"></i>A big day, 20% or more over target</span>
+        <span><i class="sw line" style="background: var(--ink-2)"></i>Trend</span>
+      </div>
+    </div>
+    <p class="sub">Each dot is a day: across, what you ate against that day's target; up or down, how the scale moved by the next morning. Day to day that is mostly water and food weight.</p>
+    <div class="duo">
+      <div><div class="chart" id="c-scatter"></div></div>
+      <div>
+        <h3 style="margin-top: 14px">The mornings after a big day</h3>
+        <div class="legend">
+          <span><i class="sw line" style="background: var(--s2)"></i>Average</span>
+          <span><i class="sw aband"></i>Middle half of big days</span>
+          <span><i class="sw dash" style="border-color: var(--ink-3)"></i>Every day</span>
+        </div>
+        <div class="chart" id="c-after"></div>
+      </div>
+    </div>
+    <div class="stats" id="f-next"></div>
+    <p class="note"><b>What's different</b>A big day is 20% or more over that day's target, not a fixed 2,900, so it means the same thing on a cut and a bulk. The left chart measures against the day's target for the same reason. The right chart shows the average and the middle half of big days, with only the newest one named, instead of a line and a label for every day. The cards are plain ink: these are patterns, not good or bad.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-h">
+      <h2>The week, by day</h2>
+      <div class="legend"><span><i class="sw" style="background: color-mix(in srgb, var(--s1) 38%, transparent)"></i>Under target</span><span><i class="sw" style="background: color-mix(in srgb, var(--s2) 55%, transparent)"></i>Over target</span><span><i class="sw to"></i>Weigh-in against its trend</span></div>
+    </div>
+    <p class="sub">Each column is one weekday, averaged over every complete week.</p>
+    <div class="duo" style="grid-template-columns: repeat(auto-fit, minmax(min(360px, 100%), 1fr))">
+      <div><h3 style="margin-top: 14px">Calories against target, average · days over, underneath</h3><div class="chart" id="c-dowcal"></div></div>
+      <div><h3 style="margin-top: 14px">Weigh-in against its 7-day trend, average</h3><div class="chart" id="c-dowwt"></div></div>
+    </div>
+    <div class="stats" id="f-dow"></div>
+    <p class="note"><b>What's different</b>The two charts sit side by side on a wide screen. The three cards lose their red and green.</p>
+  </div>
+
+  <div class="pair">
+    <div class="card">
+      <div class="card-h"><h2>Steps</h2><div class="legend"><span><i class="sw line"></i>Weekly average</span><span><i class="sw dot"></i>A day</span></div></div>
+      <div class="chart" id="c-steps"></div>
+      <p class="foot" id="t-steps"></p>
+    </div>
+    <div class="card">
+      <div class="card-h"><h2>Protein, carbs and fat</h2><div class="legend"><span><i class="sw p1"></i>Protein</span><span><i class="sw p2"></i>Carbs</span><span><i class="sw p3"></i>Fat</span><span><i class="sw dash" style="border-color: var(--ink)"></i>Protein goal</span></div></div>
+      <div class="chart" id="c-macros"></div>
+      <p class="foot" id="t-macros"></p>
+    </div>
+  </div>
+  <p class="note"><b>What's different</b>Both charts draw weekly averages over the daily readings instead of a bar for every day, so they stay readable as the log grows. Protein is the one macro with a goal, so it is the heavy line.</p>
+</section>
+
+<!-- ───────────── This week ───────────── -->
+<section id="v-week" hidden>
+  <header class="top"><div><div class="eyebrow" id="eb-week"></div><h1>This week</h1></div></header>
+  <p class="note" style="margin-top: 0"><b>In this mockup</b>The lead card at the top of This week stays as it is, so it isn't redrawn here. Below are the three things that change: the tiles, the log's legend, and the colours in Records.</p>
+
+  <div class="card">
+    <div class="card-h"><h2>The eight tiles</h2></div>
+    <p class="sub">Averages cover the block you are in, so a cut and a bulk are never blended. The dashed line under a tile is what it shows today.</p>
+    <div class="stats tiles" id="tiles"></div>
+  </div>
+
+  <div class="loghead"><h2>The log</h2>
+    <div class="legend"><span><i class="pip lift"></i>Lift</span><span><i class="pip cardio"></i>Cardio</span><span><span class="rest">–</span>Rest</span></div>
+  </div>
+  <div class="card" style="margin-top: 12px" id="logcard"></div>
+  <p class="note"><b>What's different</b>The dots finally have a key, beside the heading. "Week ending · Lean bulk" stays on one line.</p>
+
+  <div class="card">
+    <div class="card-h"><h2>Records › By week</h2></div>
+    <p class="sub">The calendar's rule for calories, used here too: on a cut, at or under target is good, up to 10% over is plain, and only more than that is red.</p>
+    <div class="scroll"><table id="rec"></table></div>
+  </div>
+</section>
+
+</main>
+
+<script>
+const D = /*DATA*/null;
+const days = D.days, N = days.length, G = D.goals;
+const MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'], DOW = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const dt = (s) => new Date(s + 'T12:00:00Z');
+const short = (s) => { const d = dt(s); return MON[d.getUTCMonth()] + ' ' + d.getUTCDate(); };
+const dow = (s) => dt(s).getUTCDay();
+const addDays = (s, n) => { const d = dt(s); d.setUTCDate(d.getUTCDate() + n); return d.toISOString().slice(0, 10); };
+const diffDays = (a, b) => Math.round((dt(b) - dt(a)) / 864e5);
+const fmt = (v, d = 0) => v.toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d });
+const sgn = (v, d = 1) => { const r = +v.toFixed(d); return (r > 0 ? '+' : r < 0 ? '−' : '') + fmt(Math.abs(r), d); };
+const mean = (a) => (a.length ? a.reduce((x, y) => x + y, 0) / a.length : null);
+const nums = (ds, k) => ds.map((d) => d[k]).filter((v) => v != null);
+const f1 = (v) => v.toFixed(1);
+const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;');
+const $ = (s) => document.querySelector(s);
+
+/* ── the data, shaped the way the site shapes it ── */
+const CT = D.calorieTargets.slice().sort((a, b) => a.from.localeCompare(b.from));
+const targetFor = (date) => { let t = null; for (const c of CT) if (c.from <= date) t = c.cals; return t; };
+const PH = D.phases.slice().sort((a, b) => a.start.localeCompare(b.start));
+const blocks = PH.map((p, i) => ({ ...p, idx: i, end: i + 1 < PH.length ? addDays(PH[i + 1].start, -1) : null }));
+const blockAt = (date) => { for (let i = blocks.length - 1; i >= 0; i--) { const b = blocks[i]; if (b.start <= date && (!b.end || date <= b.end)) return b; } return null; };
+days.forEach((d, i) => { d.i = i; d.target = targetFor(d.date); d.block = blockAt(d.date); });
+const mondayOf = (s) => addDays(s, -((dow(s) + 6) % 7));
+const wkMap = new Map();
+days.forEach((d) => { const m = mondayOf(d.date); if (!wkMap.has(m)) wkMap.set(m, []); wkMap.get(m).push(d); });
+const weeks = [...wkMap.entries()].sort((a, b) => a[0].localeCompare(b[0])).map(([mon, ds]) => ({
+  mon, sun: addDays(mon, 6), days: ds, full: ds.length === 7,
+  w: mean(nums(ds, 'weight')), cals: mean(nums(ds, 'cals')), target: mean(nums(ds, 'target')),
+  protein: mean(nums(ds, 'protein')), carbs: mean(nums(ds, 'carbs')), fat: mean(nums(ds, 'fat')), steps: mean(nums(ds, 'steps')),
+  block: ds[ds.length - 1].block,
+}));
+weeks.forEach((w, i) => { w.change = i > 0 && w.w != null && weeks[i - 1].w != null ? w.w - weeks[i - 1].w : null; w.days.forEach((d) => { d.week = w; }); });
+blocks.forEach((b) => {
+  b.days = days.filter((d) => d.block === b);
+  const wd = b.days.filter((d) => d.weight != null);
+  b.startWeight = wd.length ? wd[0].weight : null;
+  b.weeks = weeks.filter((w) => w.block === b && w.w != null);
+  b.now = b.weeks.length ? b.weeks[b.weeks.length - 1].w : null;
+  b.ongoing = !b.end;
+  b.dir = b.type === 'bulk' ? 1 : b.type === 'cut' ? -1 : 0;
+});
+const cur = blocks[blocks.length - 1];
+const lastWeek = weeks[weeks.length - 1];
+const planAt = (b, date) => b.startWeight + b.rate * diffDays(b.start, date) / 7;
+
+/** The calendar's rule: a cut wants calories at or under target; a bulk wants them near it. */
+function calLight(cals, target, type) {
+  if (cals == null || target == null) return 'none';
+  const r = cals / target;
+  if (type === 'cut' || !type) return r <= 1 ? 'hit' : r <= 1.1 ? 'close' : 'miss';
+  const off = Math.abs(r - 1);
+  return off <= 0.05 + 1e-9 ? 'hit' : off <= 0.1 + 1e-9 ? 'close' : 'miss';
+}
+const toneOf = (light) => (light === 'hit' ? 'is-good' : light === 'miss' ? 'is-over' : '');
+
+let RANGE = 'w8';
+function rangeOf(key) {
+  if (key === 'all') return { i0: 0, i1: N - 1 };
+  if (key === 'block') return { i0: cur.days[0].i, i1: N - 1 };
+  return { i0: Math.max(0, N - 56), i1: N - 1 };
+}
+const inRange = (w, r) => w.days.filter((d) => d.i >= r.i0 && d.i <= r.i1);
+const midOf = (ds, r) => mean(ds.map((d) => d.i - r.i0));
+
+/* ── drawing helpers ── */
+const mctx = document.createElement('canvas').getContext('2d');
+const tw = (text, font, ls = 0) => { mctx.font = font; return mctx.measureText(text).width + ls * text.length; };
+const F_LAB = '500 10.5px "Plex Mono"', F_NOTE = '400 10.5px "Plex Mono"';
+const niceStep = (range, most = 6, steps = [0.5, 1, 2, 5, 10, 20]) => steps.find((s) => range / s <= most) || 50;
+const row = (k, v, cls = '') => `<div class="row"><span>${k}</span><b class="${cls}">${v}</b></div>`;
+
+function spansOf(ds, L, band) {
+  return blocks.map((b) => {
+    let a = -1, z = -1;
+    ds.forEach((d, i) => { if (d.block === b) { if (a < 0) a = i; z = i; } });
+    return a < 0 ? null : { b, a, z, x0: L + band * a, x1: L + band * (z + 1) };
+  }).filter(Boolean);
+}
+function bandsSvg(spans, top, bottom) {
+  let s = '';
+  if (spans.length > 1) spans.forEach((sp) => { if (sp.b.idx % 2 === 1) s += `<rect class="g-band" x="${f1(sp.x0)}" y="${top}" width="${f1(sp.x1 - sp.x0)}" height="${bottom - top}"/>`; });
+  spans.forEach((sp) => { if (sp.a > 0) s += `<line class="g-edge" x1="${f1(sp.x0)}" x2="${f1(sp.x0)}" y1="${top}" y2="${bottom}"/>`; });
+  return s;
+}
+/** One row of block labels. Each block takes the longest wording that fits inside it; a block too narrow even for
+ *  its shortest wording labels from its right edge, and the label before it shortens to make room. */
+function layoutRow(spans, variantsOf, font, ls) {
+  const items = spans.map((sp) => ({ sp, vars: variantsOf(sp).filter(Boolean), level: 0 }));
+  const place = (it) => {
+    if (!it.vars.length) return null;
+    const bw = it.sp.x1 - it.sp.x0;
+    while (it.level < it.vars.length - 1 && tw(it.vars[it.level], font, ls) > bw - 12) it.level++;
+    const text = it.vars[it.level], w = tw(text, font, ls);
+    if (w <= bw - 12) return { text, x: it.sp.x0 + 6, anchor: 'start', a: it.sp.x0 + 6, e: it.sp.x0 + 6 + w };
+    return { text, x: it.sp.x1 - 6, anchor: 'end', a: it.sp.x1 - 6 - w, e: it.sp.x1 - 6 };
+  };
+  const out = items.map(place);
+  for (let pass = 0; pass < 4; pass++) {
+    let changed = false;
+    for (let k = 1; k < out.length; k++) {
+      let q = k - 1;
+      while (q >= 0 && !out[q]) q--;
+      if (q < 0 || !out[k]) continue;
+      if (out[k].a < out[q].e + 10 && items[q].level < items[q].vars.length - 1) { items[q].level++; out[q] = place(items[q]); changed = true; }
+    }
+    if (!changed) break;
+  }
+  return out;
+}
+const rowSvg = (items, y, cls) => items.map((it) => (it ? `<text class="${cls}" x="${f1(it.x)}" y="${y}" text-anchor="${it.anchor}">${esc(it.text)}</text>` : '')).join('');
+
+function sundayLabels(ds, x, band, y, minGap = 54) {
+  const stride = Math.max(1, Math.ceil(minGap / (7 * band)));
+  const suns = [];
+  ds.forEach((d, i) => { if (dow(d.date) === 0) suns.push(i); });
+  let out = '';
+  for (let k = suns.length - 1, c = 0; k >= 0; k--, c++) {
+    if (c % stride) continue;
+    out += `<text x="${f1(x(suns[k]))}" y="${y}" text-anchor="middle">${short(ds[suns[k]].date)}</text>`;
+  }
+  return out;
+}
+
+function attachHover(host, at) {
+  const svg = host.querySelector('svg'), tip = host.querySelector('.tip'), cross = svg.querySelector('.g-cross');
+  const hide = () => { tip.hidden = true; if (cross) cross.setAttribute('visibility', 'hidden'); };
+  const move = (e) => {
+    const rc = svg.getBoundingClientRect();
+    const h = at(e.clientX - rc.left, e.clientY - rc.top);
+    if (!h) return hide();
+    if (cross) { cross.setAttribute('x1', h.x); cross.setAttribute('x2', h.x); cross.setAttribute('visibility', 'visible'); }
+    tip.innerHTML = h.html;
+    tip.hidden = false;
+    const w = tip.offsetWidth;
+    let left = h.x + 12;
+    if (left + w > rc.width) left = Math.max(0, h.x - 12 - w);
+    tip.style.left = left + 'px';
+  };
+  svg.addEventListener('pointermove', move);
+  svg.addEventListener('pointerdown', move);
+  svg.addEventListener('pointerleave', (e) => { if (e.pointerType !== 'touch') hide(); });
+}
+const mount = (host, W, H, label, s) => { host.innerHTML = `<svg viewBox="0 0 ${W} ${H}" height="${H}" role="img" aria-label="${label}">${s}</svg><div class="tip" hidden></div>`; };
+
+/* ── 1. Weight, with calories underneath on the same dates ── */
+function drawWeight(host, r) {
+  const W = host.clientWidth, phone = W < 560;
+  const L = phone ? 34 : 46, R = phone ? 36 : 46, T = 54, H1 = phone ? 220 : 300, GAP = 54, H2 = phone ? 92 : 118, B = 26, H = T + H1 + GAP + H2 + B;
+  const ds = days.slice(r.i0, r.i1 + 1), n = ds.length, band = (W - L - R) / n, x = (i) => L + band * (i + 0.5);
+  const spans = spansOf(ds, L, band);
+  const wpts = weeks.map((w) => { const ir = inRange(w, r); return w.w != null && ir.length >= 4 ? { w, xi: midOf(ir, r) } : null; }).filter(Boolean);
+
+  const vals = nums(ds, 'weight').concat(wpts.map((p) => p.w.w));
+  spans.forEach((sp) => { if (sp.b.rate && sp.b.startWeight != null) vals.push(planAt(sp.b, ds[sp.a].date), planAt(sp.b, ds[sp.z].date)); });
+  let lo = Math.min(...vals), hi = Math.max(...vals);
+  const step = niceStep(hi - lo + 1, 8);
+  lo = Math.floor((lo - 0.3) / step) * step; hi = Math.ceil((hi + 0.3) / step) * step;
+  const y = (v) => T + H1 - (v - lo) / (hi - lo) * H1;
+
+  let s = bandsSvg(spans, 4, H - B);
+  for (let v = lo; v <= hi + 1e-9; v += step) s += `<line class="g-grid" x1="${L}" x2="${W - R}" y1="${f1(y(v))}" y2="${f1(y(v))}"/><text x="${L - 7}" y="${f1(y(v) + 3.5)}" text-anchor="end">${fmt(v, step < 1 ? 1 : 0)}</text>`;
+  s += `<text x="${L - 7}" y="${T - 14}" text-anchor="end">lb</text>`;
+
+  // Block labels: name, dates and net change, then the goal when it is off the scale.
+  const netOf = (b) => (b.now != null && b.startWeight != null ? sgn(b.now - b.startWeight) + ' lb' : '');
+  const datesOf = (b) => (b.ongoing ? 'since ' + short(b.start) : short(b.start) + ' – ' + short(b.end));
+  const goalIn = (b) => b.goalWeight != null && b.goalWeight >= lo && b.goalWeight <= hi;
+  s += rowSvg(layoutRow(spans, (sp) => { const b = sp.b, nm = b.label.toUpperCase(); return [`${nm} · ${datesOf(b)} · ${netOf(b)}`, `${nm} · ${netOf(b)}`, nm]; }, F_LAB, 0.42), 17, 't-lab');
+  s += rowSvg(layoutRow(spans, (sp) => {
+    const b = sp.b;
+    if (b.goalWeight == null || goalIn(b) || b.now == null) return [];
+    const arrow = b.goalWeight > hi ? '↑' : '↓', gap = Math.abs(b.goalWeight - b.now), reached = b.dir * (b.now - b.goalWeight) >= 0;
+    const tail = reached ? 'reached' : b.ongoing ? `${fmt(gap, 1)} lb to go` : `ended ${fmt(gap, 1)} lb short`;
+    return [`goal ${fmt(b.goalWeight)} ${arrow} ${tail}`, `goal ${fmt(b.goalWeight)} ${arrow}`];
+  }, F_NOTE, 0), 32, 't-note');
+
+  spans.forEach((sp) => {
+    const b = sp.b;
+    if (goalIn(b)) s += `<path class="g-goal" d="M${f1(sp.x0)} ${f1(y(b.goalWeight))}H${f1(sp.x1)}"/><text class="t-note" x="${f1(sp.x0 + 6)}" y="${f1(y(b.goalWeight) - 6)}">${esc(b.label)} goal ${fmt(b.goalWeight, 1)}</text>`;
+    if (b.rate && b.startWeight != null) {
+      const y1 = y(planAt(b, ds[sp.z].date));
+      s += `<path class="g-plan" d="M${f1(x(sp.a))} ${f1(y(planAt(b, ds[sp.a].date)))}L${f1(x(sp.z))} ${f1(y1)}"/><text class="t-note" x="${f1(x(sp.z) + band / 2 + 5)}" y="${f1(y1 + 3.5)}">plan</text>`;
+    }
+  });
+
+  ds.forEach((d, i) => { if (d.weight != null) s += `<circle class="g-day" cx="${f1(x(i))}" cy="${f1(y(d.weight))}" r="${phone ? 1.7 : 2.3}"/>`; });
+  if (wpts.length) {
+    s += `<path class="g-avg" d="${wpts.map((p, k) => (k ? 'L' : 'M') + f1(x(p.xi)) + ' ' + f1(y(p.w.w))).join('')}"/>`;
+    wpts.forEach((p) => { s += `<circle class="g-wk" cx="${f1(x(p.xi))}" cy="${f1(y(p.w.w))}" r="${phone ? 3.4 : 4.6}"/>`; });
+    const last = wpts[wpts.length - 1], prev = wpts[wpts.length - 2], first = wpts[0];
+    const rising = !prev || last.w.w >= prev.w.w;
+    s += `<text class="t-val" x="${f1(x(last.xi) + 4)}" y="${f1(y(last.w.w) + (rising ? -10 : 18))}" text-anchor="end">${fmt(last.w.w, 1)}</text>`;
+    if (first !== last) {
+      const falling = wpts[1].w.w < first.w.w;
+      s += `<text class="t-val" x="${f1(x(first.xi) - 2)}" y="${f1(y(first.w.w) + (falling ? -10 : 18))}">${fmt(first.w.w, 1)}</text>`;
+    }
+    const low = wpts.reduce((a, b) => (b.w.w < a.w.w ? b : a));
+    if (low !== last && low !== first) s += `<text class="t-val" x="${f1(x(low.xi))}" y="${f1(y(low.w.w) + 18)}" text-anchor="middle">${fmt(low.w.w, 1)}</text>`;
+  }
+
+  // Calories against target: a bar per day, or per week once the range is long.
+  const y2 = T + H1 + GAP, weekly = n > 70;
+  s += `<text class="t-cap" x="${L}" y="${y2 - 34}">${weekly ? (phone ? 'CALORIES AGAINST TARGET, BY WEEK' : 'CALORIES AGAINST TARGET, WEEKLY AVERAGE') : 'CALORIES AGAINST THE DAY’S TARGET'}</text>`;
+  const stepsAt = [];
+  ds.forEach((d, i) => { if (i === 0 || d.target !== ds[i - 1].target) stepsAt.push(i); });
+  let nextStart = 1e9;
+  for (let k = stepsAt.length - 1; k >= 0; k--) {
+    const i = stepsAt[k], xs = L + band * i, text = (k === 0 ? 'target ' : '') + fmt(ds[i].target), w = tw(text, F_NOTE);
+    s += `<line class="g-edge" x1="${f1(xs)}" x2="${f1(xs)}" y1="${y2 - 22}" y2="${y2 - 8}"/>`;
+    if (xs + 4 + w <= nextStart - 8) { s += `<text class="t-note" x="${f1(xs + 4)}" y="${y2 - 11}">${text}</text>`; nextStart = xs + 4; }
+  }
+  const cv = [];
+  if (!weekly) ds.forEach((d, i) => { if (d.cals != null && d.target != null) cv.push({ v: d.cals - d.target, cx: x(i), bw: Math.max(1.5, band * 0.66), light: calLight(d.cals, d.target, d.block && d.block.type) }); });
+  else weeks.forEach((w) => { const ir = inRange(w, r); if (ir.length >= 4 && w.cals != null && w.target != null) cv.push({ v: w.cals - w.target, cx: x(midOf(ir, r)), bw: ir.length * band * 0.7, light: calLight(w.cals, w.target, w.block && w.block.type) }); });
+  const cmin = Math.min(0, ...cv.map((c) => c.v)), cmax = Math.max(0, ...cv.map((c) => c.v));
+  const cstep = cmax - cmin > 900 ? 500 : cmax - cmin > 400 ? 250 : 100;
+  const clo = Math.floor(cmin / cstep) * cstep, chi = Math.ceil(cmax / cstep) * cstep;
+  const yc = (v) => y2 + H2 - (v - clo) / (chi - clo) * H2;
+  for (let v = clo; v <= chi; v += cstep) s += `${v ? `<line class="g-grid" x1="${L}" x2="${W - R}" y1="${f1(yc(v))}" y2="${f1(yc(v))}"/>` : ''}<text x="${L - 7}" y="${f1(yc(v) + 3.5)}" text-anchor="end">${v ? sgn(v, 0) : '0'}</text>`;
+  cv.forEach((c) => { const a = yc(0), b = yc(c.v); s += `<rect class="c-${c.light}" x="${f1(c.cx - c.bw / 2)}" y="${f1(Math.min(a, b))}" width="${f1(c.bw)}" height="${f1(Math.max(1, Math.abs(b - a)))}" rx="1"/>`; });
+  s += `<line class="g-zero" x1="${L}" x2="${W - R}" y1="${f1(yc(0))}" y2="${f1(yc(0))}"/>`;
+  s += sundayLabels(ds, x, band, H - 8);
+  s += `<line class="g-cross" x1="0" x2="0" y1="${T}" y2="${y2 + H2}" visibility="hidden"/>`;
+
+  mount(host, W, H, 'Weight by day with weekly averages, and calories against target underneath', s);
+  attachHover(host, (px) => {
+    const i = Math.max(0, Math.min(n - 1, Math.floor((px - L) / band))), d = ds[i], b = d.block;
+    const vs = d.cals != null && d.target != null ? d.cals - d.target : null;
+    return { x: x(i), html: `<div class="k">${DOW[dow(d.date)]}, ${short(d.date)}</div>` + row('Phase', b ? esc(b.label) : '—') + row('Weight', d.weight != null ? fmt(d.weight, 1) + ' lb' : '—')
+      + row('Week average', d.week.w != null ? fmt(d.week.w, 1) + ' lb' : '—') + row('Calories', d.cals != null ? fmt(d.cals) : '—')
+      + (vs != null ? row('Against target', sgn(vs, 0), toneOf(calLight(d.cals, d.target, b && b.type))) : '') };
+  });
+
+  // The facts under the chart follow the range too.
+  const first = wpts[0], last = wpts[wpts.length - 1];
+  $('#f-weight').innerHTML = [
+    ['Week ending ' + short(lastWeek.sun), fmt(lastWeek.w, 1) + ' lb', lastWeek.change != null ? `${sgn(lastWeek.change)} lb on the week before` : 'first week'],
+    [`Over the ${wpts.length} weeks shown`, sgn(+last.w.w.toFixed(1) - +first.w.w.toFixed(1)) + ' lb', `${fmt(first.w.w, 1)} to ${fmt(last.w.w, 1)} lb, weekly averages`],
+    cur.goalWeight != null && cur.now != null ? ['To the goal', fmt(Math.abs(cur.goalWeight - cur.now), 1) + ' lb', `${fmt(cur.goalWeight)} lb, the ${cur.label.toLowerCase()}'s goal`] : null,
+  ].filter(Boolean).map(([k, n2, l]) => `<div><div class="k">${k}</div><div class="n">${n2}</div><div class="l">${l}</div></div>`).join('');
+}
+
+/* ── 2. Pounds per week ── */
+function drawPace(host, r) {
+  const W = host.clientWidth, phone = W < 560;
+  const L = phone ? 34 : 46, R = phone ? 36 : 46, T = 34, Hh = phone ? 170 : 210, B = 26, H = T + Hh + B;
+  const ds = days.slice(r.i0, r.i1 + 1), n = ds.length, band = (W - L - R) / n, x = (i) => L + band * (i + 0.5);
+  const spans = spansOf(ds, L, band);
+  const pts = weeks.map((w) => { const ir = inRange(w, r); return w.change != null && ir.length >= 4 ? { w, cx: x(midOf(ir, r)), ww: ir.length * band } : null; }).filter(Boolean);
+  const vals = pts.map((p) => p.w.change);
+  spans.forEach((sp) => { if (sp.b.rate) vals.push(sp.b.rate + 0.25, sp.b.rate - 0.25); });
+  let lo = Math.min(0, ...vals), hi = Math.max(0, ...vals);
+  const step = hi - lo > 3 ? 1 : 0.5;
+  lo = Math.floor((lo - 0.05) / step) * step; hi = Math.ceil((hi + 0.05) / step) * step;
+  const y = (v) => T + Hh - (v - lo) / (hi - lo) * Hh;
+
+  let s = bandsSvg(spans, 4, H - B);
+  for (let v = lo; v <= hi + 1e-9; v += step) s += `${Math.abs(v) > 1e-9 ? `<line class="g-grid" x1="${L}" x2="${W - R}" y1="${f1(y(v))}" y2="${f1(y(v))}"/>` : ''}<text x="${L - 7}" y="${f1(y(v) + 3.5)}" text-anchor="end">${Math.abs(v) > 1e-9 ? sgn(v, step < 1 ? 1 : 0) : '0'}</text>`;
+  s += `<text x="${L - 7}" y="${T - 12}" text-anchor="end">lb</text>`;
+  s += rowSvg(layoutRow(spans, (sp) => { const b = sp.b, nm = b.label.toUpperCase(); return b.rate ? [`${nm} · plan ${sgn(b.rate)} lb a week`, `${nm} · plan ${sgn(b.rate)}`, nm] : [nm, nm, nm]; }, F_LAB, 0.42), 17, 't-lab');
+  spans.forEach((sp) => {
+    if (!sp.b.rate) return;
+    s += `<rect class="g-planband" x="${f1(sp.x0)}" y="${f1(y(sp.b.rate + 0.25))}" width="${f1(sp.x1 - sp.x0)}" height="${f1(y(sp.b.rate - 0.25) - y(sp.b.rate + 0.25))}"/><path class="g-plan" d="M${f1(sp.x0)} ${f1(y(sp.b.rate))}H${f1(sp.x1)}"/>`;
+  });
+  const all = pts.length && pts[0].ww >= 34;
+  pts.forEach((p, k) => {
+    const c = p.w.change, b = p.w.block, cls = !b || !b.dir || Math.abs(c) < 0.05 ? 'p-flat' : Math.sign(c) === b.dir ? 'p-to' : 'p-away';
+    const a = y(0), e = y(c), bw = Math.min(96, p.ww * 0.62);
+    s += `<rect class="${cls}" x="${f1(p.cx - bw / 2)}" y="${f1(Math.min(a, e))}" width="${f1(bw)}" height="${f1(Math.max(1.5, Math.abs(e - a)))}" rx="2"/>`;
+    if (all) s += `<text class="t-sm" x="${f1(p.cx)}" y="${f1(c >= 0 ? e - 5 : e + 14)}" text-anchor="middle">${sgn(c)}</text>`;
+    else if (k === pts.length - 1) s += `<text class="t-sm" x="${f1(p.cx + bw / 2 + 5)}" y="${f1(e + 4)}">${sgn(c)}</text>`;
+  });
+  s += `<line class="g-zero" x1="${L}" x2="${W - R}" y1="${f1(y(0))}" y2="${f1(y(0))}"/>`;
+  s += sundayLabels(ds, x, band, H - 8);
+  mount(host, W, H, 'Change in weekly average weight, week by week, against the planned pace', s);
+  attachHover(host, (px) => {
+    if (!pts.length) return null;
+    const p = pts.reduce((a, b) => (Math.abs(b.cx - px) < Math.abs(a.cx - px) ? b : a));
+    return { x: p.cx, html: `<div class="k">Week ending ${short(p.w.sun)}</div>` + row('Phase', p.w.block ? esc(p.w.block.label) : '—') + row('Average', fmt(p.w.w, 1) + ' lb') + row('On the week before', sgn(p.w.change) + ' lb') + (p.w.block && p.w.block.rate ? row('Planned', sgn(p.w.block.rate) + ' lb') : '') };
+  });
+
+  const bw = cur.weeks.filter((w) => w.change != null), avg = mean(bw.map((w) => w.change));
+  const cells = [
+    ['Last week', sgn(lastWeek.change) + ' lb', 'week ending ' + short(lastWeek.sun)],
+    [`This ${cur.type}, week on week`, sgn(avg) + ' lb', `a week on average, over ${bw.length} weeks`],
+  ];
+  if (cur.rate) {
+    cells.push(['The plan', sgn(cur.rate) + ' lb', 'a week']);
+    const ahead = lastWeek.w - planAt(cur, addDays(lastWeek.mon, 3));
+    cells.push(['Against the plan line', `${fmt(Math.abs(ahead), 1)} lb`, `${ahead >= 0 ? 'above' : 'below'} it this week; the line starts at the block's first weigh-in`]);
+  }
+  $('#f-pace').innerHTML = cells.map(([k, n2, l]) => `<div><div class="k">${k}</div><div class="n">${n2}</div><div class="l">${l}</div></div>`).join('');
+}
+
+/* ── 3. The next morning ── */
+const BIG = 1.2;
+const pairs = [];
+for (let i = 0; i < N - 1; i++) {
+  const a = days[i], b = days[i + 1];
+  if (a.weight != null && b.weight != null && a.cals != null && a.target != null && diffDays(a.date, b.date) === 1) pairs.push({ dx: a.cals - a.target, dy: b.weight - a.weight, big: a.cals >= a.target * BIG, d: a });
+}
+const bigPaths = [], allPaths = [];
+for (let i = 0; i < N; i++) {
+  const a = days[i];
+  if (a.weight == null) continue;
+  const path = [0];
+  for (let k = 1; k <= 3; k++) { const b = days[i + k]; if (!b || b.weight == null || diffDays(a.date, b.date) !== k) break; path.push(b.weight - a.weight); }
+  if (path.length < 2) continue;
+  allPaths.push(path);
+  if (a.cals != null && a.target != null && a.cals >= a.target * BIG) bigPaths.push({ path, d: a });
+}
+function colStats(paths) {
+  return [0, 1, 2, 3].map((k) => {
+    const v = paths.map((p) => p[k]).filter((u) => u != null).sort((a, b) => a - b);
+    const q = (t) => { if (!v.length) return null; const pos = (v.length - 1) * t, a = Math.floor(pos), b = Math.ceil(pos); return v[a] + (v[b] - v[a]) * (pos - a); };
+    return { n: v.length, mean: mean(v), q1: q(0.25), q3: q(0.75), below: v.filter((u) => u < 0).length };
+  });
+}
+function drawScatter(host) {
+  const W = host.clientWidth, L = 46, R = 12, T = 20, B = 40, Hh = Math.round(Math.min(320, Math.max(230, W * 0.6))), H = T + Hh + B;
+  const xs = pairs.map((p) => p.dx), ym = Math.ceil(Math.max(...pairs.map((p) => Math.abs(p.dy))));
+  const xlo = Math.floor(Math.min(...xs) / 200) * 200, xhi = Math.ceil(Math.max(...xs) / 200) * 200;
+  const x = (v) => L + (v - xlo) / (xhi - xlo) * (W - L - R), y = (v) => T + Hh / 2 - v / ym * (Hh / 2);
+  let s = '';
+  for (let v = -ym; v <= ym; v++) s += `<line class="${v ? 'g-grid' : 'g-zero'}" x1="${L}" x2="${W - R}" y1="${f1(y(v))}" y2="${f1(y(v))}"/><text x="${L - 7}" y="${f1(y(v) + 3.5)}" text-anchor="end">${v ? sgn(v, 0) : '0'} lb</text>`;
+  const xstep = (xhi - xlo) / 400 > (W < 420 ? 4 : 7) ? 800 : 400;
+  for (let v = Math.ceil(xlo / xstep) * xstep; v <= xhi; v += xstep) s += `<text x="${f1(x(v))}" y="${T + Hh + 16}" text-anchor="middle">${v ? sgn(v, 0) : 'target'}</text>`;
+  s += `<text x="${W - R}" y="${H - 4}" text-anchor="end">kcal over or under that day’s target</text>`;
+  s += `<path class="g-dots" d="M${f1(x(0))} ${T}V${T + Hh}"/>`;
+  s += `<text class="t-note" x="${L + 6}" y="${T + 10}">heavier next morning ↑</text><text class="t-note" x="${L + 6}" y="${T + Hh - 6}">lighter next morning ↓</text>`;
+  const mx = mean(xs), my = mean(pairs.map((p) => p.dy));
+  const m = pairs.reduce((t, p) => t + (p.dx - mx) * (p.dy - my), 0) / pairs.reduce((t, p) => t + (p.dx - mx) ** 2, 0), c = my - m * mx;
+  s += `<path class="g-fit" d="M${f1(x(xlo))} ${f1(y(m * xlo + c))}L${f1(x(xhi))} ${f1(y(m * xhi + c))}"/>`;
+  pairs.forEach((p) => { s += `<circle class="${p.big ? 'd-big' : 'd-day'}" cx="${f1(x(p.dx))}" cy="${f1(y(p.dy))}" r="3.2"/>`; });
+  mount(host, W, H, 'Each day’s calories against target, and the change on the scale the next morning', s);
+  attachHover(host, (px, py) => {
+    let best = null, bd = 18 * 18;
+    pairs.forEach((p) => { const d2 = (x(p.dx) - px) ** 2 + (y(p.dy) - py) ** 2; if (d2 < bd) { bd = d2; best = p; } });
+    return best ? { x: x(best.dx), html: `<div class="k">${DOW[dow(best.d.date)]}, ${short(best.d.date)}</div>` + row('Phase', best.d.block ? esc(best.d.block.label) : '—') + row('Calories', fmt(best.d.cals)) + row('Against target', sgn(best.dx, 0)) + row('Next morning', sgn(best.dy) + ' lb') } : null;
+  });
+}
+function drawAfter(host) {
+  const W = host.clientWidth, L = 44, R = 96, T = 14, B = 26, Hh = Math.round(Math.min(300, Math.max(220, W * 0.6))), H = T + Hh + B;
+  const bs = colStats(bigPaths.map((p) => p.path)), as = colStats(allPaths);
+  const every = bigPaths.flatMap((p) => p.path), lo = Math.floor(Math.min(...every)), hi = Math.ceil(Math.max(...every));
+  const x = (k) => L + k * (W - L - R) / 3, y = (v) => T + Hh - (v - lo) / (hi - lo) * Hh;
+  let s = '';
+  for (let v = lo; v <= hi; v++) s += `<line class="${v ? 'g-grid' : 'g-zero'}" x1="${L}" x2="${W - R}" y1="${f1(y(v))}" y2="${f1(y(v))}"/><text x="${L - 7}" y="${f1(y(v) + 3.5)}" text-anchor="end">${v ? sgn(v, 0) : '0'} lb</text>`;
+  ((W - L - R) / 3 < 96 ? ['day 0', '+1', '+2', '+3 days'] : ['that morning', '1 day on', '2 days on', '3 days on']).forEach((t, k) => { s += `<text x="${f1(x(k))}" y="${H - 8}" text-anchor="${k ? 'middle' : 'start'}">${t}</text>`; });
+  const line = (p) => p.map((v, k) => (k ? 'L' : 'M') + f1(x(k)) + ' ' + f1(y(v))).join('');
+  bigPaths.forEach((p) => { s += `<path class="a-one" d="${line(p.path)}"/>`; });
+  const ks = [0, 1, 2, 3].filter((k) => bs[k].n > 0);
+  s += `<path class="a-band" d="${ks.map((k, j) => (j ? 'L' : 'M') + f1(x(k)) + ' ' + f1(y(bs[k].q3))).join('')}${ks.slice().reverse().map((k) => 'L' + f1(x(k)) + ' ' + f1(y(bs[k].q1))).join('')}Z"/>`;
+  s += `<path class="g-ref" d="${line(as.map((c) => c.mean))}"/>`;
+  s += `<path class="a-mean" d="${line(ks.map((k) => bs[k].mean))}"/>`;
+  ks.forEach((k) => { s += `<circle class="a-pt" cx="${f1(x(k))}" cy="${f1(y(bs[k].mean))}" r="4"/>`; });
+  const endK = ks[ks.length - 1];
+  let yb = y(bs[endK].mean), ye = y(as[3].mean);
+  if (Math.abs(yb - ye) < 26) { const mid = (yb + ye) / 2; if (yb < ye) { yb = mid - 13; ye = mid + 13; } else { yb = mid + 13; ye = mid - 13; } }
+  s += `<text class="t-val" x="${f1(x(endK) + 9)}" y="${f1(yb)}">${sgn(bs[endK].mean)} lb</text><text class="t-note" x="${f1(x(endK) + 9)}" y="${f1(yb + 13)}">big days</text>`;
+  s += `<text class="t-note" x="${f1(x(3) + 9)}" y="${f1(ye + 3.5)}">every day</text>`;
+  const latest = bigPaths[bigPaths.length - 1];
+  if (latest) {
+    const e = latest.path.length - 1, soFar = latest.path.length < 4;
+    s += `<path class="a-last" d="${line(latest.path)}"/>` + latest.path.map((v, k) => `<circle class="a-lastpt" cx="${f1(x(k))}" cy="${f1(y(v))}" r="3"/>`).join('');
+    if (soFar) s += `<text class="t-note" x="${f1(x(e) + 8)}" y="${f1(y(latest.path[e]) + 3.5)}">${short(latest.d.date)} · so far</text>`;
+    else s += `<text class="t-note" x="${f1(x(1) + 6)}" y="${f1(y(latest.path[1]) + (latest.path[1] > bs[1].mean ? -8 : 14))}">${short(latest.d.date)}, the newest</text>`;
+  }
+  mount(host, W, H, 'How the scale moves over the three mornings after a big day', s);
+  host.querySelector('.tip').remove();
+}
+function nextFacts() {
+  const over = pairs.filter((p) => p.dx > 0), under = pairs.filter((p) => p.dx <= 0), big = pairs.filter((p) => p.big), bs = colStats(bigPaths.map((p) => p.path));
+  $('#f-next').innerHTML = [
+    ['After a day over target', sgn(mean(over.map((p) => p.dy))) + ' lb', `next morning, average of ${over.length} days`],
+    ['After a day at or under', sgn(mean(under.map((p) => p.dy))) + ' lb', `next morning, average of ${under.length} days`],
+    ['After a big day', sgn(mean(big.map((p) => p.dy))) + ' lb', `next morning, average of ${big.length} days`],
+    ['Three days after one', sgn(bs[3].mean) + ' lb', `against that morning; below it on ${bs[3].below} of ${bs[3].n}`],
+  ].map(([k, n2, l]) => `<div><div class="k">${k}</div><div class="n">${n2}</div><div class="l">${l}</div></div>`).join('');
+}
+
+/* ── 4. The week, by day ── */
+const fullWeeks = weeks.filter((w) => w.full);
+const dev = [];
+for (let i = 3; i < N - 3; i++) { const win = days.slice(i - 3, i + 4); if (win.every((d) => d.weight != null) && diffDays(win[0].date, win[6].date) === 6) dev.push({ k: dow(days[i].date), v: days[i].weight - mean(win.map((d) => d.weight)) }); }
+const WD = [1, 2, 3, 4, 5, 6, 0].map((k) => {
+  const ds = fullWeeks.flatMap((w) => w.days).filter((d) => dow(d.date) === k && d.cals != null && d.target != null);
+  return { k, name: DOW[k], vs: mean(ds.map((d) => d.cals - d.target)), over: ds.filter((d) => d.cals > d.target).length, n: ds.length, dev: mean(dev.filter((e) => e.k === k).map((e) => e.v)) };
+});
+function drawBars(host, items, o) {
+  const W = host.clientWidth, L = o.L || 46, R = 8, T = 20, B = o.sub ? 42 : 26, Hh = 170, H = T + Hh + B;
+  const vals = items.map((i) => i.v);
+  let lo = Math.floor(Math.min(0, ...vals) / o.step) * o.step, hi = Math.ceil(Math.max(0, ...vals) / o.step) * o.step;
+  const bw = (W - L - R) / items.length, x = (i) => L + bw * (i + 0.5), y = (v) => T + Hh - (v - lo) / (hi - lo) * Hh;
+  let s = '';
+  for (let v = lo; v <= hi + 1e-9; v += o.step) s += `${Math.abs(v) > 1e-9 ? `<line class="g-grid" x1="${L}" x2="${W - R}" y1="${f1(y(v))}" y2="${f1(y(v))}"/>` : ''}<text x="${L - 7}" y="${f1(y(v) + 3.5)}" text-anchor="end">${Math.abs(v) > 1e-9 ? sgn(v, o.d) : o.zero}</text>`;
+  items.forEach((it, i) => {
+    const a = y(0), e = y(it.v), w = Math.min(64, bw * 0.5);
+    s += `<rect class="${o.cls(it.v)}" x="${f1(x(i) - w / 2)}" y="${f1(Math.min(a, e))}" width="${f1(w)}" height="${f1(Math.max(1.5, Math.abs(e - a)))}" rx="2"/>`;
+    s += `<text class="t-sm" x="${f1(x(i))}" y="${f1(it.v >= 0 ? e - 5 : e + 14)}" text-anchor="middle">${sgn(it.v, o.d)}</text>`;
+    s += `<text class="t-cat" x="${f1(x(i))}" y="${T + Hh + 18}" text-anchor="middle">${it.label}</text>`;
+    if (o.sub) s += `<text x="${f1(x(i))}" y="${T + Hh + 33}" text-anchor="middle">${bw < 58 ? it.subTiny : bw < 108 ? it.subShort : it.sub}</text>`;
+  });
+  s += `<line class="g-zero" x1="${L}" x2="${W - R}" y1="${f1(y(0))}" y2="${f1(y(0))}"/>`;
+  mount(host, W, H, o.label, s);
+  host.querySelector('.tip').remove();
+}
+function dowFacts() {
+  const per = fullWeeks.map((w) => { const sum = (ks) => ks.reduce((t, k) => { const d = w.days.find((e) => dow(e.date) === k); return t + (d && d.cals != null && d.target != null ? d.cals - d.target : 0); }, 0); return { end: sum([5, 6, 0]), mid: sum([1, 2, 3, 4]) }; });
+  const m = (ks) => mean(dev.filter((e) => ks.includes(e.k)).map((e) => e.v));
+  $('#f-dow').innerHTML = [
+    ['Friday to Sunday', sgn(mean(per.map((p) => p.end)), 0) + ' kcal', `against target, a week on average; over in ${per.filter((p) => p.end > 0).length} of ${per.length} weeks`],
+    ['Monday to Thursday', sgn(mean(per.map((p) => p.mid)), 0) + ' kcal', `against target, a week on average; under in ${per.filter((p) => p.mid < 0).length} of ${per.length} weeks`],
+    ['Sunday and Monday mornings', sgn(m([0, 1]) - m([5, 6])) + ' lb', 'against Friday and Saturday mornings, once the trend is taken out'],
+  ].map(([k, n2, l]) => `<div><div class="k">${k}</div><div class="n">${n2}</div><div class="l">${l}</div></div>`).join('');
+}
+
+/* ── 5. Steps and macros: weekly averages over the daily readings ── */
+function drawSeries(host, r, o) {
+  const W = host.clientWidth, L = 40, R = o.R, T = 14, B = 26, Hh = 200, H = T + Hh + B;
+  const ds = days.slice(r.i0, r.i1 + 1), n = ds.length, band = (W - L - R) / n, x = (i) => L + band * (i + 0.5);
+  const wk = weeks.map((w) => { const ir = inRange(w, r); return ir.length >= 4 ? { w, xi: midOf(ir, r) } : null; }).filter(Boolean);
+  const dv = nums(ds, o.daily), all = dv.concat(...o.lines.map((ln) => wk.map((p) => p.w[ln.k])), o.refs.map((f) => f.v));
+  const lo = o.zero ? 0 : Math.floor(Math.min(...all) / o.step) * o.step, hi = Math.ceil(Math.max(...all) / o.step) * o.step;
+  const y = (v) => T + Hh - (v - lo) / (hi - lo) * Hh;
+  let s = bandsSvg(spansOf(ds, L, band), 4, H - B);
+  for (let v = lo; v <= hi; v += o.step) s += `<line class="g-grid" x1="${L}" x2="${W - R}" y1="${f1(y(v))}" y2="${f1(y(v))}"/><text x="${L - 7}" y="${f1(y(v) + 3.5)}" text-anchor="end">${o.tick(v)}</text>`;
+  const taken = [];
+  o.refs.forEach((f) => { s += `<path class="g-ref ${f.cls || ''}" d="M${L} ${f1(y(f.v))}H${W - R}"/>`; if (f.label) { s += `<text class="t-note" x="${W - R + 6}" y="${f1(y(f.v) + 3.5)}">${f.label}</text>`; taken.push(y(f.v)); } });
+  ds.forEach((d, i) => { if (d[o.daily] != null) s += `<circle class="g-day" cx="${f1(x(i))}" cy="${f1(y(d[o.daily]))}" r="${n > 70 ? 1.6 : 2.1}"/>`; });
+  o.lines.forEach((ln) => {
+    s += `<path class="${ln.line}" d="${wk.map((p, k) => (k ? 'L' : 'M') + f1(x(p.xi)) + ' ' + f1(y(p.w[ln.k]))).join('')}"/>`;
+    if (ln.pts) wk.forEach((p) => { s += `<circle class="${ln.pts}" cx="${f1(x(p.xi))}" cy="${f1(y(p.w[ln.k]))}" r="3.4"/>`; });
+    const last = wk[wk.length - 1];
+    let ly = y(last.w[ln.k]);
+    taken.forEach((ty) => { if (Math.abs(ly - ty) < 13) ly = ly < ty ? ty - 13 : ty + 13; });
+    taken.push(ly);
+    s += `<text class="t-sm" x="${W - R + 6}" y="${f1(ly + 4)}">${ln.end(last.w[ln.k])}</text>`;
+  });
+  s += sundayLabels(ds, x, band, H - 8, 62);
+  mount(host, W, H, o.label, s);
+  host.querySelector('.tip').remove();
+}
+function runs(ok) { let best = 0, c = 0; ok.forEach((v) => { c = v ? c + 1 : 0; best = Math.max(best, c); }); return { cur: c, best }; }
+function drawStepsMacros(r) {
+  drawSeries($('#c-steps'), r, { label: 'Steps: weekly averages over daily readings, against the floor and the goal', daily: 'steps', step: 5000, R: 70, tick: (v) => v / 1000 + 'k',
+    lines: [{ k: 'steps', line: 'g-avg', pts: 'g-wk', end: (v) => fmt(v / 1000, 1) + 'k' }],
+    refs: [{ v: G.stepsGoal, label: `goal ${G.stepsGoal / 1000}k`, cls: 'strong' }, { v: G.stepsMinimum, label: `floor ${G.stepsMinimum / 1000}k` }] });
+  const sd = days.filter((d) => d.steps != null), fl = runs(sd.map((d) => d.steps >= G.stepsMinimum)), gl = runs(sd.map((d) => d.steps >= G.stepsGoal));
+  const say = (o) => `<b>${o.cur} days</b> running${o.cur === o.best ? ', the best run yet' : ` (best run ${o.best} days)`}`;
+  $('#t-steps').innerHTML = `Above the floor ${say(fl)}. Above the goal ${say(gl)}.`;
+  drawSeries($('#c-macros'), r, { label: 'Protein, carbs and fat: weekly averages in grams', daily: 'protein', step: 100, zero: true, R: 78, tick: (v) => v + (v ? '' : ' g'),
+    lines: [{ k: 'carbs', line: 'l-p2', end: (v) => `Carbs ${fmt(v)}` }, { k: 'fat', line: 'l-p3', end: (v) => `Fat ${fmt(v)}` }, { k: 'protein', line: 'l-p1', pts: 'pt-p1', end: (v) => `Protein ${fmt(v)}` }],
+    refs: [{ v: G.proteinGoal, cls: 'strong' }] });
+  const ds = days.slice(r.i0, r.i1 + 1).filter((d) => d.protein != null);
+  $('#t-macros').innerHTML = `Grams a day. The dots are each day's protein; it met the ${G.proteinGoal} g goal on <b>${ds.filter((d) => d.protein >= G.proteinGoal).length} of ${ds.length} days</b> shown.`;
+}
+
+/* ── This week: the tiles, the log's key, and the Records colours ── */
+function drawWeek() {
+  const last21 = days.slice(-21), wd = last21.filter((d) => d.weight != null);
+  const xs = wd.map((d) => d.i), ys = wd.map((d) => d.weight), mx = mean(xs), my = mean(ys);
+  const slope = xs.reduce((t, v, k) => t + (v - mx) * (ys[k] - my), 0) / xs.reduce((t, v) => t + (v - mx) ** 2, 0);
+  const intake21 = mean(nums(last21, 'cals')), surplus = slope * 3500, maint = intake21 - surplus;
+  const allCals = mean(nums(days, 'cals')), latest = [...days].reverse().find((d) => d.weight != null);
+  let streak = 0;
+  for (let i = weeks.length - 1; i >= 0; i--) { const w = weeks[i]; if (w.days.filter((d) => d.weight != null).length >= G.weighInsPerWeek && w.days.filter((d) => d.workout).length >= G.liftsPerWeek && w.days.filter((d) => d.cardio).length >= G.cardioPerWeek) streak++; else break; }
+  const since = latest.weight - cur.startWeight;
+  const tiles = [
+    ['Latest weigh-in', fmt(latest.weight, 1) + ' lb', `<span class="${Math.sign(since) === cur.dir ? 'is-good' : ''}">one reading · ${sgn(since)} lb since ${short(cur.start)}</span>`],
+    ['Avg calories', fmt(mean(nums(cur.days, 'cals'))), `per day, this ${cur.type}`, `${fmt(allCals)} · every recorded day, cut and bulk together`],
+    ['Est. maintenance', fmt(maint), 'kcal/day implied by the last 3 weeks'],
+    ['Avg protein', fmt(mean(nums(cur.days, 'protein'))) + ' g', `per day, this ${cur.type}`, `${fmt(mean(nums(days, 'protein')))} g · every recorded day`],
+    ['Avg steps', fmt(mean(nums(cur.days, 'steps'))), `per day, this ${cur.type}`, `${fmt(mean(nums(days, 'steps')))} · every recorded day`],
+    [surplus >= 0 ? 'Est. surplus' : 'Est. deficit', fmt(Math.abs(surplus)) + ' kcal', 'per day, last 3 weeks', `${fmt(Math.abs(maint - allCals))} kcal · it took 3-week maintenance from all-time intake`],
+    ['Goal streak', `${streak} weeks`, 'weeks in a row hitting all three goals'],
+    ['Tracked', `${cur.weeks.length} weeks`, `this ${cur.type} · ${N} days in all`, `${N} days · ${weeks.length} weeks`],
+  ];
+  $('#tiles').innerHTML = tiles.map(([k, n2, l, was]) => `<div><div class="k">${k}</div><div class="n">${n2}</div><div class="l">${l}</div>${was ? `<div class="was">today: ${was}</div>` : ''}</div>`).join('');
+
+  const w = lastWeek, vs = w.cals - w.target, lifts = w.days.filter((d) => d.workout).length, cardio = w.days.filter((d) => d.cardio).length, mins = w.days.reduce((t, d) => t + (d.cardioMinutes || 0), 0);
+  $('#logcard').innerHTML = `<div class="wk">
+    <div><div class="eyebrow">Week ending · ${esc(w.block.label)}</div><h4>${short(w.sun)}</h4><div style="font-size: 12.5px; color: var(--ink-2)">${w.days.length} days recorded</div></div>
+    <div><div class="eyebrow">Avg weight</div><div class="big">${fmt(w.w, 1)} lb</div><div class="${Math.sign(w.change) === w.block.dir ? 'is-good' : 'is-over'}" style="font-size: 12.5px">${sgn(w.change)} lb</div></div>
+    <div class="chips"><span class="chip">${fmt(w.cals)} kcal · <span class="${toneOf(calLight(w.cals, w.target, w.block.type))}">${sgn(vs, 0)}</span></span><span class="chip">${fmt(w.protein)} g protein</span><span class="chip">${fmt(w.steps)} steps</span><span class="chip">${lifts} lifts · ${cardio} cardio · ${mins} min</span></div>
+    <div class="goals">✓ Measure<br>✓ Lifts<br>✓ Cardio</div>
+  </div><div class="days7">${w.days.map((d) => `<div class="dayc"><div class="d"><span>${DOW[dow(d.date)]}</span><span>${dt(d.date).getUTCDate()}</span></div><div class="w">${d.weight != null ? fmt(d.weight, 1) : '—'}</div><div class="m">${d.workout ? '<i class="pip lift"></i>' : ''}${d.cardio ? '<i class="pip cardio"></i>' : ''}${!d.workout && !d.cardio ? '<span class="rest">–</span>' : ''}</div></div>`).join('')}</div>`;
+
+  const pick = ['2026-10-25', '2026-10-11', '2026-10-04', '2026-09-06', '2026-08-23', '2026-08-16', '2026-08-02'];
+  const rows = weeks.filter((x) => pick.includes(x.sun)).reverse();
+  $('#rec').innerHTML = `<thead><tr><th>Week ending</th><th>Phase</th><th class="num">Avg cals</th><th class="num">Target</th><th class="num">vs goal today</th><th class="num">vs goal proposed</th></tr></thead><tbody>${rows.map((x) => {
+    const v = x.cals - x.target, old = +v.toFixed(0) > 0 ? 'is-over' : +v.toFixed(0) < 0 ? 'is-good' : '';
+    return `<tr><td class="wkname">${short(x.sun)}</td><td>${esc(x.block.label)}</td><td class="num">${fmt(x.cals)}</td><td class="num">${fmt(x.target)}</td><td class="num ${old}">${sgn(v, 0)}</td><td class="num ${toneOf(calLight(x.cals, x.target, x.block.type))}">${sgn(v, 0)}</td></tr>`;
+  }).join('')}</tbody>`;
+}
+
+/* ── wiring ── */
+let VIEW = 'trends';
+function draw() {
+  if (VIEW === 'trends') {
+    const r = rangeOf(RANGE);
+    drawWeight($('#c-weight'), r);
+    drawPace($('#c-pace'), r);
+    drawScatter($('#c-scatter'));
+    drawAfter($('#c-after'));
+    nextFacts();
+    drawBars($('#c-dowcal'), WD.map((o) => ({ label: o.name, v: o.vs, sub: `over on ${o.over} of ${o.n}`, subShort: `${o.over} of ${o.n}`, subTiny: `${o.over}/${o.n}` })), { step: 300, d: 0, zero: 'target', sub: true, cls: (v) => (v > 0 ? 'b-over' : 'b-under'), label: 'Average calories against target, by weekday' });
+    drawBars($('#c-dowwt'), WD.map((o) => ({ label: o.name, v: o.dev })), { step: 0.5, d: 1, zero: 'trend', cls: () => 'b-acc', label: 'Average weigh-in against its 7-day trend, by weekday' });
+    dowFacts();
+    drawStepsMacros(r);
+  } else drawWeek();
+}
+const eyebrow = `Health · ${cur.label}, week ${cur.weeks.length}`;
+$('#eb-trends').textContent = eyebrow; $('#eb-week').textContent = eyebrow; $('#rb-date').textContent = short(days[N - 1].date);
+document.querySelectorAll('[data-range]').forEach((b) => b.addEventListener('click', () => {
+  RANGE = b.dataset.range;
+  document.querySelectorAll('[data-range]').forEach((o) => o.setAttribute('aria-pressed', String(o === b)));
+  draw();
+}));
+document.querySelectorAll('[data-view]').forEach((b) => b.addEventListener('click', () => {
+  VIEW = b.dataset.view;
+  document.querySelectorAll('[data-view]').forEach((o) => { if (o === b) o.setAttribute('aria-current', 'page'); else o.removeAttribute('aria-current'); });
+  $('#v-trends').hidden = VIEW !== 'trends'; $('#v-week').hidden = VIEW !== 'week';
+  window.scrollTo(0, 0);
+  draw();
+}));
+$('#notes-btn').addEventListener('click', (e) => {
+  const off = document.body.classList.toggle('no-notes');
+  e.currentTarget.textContent = off ? 'Notes: off' : 'Notes: on';
+  e.currentTarget.setAttribute('aria-pressed', String(!off));
+});
+let lastW = 0, timer = 0;
+new ResizeObserver(() => { const w = document.querySelector('.wrap').clientWidth; if (w === lastW) return; lastW = w; clearTimeout(timer); timer = setTimeout(draw, 60); }).observe(document.querySelector('.wrap'));
+const fonts = ['500 10.5px "Plex Mono"', '400 10.5px "Plex Mono"', '600 12px "Plex Sans"', '600 24px "Geist Serif"'].map((f) => document.fonts.load(f));
+Promise.race([Promise.all(fonts), new Promise((res) => setTimeout(res, 1500))]).then(draw, draw);
+</script>
+</body>
+</html>

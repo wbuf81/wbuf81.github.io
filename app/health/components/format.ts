@@ -40,17 +40,16 @@ export function weightTone(change: number | null, block: PhaseType | null, digit
 }
 
 /**
- * Average calories against the target, coloured by the block, on the calendar's rule (lib/healthCalendar.ts): a cut
- * wants them at or under the target, so over is the worse direction; a bulk or maintenance wants them near it, so
- * within 5% is good, more than 10% off either way the worse, and between says nothing.
+ * Average calories against the target, coloured on the calendar's rule (lib/healthCalendar.ts › calorieLight) for
+ * every block: a cut wants them at or under the target (up to 10% over says nothing, more is the worse direction); a
+ * bulk or maintenance wants them near it (within 5% good, more than 10% off either way the worse). Outside any block
+ * it reads as a cut. With no average to compare against, it falls back to the sign.
  */
 export function calsTone(vsGoal: number | null, avgCals: number | null, block: PhaseType | null): string {
   if (vsGoal === null) return '';
-  if ((block === 'bulk' || block === 'maintain') && avgCals !== null) {
-    const light = calorieLight(avgCals, avgCals - vsGoal, block);
-    return light === 'hit' ? 'is-good' : light === 'miss' ? 'is-over' : '';
-  }
-  return downIsGood(vsGoal, 0);
+  if (avgCals === null) return downIsGood(vsGoal, 0);
+  const light = calorieLight(avgCals, avgCals - vsGoal, block);
+  return light === 'hit' ? 'is-good' : light === 'miss' ? 'is-over' : '';
 }
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];

@@ -54,10 +54,10 @@ export function barPath(cx: number, width: number, y0: number, y1: number): stri
   );
 }
 
-/** A plain rectangle from (x0, y0) to (x1, y1). */
-export function rectPath(x0: number, y0: number, x1: number, y1: number): string {
+/** A plain rectangle from (x0, y0) to (x1, y1), at least `minH` high so a zero still shows. */
+export function rectPath(x0: number, y0: number, x1: number, y1: number, minH = 1): string {
   const top = Math.min(y0, y1);
-  const h = Math.max(1, Math.abs(y1 - y0));
+  const h = Math.max(minH, Math.abs(y1 - y0));
   return `M${f1(x0)} ${f1(top)}h${f1(x1 - x0)}v${f1(h)}h${f1(x0 - x1)}Z`;
 }
 

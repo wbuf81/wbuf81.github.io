@@ -38,6 +38,11 @@ export interface HealthPhase {
   label?: string;
   /** Optional target weight for this phase. */
   goalWeight?: number | null;
+  /**
+   * Optional planned pace in lb a week, signed: +0.5 for a lean bulk, -1 for a cut. Draws a plan line from the
+   * block's first weigh-in. A block without one has no plan line.
+   */
+  ratePerWeek?: number | null;
   note?: string;
 }
 
@@ -188,6 +193,8 @@ export interface PhaseSummary {
    */
   recentChangePerWeek: number | null;
   goalWeight: number | null;
+  /** The planned pace in lb a week, signed, as hand-written on the phase. Null without one. */
+  ratePerWeek: number | null;
   /**
    * Weight still to go to reach the goal, as a magnitude — positive whether the
    * goal is above or below the current weight. Null without a goal.
@@ -244,6 +251,11 @@ export interface HealthSummary {
    * weight change across the weighed span. Null until two weeks are weighed.
    */
   estimatedMaintenance: number | null;
+  /**
+   * Average daily intake over the same trailing window `estimatedMaintenance` is measured over, so the two can be
+   * subtracted. Null whenever maintenance is.
+   */
+  recentAvgCals: number | null;
   workoutsThisWeek: number;
   cardioSessionsThisWeek: number;
   cardioMinutesThisWeek: number;

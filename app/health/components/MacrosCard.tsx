@@ -1,108 +1,69 @@
-import { HealthDatedTargets, HealthDay } from '@/types/health';
+import { HealthDatedTargets, PhaseSummary, WeeklyTrendRow } from '@/types/health';
 import { targetsFor } from '@/lib/targets';
-import { formatNumber, shortDate } from './format';
-import { HALF, HALF_RENDER_PX } from './StepsCard';
-import { VARIANTS, Variant, bands, barPath, cleanTop, hline, labelStride, pct, stepPath, sundayLabels, ticks, yScale } from './svg';
+import { formatNumber } from './format';
+import type { TrendRange } from './trendRange';
+import WeeklySeries from './WeeklySeries';
 
 interface Props {
-  days: HealthDay[];
+  range: TrendRange;
+  weeklyTrend: WeeklyTrendRow[];
+  phases: PhaseSummary[];
   /** Dated standing goals; the protein goal in force each day is drawn as a stepped dashed line. */
   targets: HealthDatedTargets[];
 }
 
 /**
- * Grams per day, stacked protein / carbs / fat — one scale. Protein sits at the bottom, so a day whose
- * protein segment reaches the dashed line met the goal. The fat colour is under 3:1 against the card, so
- * the legend names every segment and the Every-day table has the grams.
+ * Protein, carbs and fat over the Trends range: weekly averages in grams on one scale, protein the heavy line with
+ * points (it is the one with a goal), carbs and fat thin, each day's protein a faint dot, and the protein goal in force
+ * each day a stepped dashed line. Every line is named at its right end. The fat colour is under 3:1 against the card,
+ * so it is named in words and the Every-day table has the grams.
  */
-export default function MacrosCard({ days, targets }: Props) {
-  const goals = days.map((d) => targetsFor(d.date, targets)?.proteinGoal ?? null);
-  const proteinGoal = goals[goals.length - 1] ?? null;
-  const totals = days.map((d) => (d.protein ?? 0) + (d.carbs ?? 0) + (d.fat ?? 0));
-  const top = cleanTop(Math.max(...totals, ...goals.map((g) => g ?? 0)), 200);
+export default function MacrosCard({ range, weeklyTrend, phases, targets }: Props) {
+  const goals = range.days.map((d) => targetsFor(d.date, targets)?.proteinGoal ?? null);
+  const latestGoal = [...goals].reverse().find((g) => g !== null) ?? null;
 
   // Each day against the goal in force that day, so raising the goal never rescores the days before it.
-  const scored = days
+  const scored = range.days
     .map((d, i) => ({ protein: d.protein, goal: goals[i] }))
     .filter((s): s is { protein: number; goal: number } => s.protein !== null && s.goal !== null);
   const met = scored.filter((s) => s.protein >= s.goal).length;
 
-  const plot = (v: Variant) => {
-    const f = HALF[v];
-    const { band, x } = bands(f, days.length);
-    const y = yScale(f, 0, top);
-    const bw = Math.max(2, band * 0.62);
-    // The page showing between stacked segments: about 2px at either frame's scale. Spacing, not a border.
-    const gap = v === 'wide' ? 2 : 5;
-    let p = '';
-    let c = '';
-    let fat = '';
-    days.forEach((d, i) => {
-      const pr = d.protein ?? 0;
-      const cb = d.carbs ?? 0;
-      const ft = d.fat ?? 0;
-      p += barPath(x(i), bw, y(0), y(pr));
-      c += barPath(x(i), bw, y(pr) - gap, y(pr + cb));
-      fat += barPath(x(i), bw, y(pr + cb) - gap, y(pr + cb + ft));
-    });
-    return (
-      <div className={`h-panel h-v is-${v}`} key={v}>
-        <svg viewBox={`0 0 ${f.w} ${f.h}`} role="img" aria-label="Macros in grams per day, stacked">
-          <path className="g-grid" d={ticks(0, top, 200).map((t) => hline(f, y(t))).join('')} />
-          <path className="g-p" d={p} />
-          <path className="g-c" d={c} />
-          <path className="g-f" d={fat} />
-          <path className="g-line" d={stepPath(f, goals, y)} />
-        </svg>
-        {ticks(0, top, 200).map((t) => (
-          <span key={t} className="h-ax is-left" style={{ top: pct(y(t), f.h), width: pct(f.l, f.w) }}>
-            {formatNumber(t)}
-          </span>
-        ))}
-        {sundayLabels(days, labelStride(band, f.w, HALF_RENDER_PX[v])).map(({ day, i }) => (
-          <span key={day.date} className="h-ax is-x" style={{ left: pct(x(i), f.w) }}>
-            {shortDate(day.date)}
-          </span>
-        ))}
-      </div>
-    );
-  };
-
   return (
     <section className="h-card">
       <div className="h-card-h">
-        <h2>Macros</h2>
+        <h2>Protein, carbs and fat</h2>
         <div className="h-legend">
           <span>
-            <i className="h-sw is-s1" />
-            Protein
+            <i className="h-sw is-dot is-mark" />A day&rsquo;s protein
           </span>
-          <span>
-            <i className="h-sw is-s2" />
-            Carbs
-          </span>
-          <span>
-            <i className="h-sw is-s3" />
-            Fat
-          </span>
-          {proteinGoal !== null && (
-            <span>
-              <i className="h-sw is-dashed" />
-              {formatNumber(proteinGoal)} g protein
-            </span>
-          )}
         </div>
       </div>
-      {VARIANTS.map(plot)}
+      <WeeklySeries
+        range={range}
+        weeklyTrend={weeklyTrend}
+        phases={phases}
+        daily={(d) => d.protein}
+        lines={[
+          { key: 'carbs', cls: 'g-p2', value: (w) => w.avgCarbs, end: (v) => `Carbs ${formatNumber(v)}` },
+          { key: 'fat', cls: 'g-p3', value: (w) => w.avgFat, end: (v) => `Fat ${formatNumber(v)}` },
+          { key: 'protein', cls: 'g-p1', pts: 'g-p1pts', value: (w) => w.avgProtein, end: (v) => `Protein ${formatNumber(v)}` },
+        ]}
+        refs={[{ key: 'goal', cls: 'g-line', values: goals, end: (v) => `goal ${formatNumber(v)}` }]}
+        step={100}
+        zero
+        tick={(v) => (v === 0 ? '0 g' : formatNumber(v))}
+        label="Protein, carbs and fat: weekly averages in grams, with each day’s protein and the protein goal"
+        endPx={80}
+      />
       <p className="h-note is-after">
-        Grams per day, stacked, protein at the bottom
-        {proteinGoal !== null && scored.length > 0 ? (
+        Grams a day, weekly averages. The dots are each day&rsquo;s protein
+        {latestGoal !== null && scored.length > 0 ? (
           <>
-            : a protein segment reaching the dashed line met the goal, on{' '}
+            ; it met the {formatNumber(latestGoal)} g goal on{' '}
             <b>
               {met} of {scored.length} days
-            </b>
-            .
+            </b>{' '}
+            shown.
           </>
         ) : (
           '.'

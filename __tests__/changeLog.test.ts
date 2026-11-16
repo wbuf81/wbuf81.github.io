@@ -35,6 +35,26 @@ describe('buildChangeLog', () => {
     );
   });
 
+  test("a phase's planned pace is its own entry, signed, and only when it changes", () => {
+    const log = buildChangeLog({
+      phases: [
+        { ...CUT, ratePerWeek: -1 },
+        { start: '2026-10-26', type: 'bulk', label: 'Lean bulk', ratePerWeek: 0.5 },
+        { start: '2027-02-01', type: 'bulk', label: 'Bulk', ratePerWeek: 0.5 },
+      ],
+    });
+    const paces = log.filter((e) => e.label === 'Planned pace');
+
+    expect(paces).toEqual([
+      expect.objectContaining({ date: '2026-07-20', from: null, to: '−1 lb a week' }),
+      expect.objectContaining({ date: '2026-10-26', from: '−1 lb a week', to: '+0.5 lb a week' }),
+    ]);
+  });
+
+  test('a phase with no pace adds no pace entry', () => {
+    expect(buildChangeLog({ phases: [CUT] }).some((e) => e.label === 'Planned pace')).toBe(false);
+  });
+
   test('the first calorie target reads as set rather than changed', () => {
     const log = buildChangeLog({ calorieTargets: [{ from: '2026-07-20', cals: 2350 }] });
 

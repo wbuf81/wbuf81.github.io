@@ -337,6 +337,7 @@ export function summarize(days: HealthDay[], targets?: HealthDatedTargets[]): He
   // moves as the diet goes on, and the first fortnight's water loss otherwise
   // inflates the deficit for the rest of the block.
   let estimatedMaintenance: number | null = null;
+  let recentAvgCals: number | null = null;
   if (weighed.length > 1) {
     const windowStart = addDays(weighed[weighed.length - 1].date, -(RECENT_WINDOW_DAYS - 1));
     const windowed = weighed.filter((d) => d.date >= windowStart);
@@ -352,6 +353,7 @@ export function summarize(days: HealthDay[], targets?: HealthDatedTargets[]): He
 
     if (spanDays >= MAINTENANCE_MIN_SPAN_DAYS && spanCals !== null && dailyRate !== null) {
       estimatedMaintenance = spanCals - dailyRate * CALS_PER_LB;
+      recentAvgCals = spanCals;
     }
   }
 
@@ -364,6 +366,7 @@ export function summarize(days: HealthDay[], targets?: HealthDatedTargets[]): He
     avgProtein: mean(sorted.map((d) => d.protein)),
     avgSteps: mean(sorted.map((d) => d.steps)),
     estimatedMaintenance,
+    recentAvgCals,
     workoutsThisWeek: thisWeek?.workouts ?? 0,
     cardioSessionsThisWeek: thisWeek?.cardioSessions ?? 0,
     cardioMinutesThisWeek: thisWeek?.cardioMinutes ?? 0,
@@ -511,6 +514,7 @@ export function buildPhases(days: HealthDay[], phases?: HealthPhase[]): PhaseSum
       weightChangePerWeek,
       recentChangePerWeek,
       goalWeight,
+      ratePerWeek: phase.ratePerWeek ?? null,
       goalRemaining,
       goalPercent,
       projectedGoalDate,
@@ -690,6 +694,12 @@ function formatValue(value: number): string {
   return value.toLocaleString('en-US');
 }
 
+/** A signed pace: "+0.5 lb a week", "−1 lb a week". */
+function formatPace(value: number): string {
+  const sign = value > 0 ? '+' : value < 0 ? '−' : '';
+  return `${sign}${formatValue(Math.abs(value))} lb a week`;
+}
+
 /**
  * Every dated change to a goal or a block, oldest first.
  *
@@ -740,6 +750,18 @@ export function buildChangeLog(
         'Goal weight',
         previousGoal === null ? null : formatValue(previousGoal),
         formatValue(goal)
+      );
+    }
+
+    // The planned pace rides on the phase the same way.
+    const pace = phase.ratePerWeek ?? null;
+    const previousPace = previous?.ratePerWeek ?? null;
+    if (pace !== null && pace !== previousPace) {
+      add(
+        phase.start,
+        'Planned pace',
+        previousPace === null ? null : formatPace(previousPace),
+        formatPace(pace)
       );
     }
   });

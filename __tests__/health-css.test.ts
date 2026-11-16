@@ -17,3 +17,7 @@ test('every selector is scoped under .wb', () => {
     for (const part of sel.split(',')) expect(part.trim()).toMatch(/^\.wb\b/);
   }
 });
+
+test('the log’s "Week ending · Lean bulk" eyebrow never wraps', () => {
+  expect(css).toMatch(/\.wb \.h-wk-eyebrow \{[^}]*white-space: nowrap/);
+});

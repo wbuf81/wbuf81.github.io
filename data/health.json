@@ -16,6 +16,7 @@
       "type": "bulk",
       "label": "Lean bulk",
       "goalWeight": 220,
+      "ratePerWeek": 0.5,
       "note": "Aiming for about half a pound a week"
     }
   ],

@@ -2,7 +2,7 @@ import { HealthDay, HealthMarker, HealthNoteMark, WeekSummary, WeeklyGoals } fro
 import { CardioSide, cardioMornings } from '@/lib/healthInsights';
 import ConsistencyGrid from './ConsistencyGrid';
 import GoalTracker from './GoalTracker';
-import { downIsGood, formatDelta, formatNumber } from './format';
+import { formatDelta, formatNumber } from './format';
 
 interface Props {
   days: HealthDay[];
@@ -57,7 +57,8 @@ function CardioFact({ label, side, weightUnit }: { label: string; side: CardioSi
   return (
     <div>
       <div className="h-k">{label}</div>
-      <div className={`h-n ${downIsGood(side.avg)}`}>{side.avg === null ? '—' : `${formatDelta(side.avg)} ${weightUnit}`}</div>
+      {/* Plain ink: a pattern, not a good or a bad result. */}
+      <div className="h-n">{side.avg === null ? '—' : `${formatDelta(side.avg)} ${weightUnit}`}</div>
       <div className="h-l">
         Monday to Friday, average of {side.n} {side.n === 1 ? 'day' : 'days'}
         {side.avgCals !== null && `; ${formatNumber(side.avgCals)} kcal eaten on them`}

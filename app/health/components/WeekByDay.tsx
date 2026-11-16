@@ -4,9 +4,9 @@ import { useMemo, useState } from 'react';
 import type { PointerEvent } from 'react';
 import { HealthCalorieTarget, HealthDatedTargets, HealthDay } from '@/types/health';
 import { targetsFor } from '@/lib/targets';
-import { WeekdayProfile, weekdayProfile } from '@/lib/healthInsights';
-import { downIsGood, formatDelta, formatNumber } from './format';
-import { Frame, VARIANTS, Variant, bands, hline, pct, rectPath, yScale } from './svg';
+import { WeekdayProfile, WeekdayRow, weekdayProfile } from '@/lib/healthInsights';
+import { formatDelta, formatNumber } from './format';
+import { VARIANTS, Variant, pct, rectPath } from './svg';
 
 interface Props {
   days: HealthDay[];
@@ -17,99 +17,145 @@ interface Props {
 }
 
 const NAMES = { Mon: 'Monday', Tue: 'Tuesday', Wed: 'Wednesday', Thu: 'Thursday', Fri: 'Friday', Sat: 'Saturday', Sun: 'Sunday' };
-const FRAMES: Record<Variant, { top: Frame; low: Frame }> = {
-  wide: {
-    top: { w: 1000, h: 220, l: 64, r: 24, t: 10, b: 10 },
-    low: { w: 1000, h: 150, l: 64, r: 24, t: 8, b: 8 },
-  },
-  compact: {
-    top: { w: 1000, h: 560, l: 170, r: 20, t: 40, b: 40 },
-    low: { w: 1000, h: 420, l: 170, r: 20, t: 40, b: 40 },
-  },
+
+/**
+ * The frames, in viewBox units, the same for both charts so they line up side by side. `px` is roughly how many units
+ * make a CSS pixel where the frame is drawn: wide, about 420 to 540px beside the other chart (up to 880px stacked);
+ * compact, about 300 to 340px. The bottom margin holds the weekday names and, under the calories, the days over.
+ */
+interface DFrame {
+  w: number;
+  l: number;
+  r: number;
+  t: number;
+  plot: number;
+  b: number;
+  px: number;
+}
+const FRAMES: Record<Variant, DFrame> = {
+  wide: { w: 600, l: 72, r: 8, t: 28, plot: 200, b: 54, px: 1.33 },
+  compact: { w: 600, l: 104, r: 10, t: 40, plot: 300, b: 80, px: 2 },
 };
+const height = (F: DFrame) => F.t + F.plot + F.b;
 const TIP_WIDTH = 236;
+const f1 = (n: number) => n.toFixed(1);
 
 /** Under two complete weeks a weekday's average is one or two days, which is an anecdote. */
 const MIN_WEEKS = 2;
 
-function build(v: Variant, profile: WeekdayProfile) {
-  const { top: TOP, low: LOW } = FRAMES[v];
-  const { band, x } = bands(TOP, 7);
-  const bw = band * 0.5;
-  const col = (i: number, y0: number, y1: number) => rectPath(x(i) - bw / 2, y0, x(i) + bw / 2, y1);
-  // The value labels sit a line's height beyond the end of each column.
-  const off = v === 'wide' ? 10 : 26;
+type Kind = 'cal' | 'wt';
 
-  // Calories against target: symmetric, on a clean step.
-  const cMax = Math.max(200, ...profile.rows.map((r) => Math.abs(r.avgVsTarget ?? 0)));
-  const cr = Math.ceil(cMax / 200) * 200;
-  const cy = yScale(TOP, -cr, cr);
-  let under = '';
-  let over = '';
+interface Spec {
+  kind: Kind;
+  title: string;
+  label: string;
+  step: number;
+  digits: number;
+  zero: string;
+  value: (r: WeekdayRow) => number | null;
+}
+
+function specs(weightUnit: string): Spec[] {
+  return [
+    {
+      kind: 'cal',
+      title: 'Calories against target, average · days over, underneath',
+      label: 'Average calories against target, by weekday, with the days over target under each',
+      step: 300,
+      digits: 0,
+      zero: 'target',
+      value: (r) => r.avgVsTarget,
+    },
+    {
+      kind: 'wt',
+      title: 'Weigh-in against its 7-day trend, average',
+      label: `Average weigh-in against its centred 7-day trend, by weekday, in ${weightUnit}`,
+      step: 0.5,
+      digits: 1,
+      zero: 'trend',
+      value: (r) => r.weighInVsTrend,
+    },
+  ];
+}
+
+function build(spec: Spec, v: Variant, profile: WeekdayProfile, weightUnit: string) {
+  const F = FRAMES[v];
+  const H = height(F);
+  const band = (F.w - F.l - F.r) / 7;
+  const x = (i: number) => F.l + band * (i + 0.5);
+  const vals = profile.rows.map(spec.value).filter((n): n is number => n !== null);
+  const lo = Math.floor(Math.min(0, ...vals) / spec.step) * spec.step;
+  const hi = Math.max(Math.ceil(Math.max(0, ...vals) / spec.step) * spec.step, lo + spec.step);
+  const y = (n: number) => F.t + F.plot - ((n - lo) / (hi - lo)) * F.plot;
+  const bw = Math.min(64 * F.px, band * 0.5);
+
+  const ticks: number[] = [];
+  for (let t = lo; t <= hi + 1e-9; t += spec.step) ticks.push(Math.round(t * 100) / 100);
+  const bars = { under: '', over: '', wt: '' };
+  const values: { key: string; left: string; top: string; transform: string; text: string }[] = [];
   profile.rows.forEach((r, i) => {
-    if (r.avgVsTarget === null) return;
-    const p = col(i, cy(0), cy(r.avgVsTarget));
-    if (r.avgVsTarget > 0) over += p;
-    else under += p;
+    const n = spec.value(r);
+    if (n === null) return;
+    const d = rectPath(x(i) - bw / 2, y(0), x(i) + bw / 2, y(n), 1.5 * F.px);
+    if (spec.kind === 'wt') bars.wt += d;
+    else if (n > 0) bars.over += d;
+    else bars.under += d;
+    values.push({
+      key: r.day,
+      left: pct(x(i), F.w),
+      top: pct(y(n), H),
+      transform: n >= 0 ? 'translate(-50%, calc(-100% - 3px))' : 'translate(-50%, 3px)',
+      text: formatDelta(n, spec.digits),
+    });
   });
-
-  const wMax = Math.max(0.5, ...profile.rows.map((r) => Math.abs(r.weighInVsTrend ?? 0)));
-  const wr = Math.ceil((wMax + 0.1) * 2) / 2;
-  const wy = yScale(LOW, -wr, wr);
-  const cTicks = [-cr, -cr / 2, 0, cr / 2, cr];
+  const unit = spec.kind === 'wt' ? ` ${weightUnit}` : '';
 
   return {
+    spec,
     v,
-    TOP,
-    LOW,
+    F,
+    H,
     band,
     x,
-    cGrid: cTicks.filter((t) => t !== 0).map((t) => hline(TOP, cy(t))).join(''),
-    cZero: hline(TOP, cy(0)),
-    under,
-    over,
-    cTicks: cTicks.map((t) => ({ t, top: pct(cy(t), TOP.h) })),
-    cLabels: profile.rows.map((r, i) =>
-      r.avgVsTarget === null ? null : { left: pct(x(i), TOP.w), top: pct(cy(r.avgVsTarget) + (r.avgVsTarget > 0 ? -off : off), TOP.h), value: r.avgVsTarget },
-    ),
-    wBars: profile.rows.map((r, i) => (r.weighInVsTrend === null ? '' : col(i, wy(0), wy(r.weighInVsTrend)))).join(''),
-    wGrid: [-wr, wr].map((t) => hline(LOW, wy(t))).join(''),
-    wZero: hline(LOW, wy(0)),
-    wTicks: [-wr, 0, wr].map((t) => ({ t, top: pct(wy(t), LOW.h) })),
-    wLabels: profile.rows.map((r, i) =>
-      r.weighInVsTrend === null ? null : { left: pct(x(i), LOW.w), top: pct(wy(r.weighInVsTrend) + (r.weighInVsTrend > 0 ? -off : off), LOW.h), value: r.weighInVsTrend },
-    ),
-    highlight: (i: number, f: Frame) => rectPath(x(i) - band / 2 + 2, 0, x(i) + band / 2 - 2, f.h),
+    grid: ticks.filter((t) => Math.abs(t) > 1e-9).map((t) => `M${F.l} ${f1(y(t))}H${F.w - F.r}`).join(''),
+    zero: `M${F.l} ${f1(y(0))}H${F.w - F.r}`,
+    bars,
+    values,
+    ticks: ticks.map((t) => ({ t, top: pct(y(t), H), text: Math.abs(t) < 1e-9 ? spec.zero : `${formatDelta(t, spec.digits)}${unit}` })),
+    dayTop: pct(F.t + F.plot, H),
+    highlight: (i: number) => rectPath(x(i) - band / 2 + 2, F.t - 10 * F.px, x(i) + band / 2 - 2, F.t + F.plot, 0),
   };
 }
 
 /**
- * Monday to Sunday, averaged over the recorded weeks: calories against target on top, the morning's
- * weigh-in against its centred 7-day average below, so a weekend's eating and the next mornings' scale
- * can be read in the same column.
+ * Monday to Sunday, averaged over the recorded weeks: calories against target, with the days over under each column,
+ * beside the morning's weigh-in against its centred 7-day average, so a weekend's eating and the next mornings' scale
+ * read across. Side by side on a wide screen, stacked on a narrow one. The figures are patterns, so plain ink.
  */
 export default function WeekByDay({ days, calorieTargets, targets, weightUnit }: Props) {
-  const [hover, setHover] = useState<{ i: number; left: number } | null>(null);
+  const [hover, setHover] = useState<{ kind: Kind; v: Variant; i: number; left: number } | null>(null);
   const profile = useMemo(
     () => weekdayProfile(days, calorieTargets, (date) => targetsFor(date, targets)?.proteinGoal ?? null),
     [days, calorieTargets, targets],
   );
-  const charts = useMemo(() => VARIANTS.map((v) => build(v, profile)), [profile]);
+  const charts = useMemo(() => specs(weightUnit).map((s) => VARIANTS.map((v) => build(s, v, profile, weightUnit))), [profile, weightUnit]);
 
   if (profile.weeks < MIN_WEEKS) return null;
 
-  const move = (e: PointerEvent<HTMLDivElement>, c: (typeof charts)[number]) => {
+  const move = (e: PointerEvent<HTMLDivElement>, c: ReturnType<typeof build>) => {
     const r = e.currentTarget.getBoundingClientRect();
     if (r.width === 0) return;
-    const i = Math.floor((((e.clientX - r.left) / r.width) * c.TOP.w - c.TOP.l) / c.band);
+    const i = Math.floor((((e.clientX - r.left) / r.width) * c.F.w - c.F.l) / c.band);
     if (!Number.isFinite(i)) return;
     if (i < 0 || i > 6) return setHover(null);
-    const x = (c.x(i) / c.TOP.w) * r.width;
-    const half = (c.band / c.TOP.w) * r.width * 0.5;
+    const x = (c.x(i) / c.F.w) * r.width;
+    const half = (c.band / c.F.w) * r.width * 0.5;
+    // Beside the column, or before it near the right edge; never past either edge.
     const left = x + half + TIP_WIDTH > r.width ? Math.max(0, x - half - TIP_WIDTH) : x + half;
-    setHover({ i, left });
+    setHover({ kind: c.spec.kind, v: c.v, i, left });
   };
   const leave = (e: PointerEvent<HTMLDivElement>) => {
+    // A tap on a phone ends with pointerleave; keep its tip up until the next tap.
     if (e.pointerType !== 'touch') setHover(null);
   };
 
@@ -136,116 +182,110 @@ export default function WeekByDay({ days, calorieTargets, targets, weightUnit }:
         </div>
       </div>
       <p className="h-note">
-        Each column is one weekday, averaged over every recorded week. Top: calories against that day&rsquo;s target.
-        Bottom: that morning&rsquo;s weigh-in against the 7-day average centred on it, so a column above the line
-        weighs in heavy for where the trend is.
+        Each column is one weekday, averaged over every recorded week: calories against that day&rsquo;s target, and
+        that morning&rsquo;s weigh-in against the 7-day average centred on it, so a column above the line weighs in
+        heavy for where the trend is.
       </p>
 
-      {charts.map((c) => (
-        <div key={c.v} className={`h-wkd h-v is-${c.v}`} onPointerMove={(e) => move(e, c)} onPointerDown={(e) => move(e, c)} onPointerLeave={leave}>
-          <div className="h-sub">Calories against target, average</div>
-          <div className="h-panel">
-            <svg viewBox={`0 0 ${c.TOP.w} ${c.TOP.h}`} role="img" aria-label="Average calories against target by weekday">
-              {hover && <path className="g-hl" d={c.highlight(hover.i, c.TOP)} />}
-              <path className="g-grid" d={c.cGrid} />
-              <path className="g-under" d={c.under} />
-              <path className="g-over" d={c.over} />
-              <path className="g-zero" d={c.cZero} />
-            </svg>
-            {c.cTicks.map(({ t, top }) => (
-              <span key={t} className="h-ax is-left" style={{ top, width: pct(c.TOP.l, c.TOP.w) }}>
-                {t === 0 ? 'target' : formatDelta(t, 0)}
-              </span>
-            ))}
-            {c.cLabels.map((l, i) =>
-              l ? (
-                <span key={i} className="h-ax is-value" style={{ left: l.left, top: l.top }}>
-                  {formatDelta(l.value, 0)}
-                </span>
-              ) : null,
-            )}
-          </div>
-
-          <div className="h-wkd-row">
-            {profile.rows.map((r, i) => (
-              <span key={r.day} className="h-wkd-day" style={{ left: pct(c.x(i), c.TOP.w) }}>
-                <b>{r.day}</b>
-                {/* A phone has room for the day alone; the counts are in its tooltip and the facts below. */}
-                {c.v === 'wide' && (
-                  <i>
-                    <span className="h-wkd-over">over on </span>
-                    {r.overTarget} of {r.targeted}
-                  </i>
+      <div className="h-two is-even">
+        {charts.map((frames) => (
+          <div key={frames[0].spec.kind}>
+            <div className="h-sub">{frames[0].spec.title}</div>
+            {frames.map((c) => (
+              <div
+                key={c.v}
+                className={`h-panel h-v is-${c.v} is-hover h-wkd is-${c.spec.kind}`}
+                onPointerMove={(e) => move(e, c)}
+                onPointerDown={(e) => move(e, c)}
+                onPointerLeave={leave}
+              >
+                <svg viewBox={`0 0 ${c.F.w} ${c.H}`} role="img" aria-label={c.spec.label}>
+                  {hover && <path className="g-hl" d={c.highlight(hover.i)} />}
+                  <path className="g-grid" d={c.grid} />
+                  <path className="g-under" d={c.bars.under} />
+                  <path className="g-over" d={c.bars.over} />
+                  <path className="g-wt" d={c.bars.wt} />
+                  <path className="g-zero" d={c.zero} />
+                </svg>
+                {c.ticks.map(({ t, top, text }) => (
+                  <span key={t} className="h-ax is-left" style={{ top, width: pct(c.F.l, c.F.w) }}>
+                    {text}
+                  </span>
+                ))}
+                {c.values.map((l) => (
+                  <span key={l.key} className="h-ax is-sm" style={{ left: l.left, top: l.top, transform: l.transform }}>
+                    {l.text}
+                  </span>
+                ))}
+                {profile.rows.map((r, i) => (
+                  <span key={r.day} className="h-wkd-day" style={{ left: pct(c.x(i), c.F.w), top: c.dayTop }}>
+                    <b>{r.day}</b>
+                    {c.spec.kind === 'cal' &&
+                      (c.v === 'wide' ? (
+                        // Three wordings by the chart's own width (health.css › .h-wkd): side by side the columns are
+                        // too narrow for "11 of 17" seven times over, and the counts ran together.
+                        <i>
+                          <span className="h-wkd-long">
+                            <span className="h-wkd-over">over on </span>
+                            {r.overTarget} of {r.targeted}
+                          </span>
+                          <span className="h-wkd-short">
+                            {r.overTarget}/{r.targeted}
+                          </span>
+                        </i>
+                      ) : (
+                        <i>
+                          {r.overTarget}/{r.targeted}
+                        </i>
+                      ))}
+                  </span>
+                ))}
+                {row && hover && hover.kind === c.spec.kind && hover.v === c.v && (
+                  <div className="h-tip" style={{ left: hover.left, top: 4, width: TIP_WIDTH }}>
+                    <div className="h-k">{NAMES[row.day]}</div>
+                    <div className="h-row">
+                      <span>Calories, average</span>
+                      <b>{row.avgCals !== null ? formatNumber(row.avgCals) : '—'}</b>
+                    </div>
+                    <div className="h-row">
+                      <span>Against target</span>
+                      <b>{row.avgVsTarget !== null ? formatDelta(row.avgVsTarget, 0) : '—'}</b>
+                    </div>
+                    <div className="h-row">
+                      <span>Over target</span>
+                      <b>
+                        {row.overTarget} of {row.targeted}
+                      </b>
+                    </div>
+                    <div className="h-row">
+                      <span>Protein, average</span>
+                      <b>{row.avgProtein !== null ? `${formatNumber(row.avgProtein)} g` : '—'}</b>
+                    </div>
+                    {row.atProteinGoal !== null && (
+                      <div className="h-row">
+                        <span>At the protein goal</span>
+                        <b>
+                          {row.atProteinGoal} of {row.proteinScored}
+                        </b>
+                      </div>
+                    )}
+                    <div className="h-row">
+                      <span>Weigh-in against trend</span>
+                      <b>{row.weighInVsTrend !== null ? `${formatDelta(row.weighInVsTrend)} ${weightUnit}` : '—'}</b>
+                    </div>
+                  </div>
                 )}
-              </span>
+              </div>
             ))}
           </div>
-
-          <div className="h-sub">Weigh-in against its 7-day trend, average</div>
-          <div className="h-panel">
-            <svg viewBox={`0 0 ${c.LOW.w} ${c.LOW.h}`} role="img" aria-label="Average morning weight against its 7-day trend by weekday">
-              {hover && <path className="g-hl" d={c.highlight(hover.i, c.LOW)} />}
-              <path className="g-grid" d={c.wGrid} />
-              <path className="g-wt" d={c.wBars} />
-              <path className="g-zero" d={c.wZero} />
-            </svg>
-            {c.wTicks.map(({ t, top }) => (
-              <span key={t} className="h-ax is-left" style={{ top, width: pct(c.LOW.l, c.LOW.w) }}>
-                {t === 0 ? 'trend' : `${formatDelta(t)} ${weightUnit}`}
-              </span>
-            ))}
-            {c.wLabels.map((l, i) =>
-              l ? (
-                <span key={i} className="h-ax is-value" style={{ left: l.left, top: l.top }}>
-                  {formatDelta(l.value)}
-                </span>
-              ) : null,
-            )}
-          </div>
-
-          {row && hover && (
-            <div className="h-tip" style={{ left: hover.left, top: 28, width: TIP_WIDTH }}>
-              <div className="h-k">{NAMES[row.day]}</div>
-              <div className="h-row">
-                <span>Calories, average</span>
-                <b>{row.avgCals !== null ? formatNumber(row.avgCals) : '—'}</b>
-              </div>
-              <div className="h-row">
-                <span>Vs target</span>
-                <b className={downIsGood(row.avgVsTarget, 0)}>{row.avgVsTarget !== null ? formatDelta(row.avgVsTarget, 0) : '—'}</b>
-              </div>
-              <div className="h-row">
-                <span>Over target</span>
-                <b>
-                  {row.overTarget} of {row.targeted}
-                </b>
-              </div>
-              <div className="h-row">
-                <span>Protein, average</span>
-                <b>{row.avgProtein !== null ? `${formatNumber(row.avgProtein)} g` : '—'}</b>
-              </div>
-              {row.atProteinGoal !== null && (
-                <div className="h-row">
-                  <span>At the protein goal</span>
-                  <b>
-                    {row.atProteinGoal} of {row.proteinScored}
-                  </b>
-                </div>
-              )}
-              <div className="h-row">
-                <span>Weigh-in vs trend</span>
-                <b>{row.weighInVsTrend !== null ? `${formatDelta(row.weighInVsTrend)} ${weightUnit}` : '—'}</b>
-              </div>
-            </div>
-          )}
-        </div>
-      ))}
+        ))}
+      </div>
 
       <div className="h-facts">
         {weekendVsTarget !== null && (
           <div>
             <div className="h-k">Friday to Sunday</div>
-            <div className={`h-n ${downIsGood(weekendVsTarget, 0)}`}>{formatDelta(weekendVsTarget, 0)} kcal</div>
+            <div className="h-n">{formatDelta(weekendVsTarget, 0)} kcal</div>
             <div className="h-l">
               against target, a week on average; over in {profile.weekendOverWeeks} of {weeks} weeks
             </div>
@@ -254,7 +294,7 @@ export default function WeekByDay({ days, calorieTargets, targets, weightUnit }:
         {midweekVsTarget !== null && (
           <div>
             <div className="h-k">Monday to Thursday</div>
-            <div className={`h-n ${downIsGood(midweekVsTarget, 0)}`}>{formatDelta(midweekVsTarget, 0)} kcal</div>
+            <div className="h-n">{formatDelta(midweekVsTarget, 0)} kcal</div>
             <div className="h-l">
               against target, a week on average; under in {profile.midweekUnderWeeks} of {weeks} weeks
             </div>
@@ -263,7 +303,7 @@ export default function WeekByDay({ days, calorieTargets, targets, weightUnit }:
         {sunMonVsFriSat !== null && (
           <div>
             <div className="h-k">Sunday and Monday mornings</div>
-            <div className={`h-n ${downIsGood(sunMonVsFriSat)}`}>
+            <div className="h-n">
               {formatDelta(sunMonVsFriSat)} {weightUnit}
             </div>
             <div className="h-l">

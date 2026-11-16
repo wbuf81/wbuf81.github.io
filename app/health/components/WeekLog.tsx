@@ -1,5 +1,5 @@
 import { HealthMarker, HealthNoteMark, WeekSummary, WeeklyGoals, WeeklyTrendRow } from '@/types/health';
-import { Marks, dayMarks } from './ConsistencyGrid';
+import { Marks, MarksKey, dayMarks } from './ConsistencyGrid';
 import { calsTone, formatDelta, formatNumber, shortDate, weightTone } from './format';
 
 interface Props {
@@ -34,13 +34,15 @@ export default function WeekLog({ weeks, trend, weeklyGoals, markers, noteMarks,
 
   return (
     <>
+      {/* The key to the day cells' dots sits beside the heading, as the Consistency grid's legend. */}
       <div className="sec-h h-sec">
         <h2>The log</h2>
-        <p>
-          The last {newest.length === 1 ? 'week' : `${newest.length} weeks`}, newest first. Notes are taped to the week
-          they happened.
-        </p>
+        <MarksKey noteMarks={noteMarks} />
       </div>
+      <p className="h-sec-note">
+        The last {newest.length === 1 ? 'week' : `${newest.length} weeks`}, newest first. Notes are taped to the week
+        they happened.
+      </p>
       {newest.map((week) => {
         const row = trendBy.get(week.weekStart);
         const isNewest = week === weeks[weeks.length - 1];
@@ -53,7 +55,7 @@ export default function WeekLog({ weeks, trend, weeklyGoals, markers, noteMarks,
             <div className="h-wk-head">
               <div>
                 {/* The block the week was in, so alternating cuts and bulks read at a glance. */}
-                <div className="eyebrow">Week ending{row?.phase ? ` · ${row.phase.label}` : ''}</div>
+                <div className="eyebrow h-wk-eyebrow">Week ending{row?.phase ? ` · ${row.phase.label}` : ''}</div>
                 <h3>{week.label}</h3>
                 <div className="h-l">
                   {week.days.length === 1 ? '1 day' : `${week.days.length} days`} recorded

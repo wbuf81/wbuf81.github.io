@@ -13,8 +13,16 @@ import { calorieTargetFor } from './calorieTarget.ts';
  * one would overstate every swing.
  */
 
-/** Calories that count as a big day. */
-export const BIG_DAY = 2900;
+/**
+ * A big day is this many times that day's calorie target or more: 20% over. Relative, not a fixed number of
+ * calories, so it means the same on a cut at 2,450 and a bulk at 2,900. A day with no target is never big.
+ */
+export const BIG_DAY_RATIO = 1.2;
+
+/** Whether a day's calories make it a big day against the target in force that day. */
+export function isBigDay(cals: number | null, target: number | null): boolean {
+  return cals !== null && target !== null && target > 0 && cals >= target * BIG_DAY_RATIO;
+}
 
 const WEEKDAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'] as const;
 export type Weekday = (typeof WEEKDAYS)[number];
@@ -57,6 +65,10 @@ export interface NextMorningPair {
   over: boolean;
   /** The calorie target in force that day, or null before the first one. */
   target: number | null;
+  /** Calories minus that day's target. Null with no target. */
+  vsTarget: number | null;
+  /** 20% or more over that day's target (`BIG_DAY_RATIO`). False with no target. */
+  big: boolean;
 }
 
 export function nextMorningPairs(days: HealthDay[], calorieTargets?: HealthCalorieTarget[]): NextMorningPair[] {
@@ -66,7 +78,15 @@ export function nextMorningPairs(days: HealthDay[], calorieTargets?: HealthCalor
     const next = byDate.get(addDays(day.date, 1));
     if (!next || day.cals === null || day.weight === null || next.weight === null) continue;
     const target = calorieTargetFor(day.date, calorieTargets);
-    pairs.push({ date: day.date, cals: day.cals, change: tenth(next.weight - day.weight), over: target !== null && day.cals > target, target });
+    pairs.push({
+      date: day.date,
+      cals: day.cals,
+      change: tenth(next.weight - day.weight),
+      over: target !== null && day.cals > target,
+      target,
+      vsTarget: target === null ? null : day.cals - target,
+      big: isBigDay(day.cals, target),
+    });
   }
   return pairs;
 }
@@ -75,18 +95,22 @@ export interface NextMorningFacts {
   over: MeanCount;
   atOrUnder: MeanCount;
   big: MeanCount;
-  /** Least-squares line, change = slope × cals + intercept. Null under three pairs or with no spread. */
+  /**
+   * Least-squares line over the pairs with a target, change = slope × vsTarget + intercept. Null under three such
+   * pairs or with no spread.
+   */
   fit: { slope: number; intercept: number } | null;
 }
 
-export function nextMorningFacts(pairs: NextMorningPair[], bigDay = BIG_DAY): NextMorningFacts {
+export function nextMorningFacts(pairs: NextMorningPair[]): NextMorningFacts {
   let fit: NextMorningFacts['fit'] = null;
-  if (pairs.length >= 3) {
-    const mx = mean(pairs.map((p) => p.cals)) as number;
-    const my = mean(pairs.map((p) => p.change)) as number;
-    const sxx = pairs.reduce((s, p) => s + (p.cals - mx) ** 2, 0);
+  const scored = pairs.filter((p): p is NextMorningPair & { vsTarget: number } => p.vsTarget !== null);
+  if (scored.length >= 3) {
+    const mx = mean(scored.map((p) => p.vsTarget)) as number;
+    const my = mean(scored.map((p) => p.change)) as number;
+    const sxx = scored.reduce((s, p) => s + (p.vsTarget - mx) ** 2, 0);
     if (sxx > 0) {
-      const slope = pairs.reduce((s, p) => s + (p.cals - mx) * (p.change - my), 0) / sxx;
+      const slope = scored.reduce((s, p) => s + (p.vsTarget - mx) * (p.change - my), 0) / sxx;
       fit = { slope, intercept: my - slope * mx };
     }
   }
@@ -94,7 +118,7 @@ export function nextMorningFacts(pairs: NextMorningPair[], bigDay = BIG_DAY): Ne
     over: meanCount(pairs.filter((p) => p.over).map((p) => p.change)),
     // A day with no target in force was neither over nor at-or-under: it was scored against nothing.
     atOrUnder: meanCount(pairs.filter((p) => !p.over && p.target !== null).map((p) => p.change)),
-    big: meanCount(pairs.filter((p) => p.cals >= bigDay).map((p) => p.change)),
+    big: meanCount(pairs.filter((p) => p.big).map((p) => p.change)),
     fit,
   };
 }
@@ -102,6 +126,8 @@ export function nextMorningFacts(pairs: NextMorningPair[], bigDay = BIG_DAY): Ne
 export interface BigDayTrace {
   date: string;
   cals: number;
+  /** The calorie target in force that day. */
+  target: number;
   /** Weight against that day's morning: [0, next morning, …], stopping at the first missing reading. */
   changes: number[];
   /** Short only because the data ends: more mornings may come with the next import. */
@@ -111,46 +137,89 @@ export interface BigDayTrace {
 export interface AfterBigDays {
   horizon: number;
   traces: BigDayTrace[];
-  /** Every day's average change at each offset, for comparison. Null where no pair exists. */
+  /** Every day's average change at each offset (`everyDay`'s means), for comparison. Null where none reaches it. */
   typical: (number | null)[];
+  /**
+   * The same statistics as `offsets`, over every weighed day rather than the big ones: each day traced from its morning
+   * through the mornings after it, stopping at the first one not weighed, as the big days are (the mockup's allPaths).
+   * A day with no weighed next morning is left out. Null at an offset no day reaches.
+   */
+  everyDay: (OffsetStats | null)[];
   /** Over the traces that reach the horizon: their average there, how many, how many below that morning. */
   atHorizon: { avg: number | null; n: number; below: number };
+  /**
+   * Per offset 0…horizon, over the traces that reach it: the average, the quartiles (the middle half lies between q1
+   * and q3) and how many. Null at an offset no trace reaches.
+   */
+  offsets: (OffsetStats | null)[];
 }
 
-export function afterBigDays(days: HealthDay[], bigDay = BIG_DAY, horizon = 3): AfterBigDays {
+export interface OffsetStats {
+  mean: number;
+  q1: number;
+  q3: number;
+  n: number;
+}
+
+/** The value a fraction `t` of the way through sorted values, interpolating linearly between neighbours. */
+function quantile(sorted: number[], t: number): number {
+  const pos = (sorted.length - 1) * t;
+  const lo = Math.floor(pos);
+  const hi = Math.ceil(pos);
+  return sorted[lo] + (sorted[hi] - sorted[lo]) * (pos - lo);
+}
+
+function offsetStats(values: number[]): OffsetStats | null {
+  if (values.length === 0) return null;
+  const sorted = [...values].sort((a, b) => a - b);
+  return {
+    mean: hundredth(mean(sorted)) as number,
+    q1: hundredth(quantile(sorted, 0.25)) as number,
+    q3: hundredth(quantile(sorted, 0.75)) as number,
+    n: sorted.length,
+  };
+}
+
+export function afterBigDays(days: HealthDay[], calorieTargets?: HealthCalorieTarget[], horizon = 3): AfterBigDays {
   const byDate = new Map(days.map((d) => [d.date, d]));
   const weightOn = (iso: string) => byDate.get(iso)?.weight ?? null;
 
   const lastDate = days.reduce((max, d) => (d.date > max ? d.date : max), '');
-  const traces: BigDayTrace[] = [];
-  for (const day of days) {
-    if (day.cals === null || day.cals < bigDay || day.weight === null) continue;
+  // A day's weight against its own morning, through the mornings after it, until one was not weighed.
+  const trace = (day: HealthDay & { weight: number }): number[] => {
     const changes = [0];
     for (let k = 1; k <= horizon; k++) {
       const w = weightOn(addDays(day.date, k));
       if (w === null) break;
       changes.push(tenth(w - day.weight));
     }
+    return changes;
+  };
+
+  const traces: BigDayTrace[] = [];
+  const everyPaths: number[][] = [];
+  for (const day of days) {
+    if (day.weight === null) continue;
+    const changes = trace(day as HealthDay & { weight: number });
+    if (changes.length > 1) everyPaths.push(changes);
+    const target = calorieTargetFor(day.date, calorieTargets);
+    if (!isBigDay(day.cals, target)) continue;
     const open = changes.length <= horizon && addDays(day.date, changes.length) > lastDate;
-    traces.push({ date: day.date, cals: day.cals, changes, open });
+    traces.push({ date: day.date, cals: day.cals as number, target: target as number, changes, open });
   }
 
-  const typical: (number | null)[] = [0];
-  for (let k = 1; k <= horizon; k++) {
-    const changes: number[] = [];
-    for (const day of days) {
-      const w = weightOn(addDays(day.date, k));
-      if (day.weight !== null && w !== null) changes.push(w - day.weight);
-    }
-    typical.push(hundredth(mean(changes)));
-  }
+  const statsAt = (paths: number[][]) =>
+    Array.from({ length: horizon + 1 }, (_, k) => offsetStats(paths.filter((p) => p.length > k).map((p) => p[k])));
+  const everyDay = statsAt(everyPaths);
 
   const ends = traces.filter((t) => t.changes.length === horizon + 1).map((t) => t.changes[horizon]);
   return {
     horizon,
     traces,
-    typical,
+    typical: everyDay.map((s) => (s ? s.mean : null)),
+    everyDay,
     atHorizon: { avg: hundredth(mean(ends)), n: ends.length, below: ends.filter((v) => v < 0).length },
+    offsets: statsAt(traces.map((t) => t.changes)),
   };
 }
 

@@ -43,6 +43,7 @@ const PHASE: PhaseSummary = {
   weightChangePerWeek: -1.1,
   recentChangePerWeek: -0.5,
   goalWeight: 190,
+  ratePerWeek: null,
   goalRemaining: 14.6,
   goalPercent: 28,
   projectedGoalDate: '2026-11-22',

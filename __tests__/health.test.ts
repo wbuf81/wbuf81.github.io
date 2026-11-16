@@ -329,6 +329,14 @@ describe('buildPhases', () => {
     expect(phase.goalPercent).toBeCloseTo(((210.2 - WEEK_ONE_AVG) / 10.2) * 100, 4);
   });
 
+  test('carries a planned pace when the block has one, and null when it does not', () => {
+    const [planned] = buildPhases(WEEK_ONE, [{ ...CUT, ratePerWeek: -1 }]);
+    const [unplanned] = buildPhases(WEEK_ONE, [CUT]);
+
+    expect(planned.ratePerWeek).toBe(-1);
+    expect(unplanned.ratePerWeek).toBeNull();
+  });
+
   test('reports goal progress for a bulk, where the target is above the start', () => {
     const gaining = [
       day({ date: '2026-07-20', day: 'Mon', weight: 200 }),
@@ -1020,6 +1028,25 @@ describe('estimated maintenance', () => {
     const days = mondays.map(([date, weight]) => day({ date, day: 'Mon', cals: 2500, weight }));
 
     expect(summarize(days).estimatedMaintenance).toBeCloseTo(2500, 5);
+  });
+
+  test('reports the intake it was measured against, over the same trailing window', () => {
+    // 3,000 a day for the first fortnight, 2,500 after: the window holds only the 2,500 days.
+    const mondays: [string, number, number][] = [
+      ['2026-07-20', 210.0, 3000],
+      ['2026-07-27', 208.0, 3000],
+      ['2026-08-03', 206.0, 2500],
+      ['2026-08-10', 206.0, 2500],
+      ['2026-08-17', 206.0, 2500],
+    ];
+    const summary = summarize(mondays.map(([date, weight, cals]) => day({ date, day: 'Mon', cals, weight })));
+
+    expect(summary.recentAvgCals).toBeCloseTo(2500, 5);
+    expect(summary.avgCals).toBeCloseTo(2700, 5);
+  });
+
+  test('has no recent intake when there is no maintenance', () => {
+    expect(summarize(WEEK_ONE).recentAvgCals).toBeNull();
   });
 });
 

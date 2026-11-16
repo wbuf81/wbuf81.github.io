@@ -105,27 +105,34 @@ export default function ConsistencyGrid({ weeks, markers = [], noteMarks = [] }:
           ];
         })}
       </div>
-      <div className="h-legend is-below">
-        <span>
-          <i className="h-dot is-lift" />
-          Lift
-        </span>
-        <span>
-          <i className="h-dot is-cardio" />
-          Cardio
-        </span>
-        <span>
-          <i className="h-rest" />
-          Rest
-        </span>
-        {noteMarks
-          .filter((mark) => mark.icon.trim() !== '')
-          .map((mark) => (
-            <span key={mark.label}>
-              <span aria-hidden="true">{mark.icon}</span> {mark.label}
-            </span>
-          ))}
-      </div>
+      <MarksKey noteMarks={noteMarks} className="is-below" />
     </>
+  );
+}
+
+/** The key to the day marks: Lift, Cardio, Rest and each note mark. Shared by the grid and the log. */
+export function MarksKey({ noteMarks = [], className = '' }: { noteMarks?: HealthNoteMark[]; className?: string }) {
+  return (
+    <div className={`h-legend ${className}`.trim()}>
+      <span>
+        <i className="h-dot is-lift" />
+        Lift
+      </span>
+      <span>
+        <i className="h-dot is-cardio" />
+        Cardio
+      </span>
+      <span>
+        <i className="h-rest" />
+        Rest
+      </span>
+      {noteMarks
+        .filter((mark) => mark.icon.trim() !== '')
+        .map((mark) => (
+          <span key={mark.label}>
+            <span aria-hidden="true">{mark.icon}</span> {mark.label}
+          </span>
+        ))}
+    </div>
   );
 }

@@ -11,21 +11,17 @@ import {
   WeekSummary,
   WeeklyGoals,
   WeeklyTrendRow,
-  WeightPoint,
 } from '@/types/health';
 import type { CalendarDay } from '@/lib/healthCalendar';
-import type { HealthSection } from '../sections';
+import { section as sectionInfo, type HealthSection } from '../sections';
 import Calendar from './Calendar';
 import Consistency from './Consistency';
-import MacrosCard from './MacrosCard';
-import NextMorning from './NextMorning';
 import Records from './Records';
+import SectionHeader, { healthEyebrow } from './SectionHeader';
 import StatTiles from './StatTiles';
-import StepsCard from './StepsCard';
-import WeekByDay from './WeekByDay';
+import Trends from './Trends';
 import WeekLead from './WeekLead';
 import WeekLog from './WeekLog';
-import WeightCalories from './WeightCalories';
 
 interface Props {
   /** Which page: /health draws 'week', /health/calendar 'calendar', and so on (app/health/sections.ts). */
@@ -34,7 +30,6 @@ interface Props {
   days: HealthDay[];
   weeks: WeekSummary[];
   summary: HealthSummary;
-  weightSeries: WeightPoint[];
   weeklyTrend: WeeklyTrendRow[];
   phases: PhaseSummary[];
   activePhase: PhaseSummary | null;
@@ -55,7 +50,7 @@ interface Props {
  * One /health section, each its own page under the HealthNav menu:
  * - week: the week and the block, the tiles, the log's four newest weeks
  * - calendar: the month, each day as three lights
- * - trends: weight and calories together, the next morning, the week by day, steps and macros
+ * - trends: weight with calories under it, pounds per week, the next morning, the week by day, steps and macros
  * - habits: consistency
  * - records: the records
  * Specs: docs/superpowers/specs/2026-10-04-health-redesign-design.md, 2026-11-04-health-sections-calendar-design.md.
@@ -66,7 +61,6 @@ export default function HealthDashboard({
   days,
   weeks,
   summary,
-  weightSeries,
   weeklyTrend,
   phases,
   activePhase,
@@ -81,14 +75,22 @@ export default function HealthDashboard({
   lastUpdated,
   weightUnit,
 }: Props) {
-  if (days.length === 0) {
-    return <p className="h-note">No data recorded yet.</p>;
-  }
+  // Every section opens on its own title, with the block the newest data falls in as the eyebrow.
+  const header = <SectionHeader eyebrow={healthEyebrow(leadPhase)} title={sectionInfo(section).title} />;
 
+  if (days.length === 0) {
+    return (
+      <>
+        {header}
+        <p className="h-note">No data recorded yet.</p>
+      </>
+    );
+  }
 
   if (section === 'week') {
     return (
       <>
+        {header}
         <WeekLead
           rows={weeklyTrend}
           phase={leadPhase}
@@ -112,6 +114,7 @@ export default function HealthDashboard({
   if (section === 'calendar') {
     return (
       <>
+        {header}
         <Calendar days={calendarDays} weightUnit={weightUnit} />
         <Updated on={lastUpdated} />
       </>
@@ -119,22 +122,21 @@ export default function HealthDashboard({
   }
 
   if (section === 'trends') {
+    // Trends draws its own header, with the range switch beside the title.
     return (
       <>
-        <WeightCalories
+        <Trends
+          eyebrow={healthEyebrow(leadPhase)}
+          title={sectionInfo(section).title}
           days={days}
-          series={weightSeries}
+          weeklyTrend={weeklyTrend}
+          phases={phases}
+          leadPhase={leadPhase}
           calorieTargets={calorieTargets}
-          blocks={phases}
-          showTrend={summary.showMovingAverage}
+          targets={targets}
+          stepStreaks={stepStreaks}
           weightUnit={weightUnit}
         />
-        <NextMorning days={days} calorieTargets={calorieTargets} weightUnit={weightUnit} />
-        <WeekByDay days={days} calorieTargets={calorieTargets} targets={targets} weightUnit={weightUnit} />
-        <div className="h-pair">
-          <StepsCard days={days} targets={targets} streaks={stepStreaks} />
-          <MacrosCard days={days} targets={targets} />
-        </div>
         <Updated on={lastUpdated} />
       </>
     );
@@ -143,6 +145,7 @@ export default function HealthDashboard({
   if (section === 'habits') {
     return (
       <>
+        {header}
         <Consistency
           days={days}
           weeks={weeks}
@@ -159,6 +162,7 @@ export default function HealthDashboard({
 
   return (
     <>
+      {header}
       <Records
         trend={weeklyTrend}
         markers={markers}
