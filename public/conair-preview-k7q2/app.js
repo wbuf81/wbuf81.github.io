@@ -1124,24 +1124,12 @@ const OBS = {
   sprinkler(g, W, H) {   // the riser head fills its own box
     R(g, '#55555F', 0, 0, W, H); R(g, '#8A8A96', 1, 0, W - 2, H); R(g, '#D8B04A', 0, 0, W, 3); R(g, '#3A3A44', 0, H - 4, W, 4);
   },
-  ball(g, W, H, e, f) {   // HAZARD: an angry goose (never the golf-ball pickup sprite), bold enough to read at ~35 px
-    const flip = (f & 2) !== 0, up = (f & 1) === 0, c = mk(W, H), q = ctx2(c), u = Math.min(W, H) / 20, cx = W / 2, cy = H / 2;
-    const X = v => cx + v * u, Y = v => cy + v * u;
-    // wing (behind body when down, raised over the back when up)
-    if (up) Poly(q, '#7A7E88', [[X(-9), Y(1)], [X(-6), Y(-10)], [X(-1), Y(-9)], [X(2), Y(-1)]]);
-    E(q, '#F4F4F0', X(-1), Y(3), 9.5 * u, 6.8 * u); E(q, '#B8BCC4', X(-1), Y(6.5), 7.5 * u, 3 * u);   // body + grey belly
-    Poly(q, '#9CA0AA', [[X(-10), Y(0)], [X(-7), Y(3)], [X(-10), Y(5)]]);                              // tail
-    if (up) Poly(q, '#9CA0AA', [[X(-7), Y(1)], [X(-5), Y(-8)], [X(-1), Y(-7)], [X(1), Y(0)]]);
-    else Poly(q, '#7A7E88', [[X(-7), Y(2)], [X(-2), Y(10)], [X(2), Y(9)], [X(2), Y(2)]]);
-    Ln(q, '#141418', X(3), Y(1), X(5), Y(-6), 4.2 * u);                                                 // long black neck
-    E(q, '#141418', X(5.5), Y(-7), 3.6 * u, 3 * u);                                                     // head
-    R(q, '#F4F4F0', X(3), Y(-6.5), 2.2 * u, 2 * u);                                                     // white chinstrap
-    Poly(q, '#FF8A1A', [[X(8), Y(-9)], [X(10), Y(-8.5)], [X(8.5), Y(-7.2)]]);                            // upper beak
-    Poly(q, '#E05A0A', [[X(8.2), Y(-6.6)], [X(10), Y(-5)], [X(8), Y(-5.6)]]);                            // lower beak: open honk
-    R(q, '#FFFFFF', X(6), Y(-8.6), Math.max(1, 1.4 * u), Math.max(1, 1.2 * u)); R(q, '#D8283A', X(6.6), Y(-8.4), Math.max(1, 0.8 * u), Math.max(1, 0.8 * u));   // angry eye
-    Ln(q, '#F4F4F0', X(4.6), Y(-10), X(8), Y(-8.8), Math.max(1, u));                                     // furious brow
-    R(q, '#FF8A1A', X(-2), Y(9), 2 * u, 1 * u); R(q, '#FF8A1A', X(1), Y(9), 2 * u, 1 * u);               // feet
-    if (flip) { g.save(); g.translate(W, 0); g.scale(-1, 1); g.drawImage(c, 0, 0); g.restore(); } else g.drawImage(c, 0, 0);
+  ball(g, W, H) {   // HAZARD: the swept disc of a spinning thrown driver (the club itself is drawn on top, rotating)
+    const r = Math.min(W, H) / 2, cx = W / 2, cy = H / 2;
+    g.globalAlpha = 0.78; E(g, '#AEB8C8', cx, cy, r, r); g.globalAlpha = 1;
+    E(g, '#8A94A8', cx, cy, r * 0.72, r * 0.72); g.globalAlpha = 0.78; E(g, '#C8D2E0', cx, cy, r * 0.6, r * 0.6); g.globalAlpha = 1;
+    for (let i = 0; i < 6; i++) { const a = i / 6 * TAU; Ln(g, '#E8EEF8', cx + Math.cos(a) * r * 0.75, cy + Math.sin(a) * r * 0.75, cx + Math.cos(a + 0.5) * r * 0.75, cy + Math.sin(a + 0.5) * r * 0.75, 1); }
+    E(g, '#3A3A44', cx, cy, Math.max(1, r * 0.14), Math.max(1, r * 0.14));
   },
   goalpost(g, W, H, e) {   // each gate piece is a solid padded upright filling its box
     const top = e.part === 'top', Y = '#F2D23A', y2 = '#C8A820';
@@ -1371,8 +1359,7 @@ function drawObstacle(ctx, e, v, t, type) {
   if (st === 'smash' || st === 'smashed' || e.smashed) ex.__smash = c01(num(e.k, 0));
   ex.__burn = st === 'burn' ? c01(num(e.k, 0)) : undefined;
   let f = 0;
-  if (type === 'ball') { f = (Math.floor(t * 8) & 1) | (gooseLeft(e) ? 2 : 0); }
-  else if (type === 'flag') f = Math.floor(t * 4 + wx * 0.1) & 3;
+  if (type === 'flag') f = Math.floor(t * 4 + wx * 0.1) & 3;
   else if (type === 'roulette') f = Math.floor(frac(num(e.k, t * 0.6) / (TAU / 8)) * 8) % 8;
   else if (type === 'slot') f = Math.floor(t * 0.7 + wx) % 3;
   if (ex.__smash != null) f = 0;
@@ -1398,6 +1385,26 @@ function drawObstacle(ctx, e, v, t, type) {
   }
   const hh = (type === 'ball' || type === 'roulette') ? w : h;   // circles: diameter = w
   drawBox(ctx, type, ex, wx, wy, w, hh, v, t, f);
+  if (type === 'ball' && ex.__smash == null) drawClub(ctx, e, v, t, wx, wy, w);
+}
+/* the thrown driver: spins end over end ~2.5 turns/s, direction flips when it turns back */
+let CLUB = null;
+function clubSprite() {
+  if (CLUB) return CLUB;
+  const c = mk(26, 9), g = ctx2(c);
+  R(g, '#180C16', 0, 3, 19, 3); R(g, '#D8DEE8', 1, 4, 18, 1); R(g, '#9AA4B4', 1, 5, 18, 0);   // shaft
+  R(g, '#180C16', 0, 2, 5, 5); R(g, '#2A2A32', 1, 3, 3, 3);                                    // grip
+  E(g, '#180C16', 21, 4.5, 5, 4.5); E(g, '#2A2A32', 21, 4.5, 4, 3.5); R(g, '#C8D2E0', 24, 2, 1, 5); P(g, '#F2C23E', 20, 3);   // chunky head
+  return (CLUB = c);
+}
+function drawClub(ctx, e, v, t, wx, wy, w) {
+  const C = clubSprite(), x = sxOf(v, wx), y = syOf(v, wy), L = w * v.sc * 0.98, k = L / C.width;
+  const dir = gooseLeft(e) ? -1 : 1, a = dir * t * 2.5 * TAU;
+  ctx.save(); ctx.translate(Math.round(x), Math.round(y)); ctx.rotate(a); ctx.imageSmoothingEnabled = false;
+  ctx.drawImage(C, -L / 2, -C.height * k / 2, L, C.height * k); ctx.restore();
+  ctx.save(); ctx.globalAlpha = 0.4; ctx.strokeStyle = '#FFFFFF'; ctx.lineWidth = Math.max(1, v.ps);   // speed ticks inside the disc edge
+  for (let i = 0; i < 3; i++) { const b = a + i * 2.1; ctx.beginPath(); ctx.arc(x, y, w * v.sc * 0.42, b, b + 0.5 * dir); ctx.stroke(); }
+  ctx.restore();
 }
 function sprinklerOn(e) {
   if (e.on != null) return !!e.on;
