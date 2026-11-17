@@ -3230,14 +3230,15 @@ const HZ = 120, DT = 1 / HZ;
 const P = {
   H: 200,                         // playfield height
   g: 440, thrust: 860, vyUp: -165, vyDown: 215, onset: 0.09, release: 0.06, coyote: 0.04, // RULINGS 23C: rounder hold
-  cell: 48.8, rx: 9.5, ry: 12.5, hbx: 4.9, hby: -4.9, // hero.png cell (world units, square; body ~40 tall in cells 0-1) and the hitbox
+  cell: 48.8, rx: 8.4, ry: 11, // RULINGS 24: hitbox ~12% smaller than ruling 7's 9.5 x 12.5
+   hbx: 4.9, hby: -4.9, // hero.png cell (world units, square; body ~40 tall in cells 0-1) and the hitbox
                                   // ellipse on head+torso (RULINGS 7: centre 0.60,0.40 of the cell); sim (x,y) = hitbox centre
-  v0: 70, v1: 150, tRamp: 90, creep: 0.15,
+  v0: 70, v1: 134, tRamp: 90, creep: 0.15,
   gap0: 170, gap1: 105, gapMin: 92, gapCreep: 0.1, gapT: 160,
-  clear0: 28.5, clear1: 24, clearT: 120,   // half-height of the guaranteed open band around the guide path
+  clear0: 28.5, clear1: 26.5, clearT: 120,   // half-height of the guaranteed open band around the guide path
   wallM: 5,                       // guide path keeps clear + wallM from the corridor walls
   pathA: 230,                     // max vertical accel the guide path asks for (u/s^2)
-  spc0: 1.8, spc1: 0.9, spcT: 130, // seconds of air between patterns
+  spc0: 1.8, spc1: 1.0, spcT: 130, // seconds of air between patterns
   emptyT: 4,                      // RULINGS 22b: the first obstacle never arrives before 4 s after the first press
   grace: 3.0, graceFade: 0.8,     // launch grace: soft floor/ceiling, nothing hurts
   zoneT: 16, nZones: 5, zoneGap: 0.75, winZones: 5, // RULINGS 16: outlast zone 5 (T = 80 s) and the bet hits
@@ -3478,7 +3479,7 @@ function genPattern(C) {
     const px = (lx + gapEnd) / 2, Tp = Tof(px);
     if (!(Tp > tb - P.zoneGap && Tp < tb + P.zoneGap)) {
       const rr = C.rnd(); let t;
-      if (Tp > 45 && rr < 0.12) t = 'pk.bone';
+      if (Tp >= 2 * P.zoneT && !C.boneDone) { t = 'pk.bone'; C.boneDone = true; } // RULINGS 24: one bone per run from zone 3
       else { const r2 = C.rnd(); t = Tp < 10 ? (r2 < 0.5 ? 'pk.zin' : 'pk.slip') : r2 < 0.36 ? 'pk.zin' : r2 < 0.64 ? 'pk.beef' : 'pk.slip'; }
       C.picks.push({ id: C.id++, type: t, x: px, y: C.path(px), r: P.pkR });
       C.nSpecial++;
@@ -4775,6 +4776,9 @@ boot();
  * - RULINGS 23: g 440, thrust 860, vy [-165, 215], smoothstep onset 90 ms / release 60 ms, 40 ms coyote on grace bounces;
  *   clearance retuned to 28.5 -> 24 to keep the bars. Pose/angle run per sim step (spring, w = 1/0.09 s); the camera's
  *   vertical ease is skipped (the 200-unit playfield always fills the view height).
+ * - RULINGS 24 (one notch easier): hitbox rx 9.5 -> 8.4, ry 12.5 -> 11 (sprite unchanged); top speed v1 150 -> 134
+ *   (start 70); clearance end 24 -> 26.5; pattern spacing end 0.9 -> 1.0 s; one bone per run from zone 3. Zones stay
+ *   16 s of nominal flight, so a win is still ~80 s (the bet now hits at ~823 m).
  */
 
 </script>
