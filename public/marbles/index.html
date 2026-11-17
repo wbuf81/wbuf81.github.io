@@ -3096,7 +3096,12 @@ function inputVec() {
   if (k.ArrowLeft || k.KeyA) x -= 1; if (k.ArrowRight || k.KeyD) x += 1; if (k.ArrowUp || k.KeyW) y -= 1; if (k.ArrowDown || k.KeyS) y += 1;
   if (x || y) { const m = Math.hypot(x, y); return [x / m, y / m]; }
   if (G.stick && G.stick.active) { const dx = G.stick.x - G.stick.ox, dy = G.stick.y - G.stick.oy, m = Math.hypot(dx, dy) / 56; if (m < 0.04) return [0, 0]; const s = Math.min(1, m) / m; return [dx / 56 * s, dy / 56 * s]; }
-  if (G.tilt.on && G.tilt.state === 'on') return [G.tilt.sx, G.tilt.sy];
+  if (G.tilt.on && G.tilt.state === 'on') {
+    // tilt assist: softer top push, and the marble brakes itself as the phone comes back to level
+    let tx = G.tilt.sx * 0.85, ty = G.tilt.sy * 0.85; const S = R && R.S;
+    if (S && R.phase === 'run') { const m = Math.min(1, Math.hypot(G.tilt.sx, G.tilt.sy)), c = 0.16 * (1 - m) * (1 - m) + 0.02; tx -= c * (S.vx - S.vy) * 0.7071; ty -= c * (S.vx + S.vy) * 0.7071; }
+    const n = Math.hypot(tx, ty); return n > 1 ? [tx / n, ty / n] : [tx, ty];
+  }
   return [0, 0];
 }
 
@@ -3112,7 +3117,7 @@ function tiltRaw() {
 function tiltRecenter() { const r = tiltRaw(); G.tilt.g0 = r[0]; G.tilt.b0 = r[1]; }
 function tiltUpdate(dt) {
   const T = G.tilt; if (!T.on || T.beta == null) return;
-  const r = tiltRaw(); const f = (d) => { const s = Math.sign(d), m = Math.abs(d); if (m < 3) return 0; const u = Math.min(1, (m - 3) / 27); return s * (0.55 * u + 0.45 * u * u); };
+  const r = tiltRaw(); const f = (d) => { const s = Math.sign(d), m = Math.abs(d); if (m < 4) return 0; const u = Math.min(1, (m - 4) / 30); return s * (0.55 * u + 0.45 * u * u); };
   let tx = f(r[0] - T.g0), ty = f(r[1] - T.b0);
   const k = 1 - Math.exp(-dt * 9); T.sx += (tx - T.sx) * k; T.sy += (ty - T.sy) * k;
 }
