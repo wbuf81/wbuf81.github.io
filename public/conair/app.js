@@ -4826,9 +4826,9 @@ function connieAt(x, y, size, pose, age) {
   if (!artCall('drawEntities', [ctx, [e], view, G.t])) stubConnie(e, view);
   ctx.setTransform(V.dpr, 0, 0, V.dpr, 0, 0);
 }
-function teddySit(x, feetY, w, state) {
+function teddySit(x, feetY, w, state, k) {
   const ps = w / 61; // art draws the 80 px Teddy cell at 61 * ps screen px (hero scale); w = the cell's on-screen size
-  const e = { type: 'teddy', state: state || 'sit', k: 0 };
+  const e = { type: 'teddy', state: state || 'sit', k: k || 0 };
   if (artCall('drawTeddyAt', [ctx, e, x, feetY, ps, G.t])) { ctx.setTransform(V.dpr, 0, 0, V.dpr, 0, 0); return; }
   stubEntity(Object.assign({ x: 0, y: 0 }, e), { scale: ps * 2, ox: x, oy: feetY, camX: 0, camY: 0 }, G.t);
 }
@@ -4906,7 +4906,17 @@ function drawTitle() {
   button('name', rx - nw / 2, by, nw, nh, SAVE.name ? 'NAME: ' + SAVE.name : 'NAME', () => nameThenSubmit(), { ui, px: 1.5 }); by += nh + gap;
   button('board', bx, by, bw, bh, 'GLOBAL LEADERBOARD', () => { G.from = 'title'; toScene('board'); }, { ui }); by += bh + gap;
   // Teddy stands proud under the buttons when there is room
-  if (tall && A.y + A.h - by >= TEDDY_T) teddySit(bx + 44, by + TEDDY_T - 6, 92, 'proud');
+  // Teddy trots across the bottom, left to right, pausing to sit in the middle, then comes round again
+  { const room = V.H - V.ins.b - by; if (room >= 44) {
+      const w = Math.min(92, room + 14), feet = Math.min(by + w * 0.78, V.H - V.ins.b - 4), span = V.W + w * 2, T = 13, u = (G.t % T) / T;
+      // 0-0.38 run to the middle, 0.38-0.56 sit, 0.56-0.94 run off, 0.94-1 off-screen
+      let x, st = 'run';
+      if (u < 0.38) x = -w + (V.W / 2 + w) * (u / 0.38);
+      else if (u < 0.56) { x = V.W / 2; st = u < 0.40 || u > 0.54 ? 'proud' : 'sit'; }
+      else if (u < 0.94) x = V.W / 2 + (V.W / 2 + w) * ((u - 0.56) / 0.38);
+      else x = span;
+      teddySit(x, feet, w, st, (G.t * 2.6) % 1);
+  } }
   void top;
 }
 // RULINGS 16b: five zone segments to the Super Bowl, Connie's head riding along, a football at the end
