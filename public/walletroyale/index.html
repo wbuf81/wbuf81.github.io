@@ -12062,9 +12062,14 @@ function nameKey(k) {
   if (k === 'ArrowDown') G.nameSel = (G.nameSel + 7) % 28; if (k === 'ArrowUp') G.nameSel = (G.nameSel + 21) % 28;
   if (k === ' ') nameCell(G.nameSel);
 }
+// Shared name filter for the C Squad games. A name that matches becomes TNR (Tanner takes the credit).
+// Keep the same two lists in every worker and every game client.
+const BAD_EXACT = 'FAG FGT FAQ JEW JUW NIG NGR NGA NIC NGG KKK KYK KIK SPC SPK CHK GUK GOK WOP COK COC KOK CUM CVM JIZ TIT ASS A55 ARS SEX FUK FUC FCK FUQ FUX PHK DIK DIC DCK DIX PUS VAG CNT KNT TWT HOE HOR SLT FAP WTF STD POO PEE PIS NAZ SSS HIV AID RAP DIE KYS HTL JEWS FAGS NIGS HOES SEXY CUMS ARSE DICK DICKS COCK COCKS ANAL ANUS TITS TITTY BOOB BOOBS HOMO HOMOS DYKE DYKES SPIC SPICS RAPE RAPED RAPER KILL SUCK SUCKS BALLS BUTT BUTTS POOP FART TURD NUTS HORNY'.split(' ');
+const BAD_PART = 'FUCK FUK SHIT CUNT NIGG NIGA FAGG FAGOT BITCH WHORE SLUT PUSSY PENIS VAGINA BONER DILDO RETARD NAZI HITLER RAPIST KIKE CHINK GOOK TRANNY WANK TWAT JIZZ PISS PEDO PORN SEMEN'.split(' ');
+function isBadName(n) { n = String(n || '').toUpperCase(); return BAD_EXACT.indexOf(n) >= 0 || BAD_PART.some(function (w) { return n.indexOf(w) >= 0; }); }
 function nameDone(ok) {
   if (ok) {
-    const n = G.nameBuf.replace(/[^A-Z]/g, '').slice(0, 7); if (!n) return;
+    let n = G.nameBuf.replace(/[^A-Z]/g, '').slice(0, 7); if (!n) return; if (isBadName(n)) n = 'TNR';
     const old = SAVE.name; SAVE.name = n;
     for (const s of SAVE.scores) if (!s.name || (old && s.name === old && G.lastRun && s.ts === G.lastRun.ts)) s.name = n;
     if (G.lastRun && !G.lastRun.name) G.lastRun.name = n;

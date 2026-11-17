@@ -2771,6 +2771,11 @@ const SKIN = {}; SKINS.forEach((s) => { SKIN[s.id] = s; });
    7. Browser layer. Everything below only runs with a DOM.
    ===================================================================== */
 const BOARD_BASE = 'https://marbles-scores.wes-bard.workers.dev';
+// Shared name filter for the C Squad games. A name that matches becomes TNR (Tanner takes the credit).
+// Keep the same two lists in every worker and every game client.
+const BAD_EXACT = 'FAG FGT FAQ JEW JUW NIG NGR NGA NIC NGG KKK KYK KIK SPC SPK CHK GUK GOK WOP COK COC KOK CUM CVM JIZ TIT ASS A55 ARS SEX FUK FUC FCK FUQ FUX PHK DIK DIC DCK DIX PUS VAG CNT KNT TWT HOE HOR SLT FAP WTF STD POO PEE PIS NAZ SSS HIV AID RAP DIE KYS HTL JEWS FAGS NIGS HOES SEXY CUMS ARSE DICK DICKS COCK COCKS ANAL ANUS TITS TITTY BOOB BOOBS HOMO HOMOS DYKE DYKES SPIC SPICS RAPE RAPED RAPER KILL SUCK SUCKS BALLS BUTT BUTTS POOP FART TURD NUTS HORNY'.split(' ');
+const BAD_PART = 'FUCK FUK SHIT CUNT NIGG NIGA FAGG FAGOT BITCH WHORE SLUT PUSSY PENIS VAGINA BONER DILDO RETARD NAZI HITLER RAPIST KIKE CHINK GOOK TRANNY WANK TWAT JIZZ PISS PEDO PORN SEMEN'.split(' ');
+function isBadName(n) { n = String(n || '').toUpperCase(); return BAD_EXACT.indexOf(n) >= 0 || BAD_PART.some(function (w) { return n.indexOf(w) >= 0; }); }
 const SAVE_KEY = 'lostmarbles.v1', CHK_SALT = 'ROB LOST HIS MARBLES';
 function fnv1a32(s) { let h = 0x811c9dc5; s = String(s); for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i) & 0xff; h = Math.imul(h, 0x01000193); } return h >>> 0; }
 function scoreCode(name, level, ms, falls) {
@@ -3298,7 +3303,7 @@ function openName(after) {
   const close = (ok) => {
     const v = inp.value.toUpperCase().replace(/[^A-Z]/g, '').slice(0, 7);
     el.style.display = 'none'; try { inp.blur(); } catch (e) { }
-    if (ok && v) { SAVE.name = v; persist(); }
+    if (ok && v) { SAVE.name = isBadName(v) ? 'TNR' : v; persist(); }
     G.nameOpen = false; if (after) after(ok && !!v);
   };
   el.querySelector('#mbnameok').onclick = () => close(true);
