@@ -3394,8 +3394,20 @@ if (typeof window !== "undefined" && window.CAArt) { window.CAArt.BUBBLE = true;
     var m = W.CA_MUSIC; if (!m || !Object.prototype.hasOwnProperty.call(m, k) || !m[k]) return null;
     var e = typeof m[k] === 'string' ? { src: m[k] } : m[k]; return e && typeof e.src === 'string' && e.src ? e : null;
   }
+  // gameplay shuffle: each run plays one of the four tracks at random (never the same one twice in a row)
+  var POOL = ['game', 'title', 'intro', 'win'], gamePick = null, gameCtx = false;
+  function shuffle() {
+    var c = POOL.filter(function (k) { return manifest(k) && !fileFail[k] && k !== gamePick; });
+    if (c.length) gamePick = c[Math.floor(Math.random() * c.length)];
+  }
   function wantKey(id) {
-    var k = id === 'victory' ? 'win' : (id === 'title' || id === 'intro' || id === 'lose') ? id : ZONES.indexOf(id) >= 0 ? (manifest(id) && !fileFail[id] ? id : 'game') : null;
+    var zone = ZONES.indexOf(id) >= 0;
+    if (zone && !(manifest(id) && !fileFail[id])) {
+      if (!gamePick || !manifest(gamePick) || fileFail[gamePick]) shuffle();
+      gameCtx = true; return gamePick && manifest(gamePick) && !fileFail[gamePick] ? gamePick : (manifest('game') && !fileFail.game ? 'game' : null);
+    }
+    gameCtx = false;
+    var k = id === 'victory' ? 'win' : (id === 'title' || id === 'intro' || id === 'lose') ? id : zone ? id : null;
     return k && manifest(k) && !fileFail[k] ? k : null;
   }
   function loadFile(k, cb) {
@@ -3414,7 +3426,7 @@ if (typeof window !== "undefined" && window.CAArt) { window.CAArt.BUBBLE = true;
   function startFile(k) {
     var e = manifest(k), src = ctx.createBufferSource(), g = ctx.createGain();
     src.buffer = fileBufs[k];
-    var loop = e.loop !== undefined ? !!e.loop : !(k === 'intro' || k === 'win' || k === 'lose');
+    var loop = gameCtx || (e.loop !== undefined ? !!e.loop : !(k === 'intro' || k === 'win' || k === 'lose'));
     if (loop) { src.loop = true; var d = fileBufs[k].duration, ls = +e.loopStart || 0, le = +e.loopEnd || 0; if (ls > 0 && ls < d) src.loopStart = ls; if (le > ls && le <= d) src.loopEnd = le; }
     src.playbackRate.value = fileRate();
     g.gain.value = 0; g.gain.setTargetAtTime(FILE_LEVEL, now(), 0.13);
@@ -3452,7 +3464,7 @@ if (typeof window !== "undefined" && window.CAArt) { window.CAArt.BUBBLE = true;
     musicVol = clamp(+v, 0, 1); if (!musicBus) return;
     var t = now(); musicBus.gain.cancelScheduledValues(t); musicBus.gain.setTargetAtTime(busLevel(), t, 0.05);
   });
-  API.themes = Object.keys(THEMES);
+  API.themes = Object.keys(THEMES); API.shuffle = shuffle;
   API.setPace = safe(function (p) { pace = clamp(+p || 0, 0, 1); });
   API.duck = safe(function (on) {
     duckOn = !!on; if (!musicBus || !ctx) return;
@@ -4225,6 +4237,7 @@ const ZID = (i) => ZONES[i].id;
 function newSeedStr() { return (Math.floor(Math.random() * 2147483647) >>> 0).toString(36).toUpperCase(); }
 function startRun(o) {
   o = o || {};
+  au('shuffle'); // a different gameplay track each run
   const day = dayIndex(Date.now());
   const mode = o.mode === 'endless' ? 'endless' : 'story';
   let seedStr = o.seedStr, level = 0, newAttempt = false;
