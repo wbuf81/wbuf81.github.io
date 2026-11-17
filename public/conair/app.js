@@ -4179,7 +4179,7 @@ function cigTip(pose, age) {
   return CIG_FALLBACK[pose] || null;
 }
 const AGES = ['20s', '30s', '40s', '50s', '70s']; // lowercase s has its own glyph
-const CUTIN_LINES = [null, ['TEN YEARS LATER', 'THE JAGS MISSED THE PLAYOFFS.'], ['HIS FORTIES', 'THE KNEES GO. THE ZINS STAY.'], ['HIS FIFTIES', 'TEDDY HAS NOT AGED A DAY.'], ['HIS SEVENTIES', 'THE JAGS ARE IN THE SUPER BOWL.']];
+const CUTIN_LINES = [null, ['TEN YEARS LATER', 'THE JAGS MISSED THE PLAYOFFS.'], ['HIS FORTIES', 'THE KNEES GO. THE ZINS STAY.'], ['HIS FIFTIES', 'TEDDY HAS NOT AGED A DAY.'], ['50 YEARS LATER', 'THE JAGS FINALLY MADE THE SUPER BOWL.']];
 // RULINGS 21: the cinematic opening, eight beats
 const INTRO_BEATS = [
   { image: 'intro_city', dur: 2.6, lines: ['JACKSONVILLE.', 'A LONG TIME AGO.'] },
@@ -4196,7 +4196,7 @@ const ZONE_VERDICT = ["DIDN'T MAKE IT OUT OF THE DRIVE-THRU.", 'LOST IT ON THE B
 function introCutin(beat) { const b = INTRO_BEATS[beat]; return { kind: 'intro', beat, t: 0, dur: b.dur, image: b.image, zone: ZID(0), age: 0, lines: b.lines.slice(), s1: false, s2: false, typeT: 0 }; }
 // RULINGS 16c / 17 / 18: the win ending, one entry per beat
 const WIN_BEATS = [
-  { image: 'win', lines: ['THE JAGS WIN THE SUPER BOWL.', ''], dur: 4.5 },
+  { image: 'win', lines: ['IT TOOK 50 YEARS.', 'THE JAGS FINALLY WON THE SUPER BOWL.'], dur: 5.5 },
   { image: 'slip_win', lines: ['FIFTY YEARS. ONE BET.', ''], dur: 4.0 },
   { image: 'connie', lines: ['IT HIT.', ''], dur: 3.5 },
   { image: 'hamzah', lines: ['HAMZAH WORKS FOR THE JAGS.', 'HE IS TAKING FULL CREDIT.'], dur: 5.0 },
