@@ -96,7 +96,8 @@ function hexRgb(h) {
 }
 function rgbHex(r, g, b) { return '#' + ((1 << 24) | (clamp(Math.round(r), 0, 255) << 16) | (clamp(Math.round(g), 0, 255) << 8) | clamp(Math.round(b), 0, 255)).toString(16).slice(1).toUpperCase(); }
 function mix(a, b, k) { const x = hexRgb(a), y = hexRgb(b); return rgbHex(lerp(x[0], y[0], k), lerp(x[1], y[1], k), lerp(x[2], y[2], k)); }
-function rgba(h, a) { const c = hexRgb(h); return 'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',' + a + ')'; }
+const RGBAC = {};
+function rgba(h, a) { const k = h + a; let r = RGBAC[k]; if (r) return r; const c = hexRgb(h); r = 'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',' + a + ')'; if (typeof a === 'number' && a * 100 % 1 === 0) RGBAC[k] = r; return r; }
 let DEBUG = false;
 function safe(fn, fallback) {
   return function () {
@@ -750,6 +751,9 @@ function tile(id, which) {
   const key = id + '|' + which; if (BG[key]) return BG[key];
   const c = mk(TW, BH), g = ctx2(c);
   (LAYERS[id] && LAYERS[id][which] || function () {})(g);
+  // crop away the fully transparent rows once (build time) so each frame blends fewer pixels
+  let y0 = 0; try { const d = g.getImageData(0, 0, TW, BH).data; outer: for (; y0 < BH; y0++) for (let x = 0; x < TW; x++) if (d[(y0 * TW + x) * 4 + 3]) break outer; } catch (e) { y0 = 0; }
+  c.__y0 = Math.min(y0, BH - 1);
   return (BG[key] = c);
 }
 const LAYERS = {
@@ -887,7 +891,8 @@ function drawZoneBack(ctx, id, camX, vw, vh, t, alpha) {
   for (const l of L) {
     const tc = tile(id, l[0]), off = ((camX * l[1]) % TW + TW) % TW, tw = TW * ps;
     ctx.globalAlpha = alpha * (busy ? (l[0] === 'mid' ? 0.6 : 0.8) : 1);   // calm the busiest crowd / slot layers
-    for (let x = -off * ps; x < vw; x += tw) ctx.drawImage(tc, Math.floor(x), 0, Math.ceil(tw) + 1, vh);
+    const y0 = tc.__y0 || 0, yy = Math.floor(y0 * ps);
+    for (let x = -off * ps; x < vw; x += tw) ctx.drawImage(tc, 0, y0, TW, BH - y0, Math.floor(x), yy, Math.ceil(tw) + 1, vh - yy);
   }
   ctx.globalAlpha = alpha;
   liveTouches(ctx, id, ps, camX, vw, vh, t);
@@ -904,11 +909,15 @@ function drawBackdrop(ctx, zoneA, zoneB, mixK, camX, vw, vh, t) {
 }
 
 /* ================================================================== VIEW helpers */
+const VV = { sc: 1, ox: 0, oy: 0, cx: 0, cy: 0, vw: 390, vh: 844, ps: PX };   // reused every frame (no allocation)
 function V(view) {
-  view = view || {};
+  view = view || VV0;
   const sc = num(view.scale, 1);
-  return { sc, ox: num(view.ox, 0), oy: num(view.oy, 0), cx: num(view.camX != null ? view.camX : view.cx, 0), cy: num(view.camY != null ? view.camY : view.cy, 0), vw: num(view.vw, 390), vh: num(view.vh, 844), ps: sc * PX };
+  VV.sc = sc; VV.ox = num(view.ox, 0); VV.oy = num(view.oy, 0); VV.cx = num(view.camX != null ? view.camX : view.cx, 0); VV.cy = num(view.camY != null ? view.camY : view.cy, 0);
+  VV.vw = num(view.vw, 390); VV.vh = num(view.vh, 844); VV.ps = sc * PX;
+  return VV;
 }
+const VV0 = {};
 function sxOf(v, x) { return (x - v.cx) * v.sc + v.ox; }
 function syOf(v, y) { return (y - v.cy) * v.sc + v.oy; }
 
@@ -940,7 +949,7 @@ function patternFor(ctx, key, build) {
   if (e.ctx !== ctx) { e.p = ctx.createPattern(e.c, 'repeat'); e.ctx = ctx; }
   return e.p;
 }
-const PAT = {};
+const PAT = {}; let PATM = null;
 const FILL = {     // world-anchored fill tiles (art px) for the solid regions
   drive: {
     top: () => { const c = mk(24, 16), g = ctx2(c); R(g, '#2A1420', 0, 0, 24, 16); R(g, '#341A28', 0, 0, 11, 7); R(g, '#341A28', 12, 8, 11, 7); R(g, '#1E0E18', 0, 7, 24, 1); R(g, '#1E0E18', 0, 15, 24, 1); R(g, '#1E0E18', 11, 0, 1, 7); R(g, '#1E0E18', 23, 8, 1, 7); return c; },
@@ -1053,7 +1062,8 @@ function corridorSide(ctx, v, pts, id, side, alpha) {
   regionPath(ctx, v, pts, side);
   const pat = patternFor(ctx, id + side, FILL[id][side]);
   if (pat && pat.setTransform && window.DOMMatrix) {
-    pat.setTransform(new DOMMatrix([v.ps, 0, 0, v.ps, Math.round(sxOf(v, 0)), Math.round(syOf(v, 0))]));
+    const M = PATM || (PATM = new DOMMatrix()); M.a = v.ps; M.b = 0; M.c = 0; M.d = v.ps; M.e = Math.round(sxOf(v, 0)); M.f = Math.round(syOf(v, 0));
+    pat.setTransform(M);
     ctx.fillStyle = pat;
   } else ctx.fillStyle = side === 'top' ? Z.ceil : Z.floor;
   ctx.fill();
@@ -1227,13 +1237,17 @@ function brickFill(g, x, y, w, h) {
 }
 const OBS_DEF = { menu: [18, 30], lamp: [12, 22], fry: [8, 20], flag: [10, 44], sprinkler: [26, 28], ball: [4, 4], goalpost: [16, 60], finger: [12, 30], tuba: [18, 22], slip: [10, 14], slot: [14, 20], roulette: [28, 28], chips: [10, 26], unknown: [12, 12] };
 const OCACHE = {}; let OCOUNT = 0;
+const OCM = {};
 function obsSprite(type, W, H, e, f) {
-  const key = type + '|' + W + '|' + H + '|' + f + '|' + (e.part || '') + (e.__up ? 'u' : '') + (e.__alt ? 'a' : '') + '|' + (e.n || e.count || e.stack || '') + (sheetOk() ? 's' : '');
-  let s = OCACHE[key]; if (s) return s;
-  if (OCOUNT > 600) { for (const k in OCACHE) delete OCACHE[k]; OCOUNT = 0; }
+  const nn = clamp(Math.round(num(e.n, num(e.count, num(e.stack, 0)))), 0, 3);
+  const flags = (e.part === 'top' ? 1 : e.part === 'bottom' ? 2 : 0) | (e.__up ? 4 : 0) | (e.__alt ? 8 : 0) | (sheetOk() ? 16 : 0);
+  const key = (((W * 2048 + H) * 16 + (f & 15)) * 32 + flags) * 4 + nn;
+  let m = OCM[type]; if (!m) m = OCM[type] = new Map();
+  let s = m.get(key); if (s) return s;
+  if (OCOUNT > 600) { for (const k in OCM) OCM[k].clear(); OCOUNT = 0; }
   const c = mk(W, H), g = ctx2(c);
   (OBS[type] || OBS.unknown)(g, W, H, e, f);
-  s = OCACHE[key] = rimmed(c, RIM_DARK, RIM); OCOUNT++;
+  s = rimmed(c, RIM_DARK, RIM); m.set(key, s); OCOUNT++;
   return s;
 }
 function anchorUp(type, e) {
@@ -1334,11 +1348,12 @@ function drawBox(ctx, type, ex, wx, wy, w, h, v, t, f) {
     ctx.globalAlpha = 1;
   }
 }
+const EX = {}, EXP = {};   // scratch objects reused per obstacle (no per-frame allocation)
 function drawObstacle(ctx, e, v, t, type) {
   const def = OBS_DEF[type] || OBS_DEF.unknown;
   const w = Math.max(1, num(e.w, def[0])), h = Math.max(1, num(e.h, def[1]));
   const wx = num(e.x, 0), wy = num(e.y, 100);
-  const ex = Object.assign({}, e);
+  const ex = EX; ex.part = e.part; ex.n = e.n; ex.count = e.count; ex.stack = e.stack; ex.k = e.k; ex.ang = e.ang; ex.side = e.side; ex.__smash = undefined;
   ex.__up = anchorUp(type, e);
   ex.__alt = e.alt != null ? !!e.alt : type === 'finger' ? hash1(Math.floor(wx / 7)) > 0.5 : false;
   const st = String(e.state || '');
@@ -1350,8 +1365,8 @@ function drawObstacle(ctx, e, v, t, type) {
   if (ex.__smash != null) f = 0;
   if (type === 'goalpost' && (e.gapTop != null || e.gapBot != null)) {   // two-piece gate from core
     const y0 = num(e.y0, 0), y1 = num(e.y1, 200), gt = num(e.gapTop, wy - h / 2), gb = num(e.gapBot, wy + h / 2), pw = w;
-    if (gt - y0 > 2) drawBox(ctx, type, Object.assign({}, ex, { part: 'top' }), wx, (y0 + gt) / 2, pw, gt - y0, v, t, 0);
-    if (y1 - gb > 2) drawBox(ctx, type, Object.assign({}, ex, { part: 'bottom' }), wx, (gb + y1) / 2, pw, y1 - gb, v, t, 0);
+    ex.part = 'top'; if (gt - y0 > 2) drawBox(ctx, type, ex, wx, (y0 + gt) / 2, pw, gt - y0, v, t, 0);
+    ex.part = 'bottom'; if (y1 - gb > 2) drawBox(ctx, type, ex, wx, (gb + y1) / 2, pw, y1 - gb, v, t, 0);
     return;
   }
   if (type === 'sprinkler') {   // RULINGS: head = 6 x (floor-8 .. box bottom); spray (when on) = the whole entity box
@@ -1548,11 +1563,13 @@ function connieAngle(e) {
 }
 const BUILTIN_KEY = ['thrustA', 'thrustB', 'fall', 'hit', 'hit', 'hit', 'thrustA', 'thrustB'];
 /* geometry in CELL units (0..1 of the cell) so hero and built-in share anchors */
+const GEO_H = {};   // reused (no per-frame allocation)
 function connieGeom(e, t) {
   const pose = poseOf(e);
   if (HERO.ok && HERO.img) {
     const row = Math.min(HERO.rows - 1, rowOf(e, t)), col = Math.min(HERO.cols - 1, pose);
-    return { hero: true, img: HERO.img, sx: col * HERO.cs, sy: row * HERO.cs, sw: HERO.cs, sh: HERO.cs, pose, row, tip: heroCig(pose, row) };
+    const o = GEO_H; o.hero = true; o.img = HERO.img; o.sx = col * HERO.cs; o.sy = row * HERO.cs; o.sw = HERO.cs; o.sh = HERO.cs; o.pose = pose; o.row = row; o.tip = heroCig(pose, row);
+    return o;
   }
   const F = connieFrames()[BUILTIN_KEY[pose]];
   // built-in figure (46 px tall) sized to 40/48.8 of the cell, anchored where the hero's body sits
@@ -1560,13 +1577,22 @@ function connieGeom(e, t) {
   return { hero: false, img: F.cv, k, ax, ay, pose, row: 0, tip: pose <= 2 ? { x: ax + (F.tip.x - CON_AX) * k, y: ay + (F.tip.y - CON_AY) * k } : null };
 }
 function rotPt(cx, cy, dx, dy, a) { const c = Math.cos(a), s = Math.sin(a); return { x: cx + dx * c - dy * s, y: cy + dx * s + dy * c }; }
+/* RULINGS 23B: Connie rotates about his BODY centre (cell 0.60, 0.42), not the cell centre; every attached point
+   (cigarette tip, ember, puff emitter) is rotated about the same pivot with the same angle core passed in `k`. */
+const PIV = { x: 0.6, y: 0.42 }, TMPP = { x: 0, y: 0 };
+function pivotPt(e, cell, u, v2, out) {
+  const a = connieAngle(e), c = Math.cos(a), s = Math.sin(a), px = num(e.x, 0) + (PIV.x - 0.5) * cell, py = num(e.y, 0) + (PIV.y - 0.5) * cell;
+  const dx = (u - PIV.x) * cell, dy = (v2 - PIV.y) * cell;
+  out.x = px + dx * c - dy * s; out.y = py + dx * s + dy * c; return out;
+}
 /* world position of the cigarette tip (null in poses without a cigarette) */
+function connieGeomNS(e, t) { const ns = e.__noShim; e.__noShim = true; const G = connieGeom(e, t); if (ns === undefined) delete e.__noShim; else e.__noShim = ns; return G; }
 function cigTip(e, t) {
   e = e || {}; t = num(t, 0);
-  const G = connieGeom(Object.assign({ __noShim: true }, e), t);
+  const G = connieGeomNS(e, t);
   if (!G.tip) return null;
   const cell = num(e.cell, CELL_U) * num(e.scale, 1);
-  return rotPt(num(e.x, 0), num(e.y, 0), (G.tip.x - 0.5) * cell, (G.tip.y - 0.5) * cell, connieAngle(e));
+  return pivotPt(e, cell, G.tip.x, G.tip.y, { x: 0, y: 0 });
 }
 const GLOW = {};
 function emberGlow() { return GLOW.e || (GLOW.e = haloSpr('#FF8A3A', 6)); }
@@ -1610,39 +1636,44 @@ function bubbleGeom(e, x, y, cellPx, t) {
   const wob = 0.025 * Math.sin(t * 2.3), sq = hit * Math.sin(Math.min(1, hit) * Math.PI) * 0.6 + hit * 0.15;
   return { b, hit, dir, cx, cy: cy + dir * sq * R0 * 0.25, rx: R0 * (1 + wob + sq * 0.22), ry: R0 * (1 - wob - sq * 0.3) };
 }
-function drawBubbleBack(ctx, B, t) {
-  if (B.b <= 0) return;
-  ctx.save(); ctx.globalAlpha = B.b;
-  ctx.translate(B.cx, B.cy); ctx.scale(1, B.ry / B.rx);
-  const g = ctx.createRadialGradient(0, 0, B.rx * 0.55, 0, 0, B.rx);
-  g.addColorStop(0, 'rgba(180,240,255,0.0)'); g.addColorStop(0.75, 'rgba(170,230,255,0.10)'); g.addColorStop(1, 'rgba(200,245,255,0.28)');
-  ctx.fillStyle = g; ctx.beginPath(); ctx.arc(0, 0, B.rx, 0, TAU); ctx.fill();
-  ctx.restore();
+const BUBC = new Map();
+function bubbleSprites(R) {   // pre-rendered once per radius bucket: back film + front rim/highlight
+  const q = Math.max(8, Math.round(R / 4) * 4); let b = BUBC.get(q); if (b) return b;
+  const n = q * 2 + 8, c0 = n / 2;
+  const back = mk(n, n), g = back.getContext('2d');
+  const gr = g.createRadialGradient(c0, c0, q * 0.55, c0, c0, q);
+  gr.addColorStop(0, 'rgba(180,240,255,0)'); gr.addColorStop(0.75, 'rgba(170,230,255,0.10)'); gr.addColorStop(1, 'rgba(200,245,255,0.28)');
+  g.fillStyle = gr; g.beginPath(); g.arc(c0, c0, q, 0, TAU); g.fill();
+  const front = mk(n, n), f = front.getContext('2d'), lw = Math.max(1.5, q * 0.035);
+  f.lineWidth = lw; f.strokeStyle = 'rgba(200,240,255,0.6)'; f.beginPath(); f.arc(c0, c0, q, 0, TAU); f.stroke();
+  f.lineWidth = lw * 0.6; f.strokeStyle = 'rgba(255,190,240,0.35)'; f.beginPath(); f.arc(c0, c0, q * 0.94, 0.6, 2.4); f.stroke();
+  f.strokeStyle = 'rgba(190,255,220,0.3)'; f.beginPath(); f.arc(c0, c0, q * 0.94, 3.4, 4.6); f.stroke();
+  f.lineCap = 'round'; f.lineWidth = lw * 2.2; f.strokeStyle = 'rgba(255,255,255,0.75)'; f.beginPath(); f.arc(c0, c0, q * 0.82, Math.PI * 1.08, Math.PI * 1.42); f.stroke();
+  f.fillStyle = 'rgba(255,255,255,0.8)'; f.beginPath(); f.arc(c0 - q * 0.38, c0 - q * 0.62, lw * 1.4, 0, TAU); f.fill();
+  b = { back, front, q, n }; BUBC.set(q, b); return b;
 }
-function drawBubbleFront(ctx, B, t) {
+function drawBubbleLayer(ctx, B, which, t) {
   if (B.b <= 0) return;
-  ctx.save(); ctx.globalAlpha = B.b;
-  ctx.translate(B.cx, B.cy); ctx.scale(1, B.ry / B.rx);
-  const R0 = B.rx, lw = Math.max(1.5, R0 * 0.035);
-  // thin film rim with a slowly drifting rainbow tint
-  const hue = (t * 25) % 360;
-  ctx.lineWidth = lw; ctx.strokeStyle = 'hsla(' + hue + ',80%,85%,0.55)'; ctx.beginPath(); ctx.arc(0, 0, R0, 0, TAU); ctx.stroke();
-  ctx.lineWidth = lw * 0.6; ctx.strokeStyle = 'hsla(' + ((hue + 140) % 360) + ',80%,80%,0.35)'; ctx.beginPath(); ctx.arc(0, 0, R0 * 0.94, 0.6 + t * 0.4, 2.4 + t * 0.4); ctx.stroke();
-  // bright highlight arc top-left and a small glint
-  ctx.lineCap = 'round'; ctx.lineWidth = lw * 2.2; ctx.strokeStyle = 'rgba(255,255,255,0.75)';
-  ctx.beginPath(); ctx.arc(0, 0, R0 * 0.82, Math.PI * 1.08, Math.PI * 1.42); ctx.stroke();
-  ctx.fillStyle = 'rgba(255,255,255,0.8)'; ctx.beginPath(); ctx.arc(-R0 * 0.38, -R0 * 0.62, lw * 1.4, 0, TAU); ctx.fill();
-  // ripple ring on a bounce
-  if (B.hit > 0.02) { const q = 1 - B.hit; ctx.lineWidth = lw * 1.2; ctx.strokeStyle = 'rgba(220,250,255,' + (0.6 * B.hit).toFixed(3) + ')'; ctx.beginPath(); ctx.arc(0, 0, R0 * (1.02 + q * 0.25), 0, TAU); ctx.stroke(); }
+  const S = bubbleSprites(B.rx), sx = B.rx / S.q, sy = B.ry / S.q, img = which ? S.front : S.back;
+  ctx.save(); ctx.globalAlpha = B.b * (which ? 0.85 + 0.15 * Math.sin(t * 1.7) : 1);   // slow shimmer
+  ctx.translate(B.cx, B.cy); ctx.scale(sx, sy); ctx.imageSmoothingEnabled = true;
+  ctx.drawImage(img, -S.n / 2, -S.n / 2);
   ctx.restore();
+  if (which && B.hit > 0.02) {   // ripple ring on a bounce (stroke only, no gradient)
+    const q = 1 - B.hit; ctx.save(); ctx.globalAlpha = 0.6 * B.hit * B.b; ctx.strokeStyle = '#DCFAFF'; ctx.lineWidth = Math.max(1.5, B.rx * 0.04);
+    ctx.beginPath(); ctx.ellipse(B.cx, B.cy, B.rx * (1.02 + q * 0.25), B.ry * (1.02 + q * 0.25), 0, 0, TAU); ctx.stroke(); ctx.restore();
+  }
 }
+function drawBubbleBack(ctx, B, t) { drawBubbleLayer(ctx, B, 0, t); }
+function drawBubbleFront(ctx, B, t) { drawBubbleLayer(ctx, B, 1, t); }
 function drawConnieAt(ctx, e, x, y, ps, t) {
   const G = connieGeom(e, t), ang = connieAngle(e);
   const cellPx = num(e.cell, CELL_U) * num(e.scale, 1) / PX * ps;
   const BB = num(e.bubble, 0) > 0 ? bubbleGeom(e, x, y, cellPx, t) : null;
   if (BB) drawBubbleBack(ctx, BB, t);
   ctx.save();
-  ctx.translate(Math.round(x), Math.round(y)); ctx.rotate(ang);
+  const pdx = Math.round((PIV.x - 0.5) * cellPx), pdy = Math.round((PIV.y - 0.5) * cellPx);
+  ctx.translate(Math.round(x) + pdx, Math.round(y) + pdy); ctx.rotate(ang); ctx.translate(-pdx, -pdy);   // pivot = body centre; position rounded, angle not
   const baseA = e.alpha != null ? c01(num(e.alpha, 1)) : 1;
   const auraCol = e.beef ? '#FFB84A' : e.buzz ? '#3FF0E0' : (e.inv ? '#F4F2FF' : null);
   if (auraCol) {   // soft additive glow that hugs his silhouette, gentle pulse (core does any blinking)
@@ -1676,14 +1707,15 @@ function drawConnieAt(ctx, e, x, y, ps, t) {
   if (G.tip) {
     const tx = (G.tip.x - 0.5) * cellPx, ty = (G.tip.y - 0.5) * cellPx;
     drawEmber(ctx, tx, ty, cellPx / 64, t, false);
-    tp = rotPt(x, y, tx, ty, ang);
+    tp = rotPt(Math.round(x) + pdx, Math.round(y) + pdy, tx - pdx, ty - pdy, ang);
   }
   ctx.restore();
   if (tp) drawWisp(ctx, tp.x, tp.y, cellPx / 80, t);
   if (BB) drawBubbleFront(ctx, BB, t);
 }
 /* fart puffs: art owns them now (RULINGS 7). World-space particles emitted while e.thrust is true. */
-const PUFFP = []; const PSTATE = { last: -1, t: -1 };
+const PUFF_N = 24, PUFFP = []; for (let i = 0; i < PUFF_N; i++) PUFFP.push({ live: false, x: 0, y: 0, t0: 0, life: 0, vx: 0, vy: 0, s: 1, fl: false });
+const PSTATE = { last: -1, t: -1, was: false, n: 0, head: 0 };
 function puffFrame(k) {
   if (FARTS.ok && FARTS.img) {
     const im = FARTS.img, cs = im.naturalHeight, n = Math.max(1, Math.round(im.naturalWidth / cs));
@@ -1693,22 +1725,20 @@ function puffFrame(k) {
   return { img: f, sx: 0, sw: f.width, sh: f.height, w: f.width, h: f.height };
 }
 function updPuffs(e, t) {
-  if (t < PSTATE.t - 0.001 || t - PSTATE.t > 2) { PUFFP.length = 0; PSTATE.last = -1; PSTATE.was = false; }   // new run / time jump
+  if (t < PSTATE.t - 0.001 || t - PSTATE.t > 2) { for (const p of PUFFP) p.live = false; PSTATE.last = -1; PSTATE.was = false; }   // new run / time jump
   PSTATE.t = t;
   const sheet = FARTS.ok && FARTS.img, life = sheet ? 0.55 : 0.75, every = sheet ? 0.11 : 0.07;
-  const pose = poseOf(e), on = !!e.thrust && pose <= 1;
-  const fresh = on && !PSTATE.was;
+  const pose = poseOf(e), on = !!e.thrust && pose <= 1, fresh = on && !PSTATE.was;
   PSTATE.was = on;
   if (on && (fresh || t - PSTATE.last >= every)) {
-    PSTATE.last = t; PSTATE.n = (PSTATE.n || 0) + 1;
+    PSTATE.last = t; PSTATE.n++;
     const cell = num(e.cell, CELL_U) * num(e.scale, 1), r = hash1(PSTATE.n * 7.31), r2 = hash1(PSTATE.n * 3.17 + 1);
-    const p = rotPt(num(e.x, 0), num(e.y, 0), (PUFF_PT.x - 0.5) * cell, (PUFF_PT.y - 0.5) * cell, connieAngle(e));
-    PUFFP.push({ x: p.x - 2 + (r2 - 0.5) * 3, y: p.y + 1 + (r - 0.5) * 3, t0: t, life,
-      vx: sheet ? -18 - r * 8 : -14 - r * 10, vy: sheet ? -4 - r2 * 5 : 10 + r * 12,
-      s: (fresh ? 1.45 : 0.9 + r * 0.22), fl: r > 0.5 });
-    if (PUFFP.length > 24) PUFFP.shift();
+    pivotPt(e, cell, PUFF_PT.x, PUFF_PT.y, TMPP);
+    const p = PUFFP[PSTATE.head]; PSTATE.head = (PSTATE.head + 1) % PUFF_N;
+    p.live = true; p.x = TMPP.x - 2 + (r2 - 0.5) * 3; p.y = TMPP.y + 1 + (r - 0.5) * 3; p.t0 = t; p.life = life;
+    p.vx = sheet ? -18 - r * 8 : -14 - r * 10; p.vy = sheet ? -4 - r2 * 5 : 10 + r * 12; p.s = fresh ? 1.45 : 0.9 + r * 0.22; p.fl = r > 0.5;
   }
-  for (let i = PUFFP.length - 1; i >= 0; i--) if (t - PUFFP[i].t0 > PUFFP[i].life || t < PUFFP[i].t0) PUFFP.splice(i, 1);
+  for (const p of PUFFP) if (p.live && (t - p.t0 > p.life || t < p.t0)) p.live = false;
 }
 function drawPuffAt(ctx, x, y, sizeU, k, v, flip) {
   const f = puffFrame(k), sc = (sizeU / PX) * v.ps / Math.max(f.w, 1);
@@ -1720,7 +1750,8 @@ function drawPuffAt(ctx, x, y, sizeU, k, v, flip) {
 }
 function drawPuffs(ctx, v, t) {
   const sheet = FARTS.ok && FARTS.img;
-  for (const p of PUFFP) {
+  for (let j = 0; j < PUFF_N; j++) {
+    const p = PUFFP[(PSTATE.head + j) % PUFF_N]; if (!p.live) continue;   // oldest first
     const age = t - p.t0, k = c01(age / p.life);
     const x = sxOf(v, p.x + p.vx * age), y = syOf(v, p.y + p.vy * age);
     // sheet (RULINGS 15): 26 units across at full size, 45% at birth, full by cell 2
@@ -1819,40 +1850,38 @@ function puffSpr(i) {   // chunky round smoke puffs, radius 2..9 art px
   E(g, '#BDBBD0', n / 2, n / 2 + 0.5, r, r); E(g, '#E6E4F2', n / 2 - 0.5, n / 2 - 0.5, r * 0.8, r * 0.75); E(g, '#F6F5FC', n / 2 - r * 0.3, n / 2 - r * 0.3, r * 0.35, r * 0.3);
   return (PUFFS[i] = c);
 }
+const TRX = new Float32Array(512), TRY = new Float32Array(512), TRK = new Float32Array(512);
+const TRAIL_MAX = 48;   // RULINGS 23: at most 48 pre-rendered puff sprites
 function drawTrail(ctx, trail, view) {
   if (!trail || !trail.length) return;
-  const v = V(view), ps = v.ps, n = trail.length, B = 6;
+  const v = V(view), ps = v.ps, n = Math.min(trail.length, 512), B = 4;
   ctx.save(); ctx.imageSmoothingEnabled = false;
-  // 1) continuous ribbon core, batched into B age buckets (one stroke per bucket)
-  ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.strokeStyle = '#E8E6F4';
-  const xs = new Array(n), ys = new Array(n), ks = new Array(n);
   for (let i = 0; i < n; i++) {
-    const p = trail[i]; if (!p) { ks[i] = 2; continue; }
-    const age = num(p.age, 0), k = age / TRAIL_LIFE; ks[i] = k;
-    xs[i] = sxOf(v, num(p.x, 0)); ys[i] = syOf(v, num(p.y, 0) - age * 2.2);
+    const p = trail[trail.length - n + i]; if (!p) { TRK[i] = 2; continue; }
+    const age = num(p.age, 0), k = age / TRAIL_LIFE; TRK[i] = k;
+    TRX[i] = sxOf(v, num(p.x, 0)); TRY[i] = syOf(v, num(p.y, 0) - age * 2.2);
   }
+  // 1) ribbon core: 4 age buckets, one stroke each
+  ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.strokeStyle = '#E8E6F4';
   for (let b = 0; b < B; b++) {
     const k0 = b / B, k1 = (b + 1) / B, km = (b + 0.5) / B;
     ctx.globalAlpha = (1 - km) * 0.55; ctx.lineWidth = ps * (1.2 + km * 3.5);
     ctx.beginPath(); let open = false;
     for (let i = 1; i < n; i++) {
-      const k = ks[i];
-      if (k >= k0 && k < k1 && ks[i - 1] < 1 && Math.abs(xs[i - 1] - xs[i]) < v.vw * 0.25) {
-        if (!open) { ctx.moveTo(xs[i - 1], ys[i - 1]); open = true; }
-        ctx.lineTo(xs[i], ys[i]);
-      } else open = false;
+      const k = TRK[i];
+      if (k >= k0 && k < k1 && TRK[i - 1] < 1 && Math.abs(TRX[i - 1] - TRX[i]) < v.vw * 0.25) { if (!open) { ctx.moveTo(TRX[i - 1], TRY[i - 1]); open = true; } ctx.lineTo(TRX[i], TRY[i]); }
+      else open = false;
     }
     ctx.stroke();
   }
-  // 2) soft puffs that widen and drift up as they age (every other point; they overlap anyway)
-  for (let i = n - 1; i >= 0; i -= 2) {
-    const k = ks[i]; if (!(k < 1)) continue;
-    const p = trail[i], age = k * TRAIL_LIFE;
-    const sz = Math.min(7, Math.floor(k * 9 + (i % 3) * 0.6)), spr = puffSpr(sz);
-    const wob = Math.sin(age * 2.4 + i * 0.9) * k * 2.5;
-    const x = sxOf(v, num(p.x, 0) + wob), y = syOf(v, num(p.y, 0) - age * 2.2 - k * 1.5);
-    ctx.globalAlpha = Math.pow(1 - k, 1.4) * 0.55;
-    const d = spr.width * ps * 1.15; ctx.drawImage(spr, Math.round(x - d / 2), Math.round(y - d / 2), Math.ceil(d), Math.ceil(d));
+  // 2) puffs: at most TRAIL_MAX sprites, evenly strided, newest first
+  const step = Math.max(1, Math.ceil(n / TRAIL_MAX));
+  for (let i = n - 1; i >= 0; i -= step) {
+    const k = TRK[i]; if (!(k < 1)) continue;
+    const age = k * TRAIL_LIFE, sz = Math.min(7, Math.floor(k * 9 + (i % 3) * 0.6)), spr = puffSpr(sz);
+    const wob = Math.sin(age * 2.4 + i * 0.9) * k * 2.5 * v.sc;
+    ctx.globalAlpha = (1 - k) * Math.sqrt(1 - k) * 0.55;
+    const d = spr.width * ps * 1.15; ctx.drawImage(spr, Math.round(TRX[i] + wob - d / 2), Math.round(TRY[i] - k * 1.5 * v.sc - d / 2), Math.ceil(d), Math.ceil(d));
   }
   ctx.restore();
 }
@@ -2557,10 +2586,12 @@ function drawConnieSlumped(ctx, cx, groundY, h, age, t) {
   drawConnieAt(ctx, { pose: 2, age: clamp(Math.floor(num(age, 0)), 0, 4), cell: CELL_U, k: 0.62, __noShim: true }, cx - cellPx * 0.02, groundY - cellPx * 0.2, ps, t);
 }
 /* HUD backing: a soft dark strip across the top (h px), so labels never sit on busy ceiling scenery */
+const HUDC = new Map();
 function drawHudStrip(ctx, vw, h, a) {
-  vw = num(vw, (ctx.canvas || {}).width || 390); h = num(h, 40); a = c01(num(a, 0.65));
-  const g = ctx.createLinearGradient(0, 0, 0, h); g.addColorStop(0, 'rgba(6,4,12,' + a + ')'); g.addColorStop(0.7, 'rgba(6,4,12,' + (a * 0.75).toFixed(3) + ')'); g.addColorStop(1, 'rgba(6,4,12,0)');
-  ctx.save(); ctx.fillStyle = g; ctx.fillRect(0, 0, vw, h); ctx.restore();
+  vw = num(vw, (ctx.canvas || {}).width || 390); h = Math.max(1, Math.round(num(h, 40))); a = Math.round(c01(num(a, 0.65)) * 100) / 100;
+  const key = h * 1000 + a * 100; let c = HUDC.get(key);
+  if (!c) { c = mk(1, h); const g = c.getContext('2d'); const gr = g.createLinearGradient(0, 0, 0, h); gr.addColorStop(0, 'rgba(6,4,12,' + a + ')'); gr.addColorStop(0.7, 'rgba(6,4,12,' + (a * 0.75).toFixed(3) + ')'); gr.addColorStop(1, 'rgba(6,4,12,0)'); g.fillStyle = gr; g.fillRect(0, 0, 1, h); HUDC.set(key, c); }
+  ctx.save(); ctx.imageSmoothingEnabled = true; ctx.drawImage(c, 0, 0, vw, h); ctx.restore();
 }
 /* a dark plate behind one text label: x,y top-left, w,h size */
 function drawTextPlate(ctx, x, y, w, h, a) {
@@ -2705,7 +2736,7 @@ function init() {
   loadImg(window.CA_PORTRAIT_URI, PORT);
   loadImg(window.CA_FART_URI, FARTS);
   loadImg(window.CA_CUTIN_URI, CUTS);
-  loadImg(window.CA_LOGO_URI, LOGO); loadImg(window.CA_ITEMS_URI, ITEMS, () => { for (const k in ITC) delete ITC[k]; for (const k in OCACHE) delete OCACHE[k]; });
+  loadImg(window.CA_LOGO_URI, LOGO); loadImg(window.CA_ITEMS_URI, ITEMS, () => { for (const k in ITC) delete ITC[k]; for (const k in OCM) OCM[k].clear(); });
   loadImg(window.CA_CUTIN_WIN_URI, ENDS.win); loadImg(window.CA_CUTIN_SLIP_WIN_URI, ENDS.slip_win); loadImg(window.CA_CUTIN_SLIP_LOSE_URI, ENDS.slip_lose);
   loadImg(window.CA_CUTIN_WIFE_SAD_URI, ENDS.sad); loadImg(window.CA_CUTIN_HAMZAH_URI, ENDS.hamzah); loadImg(window.CA_CUTIN_PARTY_URI, ENDS.party); loadImg(window.CA_CUTIN_SQUAD_URI, ENDS.squad);
   loadImg(window.CA_CUTIN_INTRO_CITY_URI, INTROI.intro_city); loadImg(window.CA_CUTIN_INTRO_BET_URI, INTROI.intro_bet); loadImg(window.CA_CUTIN_INTRO_HAMZAH_URI, INTROI.intro_hamzah); loadImg(window.CA_CUTIN_INTRO_LAUNCH_URI, INTROI.intro_launch);
@@ -3184,7 +3215,7 @@ const root = typeof window !== 'undefined' ? window : globalThis;
 const HAS_DOM = typeof document !== 'undefined' && !!(document && document.getElementById);
 const QS = (root.location && root.location.search) || '';
 function qp(k, d) { const m = new RegExp('[?&]' + k + '=([^&]*)').exec(QS); return m ? decodeURIComponent(m[1]) : d; }
-const OPT = { headless: qp('headless', '0') === '1' || !HAS_DOM, seed: qp('seed', ''), debug: qp('debug', '0') === '1', hit: qp('hit', '0') === '1', noart: qp('noart', '0') === '1' };
+const OPT = { fps: qp('fps', '0') === '1', headless: qp('headless', '0') === '1' || !HAS_DOM, seed: qp('seed', ''), debug: qp('debug', '0') === '1', hit: qp('hit', '0') === '1', noart: qp('noart', '0') === '1' };
 const clamp = (v, a, b) => v < a ? a : v > b ? b : v;
 const lerp = (a, b, k) => a + (b - a) * k;
 const ss = (u) => u <= 0 ? 0 : u >= 1 ? 1 : u * u * (3 - 2 * u);
@@ -3198,12 +3229,12 @@ function osc(p) { const q = frac(p), tri = q < 0.5 ? q * 2 : 2 - q * 2; return 1
 const HZ = 120, DT = 1 / HZ;
 const P = {
   H: 200,                         // playfield height
-  g: 520, thrust: 980, vyUp: -190, vyDown: 240, onset: 0.06, release: 0.035,
+  g: 440, thrust: 860, vyUp: -165, vyDown: 215, onset: 0.09, release: 0.06, coyote: 0.04, // RULINGS 23C: rounder hold
   cell: 48.8, rx: 9.5, ry: 12.5, hbx: 4.9, hby: -4.9, // hero.png cell (world units, square; body ~40 tall in cells 0-1) and the hitbox
                                   // ellipse on head+torso (RULINGS 7: centre 0.60,0.40 of the cell); sim (x,y) = hitbox centre
   v0: 70, v1: 150, tRamp: 90, creep: 0.15,
   gap0: 170, gap1: 105, gapMin: 92, gapCreep: 0.1, gapT: 160,
-  clear0: 31, clear1: 27.5, clearT: 120,   // half-height of the guaranteed open band around the guide path
+  clear0: 28.5, clear1: 24, clearT: 120,   // half-height of the guaranteed open band around the guide path
   wallM: 5,                       // guide path keeps clear + wallM from the corridor walls
   pathA: 230,                     // max vertical accel the guide path asks for (u/s^2)
   spc0: 1.8, spc1: 0.9, spcT: 130, // seconds of air between patterns
@@ -3464,7 +3495,7 @@ function createSim(seed, o) {
   o = o || {};
   const C = makeCourse(seed);
   const S = {
-    C, seed: C.seed, x: 0, y: 100, vy: 0, thr: 0, hold: false, steps: 0, t: 0, dead: false, cause: '',
+    C, seed: C.seed, x: 0, y: 100, vy: 0, thr: 0, thr0: 0, thrT: 1, thrOn: false, hold: false, steps: 0, t: 0, dead: false, cause: '',
     bonus: 0, buzz: 0, beef: 0, inv: 0, save: 0, saveY0: 0, slip: null, teddy: 'ready', teddyUsed: false, won: false,
     smashed: 0, pickups: 0, oi: 0, pi: 0, ev: [], zk: 0, lap: 1, taken: {}, best: o.best || 0, maxV: 0,
   };
@@ -3495,8 +3526,10 @@ function step(S, hold) {
   } else if (S.beef > 0) {
     const cy = C.centre(S.x); S.thr = 1; const ny = S.y + (cy - S.y) * Math.min(1, DT * 9); S.vy = (ny - S.y) / DT; S.y = ny;
   } else {
-    if (hold) S.thr += (1 - S.thr) * DT / P.onset; else S.thr -= S.thr * DT / P.release;
-    if (S.thr < 1e-4) S.thr = 0;
+    // throttle: smoothstep ease from wherever it was when the input changed (onset 90 ms, release 60 ms)
+    if (hold !== S.thrOn) { S.thrOn = hold; S.thr0 = S.thr; S.thrT = 0; }
+    S.thrT += DT;
+    S.thr = hold ? S.thr0 + (1 - S.thr0) * ss(S.thrT / P.onset) : S.thr0 * (1 - ss(S.thrT / P.release));
     S.vy += (P.g - P.thrust * S.thr) * DT;
     S.vy = clamp(S.vy, P.vyUp, P.vyDown);
     S.y += S.vy * DT;
@@ -3505,7 +3538,7 @@ function step(S, hold) {
   const top = Math.max(C.top(S.x - P.rx * 0.6), C.top(S.x), C.top(S.x + P.rx * 0.6)), bot = Math.min(C.bot(S.x - P.rx * 0.6), C.bot(S.x), C.bot(S.x + P.rx * 0.6));
   const grace = S.t < P.grace, safe = S.inv > 0 || S.beef > 0 || S.save > 0 || grace;
   if (S.y - P.ry < top || S.y + P.ry > bot) {
-    if (grace) { if (S.y - P.ry < top) { S.y = top + P.ry; S.vy = Math.max(60, Math.abs(S.vy) * 0.45); } else { S.y = bot - P.ry; S.vy = -Math.max(90, Math.abs(S.vy) * 0.5); } if (!S.bounceT || S.t - S.bounceT > 0.25) { S.bounceT = S.t; emit(S, 'bounce'); } }
+    if (grace) { if (S.thrOn && S.thrT <= P.coyote) { S.thr = 1; S.thr0 = 1; } if (S.y - P.ry < top) { S.y = top + P.ry; S.vy = Math.max(60, Math.abs(S.vy) * 0.45); } else { S.y = bot - P.ry; S.vy = -Math.max(90, Math.abs(S.vy) * 0.5); } if (!S.bounceT || S.t - S.bounceT > 0.25) { S.bounceT = S.t; emit(S, 'bounce'); } }
     else if (safe) { if (S.y - P.ry < top) { S.y = top + P.ry; S.vy = Math.max(0, S.vy); } else { S.y = bot - P.ry; S.vy = Math.min(0, S.vy); } }
     else return hit(S, S.y - P.ry < top ? 'ceiling' : 'floor');
   }
@@ -3664,7 +3697,7 @@ const cv = document.getElementById('cv'); const ctx = cv.getContext('2d');
 const V = { W: 390, H: 844, dpr: 1, ins: { t: 0, b: 0, l: 0, r: 0 }, px: 2, land: false, scale: 1, oy: 0, ox: 0, vwU: 110 };
 function readInsets() { try { const cs = root.getComputedStyle(document.getElementById('probe')); return { t: parseFloat(cs.paddingTop) || 0, b: parseFloat(cs.paddingBottom) || 0, l: parseFloat(cs.paddingLeft) || 0, r: parseFloat(cs.paddingRight) || 0 }; } catch (e) { return { t: 0, b: 0, l: 0, r: 0 }; } }
 function layout() {
-  const dpr = Math.min(root.devicePixelRatio || 1, 3);
+  const dpr = Math.min(root.devicePixelRatio || 1, V.dprCap || 2); // RULINGS 23A: 2, dropping to 1.5 on slow phones
   const W = Math.max(1, root.innerWidth || 390), H = Math.max(1, root.innerHeight || 844);
   cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
   V.W = W; V.H = H; V.dpr = dpr; V.ins = readInsets();
@@ -3790,7 +3823,7 @@ function startRun(o) {
   const daily = /^D/.test(seedStr);
   const S = createSim(seedOfStr(seedStr), { best: SAVE.best });
   R = { S, seedStr, daily, day: daily ? parseInt(seedStr.slice(1), 36) : day, phase: 'ready', armed: false, readyT: 0, acc: 0, px: S.x, py: S.y, trail: [], cig: null, ct: 0,
-    pose: 0, poseT: 0, flyT: 0, zA: 0, zB: 0, zf: 1, card: null, nearT: 0, cam: 0, crash: null, teddyX: S.x, tedOff: -6, leap: 0, proud: 0, band: null, coach: (SAVE.coached | 0) < 3, smash: {}, age: 0, ageFrom: 0, ageT: 1, cutin: null, ramp: 1 };
+    pose: 0, poseT: 0, flyT: 0, zA: 0, zB: 0, zf: 1, card: null, nearT: 0, cam: 0, crash: null, teddyX: S.x, ang: 0, angP: 0, angV: 0, fallT: 0, diveT: 0, tedOff: -6, leap: 0, proud: 0, band: null, coach: (SAVE.coached | 0) < 3, smash: {}, age: 0, ageFrom: 0, ageT: 1, cutin: null, ramp: 1 };
   if (o.intro || (!SAVE.intro && !G.bot && !OPT.debug)) { R.cutin = introCutin(0); SAVE.intro = true; persist(); au('music', 'intro'); }
   R.cam = S.x - camFrac() * V.vwU;
   G.scene = 'play'; G.paused = false; G.result = null; G.ptrs = {};
@@ -3808,15 +3841,22 @@ function inputHeld() {
 }
 
 /* ---------- poses (RULINGS 7) ---------- */
-function updatePose(dt) {
-  const S = R.S; R.poseT += dt; R.flyT += dt;
-  if (R.phase === 'crash') return;
-  const want = (S.vy > 60 && !S.hold && S.beef <= 0 && S.save <= 0) ? 2 : 0;
-  const cur = R.pose === 2 ? 2 : 0;
-  if (want !== cur && R.poseT >= 0.1) { R.pose = want === 2 ? 2 : 0; R.poseT = 0; R.flyT = 0; }
-  if (R.pose !== 2) { const p = Math.floor(R.flyT / 0.12) % 2; if (p !== R.pose) { R.pose = p; } }
+// RULINGS 23B: always the flying cells (0/1 at 120 ms); attitude from a critically damped spring on vy; the dive cell
+// only after 0.45 s of falling faster than 150 u/s, held at least 250 ms. Runs once per sim step (deterministic).
+const ANG_W = 1 / 0.09, DEG = Math.PI / 180;
+function motionStep(S) {
+  R.angP = R.ang; R.flyT += DT;
+  const target = lerp(-14, 22, (clamp(S.vy, -190, 240) + 190) / 430) * DEG;
+  R.angV += (ANG_W * ANG_W * (target - R.ang) - 2 * ANG_W * R.angV) * DT; R.ang += R.angV * DT;
+  const falling = S.vy > 150 && !S.hold && S.beef <= 0 && S.save <= 0;
+  R.fallT = falling ? R.fallT + DT : 0;
+  if (R.pose === 2) { R.diveT += DT; if (!falling && R.diveT >= 0.25) R.pose = 0; }
+  else if (R.fallT >= 0.45) { R.pose = 2; R.diveT = 0; }
+  if (R.pose !== 2) R.pose = Math.floor(R.flyT / 0.12) % 2;
 }
-function tiltOf(pose, vy) { return pose <= 1 ? clamp(vy / 240, -1, 1) * 0.209 : 0; }
+function drawnAngle(a) { return R.pose === 2 ? 0 : lerp(R.angP, R.ang, a); }
+// trail: at most 48 points, recycled (RULINGS 23A)
+function pushTrail(x, y) { let p; if (R.trail.length >= 48) p = R.trail.shift(); else p = {}; p.x = x; p.y = y; p.age = 0; R.trail.push(p); }
 function bobY() { return Math.sin(R.readyT * 2.4) * 3; }
 function cellCentre(x, y) { return { x: x - P.hbx, y: y - P.hby }; }
 function tipWorld(x, y, pose, k, age) {
@@ -3837,7 +3877,7 @@ function update(dt) {
     if (R.phase === 'ready') {
       // RULINGS 22a: hover in the bubble until a fresh press; the sim does not move
       R.readyT += dt; R.drift = (R.drift || 0) + vNom(0) * 0.25 * dt;
-      if (Math.floor(R.readyT / DT) % 2 === 0) { const tp = tipWorld(R.S.x, R.S.y + bobY(), Math.floor(R.readyT / 0.12) % 2, 0, 0); if (tp) R.trail.push({ x: tp.x + (R.drift || 0) * 0, y: tp.y, age: 0 }); }
+      if (Math.floor(R.readyT / DT) % 6 === 0) { const tp = tipWorld(R.S.x, R.S.y + bobY(), Math.floor(R.readyT / 0.12) % 2, 0, 0); if (tp) pushTrail(tp.x, tp.y); }
       if (R.cutin) cutinUpdate(dt);
       else { const held = inputHeld(); if (!held) R.armed = true; if (G.bot || (R.armed && held)) { R.phase = 'run'; R.acc = 0; au('sfx', 'ui'); } }
       au('thrust', false);
@@ -3850,7 +3890,8 @@ function update(dt) {
       for (let i = 0; i < n && !S.dead && !R.cutin; i++) {
         R.px = S.x; R.py = S.y;
         step(S, inputHeld());
-        if (S.steps % 2 === 0) { const tp = tipWorld(S.x, S.y, R.pose, tiltOf(R.pose, S.vy), R.age); if (tp) R.trail.push({ x: tp.x, y: tp.y, age: 0 }); }
+        motionStep(S);
+        if (S.steps % 6 === 0) { const tp = tipWorld(S.x, S.y, R.pose, R.pose === 2 ? 0 : R.ang, R.age); if (tp) pushTrail(tp.x, tp.y); }
         nearMiss(S);
         handleEvents(S);
       }
@@ -3860,14 +3901,13 @@ function update(dt) {
         if (S.hold) au('thrust', true, S.vy); else au('thrust', false);
         au('setPace', clamp((speedOf(S) - P.v0) / (P.v1 + 40 - P.v0), 0, 1));
       }
-      updatePose(dt);
     } else if (R.phase === 'crash') { if (R.cutin) cutinUpdate(dt); else crashUpdate(dt); }
     // camera, trail ages, zone crossfade, Teddy
     const S2 = R.S, fx = R.phase === 'crash' ? R.crash.x : S2.x;
     R.cam = fx - camFrac() * V.vwU;
     for (const p of R.trail) p.age += dt;
     while (R.trail.length && R.trail[0].age > 2.5) R.trail.shift();
-    if (R.trail.length > 400) R.trail.splice(0, R.trail.length - 400);
+
     if (R.zf < 1) R.zf = Math.min(1, R.zf + dt);
     if (R.card) { R.card.t += dt; if (R.card.t > R.card.dur) R.card = null; }
     if (R.leap > 0 && !R.cutin) { R.leap = Math.max(0, R.leap - dt); if (R.leap === 0) R.proud = 0.5; }
@@ -3985,7 +4025,7 @@ function drawSkip() {
 }
 function startCrash() {
   const S = R.S; R.phase = 'crash'; R.ct = 0; au('thrust', false); au('setBuzz', false);
-  const k = tiltOf(R.pose, S.vy), tp = tipWorld(S.x, S.y, R.pose, k, R.age) || { x: S.x + 10, y: S.y - 4 };
+  const k = R.pose === 2 ? 0 : R.ang, tp = tipWorld(S.x, S.y, R.pose, k, R.age) || { x: S.x + 10, y: S.y - 4 };
   R.crash = { x: S.x, y: S.y, vx: speedOf(S) * 0.35, vy: Math.min(S.vy, 0) - 40, spin: 0, landed: false };
   R.cig = { x: tp.x, y: tp.y, vx: speedOf(S) * 0.5 + 30, vy: -110, a: 0, va: 14 };
   R.pose = 3; R.poseT = 0;
@@ -3999,7 +4039,7 @@ function crashUpdate(dt) {
   if (!cr.landed) R.pose = 3 + Math.floor(R.ct / 0.09) % 3; else R.pose = 5;
   const c = R.cig; c.vy += 300 * sd; c.x += c.vx * sd; c.y += c.vy * sd; c.a += c.va * sd;
   const cf = C.bot(c.x) - 1; if (c.y > cf) { c.y = cf; c.vy = -c.vy * 0.3; c.vx *= 0.6; c.va *= 0.5; }
-  if (Math.floor(R.ct / DT) % 2 === 0) R.trail.push({ x: c.x, y: c.y, age: 0 });
+  if (Math.floor(R.ct / DT) % 6 === 0) pushTrail(c.x, c.y);
   if (R.ct >= 0.8) {
     if (R.S.won) { finishRun(); return; }
     const tier = loseTier(R.S.zk), short = (SAVE.loseSeen | 0) >= 3;
@@ -4201,13 +4241,17 @@ function C_bot(S, x) { return S.C.bot(x); }
 function buildScene(view) {
   const S = R.S, C = S.C, x0 = view.camX - 40, x1 = view.camX + V.vwU + 40;
   const alive = R.phase === 'run';
-  const cx = alive ? lerp(R.px, S.x, clamp(R.acc / DT, 0, 1)) : S.x, cy = alive ? lerp(R.py, S.y, clamp(R.acc / DT, 0, 1)) : S.y;
-  const segs = []; for (let x = Math.floor((view.camX - 16) / 8) * 8; x <= view.camX + V.vwU + 16; x += 8) segs.push({ x, top: C.top(x), bot: C.bot(x), zone: R.cutin && R.cutin.kind === 'win' ? 'teal' : ZID(zoneAt(Tof(x)).i) });
-  const ents = [];
+  const a = G.noInterp ? 1 : clamp(R.acc / DT, 0, 1), cx = alive ? lerp(R.px, S.x, a) : S.x, cy = alive ? lerp(R.py, S.y, a) : S.y;
+  // pooled segs and entity list (no per-frame churn for the long arrays)
+  const segs = R.segs || (R.segs = []), pool = R.segPool || (R.segPool = []); segs.length = 0;
+  for (let x = Math.floor((view.camX - 16) / 8) * 8, i = 0; x <= view.camX + V.vwU + 16; x += 8, i++) {
+    const g = pool[i] || (pool[i] = {}); g.x = x; g.top = C.top(x); g.bot = C.bot(x); g.zone = R.cutin && R.cutin.kind === 'win' ? 'teal' : ZID(zoneAt(Tof(x)).i); segs.push(g);
+  }
+  const ents = R.ents || (R.ents = []); ents.length = 0;
   for (let i = Math.max(0, S.oi - 4); i < C.obs.length; i++) { const o = C.obs[i]; if (o.bx0 > x1) break; if (o.bx1 < x0) continue; if (o.smash != null && S.t - o.smash > 0.6) continue; ents.push(obstacleEnt(o, cx, S)); }
   for (let i = Math.max(0, S.pi - 4); i < C.picks.length; i++) { const p = C.picks[i]; if (p.x > x1) break; if (p.x < x0 || S.taken[p.id]) continue; const vs = Math.max(p.r * 2, p.type === 'pk.ball' || p.type === 'pk.dice' ? 10 : 15); ents.push({ type: p.type, id: p.id, x: p.x, y: p.y, w: vs, h: vs, r: p.r, k: frac(G.t * 0.8 + p.id * 0.37), zone: ZID(zoneAt(Tof(p.x)).i) }); }
   // Teddy runs along the floor; leaps on the save
-  const tx = R.teddyX, fy = C.bot(tx);
+  const tx = alive ? cx + R.tedOff : R.teddyX, fy = C.bot(tx);
   if (R.leap > 0) { const u = 1 - R.leap / 0.7, hgt = 4 * u * (1 - u) * Math.max(10, fy - cy); ents.push({ type: 'teddy', x: tx, y: fy - hgt, state: 'leap', k: 0 }); }
   else if (R.proud > 0) ents.push({ type: 'teddy', x: tx, y: fy, state: 'proud', k: 0 });
   else if (R.phase === 'crash') ents.push({ type: 'teddy', x: tx, y: fy, state: R.tedSat ? 'sit' : 'run', k: frac(G.t * 3) });
@@ -4219,7 +4263,7 @@ function buildScene(view) {
     const c = cellCentre(S.x, S.y + bobY());
     conn = { type: 'connie', x: c.x, y: c.y, w: P.cell, h: P.cell, cell: P.cell, pose: Math.floor(R.readyT / 0.12) % 2, age: 0, ageFrom: 0, ageK: 1, k: 0, thrust: false, bubble: 1, state: 'ready' };
   } else if (R.phase === 'run') {
-    const k = tiltOf(R.pose, S.vy), c = cellCentre(cx, cy);
+    const k = drawnAngle(a), c = cellCentre(cx, cy);
     conn = { type: 'connie', x: c.x, y: c.y, w: P.cell, h: P.cell, cell: P.cell, pose: R.pose, age: R.age, ageFrom: R.ageFrom, ageK: R.ageT, k, thrust: S.hold || S.beef > 0, inv: S.inv > 0, buzz: S.buzz > 0, beef: S.beef > 0, bubble, state: R.pose === 2 ? 'fall' : S.hold ? (R.pose ? 'thrustB' : 'thrustA') : 'rise' };
     if (R.ageT < 1) { conn.age = Math.floor(R.ageT * 0.6 / 0.08) % 2 ? R.ageFrom : R.age; }
     if (S.inv > 0 && S.beef <= 0 && !R.cutin && Math.floor(S.t / 0.08) % 2 === 1) conn = null;
@@ -4233,7 +4277,7 @@ function buildScene(view) {
   return { segs, ents };
 }
 function drawWorld() {
-  const view = makeView(R.cam), S = R.S;
+  const S = R.S, ia = G.noInterp ? 1 : clamp(R.acc / DT, 0, 1), view = makeView(R.phase === 'run' ? lerp(R.px, S.x, ia) - camFrac() * V.vwU : R.cam);
   try { const A = ART(); if (A) A.view = view; } catch (e) { }
   const zA = ZID(R.zA), zB = ZID(R.zB), z = R.zf < 1 ? (R.zf < 0.5 ? zA : zB) : zB;
   if (!artCall('drawBackdrop', [ctx, zA, zB, R.zf, view.camX + (R.drift || 0), V.W, V.H, G.t])) stubBackdrop(zA, zB, R.zf);
@@ -4241,7 +4285,10 @@ function drawWorld() {
   const sc = buildScene(view);
   if (!artCall('drawCorridor', [ctx, sc.segs, z, view])) stubCorridor(sc.segs, view);
   ctx.setTransform(V.dpr, 0, 0, V.dpr, 0, 0);
+  let head = null;
+  if (R.phase === 'run' && !R.cutin) { const tp = tipWorld(lerp(R.px, S.x, ia), lerp(R.py, S.y, ia), R.pose, drawnAngle(ia), R.age); if (tp) { head = R.trailHead || (R.trailHead = {}); head.x = tp.x; head.y = tp.y; head.age = 0; R.trail.push(head); } }
   if (!artCall('drawTrail', [ctx, R.trail, view])) stubTrail(R.trail, view);
+  if (head && R.trail[R.trail.length - 1] === head) R.trail.pop();
   ctx.setTransform(V.dpr, 0, 0, V.dpr, 0, 0);
   if (!artCall('drawEntities', [ctx, sc.ents, view, G.t])) for (const e of sc.ents) stubEntity(e, view, G.t);
   ctx.setTransform(V.dpr, 0, 0, V.dpr, 0, 0);
@@ -4419,7 +4466,7 @@ function drawHUD() {
   if (!artCall('drawHudStrip', [ctx, V.W, hudH, 0.65])) { const g = ctx.createLinearGradient(0, 0, 0, hudH); g.addColorStop(0, 'rgba(6,4,10,0.7)'); g.addColorStop(1, 'rgba(6,4,10,0)'); ctx.fillStyle = g; ctx.fillRect(0, 0, V.W, hudH); }
   ctx.setTransform(V.dpr, 0, 0, V.dpr, 0, 0); ctx.globalAlpha = 1;
   text(String(m), V.W / 2, A.y, big, '#FFFFFF', 'c');
-  const bs = S.newBest ? 'NEW BEST' : SAVE.best ? 'BEST ' + SAVE.best : S.t < 3 ? 'FIRST FLIGHT' : '';
+  const bs = S.newBest ? 'NEW BEST' : SAVE.best ? 'BEST ' + SAVE.best : '';
   if (bs) text(bs, V.W / 2, A.y + 7 * big + 6, px, S.newBest ? '#B6FF2E' : ui.ink, 'c');
   // Teddy icon top-left
   const is = Math.round(Math.max(22, 9 * px));
@@ -4563,6 +4610,7 @@ function render() {
     else drawTitle();
   } catch (e) { if (!G.lastErr) console.error(e); G.lastErr = String(e && e.stack || e); }
   ctx.setTransform(V.dpr, 0, 0, V.dpr, 0, 0); ctx.globalAlpha = 1;
+  if (OPT.fps && G.fstat && G.fstat.show) { const s = G.fstat.show, w = textW(s, 1.5); ctx.fillStyle = 'rgba(0,0,0,0.6)'; ctx.fillRect(V.ins.l + 4, V.H - V.ins.b - 20, w + 8, 16); text(s, V.ins.l + 8, V.H - V.ins.b - 16, 1.5, '#B6FF2E', 'l', { noRect: true, shadow: false }); }
   if (G.toast) { const A = area(), px = fitPx(G.toast.s, A.w - 20, V.px), w = textW(G.toast.s, px) + 24, y = A.y + A.h * 0.5; ctx.fillStyle = 'rgba(12,8,18,0.92)'; ctx.fillRect(V.W / 2 - w / 2, y, w, 9 * px + 14); text(G.toast.s, V.W / 2, y + 8, px, '#FFF1DE', 'c', { noRect: true }); }
 }
 
@@ -4573,11 +4621,36 @@ function onDown(e) {
   if (e.cancelable) e.preventDefault();
   au('unlock'); if (!G.audioInit) { G.audioInit = true; au('setMuted', SAVE.muted); }
   try { cv.setPointerCapture(e.pointerId); } catch (err) { }
+  G.lastPtrDown = (root.performance && root.performance.now) ? root.performance.now() : Date.now();
   const b = btnAt(e.clientX, e.clientY);
   if (b) { G.press = { id: b.id, pid: e.pointerId }; return; }
   if (G.scene === 'play' && G.paused) { G.paused = false; return; }
   if (G.scene === 'play' && R && R.cutin) { advanceCutin(false); R.armed = false; return; }
   if (G.scene === 'play') G.ptrs[e.pointerId] = true;
+}
+// RULINGS 23C: touch events straight on the canvas too (passive: false), de-duplicated against pointer events;
+// any finger down = hold, last finger up = release
+function onTouchStart(e) {
+  if (G.nameOpen) return;
+  if (e.cancelable) e.preventDefault();
+  au('unlock');
+  const now = (root.performance && root.performance.now) ? root.performance.now() : Date.now();
+  for (let i = 0; i < e.changedTouches.length; i++) {
+    const t = e.changedTouches[i];
+    if (btnAt(t.clientX, t.clientY)) { if (now - (G.lastPtrDown || -1e9) > 80) { const b = btnAt(t.clientX, t.clientY); G.press = { id: b.id, pid: 't' + t.identifier }; } continue; }
+    if (now - (G.lastPtrDown || -1e9) <= 80) continue; // the pointer event already handled this finger
+    if (G.scene === 'play' && G.paused) { G.paused = false; continue; }
+    if (G.scene === 'play' && R && R.cutin) { advanceCutin(false); R.armed = false; continue; }
+    if (G.scene === 'play') G.ptrs['t' + t.identifier] = true;
+  }
+}
+function onTouchEnd(e) {
+  if (e.cancelable) e.preventDefault();
+  for (let i = 0; i < e.changedTouches.length; i++) {
+    const t = e.changedTouches[i]; delete G.ptrs['t' + t.identifier];
+    if (G.press && G.press.pid === 't' + t.identifier) { const b = btnAt(t.clientX, t.clientY), id = G.press.id; G.press = null; if (b && b.id === id) { au('sfx', 'ui'); try { b.fn(); } catch (err) { console.error(err); } } }
+  }
+  if (!e.touches || e.touches.length === 0) G.ptrs = {};
 }
 function onUp(e) {
   delete G.ptrs[e.pointerId];
@@ -4607,13 +4680,22 @@ let lastTs = 0;
 function frame(ts) {
   const dt = lastTs ? Math.min(0.1, Math.max(0, (ts - lastTs) / 1000)) : 1 / 60; lastTs = ts;
   G.frames++; G.fps += ((dt > 0 ? 1 / dt : 60) - G.fps) * 0.05;
+  // one-second frame stats: worst frame for ?fps=1, and a one-way drop to DPR 1.5 if a playing second averages > 20 ms
+  const F = G.fstat || (G.fstat = { sum: 0, n: 0, worst: 0, t0: ts, show: '' });
+  F.sum += dt; F.n++; if (dt > F.worst) F.worst = dt;
+  if (ts - F.t0 >= 1000) {
+    const avg = F.sum / Math.max(1, F.n);
+    if (avg > 0.020 && G.scene === 'play' && !G.paused && (V.dprCap || 2) > 1.5 && (root.devicePixelRatio || 1) > 1.5) { V.dprCap = 1.5; layout(); }
+    F.show = Math.round(F.n * 1000 / (ts - F.t0)) + ' FPS  WORST ' + Math.round(F.worst * 1000) + ' MS  DPR ' + V.dpr;
+    F.sum = 0; F.n = 0; F.worst = 0; F.t0 = ts;
+  }
   update(dt); render();
   root.requestAnimationFrame(frame);
 }
 
 /* ---------- debug / test hooks ---------- */
 CA.debug = {
-  state() { const S = R && R.S; return { scene: G.scene, paused: G.paused, phase: R && R.phase, seed: R && R.seedStr, t: S ? +S.t.toFixed(3) : 0, m: S ? metres(S) : 0, x: S ? +S.x.toFixed(1) : 0, y: S ? +S.y.toFixed(1) : 0, vy: S ? +S.vy.toFixed(1) : 0, dead: S ? S.dead : false, teddy: S && S.teddy, pose: R && R.pose, age: R && R.age, cutin: R && R.cutin ? R.cutin.kind + ':' + R.cutin.beat : null, won: !!(R && R.S.won), zk: R && R.S.zk, steps: S ? S.steps : 0, result: G.result, fps: Math.round(G.fps), art: !!ART(), artDead: Object.keys(artDead), hero: HERO.ok, err: G.lastErr, W: V.W, H: V.H, scale: +V.scale.toFixed(3), vwU: +V.vwU.toFixed(1) }; },
+  state() { const S = R && R.S; return { scene: G.scene, paused: G.paused, phase: R && R.phase, seed: R && R.seedStr, t: S ? +S.t.toFixed(3) : 0, m: S ? metres(S) : 0, x: S ? +S.x.toFixed(1) : 0, y: S ? +S.y.toFixed(1) : 0, vy: S ? +S.vy.toFixed(1) : 0, dead: S ? S.dead : false, teddy: S && S.teddy, pose: R && R.pose, ang: R ? +(drawnAngle(G.noInterp ? 1 : clamp(R.acc / DT, 0, 1)) / DEG).toFixed(2) : 0, age: R && R.age, cutin: R && R.cutin ? R.cutin.kind + ':' + R.cutin.beat : null, won: !!(R && R.S.won), zk: R && R.S.zk, steps: S ? S.steps : 0, result: G.result, fps: Math.round(G.fps), art: !!ART(), artDead: Object.keys(artDead), hero: HERO.ok, err: G.lastErr, W: V.W, H: V.H, scale: +V.scale.toFixed(3), vwU: +V.vwU.toFixed(1) }; },
   start(o) { startRun(o); if (!(o && (o.ready || o.intro))) { R.phase = 'run'; R.acc = 0; } return this.state(); }, scene(s) { toScene(s); }, hold(on) { G.forceHold = !!on; },
   bot(kind) { G.bot = kind ? makeBot(kind, 1) : null; },
   buttons() { return G.btns.map((b) => ({ id: b.id, label: b.label, x: Math.round(b.x), y: Math.round(b.y), w: Math.round(b.w), h: Math.round(b.h) })); },
@@ -4626,6 +4708,7 @@ CA.debug = {
   card(s) { if (R) setCard(s || 'THE DRIVE-THRU', 3, null, 'LAP 2'); },
   cutin(kind, zi) { if (!R) startRun(); const z = zi == null ? 1 : zi; R.age = Math.min(4, z); R.cutin = { kind: kind || 'age', age: R.age, beat: 0, t: 0.6, dur: kind === 'intro' ? 1.3 : 1.8, zone: ZID(z % 5), lines: kind === 'intro' ? INTRO_BEATS[0].lines.slice() : (CUTIN_LINES[z % 5] || ['LAP 2', "HE'S BEEN IN THE AIR FOR FIFTY YEARS."]), s1: true, s2: true, name: ZONES[z % 5].name }; G.scene = 'play'; render(); return R.cutin; },
   skip() { advanceCutin(true); },
+  interp(on) { G.noInterp = !on; },
   go() { if (R && R.phase === 'ready') { R.phase = 'run'; R.acc = 0; } return this.state(); },
   intro(beat) { if (!R) startRun(); R.cutin = introCutin(beat | 0); R.cutin.t = 1.2; G.scene = 'play'; render(); return R.cutin; },
   win() { if (R && R.phase === 'run') { R.S.C.ensure(CA.sim.winX() + 2000); while (!R.S.won && !R.S.dead) { R.S.inv = 1; R.S.y = R.S.C.centre(R.S.x); R.S.vy = 0; CA.sim.step(R.S, false); if (!R.S.won) R.S.ev.length = 0; } R.zB = 4; handleEvents(R.S); render(); } return this.state(); },
@@ -4642,7 +4725,8 @@ function boot() {
   try { const A = ART(); if (A && typeof A.init === 'function') A.init(); } catch (e) { console.warn('CAArt.init failed', e); }
   if (!HEADLESS) { try { if (root.CAAudio && root.CAAudio.init) root.CAAudio.init(); } catch (e) { } au('setMuted', SAVE.muted); }
   root.addEventListener('resize', layout); root.addEventListener('orientationchange', () => setTimeout(layout, 150));
-  cv.addEventListener('pointerdown', onDown, { passive: false }); root.addEventListener('pointerup', onUp); root.addEventListener('pointercancel', onUp);
+  cv.addEventListener('pointerdown', onDown, { passive: false });
+  cv.addEventListener('touchstart', onTouchStart, { passive: false }); cv.addEventListener('touchend', onTouchEnd, { passive: false }); cv.addEventListener('touchcancel', onTouchEnd, { passive: false }); root.addEventListener('pointerup', onUp); root.addEventListener('pointercancel', onUp);
   root.addEventListener('keydown', (e) => onKey(e, true)); root.addEventListener('keyup', (e) => onKey(e, false));
   document.addEventListener('visibilitychange', () => { if (document.hidden) pauseNow(); au('setMuted', document.hidden || SAVE.muted); });
   document.addEventListener('touchmove', (e) => { if (e.target === cv && e.cancelable) e.preventDefault(); }, { passive: false });
@@ -4688,6 +4772,9 @@ boot();
  * - RULINGS 22: READY is a game-layer phase (sim not stepped; needs a fresh press, so a held key from RETRY does not
  *   launch). Grace lives in the sim (first 3 s: soft walls bounce, nothing hurts, Teddy untouched) so bots get it too.
  *   First obstacle at 4 s. Retune: clearance 31 -> 27.5, 1.8 -> 0.9 s between patterns.
+ * - RULINGS 23: g 440, thrust 860, vy [-165, 215], smoothstep onset 90 ms / release 60 ms, 40 ms coyote on grace bounces;
+ *   clearance retuned to 28.5 -> 24 to keep the bars. Pose/angle run per sim step (spring, w = 1/0.09 s); the camera's
+ *   vertical ease is skipped (the 200-unit playfield always fills the view height).
  */
 
 </script>
