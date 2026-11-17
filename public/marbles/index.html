@@ -8,19 +8,19 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="theme-color" content="#0B0B12">
 <link rel="icon" href="data:,">
-<title>ROB'S LOST MARBLES</title>
+<title>ROB'S MARBLE DADNESS</title>
 <meta name="description" content="Rob has lost his marbles. Roll one from the tee to the cup across five little courses: a putting green, David's kitchen, Wharton, a stock chart and a links in a gale. Race the clock, collect his wallet, beat your friends on the global leaderboard.">
-<meta property="og:title" content="ROB'S LOST MARBLES">
+<meta property="og:title" content="ROB'S MARBLE DADNESS">
 <meta property="og:description" content="Roll a marble from the tee to the cup across five little courses. Race the clock, beat your friends on the global leaderboard.">
-<meta property="og:image" content="https://wesleybard.com/marbles/share/og.png">
+<meta property="og:image" content="https://wesleybard.com/marbles/share/og.png?v=2">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:url" content="https://wesleybard.com/marbles/">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="ROB'S LOST MARBLES">
+<meta name="twitter:title" content="ROB'S MARBLE DADNESS">
 <meta name="twitter:description" content="Roll a marble from the tee to the cup across five little courses. Race the clock, beat your friends on the global leaderboard.">
-<meta name="twitter:image" content="https://wesleybard.com/marbles/share/og.png">
+<meta name="twitter:image" content="https://wesleybard.com/marbles/share/og.png?v=2">
 <meta name="robots" content="noindex, nofollow">
 <style>
 html, body { margin: 0; padding: 0; background: #0B0B12; position: fixed; inset: 0; height: 100dvh; overflow: hidden; overscroll-behavior: none; touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; -webkit-tap-highlight-color: transparent; }
@@ -1529,11 +1529,11 @@ function logoLine(ctx, str, x, y, px, depth) {
   return w;
 }
 function drawLogo(ctx, cx, top, maxW) {
-  var px2 = Math.max(2, Math.floor(maxW / 41)), px1 = Math.max(2, Math.floor(maxW / 53));
+  var px2 = Math.max(2, Math.floor(maxW / 41)), px1 = Math.max(2, Math.floor(maxW / 63));
   px1 = Math.min(px1, px2);
-  logoLine(ctx, "ROB'S LOST", cx, top, px1, Math.round(px1 * 1.5));
+  logoLine(ctx, "ROB'S MARBLE", cx, top, px1, Math.round(px1 * 1.5));
   var y2 = top + px1 * 7 + Math.round(px1 * 1.5) + px2 * 2;
-  logoLine(ctx, 'MARBLES', cx, y2, px2, Math.round(px2 * 1.5));
+  logoLine(ctx, 'DADNESS', cx, y2, px2, Math.round(px2 * 1.5));
   return y2 + px2 * 7 + Math.round(px2 * 1.5);
 }
 function titlePath(t) {      /* the title marble rolls a slow loop round the mini green */
@@ -3310,7 +3310,7 @@ function openName(after) {
 /* ---------- share ---------- */
 function shareRun(res) {
   const L = LEVELS[res.li];
-  const txt = "ROB'S LOST MARBLES · " + L.name + ' in ' + fmt(res.ms) + ' · beat it: https://wesleybard.com/marbles';
+  const txt = "ROB'S MARBLE DADNESS · " + L.name + ' in ' + fmt(res.ms) + ' · beat it: https://wesleybard.com/marbles';
   const fallback = () => { try { navigator.clipboard.writeText(txt).then(() => toast('COPIED. PASTE IT IN THE CHAT.'), () => toast('COULD NOT COPY')); } catch (e) { toast('COULD NOT COPY'); } };
   try { if (typeof navigator.share === 'function') { navigator.share({ text: txt }).catch((e) => { if (!e || e.name !== 'AbortError') fallback(); }); return; } } catch (e) { }
   fallback();
@@ -3394,8 +3394,8 @@ function drawTitle() {
   if (f) { try { f(ctx, land ? V.W * 0.52 : V.W, V.H, G.t); drawn = true; } catch (e) { console.error(e); artBroken = true; } }
   if (!drawn) {
     const cx = land ? A.x + A.w * 0.27 : A.x + A.w / 2, top = land ? A.y + A.h * 0.22 : A.y + 24;
-    const px = Math.min(fitPx('MARBLES', (land ? A.w * 0.48 : A.w) - 10, V.px * 3.5), V.px * 4);
-    text("ROB'S", cx, top, px * 0.6, ui.ink, 'c'); text('LOST', cx, top + 9 * px * 0.6, px, ui.accent, 'c'); text('MARBLES', cx, top + 9 * px * 0.6 + 9 * px, px, ui.ink, 'c');
+    const px = Math.min(fitPx('DADNESS', (land ? A.w * 0.48 : A.w) - 10, V.px * 3.5), V.px * 4);
+    text("ROB'S", cx, top, px * 0.6, ui.ink, 'c'); text('MARBLE', cx, top + 9 * px * 0.6, px, ui.accent, 'c'); text('DADNESS', cx, top + 9 * px * 0.6 + 9 * px, px, ui.ink, 'c');
     marbleIcon(SAVE.skin, cx, top + 9 * px * 0.6 + 18 * px + 18, V.px * 1.6, G.t * 2);
   }
   // buttons
