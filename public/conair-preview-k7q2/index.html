@@ -3144,7 +3144,7 @@ if (typeof window !== "undefined" && window.CAArt) { window.CAArt.BUBBLE = true;
   var ctx = null, unlocked = false, muted = false, hooked = false, silentEl = null, errors = 0;
   var master, comp, musicBus, sfxBus, thrustBus, noiseBuf;
   var T = null;                         // thrust chain
-  var tracks = [], timer = null, wantTheme = null, curTheme = null;
+  var tracks = [], timer = null, wantId = null, curTheme = null;
   var lastSfx = Object.create(null), releases = 0;
   var pace = 0, buzzOn = false, shift = 0, lastPump = 0;
 
@@ -3408,28 +3408,83 @@ if (typeof window !== "undefined" && window.CAArt) { window.CAArt.BUBBLE = true;
     var target = buzzOn ? -3 : 0; // slow glide, about 1.5 semitones per second
     if (shift !== target) { var s = 1.5 * dt; shift = Math.abs(target - shift) <= s ? target : shift + (target > shift ? s : -s); }
     tracks = tracks.filter(function (tr) {
-      if (tr.dead) { if (t > tr.stopAt) { try { tr.g.disconnect(); } catch (_) {} return false; } return true; }
+      if (tr.dead) { if (t > tr.stopAt) { try { if (tr.src) tr.src.stop(); tr.g.disconnect(); } catch (_) {} return false; } if (tr.kind === 'file') tr.src.playbackRate.value = fileRate(); return true; }
+      if (tr.kind === 'file') { tr.src.playbackRate.value = fileRate(); return true; }
       schedule(tr, t + 0.3); return true;
     });
   }
-  function applyMusic() {
-    if (!ctx || !unlocked || wantTheme === curTheme) return;
-    var t = now();
-    tracks.forEach(function (tr) { if (!tr.dead) { tr.dead = true; tr.stopAt = t + 3; tr.g.gain.cancelScheduledValues(t); tr.g.gain.setTargetAtTime(0, t, 0.5); } });
-    curTheme = wantTheme;
-    if (curTheme) { var tr = startTrack(curTheme); if (tr) tracks.push(tr); }
+  // ------------------------------------------------------------ file music (ruling 29)
+  // window.CA_MUSIC = {title:'music/title.mp3', game:{src, loopStart, loopEnd, loop}, ...}; absent keys = no file, never fetched.
+  var FILE_LEVEL = 0.55;                  // x musicBus 0.3 = 0.165, about -14 dB under the sfx bus (0.8)
+  var ZONES = ['drive', 'golf', 'gameday', 'teal', 'casino'];
+  var musicVol = 1, duckOn = false, fileBufs = {}, fileLoading = {}, fileFail = {}, fileErr = {};
+  function manifest(k) {
+    var m = W.CA_MUSIC; if (!m || !Object.prototype.hasOwnProperty.call(m, k) || !m[k]) return null;
+    var e = typeof m[k] === 'string' ? { src: m[k] } : m[k]; return e && typeof e.src === 'string' && e.src ? e : null;
   }
+  function wantKey(id) {
+    var k = id === 'victory' ? 'win' : (id === 'title' || id === 'intro' || id === 'lose') ? id : ZONES.indexOf(id) >= 0 ? (manifest(id) && !fileFail[id] ? id : 'game') : null;
+    return k && manifest(k) && !fileFail[k] ? k : null;
+  }
+  function loadFile(k, cb) {
+    if (fileBufs[k]) { cb(true); return; }
+    if (fileLoading[k]) { fileLoading[k].push(cb); return; }
+    fileLoading[k] = [cb];
+    var done = function (ok) { var l = fileLoading[k] || []; delete fileLoading[k]; if (!ok) fileFail[k] = 1; l.forEach(function (f) { try { f(ok); } catch (e) { warn(e); } }); };
+    try {
+      W.fetch(manifest(k).src).then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.arrayBuffer(); })
+        .then(function (ab) { return new Promise(function (res, rej) { var p = ctx.decodeAudioData(ab, res, rej); if (p && p.then) p.then(res, rej); }); })
+        .then(function (buf) { fileBufs[k] = buf; done(true); })
+        .catch(function (e) { fileErr[k] = String(e && e.message || e); done(false); });
+    } catch (e) { fileErr[k] = String(e && e.message || e); done(false); }
+  }
+  function fileRate() { return (1 + 0.06 * pace) * Math.pow(2, shift / 12); }
+  function startFile(k) {
+    var e = manifest(k), src = ctx.createBufferSource(), g = ctx.createGain();
+    src.buffer = fileBufs[k];
+    var loop = e.loop !== undefined ? !!e.loop : !(k === 'intro' || k === 'win' || k === 'lose');
+    if (loop) { src.loop = true; var d = fileBufs[k].duration, ls = +e.loopStart || 0, le = +e.loopEnd || 0; if (ls > 0 && ls < d) src.loopStart = ls; if (le > ls && le <= d) src.loopEnd = le; }
+    src.playbackRate.value = fileRate();
+    g.gain.value = 0; g.gain.setTargetAtTime(FILE_LEVEL, now(), 0.13);
+    src.connect(g); g.connect(musicBus); src.start(now() + 0.02);
+    var tr = { kind: 'file', key: k, src: src, g: g, dead: false, stopAt: 0 };
+    tracks.push(tr); return tr;
+  }
+  function fadeOut(tr, secs) { var t = now(); tr.dead = true; tr.stopAt = t + (secs || 1.5); tr.g.gain.cancelScheduledValues(t); tr.g.gain.setTargetAtTime(0, t, 0.13); }
+  function applyMusic() {
+    if (!ctx || !unlocked) return;
+    var id = wantId, key = id ? wantKey(id) : null, live_ = tracks.filter(function (tr) { return !tr.dead; });
+    var same = key && live_.filter(function (tr) { return tr.kind === 'file' && tr.key === key; })[0];
+    live_.forEach(function (tr) { if (tr !== same) fadeOut(tr); });
+    curTheme = null;
+    if (same || !id) return;
+    function synth() { if (THEMES[id]) { curTheme = id; var tr = startTrack(id); if (tr) tracks.push(tr); return true; } return false; }
+    if (!key) { if (!synth() && id === 'lose') API.sfx('lose'); return; }
+    if (fileBufs[key]) { startFile(key); return; }
+    synth();
+    loadFile(key, function (ok) {
+      if (wantId !== id || !unlocked) return;
+      if (ok) { tracks.forEach(function (tr) { if (!tr.dead) fadeOut(tr); }); curTheme = null; startFile(key); }
+      else if (!THEMES[id] && id === 'lose') API.sfx('lose');
+    });
+  }
+  function busLevel() { return 0.3 * musicVol * (duckOn ? 0.35 : 1); }
   API.music = safe(function (id) {
     if (id == null || id === false) id = null;
     else if (typeof id === 'number') id = NUMS[id] || null;
-    else { id = String(id).toLowerCase().replace(/[^a-z0-9]/g, ''); if (/^[0-9]$/.test(id)) id = NUMS[+id]; if (ALIAS[id]) id = ALIAS[id]; if (!THEMES.hasOwnProperty(id)) return; }
-    wantTheme = id; applyMusic();
+    else { id = String(id).toLowerCase().replace(/[^a-z0-9]/g, ''); if (/^[0-9]$/.test(id)) id = NUMS[+id]; if (ALIAS[id]) id = ALIAS[id]; if (id !== 'lose' && !THEMES.hasOwnProperty(id)) return; }
+    if (id === wantId) return;
+    wantId = id; applyMusic();
+  });
+  API.setMusicVolume = safe(function (v) {
+    musicVol = clamp(+v, 0, 1); if (!musicBus) return;
+    var t = now(); musicBus.gain.cancelScheduledValues(t); musicBus.gain.setTargetAtTime(busLevel(), t, 0.05);
   });
   API.themes = Object.keys(THEMES);
   API.setPace = safe(function (p) { pace = clamp(+p || 0, 0, 1); });
   API.duck = safe(function (on) {
-    if (!musicBus || !ctx) return;
-    var t = now(); musicBus.gain.cancelScheduledValues(t); musicBus.gain.setTargetAtTime(on ? 0.3 * 0.35 : 0.3, t, 0.05);
+    duckOn = !!on; if (!musicBus || !ctx) return;
+    var t = now(); musicBus.gain.cancelScheduledValues(t); musicBus.gain.setTargetAtTime(busLevel(), t, 0.05);
   });
   API.setBuzz = safe(function (on) { buzzOn = !!on; });
 
@@ -3476,7 +3531,7 @@ if (typeof window !== "undefined" && window.CAArt) { window.CAArt.BUBBLE = true;
     if (!unlocked) {
       unlocked = true; hook();
       if (!timer) timer = setInterval(function () { try { pump(); } catch (e) { warn(e); } }, 40);
-      if (wantTheme) applyMusic();
+      if (wantId) applyMusic();
     }
   });
   API.setMuted = safe(function (m) {
@@ -3484,7 +3539,7 @@ if (typeof window !== "undefined" && window.CAArt) { window.CAArt.BUBBLE = true;
     if (master) { var t = now(); master.gain.cancelScheduledValues(t); master.gain.setTargetAtTime(muted ? 0 : 0.8, t, 0.02); }
     if (muted && T && T.on) { T.env.gain.setTargetAtTime(0, now(), 0.03); T.on = false; }
   });
-  API.state = function () { return { ctx: ctx ? ctx.state : 'none', unlocked: unlocked, muted: muted, theme: curTheme, tracks: tracks.length, pace: pace, buzz: buzzOn, shift: shift, errors: errors }; };
+  API.state = function () { return { ctx: ctx ? ctx.state : 'none', unlocked: unlocked, muted: muted, theme: curTheme, tracks: tracks.length, pace: pace, buzz: buzzOn, shift: shift, errors: errors, files: { loaded: Object.keys(fileBufs), failed: fileErr, want: wantId } }; };
 
   W.CAAudio = API;
 })(typeof window !== 'undefined' ? window : this);
