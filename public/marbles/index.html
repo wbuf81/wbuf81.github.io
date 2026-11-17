@@ -3112,9 +3112,9 @@ function tiltRaw() {
 function tiltRecenter() { const r = tiltRaw(); G.tilt.g0 = r[0]; G.tilt.b0 = r[1]; }
 function tiltUpdate(dt) {
   const T = G.tilt; if (!T.on || T.beta == null) return;
-  const r = tiltRaw(); const f = (d) => { const s = Math.sign(d), m = Math.abs(d); return m < 2 ? 0 : s * Math.min(1, (m - 2) / 16); };
+  const r = tiltRaw(); const f = (d) => { const s = Math.sign(d), m = Math.abs(d); if (m < 3) return 0; const u = Math.min(1, (m - 3) / 27); return s * (0.55 * u + 0.45 * u * u); };
   let tx = f(r[0] - T.g0), ty = f(r[1] - T.b0);
-  const k = 1 - Math.exp(-dt * 14); T.sx += (tx - T.sx) * k; T.sy += (ty - T.sy) * k;
+  const k = 1 - Math.exp(-dt * 9); T.sx += (tx - T.sx) * k; T.sy += (ty - T.sy) * k;
 }
 function onOrient(e) { if (e && e.beta != null && e.gamma != null) { G.tilt.beta = e.beta; G.tilt.gamma = e.gamma; if (G.tilt.state === 'waiting') { G.tilt.state = 'on'; tiltRecenter(); } } }
 let orientListening = false;
@@ -3398,7 +3398,7 @@ function drawTitle() {
   const rows = 4; const total = rows * (h + gap) + 10; const footY0 = A.y + A.h - 4 * V.px * 9;
   let y = land ? Math.max(A.y + 4, A.y + (footY0 - A.y - total) / 2) : A.y + logoH + 20;
   if (!land) y = drawn ? Math.max(A.y + A.h * 0.53, Math.min(y, footY0 - total - 8)) : Math.min(y, footY0 - total - 8);
-  button('play', bx, y, bw, h + 10, 'PLAY', () => toScene('select'), { primary: true, ui }); y += h + 10 + gap;
+  button('play', bx, y, bw, h + 10, 'PLAY', () => startRun(0), { primary: true, ui }); y += h + 10 + gap;
   const half = (bw - gap) / 2;
   button('marble', bx, y, half, h, 'MARBLE', () => toScene('marble'), { ui }); button('wallet', bx + half + gap, y, half, h, 'WALLET ' + itemsFound() + '/' + ITEMS.length, () => toScene('wallet'), { ui }); y += h + gap;
   button('board', bx, y, half, h, 'BOARD', () => toScene('board'), { ui }); button('name', bx + half + gap, y, half, h, 'NAME: ' + (SAVE.name || '???'), () => openName(), { ui }); y += h + gap;
@@ -3596,17 +3596,17 @@ function drawResult() {
   const setName = () => openName((ok) => { if (ok) submitScore(res); });
   if (land) {
     const bx = px0 + 16 + colW + 16, bw = pw - colW - 48; let by = py0 + 16;
-    button('retry', bx, by, bw, h, 'RETRY', restartRun, { ui, primary: true }); by += h + gap;
+    if (nextOk) button('next', bx, by, bw, h, 'NEXT COURSE', goNext, { ui, primary: true }); else button('retry', bx, by, bw, h, 'RETRY', restartRun, { ui, primary: true }); by += h + gap;
     if (nb === 3) { button('setname', bx, by, bw, h, 'SET NAME', setName, { ui }); by += h + gap; }
-    button('next', bx, by, bw, h, nextOk ? 'NEXT' : 'COURSES', goNext, { ui }); by += h + gap;
+    if (nextOk) button('retry', bx, by, bw, h, 'RETRY', restartRun, { ui }); else button('next', bx, by, bw, h, 'COURSES', goNext, { ui }); by += h + gap;
     button('courses', bx, by, bw, h, 'COURSES', goCourses, { ui }); by += h + gap;
     button('share', bx, by, bw, h, 'SHARE', () => shareRun(res), { ui });
   } else {
     let by = py0 + ph - 16 - nb * (h + gap) + gap;
-    button('retry', px0 + 16, by, pw - 32, h, 'RETRY', restartRun, { ui, primary: true }); by += h + gap;
+    if (nextOk) button('next', px0 + 16, by, pw - 32, h, 'NEXT COURSE', goNext, { ui, primary: true }); else button('retry', px0 + 16, by, pw - 32, h, 'RETRY', restartRun, { ui, primary: true }); by += h + gap;
     if (nb === 3) { button('setname', px0 + 16, by, pw - 32, h, 'SET NAME', setName, { ui }); by += h + gap; }
     const w3 = (pw - 32 - 2 * gap) / 3;
-    button('next', px0 + 16, by, w3, h, nextOk ? 'NEXT' : 'DONE', goNext, { ui });
+    if (nextOk) button('retry', px0 + 16, by, w3, h, 'RETRY', restartRun, { ui }); else button('next', px0 + 16, by, w3, h, 'DONE', goNext, { ui });
     button('courses', px0 + 16 + w3 + gap, by, w3, h, 'COURSES', goCourses, { ui });
     button('share', px0 + 16 + 2 * (w3 + gap), by, w3, h, 'SHARE', () => shareRun(res), { ui });
   }
@@ -3657,7 +3657,7 @@ function onKey(e, down) {
   au('unlock');
   if (c === 'KeyR' && R && (G.scene === 'play' || G.scene === 'result')) restartRun();
   else if ((c === 'Escape' || c === 'KeyP') && G.scene === 'play' && R && R.phase !== 'done') G.paused = !G.paused;
-  else if (c === 'Enter' || c === 'Space') { if (G.scene === 'result') restartRun(); else if (G.scene === 'title') toScene('select'); else if (G.scene === 'play' && G.paused) G.paused = false; }
+  else if (c === 'Enter' || c === 'Space') { if (G.scene === 'result') restartRun(); else if (G.scene === 'title') startRun(0); else if (G.scene === 'play' && G.paused) G.paused = false; }
   else if (c === 'Escape' && G.scene !== 'play') { if (G.scene === 'result') { R = null; toScene('select'); } else toScene('title'); }
 }
 
