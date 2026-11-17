@@ -2201,11 +2201,11 @@ function drawCelebration(ctx, cx, cy, ph, k, t) {   // fallback for cutin_wife_h
 let BASE_T = null;
 function drawEndCutin(ctx, st, vw, vh, t) {
   BASE_T = ctx.getTransform();
-  const tan = st.kind === 'tanner', win = st.kind === 'win', sq = st.kind === 'squad', who = SQUAD[st.who] ? st.who : 'nick', k = c01(num(st.k, 0.5));
+  const reb = st.kind === 'reborn', tan = st.kind === 'tanner', win = st.kind === 'win', sq = st.kind === 'squad', who = SQUAD[st.who] ? st.who : 'nick', k = c01(num(st.k, 0.5));
   const idx = win ? clamp(Math.floor(num(st.beat, 0)), 0, 5) : clamp(Math.floor(num(st.tier, num(st.beat, 0))), 0, 2);
-  const lines = Array.isArray(st.lines) && st.lines.length ? st.lines.filter(Boolean).map(String) : (sq ? SQUAD[who].lines : tan ? ['TANNER TOOK YOUR SCORE.', '"THAT WAS ALL ME."'] : win ? WIN_LINES[idx] : LOSE_LINES[idx]);
-  const fast = st.kind === 'lose' || sq, land = vw > vh, inK = easeOut(c01(k / (fast ? 0.06 : 0.12))), outK = c01((k - 0.88) / 0.12), outE = outK * outK;
-  const image = String(st.image || (sq ? 'squad_' + who : tan ? 'tanner' : win ? WIN_IMAGES[idx] : 'slip_lose')), pic = sq ? (squadImg(who) ? { ok: true, img: squadImg(who) } : null) : ENDS[image];
+  const lines = Array.isArray(st.lines) && st.lines.length ? st.lines.filter(Boolean).map(String) : (reb ? ['LAP ' + Math.max(2, Math.floor(num(st.lap, 2))), 'BORN AGAIN.'] : sq ? SQUAD[who].lines : tan ? ['TANNER TOOK YOUR SCORE.', '"THAT WAS ALL ME."'] : win ? WIN_LINES[idx] : LOSE_LINES[idx]);
+  const fast = st.kind === 'lose' || sq || reb, land = vw > vh, inK = easeOut(c01(k / (fast ? 0.06 : 0.12))), outK = c01((k - 0.88) / 0.12), outE = outK * outK;
+  const image = String(st.image || (reb ? 'reborn' : sq ? 'squad_' + who : tan ? 'tanner' : win ? WIN_IMAGES[idx] : 'slip_lose')), pic = sq ? (squadImg(who) ? { ok: true, img: squadImg(who) } : null) : ENDS[image];
   let chH = land ? Math.min(vh * 0.45, vw * 0.22) : Math.min(vw / 3, vh * 0.45), picW = chH * 3;
   const aspect = pic && pic.ok ? pic.img.naturalWidth / pic.img.naturalHeight : (image === 'squad' ? 16 / 9 : 3);
   const tall = aspect < 2.2;   // RULINGS 20: anything taller than 2.2:1 gets the tall uncropped layout
@@ -2215,10 +2215,10 @@ function drawEndCutin(ctx, st, vw, vh, t) {
     if (land) { chH = Math.min(vh * 0.56, vw * 0.96 / a); } else { chH = Math.min(vw / a, vh * 0.45); }
     picW = chH * a;
   }
-  const squad = tall, hamC = (image === 'hamzah' || image === 'party' || image === 'tanner' || sq) && !tall;
+  const squad = tall, hamC = (image === 'hamzah' || image === 'party' || image === 'tanner' || sq || reb) && !tall;
   if (hamC) { if (land) chH = Math.min(vh * (image === 'party' ? 0.42 : 0.36), vw * 0.96 / 3); else chH = vw / 3; picW = chH * 3; }   // centred, full width, never cropped at the sides
   const bandH = squad || hamC ? chH * 1.08 : chH * (win ? 1.45 : 1.3);
-  const acc = sq ? SQUAD[who].color : tan ? '#B6FF2E' : win ? '#F2C23E' : '#8A9AB8', acc2 = tan ? '#FF6FAE' : win ? '#3FF0E0' : '#4A5A78', ink = win || tan || sq ? '#FFF6DA' : '#D8DEEA';
+  const acc = reb ? '#F2C23E' : sq ? SQUAD[who].color : tan ? '#B6FF2E' : win ? '#F2C23E' : '#8A9AB8', acc2 = tan ? '#FF6FAE' : win ? '#3FF0E0' : '#4A5A78', ink = win || tan || sq || reb ? '#FFF6DA' : '#D8DEEA';
   ctx.save(); ctx.imageSmoothingEnabled = false;
   ctx.fillStyle = 'rgba(' + (win ? '6,10,14' : '4,6,14') + ',' + ((win ? 0.62 : 0.72) * inK).toFixed(3) + ')'; ctx.fillRect(0, 0, vw, vh);
   if (win) {   // warm stadium-light wash from the top, steady
@@ -2257,6 +2257,7 @@ function drawEndCutin(ctx, st, vw, vh, t) {
     } else drawCloseup(ctx, { beat: -1 }, 4, leftX, 0, bh * 0.9, k, t, false);
   } else if (image === 'hamzah') drawHamzahScene(ctx, leftX + (land ? visHalf * 0.4 : 0), 0, bh, k, t);
   else if (image === 'party') drawParty(ctx, leftX + (land ? visHalf * 0.35 : 0), 0, bh, k, t);
+  else if (reb) drawReborn(ctx, rightX, 0, ph, k, t);
   else if (sq) drawSquadScene(ctx, who, String(st.item || SQUAD[who].item), (land ? visHalf * 0.3 : 0) + slide, 0, bh, k, t);
   else if (image === 'tanner') drawTannerScene(ctx, (land ? visHalf * 0.3 : 0) + slide, 0, bh, k, t);
   else if (image === 'squad') drawSquad(ctx, land ? visHalf * 0.25 + slide : slide, 0, bh, Math.min(picW, vw * 0.96), t);
@@ -2472,7 +2473,7 @@ function drawCutin(ctx, st, vw, vh, t) {
   const cv = ctx.canvas || {};
   vw = num(vw, cv.width || 390); vh = num(vh, cv.height || 844); t = num(t, 0);
   if (st.kind === 'wife' || st.kind === 'sheknows') return drawWifeBand(ctx, st, vw, vh, t);
-  if (st.kind === 'win' || st.kind === 'lose' || st.kind === 'tanner' || st.kind === 'squad') return drawEndCutin(ctx, st, vw, vh, t);
+  if (st.kind === 'win' || st.kind === 'lose' || st.kind === 'tanner' || st.kind === 'squad' || st.kind === 'reborn') return drawEndCutin(ctx, st, vw, vh, t);
   if (st.kind === 'intro') return drawIntroCine(ctx, st, vw, vh, t);
   const k = c01(num(st.k, 0.5)), intro = st.kind === 'intro', ted = st.kind === 'teddy';
   const age = clamp(Math.floor(num(st.age, intro ? 0 : 1)), 0, 4), beat = clamp(Math.floor(num(st.beat, 0)), 0, 3) === 3 ? 2 : clamp(Math.floor(num(st.beat, 0)), 0, 2);
@@ -2630,6 +2631,18 @@ function iconSprite(name) {
     Poly(g, name === 'arrowUp' ? '#3FF0E0' : '#FFC23A', inner);
   } else if (name === 'fire' || name === 'ipa' || name === 'bar' || name === 'vax' || name === 'flex') {
     c = squadItemSprite(name);
+  } else if (name === 'story') {   // open book with a betting slip tucked in
+    c = mk(18, 14); const g = ctx2(c);
+    R(g, '#180C16', 0, 2, 18, 12); R(g, '#8A1E2E', 1, 11, 16, 2);
+    R(g, '#F4EED8', 1, 2, 7, 9); R(g, '#E8E0C4', 10, 2, 7, 9); R(g, '#B8AE90', 8, 2, 2, 10);
+    for (let y = 4; y < 10; y += 2) R(g, '#B8AE90', 2, y, 5, 1);
+    R(g, '#180C16', 11, 0, 6, 9); R(g, '#FFFFFF', 12, 1, 4, 7); R(g, '#14B4A6', 12, 1, 4, 2); R(g, '#D8283A', 12, 6, 3, 1);
+  } else if (name === 'endless') {   // infinity loop with a tiny smoking cigarette
+    c = mk(22, 14); const g = ctx2(c);
+    for (const cx2 of [6, 15]) { E(g, '#180C16', cx2, 8, 5.5, 5); E(g, '#F2C23E', cx2, 8, 4.5, 4); E(g, '#180C16', cx2, 8, 2.5, 2); }
+    R(g, '#F2C23E', 9, 7, 3, 2);
+    R(g, '#180C16', 15, 0, 7, 3); R(g, '#FAFAFA', 16, 1, 3, 1); R(g, '#EE7F34', 19, 1, 1, 1); R(g, '#FF5A14', 20, 1, 1, 1);
+    P(g, '#C9C9DA', 21, 0); P(g, '#C9C9DA', 20, 0);
   } else if (name === 'teapot') {   // tiny teapot for TNR rows; readable at 12-16 px
     c = mk(14, 11); const g = ctx2(c);
     const O = '#180C16', T = '#F4F0E4', Tl = '#3FF0E0';
@@ -2918,6 +2931,22 @@ function squadImg(who) {
   if (who === 'hamzah' && ENDS.hamzah.ok) return ENDS.hamzah.img;
   return null;
 }
+/* REBORN (RULINGS 27E): his twenties close-up wipes in over his seventies one, gold seam, sparkles; no white */
+function drawReborn(ctx, cx, cy, ph, k, t) {
+  const old = cutinCell(4), young = cutinCell(0), w = ph * 3, x0 = cx - w / 2, y0 = cy - ph / 2;
+  if (!old || !young) { drawCloseup(ctx, { beat: -1 }, k > 0.45 ? 0 : 4, cx, cy, ph, k, t, false); return; }
+  ctx.save(); ctx.imageSmoothingEnabled = true; if ('imageSmoothingQuality' in ctx) ctx.imageSmoothingQuality = 'high';
+  ctx.drawImage(old.img, old.sx, old.sy, old.sw, old.sh, x0, y0, w, ph);
+  const q = easeOut(c01((k - 0.18) / 0.4)), sl = ph * 0.6, ex = x0 + w + sl - q * (w + sl * 2);   // wipe edge sweeps right -> left
+  ctx.save(); ctx.beginPath(); ctx.moveTo(ex, y0); ctx.lineTo(x0 + w + sl, y0); ctx.lineTo(x0 + w + sl, y0 + ph); ctx.lineTo(ex - sl, y0 + ph); ctx.closePath(); ctx.clip();
+  ctx.drawImage(young.img, young.sx, young.sy, young.sw, young.sh, x0, y0, w, ph); ctx.restore();
+  if (q > 0 && q < 1) {   // gold seam + sparks along the wipe
+    ctx.strokeStyle = '#F2C23E'; ctx.lineWidth = Math.max(3, ph * 0.03); ctx.beginPath(); ctx.moveTo(ex, y0); ctx.lineTo(ex - sl, y0 + ph); ctx.stroke();
+    ctx.fillStyle = '#FFE08A'; const d = Math.max(2, ph * 0.02);
+    for (let i = 0; i < 12; i++) { const u = hash1(i * 3.7), px = ex - sl * u + (hash1(i * 1.3 + Math.floor(t * 10)) - 0.5) * ph * 0.25, py = y0 + ph * u; ctx.fillRect(Math.round(px), Math.round(py), d, d); }
+  }
+  ctx.restore();
+}
 function drawSquadScene(ctx, who, item, cx, cy, bh, k, t) {   // placeholder picture for the squad cut-in
   const S = SQUAD[who] || SQUAD.nick, b = bustCanvas(who), sc = bh * 0.92 / b.height;
   ctx.save(); ctx.imageSmoothingEnabled = false;
@@ -2936,7 +2965,7 @@ function drawChip(ctx, who, x, y, s) {
   ctx.fillStyle = '#0B0812'; const p = Math.max(2, Math.round(s * 0.08)); ctx.fillRect(Math.round(x + p), Math.round(y + p), Math.round(s - 2 * p), Math.round(s - 2 * p));
   ctx.beginPath(); ctx.rect(x + p, y + p, s - 2 * p, s - 2 * p); ctx.clip();
   const im = squadImg(who);
-  if (im) { const h = im.naturalHeight, w = im.naturalWidth, cw = Math.min(w, h * 1.1); ctx.imageSmoothingEnabled = true; ctx.drawImage(im, (w - cw) / 2, 0, cw, h, x + p, y + p, s - 2 * p, (s - 2 * p) * h / cw); }
+  if (im) { const h = im.naturalHeight, w = im.naturalWidth, cw = Math.min(w, h * 0.82), sx = clamp(w * 0.57 - cw / 2, 0, w - cw); ctx.imageSmoothingEnabled = true; ctx.drawImage(im, sx, 0, cw, cw, x + p, y + p, s - 2 * p, s - 2 * p); }   // square around the face (right of centre)
   else { const b = bustCanvas(who); ctx.imageSmoothingEnabled = false; ctx.drawImage(b, Math.round(x + p), Math.round(y + p), Math.round(s - 2 * p), Math.round(s - 2 * p)); }
   ctx.restore();
 }
@@ -3496,7 +3525,8 @@ const P = {
   pathA: 230,                     // max vertical accel the guide path asks for (u/s^2)
   spc0: 1.8, spc1: 1.0, spcT: 130, // seconds of air between patterns
   emptyT: 4,                      // RULINGS 22b: the first obstacle never arrives before 4 s after the first press
-  grace: 3.0, graceFade: 0.8,     // launch grace: soft floor/ceiling, nothing hurts
+  grace: 3.0, graceFade: 0.8,
+  hoverT: 0.7, protectAfter: 1.2, protectMin: 2.1, resumeClearS: 2.2, // RULINGS 28: safe resume after a freezing cut-in     // launch grace: soft floor/ceiling, nothing hurts
   zoneT: 16, nZones: 5, zoneGap: 0.75, winZones: 5, // RULINGS 16: outlast zone 5 (T = 80 s) and the bet hits
   buzzT: 4, buzzK: 0.65, buzzM: 25,
   beefT: 2.5, beefK: 1.8, beefInv: 0.6, beefM: 10,
@@ -3538,6 +3568,21 @@ function Tof(x) {
   let T = x / 110; for (let i = 0; i < 8; i++) T -= (xAtT(T) - x) / vNom(T);
   return T;
 }
+// RULINGS 27: per-mode tuning. STORY is the five-level bet (easier); ENDLESS starts as gentle as level 1 for 15 s
+// and then squeezes forever (clearance keeps shrinking per lap down to a floor).
+const TUNE = {
+  story: { mode: 'story', clear0: 33, clear1: 29, clearT: 120, spc0: 1.9, spc1: 1.1, spcT: 130, zoneClearK: [1, 1, 1.08, 0.95, 1.02], gapT: 160, gap1: 130, gapMin: 115 },
+  endless: { mode: 'endless', clear0: 30, clear1: 22, rampT0: 15, rampT: 20, clearCreep: 0.02, clearMin: 17, spc0: 1.9, spc1: 0.8, spcT: 35, zoneClearK: [1, 1, 1, 1, 1], gapT: 160, gapMin: 90 },
+};
+function clearQ(Q, T) {
+  if (Q.mode === 'endless') {
+    if (T < Q.rampT0) return Q.clear0;
+    const u = clamp((T - Q.rampT0) / Q.rampT, 0, 1), c = lerp(Q.clear0, Q.clear1, u * (2 - u));
+    return Math.max(Q.clearMin, c - Q.clearCreep * Math.max(0, T - Q.rampT0 - Q.rampT));
+  }
+  const u = clamp(T / Q.clearT, 0, 1); return lerp(Q.clear0, Q.clear1, ss(u) * 0.5 + u * 0.5);
+}
+function gapQ(Q, T) { const g1 = Q.gap1 || P.gap1; return T < Q.gapT ? lerp(P.gap0, g1, T / Q.gapT) : Math.max(Q.gapMin, g1 - P.gapCreep * (T - Q.gapT)); }
 function gapAt(T) { return T < P.gapT ? lerp(P.gap0, P.gap1, T / P.gapT) : Math.max(P.gapMin, P.gap1 - P.gapCreep * (T - P.gapT)); }
 function clearAt(T) { return lerp(P.clear0, P.clear1, ss(clamp(T / P.clearT, 0, 1)) * 0.5 + clamp(T / P.clearT, 0, 1) * 0.5); }
 function zoneAt(T) { const k = Math.floor(Math.max(0, T) / P.zoneT); return { i: k % P.nZones, lap: Math.floor(k / P.nZones) + 1, k }; }
@@ -3553,15 +3598,16 @@ function knotVal(arr, x, key) {
   return a[key] + (b[key] - a[key]) * ss((x - a.x) / (b.x - a.x));
 }
 
-function makeCourse(seed) {
+function makeCourse(seed, mode) {
+  const Q = TUNE[mode] || TUNE.story;
   const rnd = mulberry((seed >>> 0) ^ 0x5EED1234);
   const C = { seed: seed >>> 0, rnd, cK: [{ x: -2000, c: 100 }, { x: 260, c: 100 }], oK: [{ x: -2000, o: 0 }, { x: xAtT(P.emptyT - 0.6), o: 0 }],
-    obs: [], picks: [], genX: xAtT(P.emptyT), cGen: 260, id: 1, nextSpecial: xAtT(5.5), nSpecial: 0, lastKind: '', orderZ: -1, order: [], lastBlastT: -99, slipAt: null, squadNext: 0 };
+    Q, mode: Q.mode, obs: [], picks: [], genX: xAtT(P.emptyT), cGen: 260, id: 1, nextSpecial: xAtT(5.5), nSpecial: 0, lastKind: '', orderZ: -1, order: [], lastBlastT: -99, slipAt: null, squadNext: 0 };
   C.centre = (x) => knotVal(C.cK, x, 'c');
-  C.gap = (x) => gapAt(Tof(x));
+  C.gap = (x) => gapQ(Q, Tof(x));
   C.top = (x) => C.centre(x) - C.gap(x) / 2;
   C.bot = (x) => C.centre(x) + C.gap(x) / 2;
-  C.half = (x) => { const T = Tof(x); return gapAt(T) / 2 - clearAt(T) - P.wallM; };
+  C.half = (x) => { const T = Tof(x); return gapQ(Q, T) / 2 - clearQ(Q, T) - P.wallM; };
   C.path = (x) => C.centre(x) + knotVal(C.oK, x, 'o') * C.half(x);
   C.ensure = (x) => { while (C.genX < x) genPattern(C); };
   return C;
@@ -3576,7 +3622,7 @@ function squadOrder(C, zk) {
 function genCentre(C, upto) {
   while (C.cGen < upto) {
     const last = C.cK[C.cK.length - 1], L = 180 + C.rnd() * 120, x = last.x + L, T = Tof(x);
-    const room = Math.max(0, (P.H - gapAt(T)) / 2 - 6);
+    const room = Math.max(0, (P.H - gapQ(C.Q, T)) / 2 - 6);
     let c = 100 + (C.rnd() * 2 - 1) * room;
     const dmax = 0.32 * L; c = clamp(c, last.c - dmax, last.c + dmax);
     C.cK.push({ x, c }); C.cGen = x;
@@ -3693,7 +3739,7 @@ function genPattern(C) {
   const tb = (z0.k + 1) * P.zoneT;
   const v0 = vNom(T0);
   const last = C.oK[C.oK.length - 1];
-  const T = T0, v = v0, z = z0.i, clear = clearAt(T) * (P.zoneClearK[z] || 1);
+  const Q = C.Q, T = T0, v = v0, z = z0.i, clear = clearQ(Q, T) * (Q.zoneClearK[z] || 1);
   // pattern choice by difficulty
   const d = clamp(T / 80, 0, 1), r = C.rnd();
   let kind = r < 0.5 - 0.25 * d ? 'one' : r < 0.72 - 0.17 * d ? 'gate' : r < 0.88 - 0.08 * d ? 'stagger' : 'slalom';
@@ -3742,7 +3788,7 @@ function genPattern(C) {
   // RULINGS 26a: a squad item every 9-12 s of flight; each of the six at most once per zone, in a per-zone shuffled
   // order (zone 1 offers ZIN and BAR first); FIREBALL and BEEF never within 6 s of each other. A betting slip may sit
   // halfway between two squad slots.
-  const gapEnd = lx + Math.max(0.4, lerp(P.spc0, P.spc1, clamp(T / P.spcT, 0, 1))) * v;
+  const gapEnd = lx + Math.max(0.4, lerp(Q.spc0, Q.spc1, clamp(T / Q.spcT, 0, 1))) * v;
   if (lx >= C.nextSpecial) {
     const px = (lx + gapEnd) / 2, Tp = Tof(px), zk = zoneAt(Tp).k;
     if (!(Tp > tb - P.zoneGap && Tp < tb + P.zoneGap)) {
@@ -3776,13 +3822,22 @@ function genPattern(C) {
    ===================================================================== */
 function createSim(seed, o) {
   o = o || {};
-  const C = makeCourse(seed);
+  const mode = o.mode === 'endless' ? 'endless' : 'story', level = mode === 'story' ? clamp(o.level | 0, 0, P.winZones - 1) : 0;
+  const C = makeCourse(seed, mode);
   const S = {
     C, seed: C.seed, x: 0, y: 100, vy: 0, thr: 0, thr0: 0, thrT: 1, thrOn: false, hold: false, steps: 0, t: 0, dead: false, cause: '',
-    bonus: 0, buzz: 0, beef: 0, fire: 0, hazy: 0, shield: false, inv: 0, save: 0, saveY0: 0, slip: null, teddy: 'ready', teddyUsed: false, won: false,
-    smashed: 0, pickups: 0, noPickups: !!o.noPickups, oi: 0, pi: 0, ev: [], zk: 0, lap: 1, taken: {}, best: o.best || 0, maxV: 0,
+    bonus: 0, buzz: 0, beef: 0, fire: 0, hazy: 0, shield: false, hover: 0, hoverHold: null, protect: 0, resumeT: 0, inv: 0, save: 0, saveY0: 0, slip: null, teddy: 'ready', teddyUsed: false, won: false,
+    mode, level, smashed: 0, pickups: 0, noPickups: !!o.noPickups, oi: 0, pi: 0, ev: [], zk: 0, lap: 1, taken: {}, best: o.best || 0, maxV: 0,
   };
-  C.ensure(1200);
+  if (level > 0) {
+    // CONTINUE: start at the beginning of that level; the first 4.5 s ahead are cleared so the READY bubble is fair
+    const x0 = xAtT(level * P.zoneT) + 1; S.x = x0; S.zk = level; S.y = C.centre(x0);
+    C.ensure(x0 + 1400); const clearTo = x0 + vNom(Tof(x0)) * 4.5;
+    C.obs.forEach((q) => { if (q.bx1 > x0 - 60 && q.bx0 < clearTo) q.smash = -1e9; });
+    while (S.oi < C.obs.length && C.obs[S.oi].bx1 < x0 - 120) S.oi++;
+    while (S.pi < C.picks.length && C.picks[S.pi].x < x0 - 120) S.pi++;
+  }
+  C.ensure(S.x + 1200);
   return S;
 }
 function emit(S, e, a) { if (S.ev.length < 64) S.ev.push(a == null ? [e] : [e, a]); }
@@ -3804,7 +3859,14 @@ function step(S, hold) {
   const v = speedOf(S); S.x += v * DT; if (v > S.maxV) S.maxV = v;
   C.ensure(S.x + 1400);
   // vertical
-  if (S.save > 0) {
+  if (S.hover > 0) {
+    // RULINGS 28: hover in place after a freezing cut-in until the input changes or 0.7 s pass; throttle keeps tracking
+    if (S.hoverHold == null) S.hoverHold = hold;
+    if (hold !== S.thrOn) { S.thrOn = hold; S.thr0 = S.thr; S.thrT = 0; }
+    S.thrT += DT; S.thr = hold ? S.thr0 + (1 - S.thr0) * ss(S.thrT / P.onset) : S.thr0 * (1 - ss(S.thrT / P.release));
+    S.vy = 0; S.hover -= DT; S.resumeT += DT;
+    if (S.hover <= 0 || hold !== S.hoverHold) { S.hover = 0; S.protect = Math.max(P.protectAfter, P.protectMin - S.resumeT); emit(S, 'hoverEnd'); }
+  } else if (S.save > 0) {
     S.save -= DT; const k = 1 - Math.max(0, S.save) / P.saveT, cy = C.centre(S.x);
     S.y = lerp(S.saveY0, cy, ss(k)); S.vy = 0; S.thr = 0;
     if (S.save <= 0) { S.save = 0; S.vy = -60; }
@@ -3821,7 +3883,8 @@ function step(S, hold) {
   }
   // the corridor
   const top = Math.max(C.top(S.x - P.rx * 0.6), C.top(S.x), C.top(S.x + P.rx * 0.6)), bot = Math.min(C.bot(S.x - P.rx * 0.6), C.bot(S.x), C.bot(S.x + P.rx * 0.6));
-  const grace = S.t < P.grace, safe = S.inv > 0 || S.beef > 0 || S.save > 0 || grace;
+  if (S.protect > 0 && S.hover <= 0) S.protect = Math.max(0, S.protect - DT);
+  const grace = S.t < P.grace || S.hover > 0 || S.protect > 0, safe = S.inv > 0 || S.beef > 0 || S.save > 0 || grace;
   if (S.y - P.ry < top || S.y + P.ry > bot) {
     if (grace) { if (S.thrOn && S.thrT <= P.coyote) { S.thr = 1; S.thr0 = 1; } if (S.y - P.ry < top) { S.y = top + P.ry; S.vy = Math.max(60, Math.abs(S.vy) * 0.45); } else { S.y = bot - P.ry; S.vy = -Math.max(90, Math.abs(S.vy) * 0.5); } if (!S.bounceT || S.t - S.bounceT > 0.25) { S.bounceT = S.t; emit(S, 'bounce'); } }
     else if (safe) { if (S.y - P.ry < top) { S.y = top + P.ry; S.vy = Math.max(0, S.vy); } else { S.y = bot - P.ry; S.vy = Math.min(0, S.vy); } }
@@ -3856,7 +3919,7 @@ function step(S, hold) {
   const z = zoneAt(Tof(S.x));
   if (z.k !== S.zk) {
     S.zk = z.k;
-    if (!S.won && z.k >= P.winZones) win(S);
+    if (S.mode === 'story' && !S.won && z.k >= P.winZones) win(S);
     else { emit(S, 'zone', z.k); if (z.lap !== S.lap) { S.lap = z.lap; emit(S, 'lap', z.lap); } }
     if (z.lap !== S.lap) S.lap = z.lap;
   }
@@ -3894,7 +3957,15 @@ function win(S) {
   emit(S, 'win');
 }
 function winX() { return xAtT(P.winZones * P.zoneT); }
-function flags(S) { return (S.teddyUsed ? 1 : 0) | (S.won ? 4 : 0); }
+// called by the game layer when a freezing cut-in (age-up, squad, Teddy, reborn) ends: vy = 0, hover, bubble, and no
+// obstacle within the first ~1.5 s of flight (+ the hover) ahead
+function resume(S) {
+  if (S.save > 0) { S.save = 0; S.y = S.C.centre(S.x); }
+  S.vy = 0; S.hover = P.hoverT; S.hoverHold = null; S.resumeT = 0; S.protect = 0;
+  const x1 = S.x + vNom(Tof(S.x)) * P.resumeClearS;
+  for (let i = S.oi; i < S.C.obs.length; i++) { const o = S.C.obs[i]; if (o.bx0 > x1) break; if (o.bx1 > S.x - P.rx - 4 && o.smash == null) o.smash = -1e9; }
+}
+function flags(S, storyWon) { return (S.teddyUsed ? 1 : 0) | ((S.won || storyWon) ? 4 : 0) | (S.mode === 'endless' ? 8 : 0); }
 
 /* =====================================================================
    4. Bots (DESIGN §5). perfect = guide-path follower; human = 120 ms reaction, noisy aim; random = random taps.
@@ -3943,8 +4014,8 @@ function runBot(seed, kind, o) {
   return { m: metres(S), dist: distM(S), t: S.t, dead: S.dead, cause: S.cause, teddy: S.teddyUsed, won: S.won, zk: S.zk, steps: S.steps, x: S.x, y: S.y, bonus: S.bonus, maxV: S.maxV };
 }
 
-const GOOD_BOT = { lag: 0.08, sigma: 6.2, lapse: 0.15 }; // RULINGS 16e 'good human'
-const SIM = { SQUAD_TYPES, collect, hit, GOOD_BOT, P, HZ, DT, ZONES, KIND, vNom, xAtT, Tof, gapAt, clearAt, zoneAt, mulberry, makeCourse, createSim, step, shapes, sprState, ballPos, slipPos, obstacleHits, metres, distM, speedOf, flags, makeBot, runBot, winX };
+const GOOD_BOT = { lag: 0.08, sigma: 6.2, lapse: 0.08 }; // RULINGS 16e 'good human'
+const SIM = { resume, TUNE, clearQ, gapQ, SQUAD_TYPES, collect, hit, GOOD_BOT, P, HZ, DT, ZONES, KIND, vNom, xAtT, Tof, gapAt, clearAt, zoneAt, mulberry, makeCourse, createSim, step, shapes, sprState, ballPos, slipPos, obstacleHits, metres, distM, speedOf, flags, makeBot, runBot, winX };
 const CA = root.CA = root.CA || {};
 CA.sim = SIM;
 /* =====================================================================
@@ -4127,18 +4198,25 @@ function newSeedStr() { return (Math.floor(Math.random() * 2147483647) >>> 0).to
 function startRun(o) {
   o = o || {};
   const day = dayIndex(Date.now());
-  let seedStr = o.seedStr;
-  if (!seedStr) seedStr = OPT.seed ? String(OPT.seed).toUpperCase() : newSeedStr();
+  const mode = o.mode === 'endless' ? 'endless' : 'story';
+  let seedStr = o.seedStr, level = 0;
+  if (mode === 'story') {
+    // RULINGS 27A: a story attempt keeps its seed and the level you died in (saved), unless you start over
+    const st = SAVE.story;
+    if (o.fresh || !st || !st.active) SAVE.story = { active: true, level: 0, deaths: 0, seedStr: seedStr || (OPT.seed ? String(OPT.seed).toUpperCase() : newSeedStr()) };
+    seedStr = SAVE.story.seedStr; level = o.fresh ? 0 : SAVE.story.level | 0; persist();
+  } else if (!seedStr) seedStr = OPT.seed ? String(OPT.seed).toUpperCase() : newSeedStr();
   const daily = false; // RULINGS 25d: no daily mode
-  const S = createSim(seedOfStr(seedStr), { best: SAVE.best });
+  const S = createSim(seedOfStr(seedStr), { best: SAVE.best, mode, level });
   R = { S, seedStr, daily, day: daily ? parseInt(seedStr.slice(1), 36) : day, phase: 'ready', armed: false, readyT: 0, acc: 0, px: S.x, py: S.y, trail: [], cig: null, ct: 0,
-    pose: 0, poseT: 0, flyT: 0, zA: 0, zB: 0, zf: 1, card: null, nearT: 0, cam: 0, crash: null, teddyX: S.x, ang: 0, angP: 0, angV: 0, fallT: 0, diveT: 0, tedOff: -6, leap: 0, proud: 0, band: null, coach: (SAVE.coached | 0) < 3, smash: {}, age: 0, ageFrom: 0, ageT: 1, cutin: null, ramp: 1 };
-  if (o.intro || (!SAVE.intro && !G.bot && !OPT.debug)) { R.cutin = introCutin(0); SAVE.intro = true; persist(); au('music', 'intro'); }
+    pose: 0, poseT: 0, flyT: 0, zA: 0, zB: 0, zf: 1, card: null, nearT: 0, cam: 0, crash: null, teddyX: S.x, ang: 0, angP: 0, angV: 0, fallT: 0, diveT: 0, tedOff: -6, leap: 0, proud: 0, band: null, coach: (SAVE.coached | 0) < 3, smash: {}, age: level, ageFrom: level, ageT: 1, cutin: null, ramp: 1, mode, level };
+  R.zA = R.zB = level;
+  if (mode === 'story' && (o.intro || (!SAVE.intro && !G.bot && !OPT.debug))) { R.cutin = introCutin(0); SAVE.intro = true; persist(); au('music', 'intro'); }
   R.cam = S.x - camFrac() * V.vwU;
   G.scene = 'play'; G.paused = false; G.result = null; G.ptrs = {};
-  au('music', ZID(0)); au('setBuzz', false); au('setPace', 0);
+  au('music', ZID(level)); au('setBuzz', false); au('setPace', 0);
 }
-function retry() { startRun(); }
+function retry() { startRun({ mode: R ? R.mode : 'endless' }); }
 function camFrac() { return V.land ? 0.22 : 0.28; }
 function toScene(s) { G.scene = s; G.paused = false; if (s === 'title') { au('music', 'title'); au('thrust', false); fetchBoard(); } if (s === 'board') { G.boardPage = 0; fetchBoard(true); } }
 function toast(s, dur) { G.toast = { s, t: 0, dur: dur || 2.2 }; }
@@ -4194,7 +4272,7 @@ function update(dt) {
     } else if (R.phase === 'run' && R.cutin) { cutinUpdate(dt); au('thrust', false); }
     else if (R.phase === 'run') {
       // after a cut-in the world ramps from 40% to 100% speed: a game-layer time scale, the sim itself never changes
-      let ts = 1; if (R.ramp < 1) { ts = lerp(0.4, 1, R.ramp); R.ramp = Math.min(1, R.ramp + dt / 0.5); }
+      let ts = 1; if (R.ramp < 1) { ts = lerp(0.4, 1, R.ramp); R.ramp = Math.min(1, R.ramp + dt / (R.rampDur || 0.5)); }
       if (R.ageT < 1) R.ageT = Math.min(1, R.ageT + dt / 0.6);
       R.acc += dt * ts; let n = Math.floor(R.acc / DT); if (n > 30) { n = 30; R.acc = 0; } else R.acc -= n * DT;
       for (let i = 0; i < n && !S.dead && !R.cutin; i++) {
@@ -4213,7 +4291,7 @@ function update(dt) {
       }
     } else if (R.phase === 'crash') { if (R.cutin) cutinUpdate(dt); else crashUpdate(dt); }
     // camera, trail ages, zone crossfade, Teddy
-    const S2 = R.S, fx = R.phase === 'crash' ? R.crash.x : S2.x;
+    const S2 = R.S, fx = R.phase === 'crash' && R.crash ? R.crash.x : S2.x;
     R.cam = fx - camFrac() * V.vwU;
     for (const p of R.trail) p.age += dt;
     while (R.trail.length && R.trail[0].age > 2.5) R.trail.shift();
@@ -4258,7 +4336,7 @@ function handleEvents(S) {
     else if (k === 'slip') { au('sfx', 'slip'); setCard('DOUBLE OR NOTHING', 1.4, '#F2E14C'); }
     else if (k === 'slipWin') { au('sfx', 'slipWin'); setCard('+100 M. CASHED OUT.', 1.4, '#B6FF2E'); }
     else if (k === 'slipLose') au('sfx', 'slipLose');
-    else if (k === 'teddySave') { au('sfx', 'teddyBark'); au('sfx', 'teddySave'); au('sfx', 'cutin'); au('duck', true); R.leap = 0.7; R.proud = 0; R.cutin = { kind: 'teddy', age: R.age, beat: 0, t: 0, dur: 0.7, zone: ZID(R.zB), lines: ['TEDDY!', 'GOOD BOY.'], s1: false, s2: false }; G.ptrs = {}; }
+    else if (k === 'teddySave') { au('sfx', 'teddyBark'); au('sfx', 'teddySave'); au('sfx', 'cutin'); au('duck', true); R.leap = 0.7; R.proud = 0; R.cutin = { kind: 'teddy', age: R.age, beat: 0, t: 0, dur: 0.7, zone: ZID(R.zB), lines: ['TEDDY!', 'GOOD BOY.'], s1: false, s2: false }; }
     else if (k === 'win') {
       R.zA = 4; R.zB = 4; R.zf = 1; R.age = 4; R.ageFrom = 4; R.ageT = 1; G.ptrs = {};
       const b = WIN_BEATS[0]; R.cutin = { kind: 'win', beat: 0, t: 0, dur: b.dur, image: b.image, zone: 'teal', age: 4, lines: b.lines.slice(), s1: false, s2: false };
@@ -4267,10 +4345,17 @@ function handleEvents(S) {
     else if (k === 'newBest') au('sfx', 'newBest');
     else if (k === 'zone') {
       const z = zoneAt(Tof(S.x)); R.zA = R.zB; R.zB = z.i; R.zf = 0; au('sfx', 'zone'); au('music', S.won ? 'victory' : ZID(z.i));
-      R.ageFrom = R.age; R.age = Math.min(4, z.k);
-      const lines = S.won ? ['VICTORY LAP', 'HE IS NEVER COMING DOWN.'] : z.lap > 1 ? ['LAP ' + z.lap, "HE'S BEEN IN THE AIR FOR FIFTY YEARS."] : (CUTIN_LINES[z.i] || [ZONES[z.i].name, '']);
-      R.cutin = { kind: 'age', age: R.age, beat: 0, t: 0, dur: 1.8, zone: ZID(z.i), lines, s1: false, s2: false, name: ZONES[z.i].name };
-      au('sfx', 'cutin'); au('duck', true); G.ptrs = {};
+      R.ageFrom = R.age;
+      if (S.mode === 'endless') {
+        // RULINGS 27B: he ages through each lap and is REBORN at the start of the next
+        R.age = z.i;
+        if (z.i === 0) R.cutin = { kind: 'reborn', age: 0, ageFrom: 4, lap: z.lap, beat: 0, t: 0, dur: 1.0, zone: ZID(0), lines: ['LAP ' + z.lap, 'REBORN. STILL OWES MONEY.'], s1: false, s2: false, name: ZONES[0].name };
+        else R.cutin = { kind: 'age', age: R.age, beat: 0, t: 0, dur: 1.8, zone: ZID(z.i), lines: [ZONES[z.i].name, 'CONNIE: ' + AGES[R.age]], s1: false, s2: false, name: ZONES[z.i].name };
+      } else {
+        R.age = Math.min(4, z.k);
+        R.cutin = { kind: 'age', age: R.age, beat: 0, t: 0, dur: 1.8, zone: ZID(z.i), lines: CUTIN_LINES[z.i] || [ZONES[z.i].name, ''], s1: false, s2: false, name: ZONES[z.i].name };
+      }
+      au('sfx', 'cutin'); au('duck', true);
     } else if (k === 'crash') { au('sfx', 'crash'); }
   }
   S.ev.length = 0;
@@ -4284,7 +4369,7 @@ function squadPicked(S, t) {
     // first time this run: the friend moment (freezing 1.3 s, skippable after 0.3 s)
     R.met[q.who] = true; seen[q.who] = (seen[q.who] | 0) + 1; persist();
     R.cutin = { kind: 'squad', who: q.who, item: t, beat: 0, t: 0, dur: 1.3, zone: ZID(R.zB), age: R.age, lines: q.lines.slice(), s1: false, s2: false };
-    au('sfx', 'squad'); au('duck', true); G.ptrs = {};
+    au('sfx', 'squad'); au('duck', true);
   } else { R.met[q.who] = true; R.chip = { who: q.who, fx: q.fx, col: q.col, t: 0 }; }
 }
 function setCard(s, dur, col, sub) { R.card = { s, sub, t: 0, dur, col }; }
@@ -4310,12 +4395,12 @@ function advanceCutin(natural) {
   if (c.kind === 'intro') { R.cutin = null; G.ptrs = {}; au('music', ZID(R.zB)); return; }
   if (c.kind === 'win' && c.beat < WIN_BEATS.length - 1) { c.beat++; const b = WIN_BEATS[c.beat]; c.t = 0; c.dur = b.dur; c.image = b.image; c.lines = b.lines.slice(); c.s1 = c.s2 = false; au('sfx', 'cutin'); if (c.beat === WIN_BEATS.length - 1) au('sfx', 'confetti'); return; }
   const wasAge = c.kind === 'age';
-  R.cutin = null; au('duck', false); G.ptrs = {};
-  if (c.kind === 'win') { R.ramp = 0; R.confT = 0; R.zA = 4; R.zB = 0; R.zf = 0; return; }
+  R.cutin = null; au('duck', false);
+  // RULINGS 28: input is never reset here; freezing cut-ins hand back a hovering, protected Connie
+  if (c.kind === 'age' || c.kind === 'squad' || c.kind === 'teddy' || c.kind === 'reborn') { CA.sim.resume(R.S); R.ramp = 0; R.rampDur = P.hoverT; R.armed = true; }
+  if (c.kind === 'win') { finishRun(); return; }
   if (c.kind === 'lose') { finishRun(); return; }
-  if (wasAge) { R.ramp = 0; R.ageT = 0; setCard(c.name, 1.5, null, 'CONNIE: ' + AGES[c.age]); }
-  else if (c.kind === 'teddy') R.ramp = 0.4;
-  else if (c.kind === 'squad') R.ramp = 0.2; // 0.4 s ramp back in (ramp runs 0 -> 1 over 0.5 s)
+  if (wasAge) { R.ageT = 0; setCard(c.name, 1.5, null, 'CONNIE: ' + AGES[c.age]); }
 }
 function stubCutin(c) {
   const k = clamp(c.t / c.dur, 0, 1), ui = uiTheme(c.zone), bh = Math.min(V.H * 0.34, 260), y = V.H / 2 - bh / 2;
@@ -4340,7 +4425,7 @@ function drawBand() {
   ctx.setTransform(V.dpr, 0, 0, V.dpr, 0, 0); ctx.globalAlpha = 1;
 }
 function drawCutin() {
-  const c = R.cutin, st = { kind: c.kind, who: c.who, item: c.item, age: c.age, beat: c.beat, tier: c.tier, image: c.image, k: clamp(c.t / c.dur, 0, 1), t: c.t, dur: c.dur, beats: c.kind === 'intro' ? INTRO_BEATS.length : undefined, zone: c.zone, lines: c.lines.slice() };
+  const c = R.cutin, st = { kind: c.kind, lap: c.lap, ageFrom: c.ageFrom, who: c.who, item: c.item, age: c.age, beat: c.beat, tier: c.tier, image: c.image, k: clamp(c.t / c.dur, 0, 1), t: c.t, dur: c.dur, beats: c.kind === 'intro' ? INTRO_BEATS.length : undefined, zone: c.zone, lines: c.lines.slice() };
   if (!artCall('drawCutin', [ctx, st, V.W, V.H, G.t])) { ctx.setTransform(V.dpr, 0, 0, V.dpr, 0, 0); stubCutin(c); }
   ctx.setTransform(V.dpr, 0, 0, V.dpr, 0, 0); ctx.globalAlpha = 1;
 }
@@ -4366,7 +4451,7 @@ function crashUpdate(dt) {
   const cf = C.bot(c.x) - 1; if (c.y > cf) { c.y = cf; c.vy = -c.vy * 0.3; c.vx *= 0.6; c.va *= 0.5; }
   if (Math.floor(R.ct / DT) % 6 === 0) pushTrail(c.x, c.y);
   if (R.ct >= 0.8) {
-    if (R.S.won) { finishRun(); return; }
+    if (R.S.won || R.mode === 'endless') { finishRun(); return; }
     const tier = loseTier(R.S.zk), short = (SAVE.loseSeen | 0) >= 3;
     SAVE.loseSeen = (SAVE.loseSeen | 0) + 1; persist();
     R.cutin = { kind: 'lose', tier, beat: 0, t: 0, dur: short ? 0.7 : 1.3, image: 'slip_lose', zone: ZID(R.zB), age: R.age, lines: [LOSE_LINES[tier], ''], s1: false, s2: false };
@@ -4376,16 +4461,22 @@ function crashUpdate(dt) {
 
 /* ---------- results, saves, submit ---------- */
 function finishRun() {
-  const S = R.S, m = metres(S), secs = clamp(Math.ceil(S.t), 1, 3600), prev = SAVE.best;
-  const pb = m > prev, dpb = false;
-  SAVE.runs++; if (R.coach) SAVE.coached = (SAVE.coached | 0) + 1; if (pb) SAVE.best = m;
-  const res = { m, dist: distM(S), secs, seedStr: R.seedStr, daily: R.daily, flags: flags(S), won: S.won, zk: Math.min(4, S.zk), pb, prev, dpb, board: 'off', rank: null, cause: S.cause, bonus: S.bonus, auto: !!G.bot, age: R.age };
-  G.result = res; R.phase = 'done'; G.scene = 'result'; R.flyT = 0;
-  if (pb && !res.auto) au('sfx', 'newBest');
-  if ((pb || dpb) && m >= 1) {
-    SAVE.pending = { m, secs, seedStr: R.seedStr, flags: res.flags };
-    submitScore(res);
+  const S = R.S, m = metres(S), secs = clamp(Math.ceil(S.t), 1, 3600), endless = R.mode === 'endless';
+  SAVE.runs++; if (R.coach) SAVE.coached = (SAVE.coached | 0) + 1;
+  const res = { mode: R.mode, m, dist: distM(S), secs, seedStr: R.seedStr, flags: flags(S, !!SAVE.storyWon), won: S.won, zk: Math.min(4, S.zk), lap: S.lap, level: S.zk % 5, pb: false, prev: SAVE.best, board: 'off', rank: null, cause: S.cause, bonus: S.bonus, auto: !!G.bot, age: R.age };
+  if (endless) {
+    const pb = m > SAVE.best; res.pb = pb; if (pb) SAVE.best = m;
+    if (pb && !res.auto) au('sfx', 'newBest');
+    // RULINGS 27B4: only ENDLESS posts (FLAGS bit3), with bit2 when this player has completed the story
+    if (pb && m >= 1) { SAVE.pending = { m, secs, seedStr: R.seedStr, flags: res.flags }; submitScore(res); }
+  } else if (S.won) {
+    const st = SAVE.story || { deaths: 0 }; res.tries = (st.deaths | 0) + 1; SAVE.storyWon = true; SAVE.story = null; res.complete = true;
+  } else {
+    // a story death: progress is kept at the level he died in (CONTINUE resumes there)
+    const st = SAVE.story || (SAVE.story = { active: true, level: 0, deaths: 0, seedStr: R.seedStr });
+    st.active = true; st.level = Math.min(4, S.zk); st.deaths = (st.deaths | 0) + 1; res.level = st.level;
   }
+  G.result = res; R.phase = 'done'; G.scene = 'result'; R.flyT = 0;
   persist();
 }
 const GB = { all: null, daily: null, day: null, state: 'idle', t: -1e9 };
@@ -4467,7 +4558,8 @@ function nameThenSubmit() { openName((ok) => { if (ok && SAVE.pending) submitSco
 
 /* ---------- share ---------- */
 function shareRun(res) {
-  const txt = 'CON AIR · I flew Connie ' + res.m + ' m · beat it: ' + SHARE_URL;
+  const txt = res.mode === 'story' ? (res.complete ? 'CON AIR · I won the bet in STORY in ' + res.tries + (res.tries === 1 ? ' try' : ' tries') : 'CON AIR · I got Connie to level ' + (res.level + 1) + ' in STORY') + ' · beat it: ' + SHARE_URL
+    : 'CON AIR · I flew Connie ' + res.m + ' m in ENDLESS · beat it: ' + SHARE_URL;
   const fallback = () => { try { root.navigator.clipboard.writeText(txt).then(() => toast('COPIED. PASTE IT IN THE CHAT.'), () => toast('COULD NOT COPY')); } catch (e) { toast('COULD NOT COPY'); } };
   try { if (root.navigator && typeof root.navigator.share === 'function') { root.navigator.share({ text: txt }).catch((e) => { if (!e || e.name !== 'AbortError') fallback(); }); return; } } catch (e) { }
   fallback();
@@ -4602,17 +4694,17 @@ function buildScene(view) {
   else if (G.scene !== 'result') ents.push({ type: 'teddy', sparkle: R.sparkle || 0, x: tx, y: fy, state: S.teddy === 'tired' ? 'tired' : 'run', k: frac(G.t * (S.teddy === 'tired' ? 2.2 : 4.5)) });
   // Connie
   let conn;
-  const bubble = R.phase === 'ready' ? 1 : R.phase === 'run' && S.t < P.grace ? clamp((P.grace - S.t) / P.graceFade, 0, 1) : 0;
+  const bubble = R.phase === 'ready' ? 1 : R.phase === 'run' && S.t < P.grace ? clamp((P.grace - S.t) / P.graceFade, 0, 1) : R.phase === 'run' && (S.hover > 0 || S.protect > 0) ? 0.6 * (S.hover > 0 ? 1 : clamp(S.protect / 0.6, 0, 1)) : 0;
   if (R.phase === 'ready') {
     const c = cellCentre(S.x, S.y + bobY());
-    conn = { type: 'connie', x: c.x, y: c.y, w: P.cell, h: P.cell, cell: P.cell, pose: Math.floor(R.readyT / 0.12) % 2, age: 0, ageFrom: 0, ageK: 1, k: 0, thrust: false, bubble: 1, state: 'ready' };
+    conn = { type: 'connie', x: c.x, y: c.y, w: P.cell, h: P.cell, cell: P.cell, pose: Math.floor(R.readyT / 0.12) % 2, age: R.age, ageFrom: R.age, ageK: 1, k: 0, thrust: false, bubble: 1, state: 'ready' };
   } else if (R.phase === 'run') {
     const k = drawnAngle(a), c = cellCentre(cx, cy);
     conn = { type: 'connie', x: c.x, y: c.y, w: P.cell, h: P.cell, cell: P.cell, pose: R.pose, age: R.age, ageFrom: R.ageFrom, ageK: R.ageT, k, thrust: S.hold || S.beef > 0, inv: S.inv > 0, buzz: S.buzz > 0, beef: S.beef > 0, fire: S.fire > 0 ? S.fire : 0, hazy: S.hazy > 0, gains: S.shield, bubble, state: R.pose === 2 ? 'fall' : S.hold ? (R.pose ? 'thrustB' : 'thrustA') : 'rise' };
     if (R.ageT < 1) { conn.age = Math.floor(R.ageT * 0.6 / 0.08) % 2 ? R.ageFrom : R.age; }
     if (S.inv > 0 && S.beef <= 0 && !R.cutin && Math.floor(S.t / 0.08) % 2 === 1) conn = null;
   } else {
-    const cr = R.crash, c = cellCentre(cr.x, cr.y);
+    const cr = R.crash || (R.crash = { x: S.x, y: S.y, vx: 0, vy: 0, landed: true }), c = cellCentre(cr.x, cr.y);
     conn = { type: 'connie', x: c.x, y: c.y, w: P.cell, h: P.cell, cell: P.cell, pose: R.phase === 'done' ? 5 : R.pose, age: R.age, ageFrom: R.age, ageK: 1, k: 0, thrust: false, state: 'hit' };
   }
   if (conn && G.scene !== 'result') ents.push(conn);
@@ -4716,6 +4808,10 @@ function drawTitleBackdrop() {
   ctx.setTransform(V.dpr, 0, 0, V.dpr, 0, 0);
   ctx.fillStyle = 'rgba(10,6,14,0.55)'; ctx.fillRect(0, 0, V.W, V.H);
 }
+function modeButton(id, x, y, w, h, lbl, fn, primary, ui) {
+  button(id, x, y, w, h, lbl, fn, { primary, ui, px: primary ? undefined : V.px * 1.2 });
+  const A = ART(); if (A && A.MODE_ICONS) { const s = Math.round(h * 0.6); icon(id, x + 10, y + (h - s) / 2, s); }
+}
 function drawTitle() {
   drawTitleBackdrop();
   const A = area(), ui = uiTheme('title'), px = V.px, gap = V.land ? 10 : 12, tall = !V.land && A.h > 700, bh = Math.round(btnH() * (tall ? 1.2 : 1)), BH = btnH(true) + (tall ? 22 : 10), sh = Math.round(bh * 0.85);
@@ -4723,7 +4819,7 @@ function drawTitle() {
   const lx = V.land ? A.x + A.w * 0.25 : V.W / 2, rx = V.land ? A.x + A.w * 0.75 : V.W / 2;
   const bw = Math.min(colW, 340), gpx = px * 0.75 >= 1.5 ? px * 0.75 : 1.5;
   const gl = wrap('GLOBAL LEADERBOARD — EVERYONE WHO PLAYS IS ON IT', bw, gpx), top = GB.all && GB.all[0];
-  const TEDDY_T = 74, btnBlock = BH + gap + (bh + gap) + sh + gap + 4 + gl.length * 10 * gpx + (top ? 4 + 10 * gpx : 0) + (tall ? TEDDY_T : 0);
+  const TEDDY_T = 74, btnBlock = BH + gap + BH * 0.8 + gap + (sh + gap) + sh * 0.8 + gap + 4 + gl.length * 10 * gpx + (top ? 4 + 10 * gpx : 0) + (tall ? TEDDY_T : 0);
   const tl = wrap('GET HOME BEFORE HAYLEY CHECKS THE ACCOUNT.', colW - 10, px);
   const textBlock = tl.length * 10 * px + (SAVE.best ? 2 + 10 * px : 0);
   // the brand column (portrait + logo + tagline) shrinks until it fits beside / above the buttons
@@ -4741,12 +4837,20 @@ function drawTitle() {
   if (SAVE.best) { y += 2; text('BEST ' + SAVE.best + ' M', lx, y, px, ui.accent, 'c'); y += 10 * px; }
   if (!V.land) by = y + 16;
   const bx = rx - bw / 2, hw = (bw - gap) / 2;
-  button('play', bx, by, bw, BH, 'PLAY', () => startRun(), { primary: true, ui }); by += BH + gap;
-  button('board', bx, by, hw, bh, 'BOARD', () => { G.from = 'title'; toScene('board'); }, { ui });
-  button('name', bx + hw + gap, by, hw, bh, SAVE.name ? 'NAME: ' + SAVE.name : 'NAME', () => nameThenSubmit(), { ui }); by += bh + gap;
-  button('sound', bx, by, hw, sh, SAVE.muted ? 'SOUND: OFF' : 'SOUND: ON', toggleMute, { ui, px: 1.5 });
-  button('story', bx + hw + gap, by, hw, sh, 'STORY', () => startRun({ intro: true }), { ui, px: 1.5 });
-  by += sh + gap + 4;
+  // RULINGS 27: STORY first and larger on a new save; ENDLESS becomes primary once the story is won
+  const st = SAVE.story, resume = st && st.active && ((st.level | 0) > 0 || (st.deaths | 0) > 0);
+  const storyLbl = resume ? 'RESUME STORY · LEVEL ' + ((st.level | 0) + 1) : 'STORY';
+  const storyFn = () => startRun({ mode: 'story' }), endlessFn = () => startRun({ mode: 'endless' });
+  const first = SAVE.storyWon ? ['endless', 'ENDLESS', endlessFn] : ['story', storyLbl, storyFn], second = SAVE.storyWon ? ['story', storyLbl, storyFn] : ['endless', 'ENDLESS', endlessFn];
+  const h2 = Math.round(BH * 0.8);
+  modeButton(first[0], bx, by, bw, BH, first[1], first[2], true, ui); by += BH + gap;
+  modeButton(second[0], bx, by, bw, h2, second[1], second[2], false, ui); by += h2 + gap;
+  const w3 = (bw - gap * 2) / 3;
+  button('board', bx, by, w3, sh, 'BOARD', () => { G.from = 'title'; toScene('board'); }, { ui, px: 1.5 });
+  button('name', bx + w3 + gap, by, w3, sh, SAVE.name ? 'NAME: ' + SAVE.name : 'NAME', () => nameThenSubmit(), { ui, px: 1.5 });
+  button('sound', bx + 2 * (w3 + gap), by, w3, sh, SAVE.muted ? 'SOUND: OFF' : 'SOUND: ON', toggleMute, { ui, px: 1.5 }); by += sh + gap;
+  const iw = Math.min(bw, 150), ih = Math.round(sh * 0.8);
+  button('intro', rx - iw / 2, by, iw, ih, 'STORY INTRO', () => startRun({ mode: 'story', intro: true }), { ui, px: 1.5 }); by += ih + gap + 4;
   gl.forEach((l) => { text(l, rx, by, gpx, ui.ink, 'c'); by += 10 * gpx; });
   if (top) { by += 4; const s2 = 'TOP: ' + top.name + ' ' + top.m + ' M'; text(s2, rx, by, fitPx(s2, bw, gpx), ui.accent, 'c'); by += 10 * gpx; }
   // Teddy stands proud under the buttons when there is room
@@ -4757,6 +4861,11 @@ function plate(x, y, w, h) { if (!artCall('drawTextPlate', [ctx, x, y, w, h, 0.7
 function dot(x, y, r) { ctx.fillStyle = 'rgba(6,4,10,0.75)'; ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill(); }
 function drawProgress(A, y, ui) {
   const S = R.S, spx = 1.5;
+  if (S.mode === 'endless') {
+    const z = zoneAt(Tof(S.x)), s = 'LAP ' + z.lap + ' · ' + ZONES[z.i].name, w = textW(s, spx);
+    plate(V.W / 2 - w / 2 - 6, y - 2, w + 12, 10 * spx + 3); text(s, V.W / 2, y + 1, spx, ui.ink, 'c');
+    return y + 10 * spx + 8;
+  }
   if (S.won) {
     const s = 'VICTORY LAP', w = textW(s, spx), is = 14;
     const pw = w + is + 6; plate(V.W / 2 - pw / 2 - 6, y - 5, pw + 12, 10 * spx + 6);
@@ -4790,9 +4899,9 @@ function drawReadyPrompt() {
   text('LET GO TO FALL', V.W / 2, y, px, '#FFFFFF', 'c', { shadow: '#000' });
 }
 // first three runs: HOLD / LET GO beside him when he drifts into the outer quarters of the corridor
-function drawCoach() {
+function drawCoach(hover) {
   const S = R.S, C = S.C, top = C.top(S.x), bot = C.bot(S.x), f = (S.y - top) / (bot - top);
-  const lbl = f < 0.25 ? 'LET GO' : f > 0.75 ? 'HOLD' : ''; if (!lbl) return;
+  const lbl = hover ? (f > 0.5 ? 'HOLD' : 'LET GO') : f < 0.25 ? 'LET GO' : f > 0.75 ? 'HOLD' : ''; if (!lbl) return;
   const view = makeView(R.cam), x = sx(view, S.x + P.cell * 0.55), y = sy(view, S.y) - 6, px = V.px;
   const w = textW(lbl, px) + 16, xx = Math.min(x, V.W - w - 8);
   ctx.fillStyle = 'rgba(6,4,10,0.7)'; ctx.fillRect(xx - 4, y - 4, w + 8, 7 * px + 8);
@@ -4819,9 +4928,16 @@ function drawHUD() {
   const fxOn = S.beef > 0 || S.fire > 0 || S.hazy > 0 || S.buzz > 0, hudH = A.y + 7 * big + 6 + 10 * px + 6 + 16 + 15 + 10 + (fxOn ? 26 : 0) + (S.slip ? 16 : 0);
   if (!artCall('drawHudStrip', [ctx, V.W, hudH, 0.65])) { const g = ctx.createLinearGradient(0, 0, 0, hudH); g.addColorStop(0, 'rgba(6,4,10,0.7)'); g.addColorStop(1, 'rgba(6,4,10,0)'); ctx.fillStyle = g; ctx.fillRect(0, 0, V.W, hudH); }
   ctx.setTransform(V.dpr, 0, 0, V.dpr, 0, 0); ctx.globalAlpha = 1;
-  text(String(m), V.W / 2, A.y, big, '#FFFFFF', 'c');
-  const bs = S.newBest ? 'NEW BEST' : SAVE.best ? 'BEST ' + SAVE.best : '';
-  if (bs) text(bs, V.W / 2, A.y + 7 * big + 6, px, S.newBest ? '#B6FF2E' : ui.ink, 'c');
+  let bs;
+  if (S.mode === 'story') {
+    // RULINGS 27A4: the big number is the distance left in the current level
+    const lv = Math.min(4, S.zk), left = Math.max(0, Math.ceil((xAtT((lv + 1) * P.zoneT) - S.x) / 10));
+    text(left + ' M', V.W / 2, A.y, big, '#FFFFFF', 'c'); bs = 'LEVEL ' + (lv + 1) + ' OF 5';
+  } else {
+    text(String(m), V.W / 2, A.y, big, '#FFFFFF', 'c');
+    bs = S.newBest ? 'NEW BEST' : SAVE.best ? 'BEST ' + SAVE.best : '';
+  }
+  if (bs) text(bs, V.W / 2, A.y + 7 * big + 6, px, S.newBest && S.mode === 'endless' ? '#B6FF2E' : ui.ink, 'c');
   // Teddy icon top-left
   const is = Math.round(Math.max(22, 9 * px));
   icon(S.teddy === 'ready' ? 'teddy' : 'teddyTired', A.x, A.y, is);
@@ -4842,7 +4958,7 @@ function drawHUD() {
     if (c.sub) text(c.sub, V.W / 2, cy + 7 * cpx + 6, px, ui.accent, 'c'); ctx.globalAlpha = 1;
   }
   if (R.phase === 'ready') drawReadyPrompt();
-  else if (R.phase === 'run' && R.coach && S.t < 6) drawCoach();
+  else if (R.phase === 'run' && ((R.coach && S.t < 6) || S.hover > 0)) drawCoach(S.hover > 0);
   if (R.chip) drawSquadChip(A.x, Math.max(ey, hudH) + 6, R.chip); // below the HUD, left
   // a small pause button (bottom-right, out of the way of the thumb hold)
   const pb = Math.round(btnH() * 0.9);
@@ -4871,22 +4987,38 @@ function drawResult() {
   const bh = btnH(), BH = btnH(true), gap = 10;
   let by = y0 + ph - 14 - BH - gap - bh;
   const bw = pw - 28, bx = x0 + 14;
-  button('retry', bx, by, bw, BH, 'RETRY', retry, { primary: true, ui });
-  const w3 = (bw - gap * 2) / 3, by2 = by + BH + gap;
-  button('share', bx, by2, w3, bh, 'SHARE', () => shareRun(res), { ui });
-  button('board', bx + w3 + gap, by2, w3, bh, 'BOARD', () => { G.from = 'result'; toScene('board'); }, { ui });
+  const w3 = (bw - gap * 2) / 3, by2 = by + BH + gap, story = res.mode === 'story';
+  if (!story) {
+    button('retry', bx, by, bw, BH, 'RETRY', retry, { primary: true, ui });
+    button('share', bx, by2, w3, bh, 'SHARE', () => shareRun(res), { ui });
+    button('board', bx + w3 + gap, by2, w3, bh, 'BOARD', () => { G.from = 'result'; toScene('board'); }, { ui });
+  } else if (res.complete) {
+    button('endless', bx, by, bw, BH, 'PLAY ENDLESS', () => startRun({ mode: 'endless' }), { primary: true, ui });
+    button('share', bx, by2, w3, bh, 'SHARE', () => shareRun(res), { ui });
+    button('again', bx + w3 + gap, by2, w3, bh, 'STORY', () => startRun({ mode: 'story', fresh: true }), { ui });
+  } else {
+    button('continue', bx, by, bw, BH, 'CONTINUE · LEVEL ' + ((res.level | 0) + 1), () => startRun({ mode: 'story' }), { primary: true, ui });
+    button('over', bx, by2, w3 * 2 + gap, bh, 'START OVER', () => startRun({ mode: 'story', fresh: true }), { ui });
+  }
   button('menu', bx + 2 * (w3 + gap), by2, w3, bh, 'MENU', () => { R = null; toScene('title'); }, { ui });
   const limit = by - 8;
   // top: run label, distance, best, verdict, money, rank
   let y = y0 + 14;
-  const hl = res.won ? 'THE BET HIT.' : 'THE BET IS DEAD.', hpx = fitPx(hl, inner, px * 1.5);
-  text(hl, cx, y, hpx, res.won ? '#F2CD52' : '#FF8A7A', 'c'); y += 7 * hpx + 8;
-  const big = fitPx(res.m + ' M', inner, px * 4); text(res.m + ' M', cx, y, big, '#FFFFFF', 'c');
-  y += 7 * big + 8;
-  const bl = res.pb ? 'NEW BEST!' : 'BEST ' + SAVE.best + ' M'; text(bl, cx, y, px, res.pb ? '#B6FF2E' : ui.ink, 'c'); y += 10 * px + 4;
-  if (!res.won) { const vl = wrap(ZONE_VERDICT[clamp(res.zk | 0, 0, 4)], inner, px); vl.forEach((l) => { text(l, cx, y, px, '#FFE7B0', 'c'); y += 10 * px; }); y += 2; }
-  text('AGE: ' + AGES[res.age | 0], cx, y, px, ui.ink, 'c'); y += 10 * px + 2;
-  const ml = res.won ? 'MONEY WON: ' + dollars(moneyWon(res.m)) : 'MONEY LOST: ' + dollars(moneyLost(res.m)); const mpx = fitPx(ml, inner, px); text(ml, cx, y, mpx, res.won ? '#B6FF2E' : '#FF9A8A', 'c'); y += 10 * mpx + 2;
+  const hl = story ? (res.complete ? 'THE BET HIT.' : 'DOWN, NOT OUT.') : 'RUN OVER', hpx = fitPx(hl, inner, px * 1.5);
+  text(hl, cx, y, hpx, res.complete ? '#F2CD52' : story ? '#FF8A7A' : ui.accent, 'c'); y += 7 * hpx + 8;
+  if (story && res.complete) {
+    const tl = res.tries === 1 ? 'WON WITHOUT A SINGLE CONTINUE' : 'WON IN ' + res.tries + ' TRIES', tp = fitPx(tl, inner, px * 1.5);
+    text(tl, cx, y, tp, '#FFFFFF', 'c'); y += 7 * tp + 10;
+  } else if (story) {
+    const ll = 'LEVEL ' + ((res.level | 0) + 1) + ' OF 5', lp = fitPx(ll, inner, px * 2.5); text(ll, cx, y, lp, '#FFFFFF', 'c'); y += 7 * lp + 8;
+  } else {
+    const big = fitPx(res.m + ' M', inner, px * 4); text(res.m + ' M', cx, y, big, '#FFFFFF', 'c'); y += 7 * big + 8;
+    const bl = res.pb ? 'NEW BEST!' : 'BEST ' + SAVE.best + ' M'; text(bl, cx, y, px, res.pb ? '#B6FF2E' : ui.ink, 'c'); y += 10 * px + 4;
+  }
+  if (story && !res.complete) { const vl = wrap(ZONE_VERDICT[clamp(res.zk | 0, 0, 4)], inner, px); vl.forEach((l) => { text(l, cx, y, px, '#FFE7B0', 'c'); y += 10 * px; }); y += 2; }
+  text('AGE: ' + AGES[res.age | 0] + (story ? '' : ' · LAP ' + (res.lap || 1)), cx, y, px, ui.ink, 'c'); y += 10 * px + 2;
+  if (story && res.complete) { const nt = 'NOW TRY ENDLESS', np = fitPx(nt, inner, px); text(nt, cx, y, np, '#B6FF2E', 'c'); y += 10 * np + 2; }
+  const ml = story && res.complete ? 'MONEY WON: ' + dollars(moneyWon(res.m)) : 'MONEY LOST: ' + dollars(moneyLost(res.m)); const mpx = fitPx(ml, inner, px); text(ml, cx, y, mpx, res.complete ? '#B6FF2E' : '#FF9A8A', 'c'); y += 10 * mpx + 2;
   let rk = '';
   if (res.board === 'ok') rk = res.rank ? 'GLOBAL RANK #' + res.rank : 'ON THE BOARD';
   else if (res.board === 'sending') rk = 'SENDING TO THE BOARD...';
@@ -4897,10 +5029,10 @@ function drawResult() {
   // characters: Connie (fist pump on a new best), and her if she knows
   // the cast is the centrepiece: Teddy, Connie (fist pump on a new best) and Hayley on one ground line
   // win: fist pump at seventy, Hayley laughing; lose: slumped, Hayley unimpressed
-  const pose = res.won ? 6 + Math.floor(R.flyT / 0.25) % 2 : 5, her = true, hp = res.won ? 3 : 2, cage = res.won ? 4 : res.age;
+  const happy = res.complete || (!story && res.pb), pose = happy ? 6 + Math.floor(R.flyT / 0.25) % 2 : 5, her = true, hp = res.complete ? 3 : happy ? 0 : 2, cage = res.complete ? 4 : res.age;
   // lose: Hayley's sad close-up as a banner above the cast when it has loaded (RULINGS 17)
-  const banner = res.won ? 'party' : 'sad';
-  if (art('drawEndImage') && root.CAArt.endImageReady && root.CAArt.endImageReady(banner)) {
+  const banner = res.complete ? 'party' : story ? 'sad' : '';
+  if (banner && art('drawEndImage') && root.CAArt.endImageReady && root.CAArt.endImageReady(banner)) {
     const bwid = Math.min(inner, 520), bhh = bwid / 3;
     if (limit - y - bhh - 8 >= (V.land ? 0 : 150)) { const h = artCall('drawEndImage', [ctx, banner, cx - bwid / 2, y + 4, bwid]); ctx.setTransform(V.dpr, 0, 0, V.dpr, 0, 0); if (typeof h === 'number' && h > 0) y += h + 8; }
   }
@@ -4929,7 +5061,7 @@ function drawBoard() {
   let y = A.y;
   const bh = btnH(), gap = 8, tw = (pw - gap * 2) / 3;
   button('back', x0, y, tw, bh, 'BACK', () => toScene(G.from === 'result' && R ? 'result' : 'title'), { ui });
-  text('ALL TIME', x0 + pw - 4, y + bh / 2 - 3.5 * px, px, ui.accent, 'r');
+  text('ENDLESS · GLOBAL', x0 + pw - 4, y + bh / 2 - 3.5 * px, fitPx('ENDLESS · GLOBAL', pw - tw - 16, px), ui.accent, 'r');
   y += bh + 12;
   const rows = GB.all || [];
   if (GB.state === 'loading' && !rows.length) { text('LOADING...', V.W / 2, y, px, ui.ink, 'c'); return; }
@@ -4962,7 +5094,7 @@ function render() {
       if (!R) { G.scene = 'title'; return; }
       drawWorld(); ctx.setTransform(V.dpr, 0, 0, V.dpr, 0, 0);
       if (G.scene === 'play') { if (!R.cutin && R.confT != null && R.confT < 6) confetti(1 - R.confT / 6); if (R.cutin) { drawCutin(); if (R.cutin.kind === 'intro') drawSkip(); } else if (R.phase !== 'done') { drawHUD(); if (R.band) drawBand(); } if (G.paused) { G.btns = []; TEXT_RECTS.length = 0; drawPause(); } }
-      else { drawResult(); if (G.result && G.result.won) confetti(0.55); }
+      else { drawResult(); if (G.result && G.result.complete) confetti(0.55); }
     } else if (G.scene === 'board') drawBoard();
     else drawTitle();
   } catch (e) { if (!G.lastErr) console.error(e); G.lastErr = String(e && e.stack || e); }
@@ -4984,7 +5116,7 @@ function onDown(e) {
   const b = btnAt(e.clientX, e.clientY);
   if (b) { G.press = { id: b.id, pid: e.pointerId }; return; }
   if (G.scene === 'play' && G.paused) { G.paused = false; return; }
-  if (G.scene === 'play' && R && R.cutin) { advanceCutin(false); R.armed = false; return; }
+  if (G.scene === 'play' && R && R.cutin) { if (R.cutin.kind !== 'intro' && R.phase === 'run') G.ptrs[e.pointerId] = true; else R.armed = false; advanceCutin(false); return; }
   if (G.scene === 'play') G.ptrs[e.pointerId] = true;
 }
 // RULINGS 23C: touch events straight on the canvas too (passive: false), de-duplicated against pointer events;
@@ -5000,7 +5132,7 @@ function onTouchStart(e) {
     if (btnAt(t.clientX, t.clientY)) { if (now - (G.lastPtrDown || -1e9) > 80) { const b = btnAt(t.clientX, t.clientY); G.press = { id: b.id, pid: 't' + t.identifier }; } continue; }
     if (now - (G.lastPtrDown || -1e9) <= 80) continue; // the pointer event already handled this finger
     if (G.scene === 'play' && G.paused) { G.paused = false; continue; }
-    if (G.scene === 'play' && R && R.cutin) { advanceCutin(false); R.armed = false; continue; }
+    if (G.scene === 'play' && R && R.cutin) { if (R.cutin.kind !== 'intro' && R.phase === 'run') G.ptrs['t' + t.identifier] = true; else R.armed = false; advanceCutin(false); continue; }
     if (G.scene === 'play') G.ptrs['t' + t.identifier] = true;
   }
 }
@@ -5055,19 +5187,23 @@ function frame(ts) {
 
 /* ---------- debug / test hooks ---------- */
 CA.debug = {
-  state() { const S = R && R.S; return { scene: G.scene, paused: G.paused, phase: R && R.phase, seed: R && R.seedStr, t: S ? +S.t.toFixed(3) : 0, m: S ? metres(S) : 0, x: S ? +S.x.toFixed(1) : 0, y: S ? +S.y.toFixed(1) : 0, vy: S ? +S.vy.toFixed(1) : 0, dead: S ? S.dead : false, teddy: S && S.teddy, pose: R && R.pose, ang: R ? +(drawnAngle(G.noInterp ? 1 : clamp(R.acc / DT, 0, 1)) / DEG).toFixed(2) : 0, age: R && R.age, cutin: R && R.cutin ? R.cutin.kind + ':' + R.cutin.beat : null, won: !!(R && R.S.won), zk: R && R.S.zk, steps: S ? S.steps : 0, result: G.result, fps: Math.round(G.fps), art: !!ART(), artDead: Object.keys(artDead), hero: HERO.ok, err: G.lastErr, W: V.W, H: V.H, scale: +V.scale.toFixed(3), vwU: +V.vwU.toFixed(1) }; },
+  state() { const S = R && R.S; return { scene: G.scene, paused: G.paused, phase: R && R.phase, seed: R && R.seedStr, t: S ? +S.t.toFixed(3) : 0, m: S ? metres(S) : 0, x: S ? +S.x.toFixed(1) : 0, y: S ? +S.y.toFixed(1) : 0, vy: S ? +S.vy.toFixed(1) : 0, dead: S ? S.dead : false, teddy: S && S.teddy, pose: R && R.pose, ang: R ? +(drawnAngle(G.noInterp ? 1 : clamp(R.acc / DT, 0, 1)) / DEG).toFixed(2) : 0, age: R && R.age, cutin: R && R.cutin ? R.cutin.kind + ':' + R.cutin.beat : null, mode: R && R.mode, level: R && R.level, won: !!(R && R.S.won), zk: R && R.S.zk, steps: S ? S.steps : 0, result: G.result, fps: Math.round(G.fps), art: !!ART(), artDead: Object.keys(artDead), hero: HERO.ok, err: G.lastErr, W: V.W, H: V.H, scale: +V.scale.toFixed(3), vwU: +V.vwU.toFixed(1) }; },
   start(o) { startRun(o); if (!(o && (o.ready || o.intro))) { R.phase = 'run'; R.acc = 0; } return this.state(); }, scene(s) { toScene(s); }, hold(on) { G.forceHold = !!on; },
   bot(kind) { G.bot = kind ? makeBot(kind, 1) : null; },
   buttons() { return G.btns.map((b) => ({ id: b.id, label: b.label, x: Math.round(b.x), y: Math.round(b.y), w: Math.round(b.w), h: Math.round(b.h) })); },
   tap(id) { const b = G.btns.find((x) => x.id === id); if (b) { b.fn(); render(); return true; } return false; },
   overlaps() { const r = TEXT_RECTS, out = []; for (let i = 0; i < r.length; i++) for (let j = i + 1; j < r.length; j++) { const a = r[i], b = r[j]; if (a.x < b.x + b.w - 0.5 && b.x < a.x + a.w - 0.5 && a.y < b.y + b.h - 0.5 && b.y < a.y + a.h - 0.5) out.push([a.s, b.s]); } const off = r.filter((a) => a.x < -0.5 || a.y < -0.5 || a.x + a.w > V.W + 0.5 || a.y + a.h > V.H + 0.5).map((a) => a.s); return { overlaps: out, offscreen: off, count: r.length }; },
   frames(n, dt) { for (let i = 0; i < (n || 1); i++) update(dt || 1 / 60); render(); return this.state(); },
-  result(res) { if (!R) startRun(); R.phase = 'done'; R.crash = R.crash || { x: R.S.x, y: R.S.y }; G.result = Object.assign({ m: 812, dist: 700, secs: 61, seedStr: R.seedStr, daily: false, flags: 0, won: false, pb: true, prev: 640, board: 'ok', rank: 7, cause: 'menu', bonus: 112, age: 2 }, res || {}); R.flyT = 0; G.scene = 'result'; render(); return G.result; },
+  result(res) { if (!R) startRun(); R.phase = 'done'; R.crash = R.crash || { x: R.S.x, y: R.S.y }; G.result = Object.assign({ mode: 'endless', lap: 1, level: 1, tries: 1, m: 812, dist: 700, secs: 61, seedStr: R.seedStr, daily: false, flags: 8, won: false, pb: true, prev: 640, board: 'ok', rank: 7, cause: 'menu', bonus: 112, age: 2 }, res || {}); R.flyT = 0; G.scene = 'result'; render(); return G.result; },
   kill() { if (R && R.phase === 'run') { R.S.teddy = 'tired'; R.S.dead = true; R.S.cause = 'debug'; startCrash(); } },
   effects(o) { if (R) Object.assign(R.S, o || {}); },
   card(s) { if (R) setCard(s || 'THE DRIVE-THRU', 3, null, 'LAP 2'); },
   cutin(kind, zi) { if (!R) startRun(); const z = zi == null ? 1 : zi; R.age = Math.min(4, z); R.cutin = { kind: kind || 'age', age: R.age, beat: 0, t: 0.6, dur: kind === 'intro' ? 1.3 : 1.8, zone: ZID(z % 5), lines: kind === 'intro' ? INTRO_BEATS[0].lines.slice() : (CUTIN_LINES[z % 5] || ['LAP 2', "HE'S BEEN IN THE AIR FOR FIFTY YEARS."]), s1: true, s2: true, name: ZONES[z % 5].name }; G.scene = 'play'; render(); return R.cutin; },
   skip() { advanceCutin(true); },
+  ptr(down, id) { const e = { pointerId: id || 7, clientX: V.W / 2, clientY: V.H * 0.7, preventDefault() { }, cancelable: false }; if (down) onDown(e); else onUp(e); return inputHeld(); },
+  tapSkip() { const e = { pointerId: 9, clientX: V.W / 2, clientY: V.H * 0.7, preventDefault() { }, cancelable: false }; onDown(e); return R && R.cutin ? R.cutin.kind : null; },
+  held() { return inputHeld(); }, hover() { return R ? { hover: R.S.hover, protect: R.S.protect, vy: R.S.vy, hold: R.S.hold } : null; },
+  reload() { try { SAVE = Object.assign(freshSave(), JSON.parse(root.localStorage.getItem(SAVE_KEY) || 'null') || {}); } catch (e) { } return SAVE; },
   give(t) { if (R && R.phase === 'run') { const p = { id: 1e9 + (R.giveN = (R.giveN || 0) + 1), type: t, x: R.S.x, y: R.S.y, r: 5 }; CA.sim.collect(R.S, p); handleEvents(R.S); render(); } return this.state(); },
   chip(t) { if (R) { const q = SQUAD[t || 'pk.zin']; R.chip = { who: q.who, fx: q.fx, col: q.col, t: 0.5 }; render(); } },
   fx() { const S = R && R.S; return S ? { buzz: S.buzz, beef: S.beef, fire: S.fire, hazy: S.hazy, shield: S.shield, teddy: S.teddy, bonus: S.bonus, chip: R.chip && R.chip.who } : null; },
@@ -5151,6 +5287,14 @@ boot();
  *   40 units and doubles every bonus (addBonus). Rebalance: clearance 27.5 -> 23.5, per-zone clearance trim
  *   [1, 1, 1.1, 0.92, 1.03] so the decent bot's per-zone death rate rises 4/15/24/30/70%. The perfect bar runs with
  *   pickups switched off (it must not need them). Bots never trigger the freezing squad cut-ins (chip only).
+ * - RULINGS 27: two modes. TUNE.story (wider corridor: gap1 130 / min 115, clearance 33 -> 29) wins the bet; a death keeps
+ *   the attempt (seed + level + deaths) in the save and CONTINUE restarts that level (first 4.5 s cleared) at that age.
+ *   TUNE.endless: level-1 gentle for 15 s, clearance 30 -> 22 over 20 s, then -0.02/s to a floor of 17, patterns
+ *   tighten to 0.8 s by 35 s; zones loop with REBORN. Only ENDLESS posts (FLAGS bit3; bit2 = has won the story).
+ *   The good-human bot model is lag 80 ms / sigma 6.2 / lapse 0.08 per s (was 0.15) so it reads as clearly better.
+ * - RULINGS 28: no input state is ever cleared by a freezing cut-in; a tap that skips one is also a hold. sim.resume():
+ *   vy 0, hover up to 0.7 s (ends on any input change), protection (grace rules, no Teddy/GAINS use) for at least 2.1 s
+ *   from the resume, obstacles cleared for 2.2 s of flight ahead, world ramps 40% -> 100% over the 0.7 s.
  */
 
 </script>
