@@ -3433,7 +3433,7 @@ if (typeof window !== "undefined" && window.CAArt) { window.CAArt.BUBBLE = true;
     fileLoading[k] = [cb];
     var done = function (ok) { var l = fileLoading[k] || []; delete fileLoading[k]; if (!ok) fileFail[k] = 1; l.forEach(function (f) { try { f(ok); } catch (e) { warn(e); } }); };
     try {
-      W.fetch(manifest(k).src).then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.arrayBuffer(); })
+      W.fetch(manifest(k).src, { cache: 'no-cache' }).then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.arrayBuffer(); })
         .then(function (ab) { return new Promise(function (res, rej) { var p = ctx.decodeAudioData(ab, res, rej); if (p && p.then) p.then(res, rej); }); })
         .then(function (buf) { if (!buf || buf.duration < 5) throw new Error('placeholder'); fileBufs[k] = buf; done(true); }) // a file under 5 s is a placeholder: keep the built-in music
         .catch(function (e) { fileErr[k] = String(e && e.message || e); done(false); });
@@ -4105,7 +4105,7 @@ const HEADLESS = OPT.headless;
 function freshSave() { return { v: 1, name: '', best: 0, muted: false, runs: 0, pending: null, submitted: 0, intro: false }; }
 let SAVE = freshSave();
 try { const s = JSON.parse(root.localStorage.getItem(SAVE_KEY) || 'null'); if (s && s.v === 1) SAVE = Object.assign(freshSave(), s); } catch (e) { }
-function fixName() { if (SAVE.name) { const c = cleanName(SAVE.name.slice(0, 3)); SAVE.name = c.ok ? c.name : ''; } }
+function fixName() { if (SAVE.name) { const c = cleanName(SAVE.name.slice(0, 3)); SAVE.name = c.ok && !c.tanner && c.name !== 'TNR' ? c.name : ''; } } // RULINGS 30: TNR is never a saved default
 fixName();
 function persist() { try { root.localStorage.setItem(SAVE_KEY, JSON.stringify(SAVE)); } catch (e) { } }
 
@@ -4255,11 +4255,12 @@ function startRun(o) {
   o = o || {};
   const day = dayIndex(Date.now());
   const mode = o.mode === 'endless' ? 'endless' : 'story';
-  let seedStr = o.seedStr, level = 0;
+  let seedStr = o.seedStr, level = 0, newAttempt = false;
   if (mode === 'story') {
     // RULINGS 27A: a story attempt keeps its seed and the level you died in (saved), unless you start over
     const st = SAVE.story;
-    if (o.fresh || !st || !st.active) SAVE.story = { active: true, level: 0, deaths: 0, seedStr: seedStr || (OPT.seed ? String(OPT.seed).toUpperCase() : newSeedStr()) };
+    newAttempt = !!(o.fresh || !st || !st.active);
+    if (newAttempt) SAVE.story = { active: true, level: 0, deaths: 0, seedStr: seedStr || (OPT.seed ? String(OPT.seed).toUpperCase() : newSeedStr()) };
     seedStr = SAVE.story.seedStr; level = o.fresh ? 0 : SAVE.story.level | 0; persist();
   } else if (!seedStr) seedStr = OPT.seed ? String(OPT.seed).toUpperCase() : newSeedStr();
   const daily = false; // RULINGS 25d: no daily mode
@@ -4267,7 +4268,7 @@ function startRun(o) {
   R = { S, seedStr, daily, day: daily ? parseInt(seedStr.slice(1), 36) : day, phase: 'ready', armed: false, readyT: 0, acc: 0, px: S.x, py: S.y, trail: [], cig: null, ct: 0,
     pose: 0, poseT: 0, flyT: 0, zA: 0, zB: 0, zf: 1, card: null, nearT: 0, cam: 0, crash: null, teddyX: S.x, ang: 0, angP: 0, angV: 0, fallT: 0, diveT: 0, tedOff: -6, leap: 0, proud: 0, band: null, coach: (SAVE.coached | 0) < 3, smash: {}, age: level, ageFrom: level, ageT: 1, cutin: null, ramp: 1, mode, level };
   R.zA = R.zB = level;
-  if (mode === 'story' && (o.intro || (!SAVE.intro && !G.bot && !OPT.debug))) { R.cutin = introCutin(0); SAVE.intro = true; persist(); au('music', 'intro'); }
+  if (mode === 'story' && (o.intro || (newAttempt && level === 0 && !o.noIntro && !G.bot && !OPT.debug))) { /* RULINGS 31: every new attempt */ R.cutin = introCutin(0); SAVE.intro = true; persist(); au('music', 'intro'); }
   R.cam = S.x - camFrac() * V.vwU;
   G.scene = 'play'; G.paused = false; G.result = null; G.ptrs = {};
   au('music', ZID(level)); au('setBuzz', false); au('setPace', 0);
@@ -4524,7 +4525,8 @@ function finishRun() {
     const pb = m > SAVE.best; res.pb = pb; if (pb) SAVE.best = m;
     if (pb && !res.auto) au('sfx', 'newBest');
     // RULINGS 27B4: only ENDLESS posts (FLAGS bit3), with bit2 when this player has completed the story
-    if (pb && m >= 1) { SAVE.pending = { m, secs, seedStr: R.seedStr, flags: res.flags }; submitScore(res); }
+    // RULINGS 30: every ENDLESS result above 0 asks for initials (arcade style); the score posts only after OK
+    if (m >= 1 && !res.auto) { res.board = 'initials'; res.post = { m, secs, seedStr: R.seedStr, flags: res.flags }; setTimeout(() => { if (G.result === res && G.scene === 'result') askInitials(res); }, 0); if (HEADLESS) askInitials(res); }
   } else if (S.won) {
     const st = SAVE.story || { deaths: 0 }; res.tries = (st.deaths | 0) + 1; SAVE.storyWon = true; SAVE.story = null; res.complete = true;
   } else {
@@ -4553,30 +4555,33 @@ function fetchBoard(force) {
 }
 function submitScore(res) {
   if (res && res.auto) { res.board = 'off'; return; }
-  const p = SAVE.pending; if (!p) return;
+  const p = SAVE.pending; if (!p || !p.name) return;
+  const code = scoreCode(p.name, p.m, p.secs, p.seedStr, p.flags);
+  G.postLog = G.postLog || []; G.postLog.push({ name: p.name, m: p.m, code }); // for the harness: what would be posted
   if (!boardAllowed()) { if (res) res.board = 'offline'; return; }
-  if (!SAVE.name) { if (res) res.board = 'name'; return; }
   if (res) res.board = 'sending';
-  fetchJSON(BOARD_BASE + '/score', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ code: scoreCode(SAVE.name, p.m, p.secs, p.seedStr, p.flags) }) })
+  fetchJSON(BOARD_BASE + '/score', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ code }) })
     .then((j) => {
-      if (j && j.ok) { if (j.tanner || j.name === 'TNR' && SAVE.name !== 'TNR') { SAVE.name = 'TNR'; tannerCutin(); } if (res) { res.board = 'ok'; res.rank = j.rank; } if (SAVE.pending === p) SAVE.pending = null; SAVE.submitted = Math.max(SAVE.submitted || 0, p.m); persist(); fetchBoard(true); }
+      if (j && j.ok) { if (j.tanner && p.name !== 'TNR') tannerCutin(); if (res) { res.board = 'ok'; res.rank = j.rank; } if (SAVE.pending === p) SAVE.pending = null; SAVE.submitted = Math.max(SAVE.submitted || 0, p.m); persist(); fetchBoard(true); }
       else if (res) res.board = 'offline';
     }, () => { if (res) res.board = 'offline'; });
 }
 
 /* ---------- name entry: a DOM field so the phone keyboard works ---------- */
-function openName(after) {
+function openName(after, o) {
+  o = o || {};
   let el = document.getElementById('caname');
   if (!el) {
     el = document.createElement('div'); el.id = 'caname';
-    el.style.cssText = 'position:fixed;inset:0;background:rgba(10,6,14,0.92);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9;font:bold 16px ui-monospace,Menlo,monospace;color:#FFF1DE;touch-action:auto;text-align:center;padding:0 16px;';
+    // RULINGS 30: the panel sits in the top half so the phone keyboard never covers OK / RETRY
+    el.style.cssText = 'position:fixed;inset:0;background:rgba(10,6,14,0.9);display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:max(6vh, env(safe-area-inset-top, 0px)) 16px 0;z-index:9;font:bold 16px ui-monospace,Menlo,monospace;color:#FFF1DE;touch-action:auto;text-align:center;';
     // three arcade slots: the real input sits on top, transparent-backed, so the phone keyboard works
-    el.innerHTML = '<div style="margin-bottom:8px;letter-spacing:2px">YOUR INITIALS FOR THE BOARD</div><div style="margin-bottom:16px;opacity:.7;font-size:12px">THREE LETTERS, A-Z</div>' +
+    el.innerHTML = '<div id="canamettl" style="margin-bottom:8px;letter-spacing:2px">YOUR INITIALS FOR THE BOARD</div><div id="canamesub" style="margin-bottom:16px;opacity:.7;font-size:12px">THREE LETTERS, A-Z</div>' +
       '<div style="position:relative;width:216px;height:72px">' +
       '<div style="position:absolute;inset:0;display:flex;gap:12px">' + [0, 1, 2].map((i) => '<div class="caslot" style="flex:1;border:3px solid #B6FF2E;background:#111;display:flex;align-items:center;justify-content:center;font:bold 40px ui-monospace,Menlo,monospace;color:#B6FF2E"></div>').join('') + '</div>' +
       '<input id="canamein" maxlength="3" inputmode="text" autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false" style="position:absolute;inset:0;width:216px;height:72px;box-sizing:border-box;border:0;outline:0;background:transparent;color:transparent;font:bold 16px ui-monospace,Menlo,monospace;padding:0;opacity:0.01;caret-color:transparent;user-select:text;-webkit-user-select:text">' +
       '</div>' +
-      '<div style="display:flex;gap:12px;margin-top:20px"><div id="canameok" style="padding:12px 28px;background:#B6FF2E;color:#111;cursor:pointer">OK</div><div id="canamex" style="padding:12px 20px;background:#333;color:#EEE;cursor:pointer">LATER</div></div>';
+      '<div style="display:flex;gap:12px;margin-top:20px"><div id="canameok" style="padding:14px 30px;background:#B6FF2E;color:#111;cursor:pointer">OK</div><div id="canamex" style="padding:14px 22px;background:#333;color:#EEE;cursor:pointer">LATER</div></div>';
     document.body.appendChild(el);
     const inp = el.querySelector('#canamein');
     inp.addEventListener('input', () => { const v = nameInput(inp.value); if (v !== inp.value) inp.value = v; syncOk(); });
@@ -4585,14 +4590,19 @@ function openName(after) {
   }
   const inp = el.querySelector('#canamein'), okb = el.querySelector('#canameok');
   function syncOk() { const v = nameInput(inp.value); el.querySelectorAll('.caslot').forEach((d, i) => { d.textContent = v[i] || ''; d.style.borderColor = i === v.length ? '#FFFFFF' : '#B6FF2E'; }); const on = nameOk(v); okb.style.opacity = on ? '1' : '0.35'; okb.style.pointerEvents = on ? 'auto' : 'none'; okb.dataset.on = on ? '1' : ''; }
-  inp.value = SAVE.name || ''; syncOk();
+  const ttl = el.querySelector('#canamettl'), sub = el.querySelector('#canamesub'), xb = el.querySelector('#canamex');
+  if (ttl) ttl.textContent = o.title || 'YOUR INITIALS FOR THE BOARD';
+  if (sub) sub.textContent = o.sub || 'THREE LETTERS, A-Z';
+  if (xb) xb.textContent = o.cancel || 'LATER';
+  const pre = o.prefill != null ? o.prefill : SAVE.name; inp.value = pre && pre !== 'TNR' ? pre : ''; syncOk();
   const close = (ok) => {
     const c = cleanName(inp.value);
     if (ok && !c.ok) return; // OK stays disabled until three letters are in
     el.style.display = 'none'; try { inp.blur(); } catch (e) { }
     inp.value = ''; // never show a blocked word back
     G.nameOpen = false; G.keys = {};
-    if (ok) { SAVE.name = c.name; persist(); if (c.tanner) tannerCutin(); }
+    if (ok) { if (!c.tanner) { SAVE.name = c.name; persist(); } else tannerCutin(); } // TNR is never saved as the default
+    G.nameResult = ok ? c.name : null;
     if (after) after(ok && c.ok);
   };
   okb.onclick = () => close(true);
@@ -4610,7 +4620,18 @@ function drawOver() {
   if (!artCall('drawCutin', [ctx, st, V.W, V.H, G.t])) { ctx.setTransform(V.dpr, 0, 0, V.dpr, 0, 0); stubCutin(c); }
   ctx.setTransform(V.dpr, 0, 0, V.dpr, 0, 0); ctx.globalAlpha = 1;
 }
-function nameThenSubmit() { openName((ok) => { if (ok && SAVE.pending) submitScore(G.scene === 'result' ? G.result : null); }); }
+function nameThenSubmit() { openName(() => { }); }
+// RULINGS 30: arcade initials after each ENDLESS run; OK posts under those initials, RETRY skips posting this run
+function askInitials(res) {
+  if (G.nameOpen || !res || res.board !== 'initials') return;
+  openName((ok) => {
+    if (G.result !== res) return;
+    if (!ok) { res.board = 'skipped'; if (G.wantRetry) { G.wantRetry = false; retry(); } return; }
+    SAVE.pending = Object.assign({}, res.post, { name: G.nameResult }); persist();
+    submitScore(res);
+  }, { title: 'ENTER YOUR INITIALS', sub: res.m + ' M · THREE LETTERS, A-Z', cancel: 'RETRY' });
+  const xb = document.getElementById('canamex'); if (xb) xb.onclick = (() => { const f = xb.onclick; return () => { G.wantRetry = true; f(); }; })();
+}
 
 /* ---------- share ---------- */
 function shareRun(res) {
@@ -4873,9 +4894,15 @@ function drawTitle() {
   const A = area(), ui = uiTheme('title'), px = V.px, gap = V.land ? 10 : 12, tall = !V.land && A.h > 700, bh = Math.round(btnH() * (tall ? 1.2 : 1)), BH = btnH(true) + (tall ? 22 : 10), sh = Math.round(bh * 0.85);
   const colW = V.land ? Math.min(A.w * 0.48, 420) : Math.min(A.w, 420);
   const lx = V.land ? A.x + A.w * 0.25 : V.W / 2, rx = V.land ? A.x + A.w * 0.75 : V.W / 2;
-  const bw = Math.min(colW, 340), gpx = px * 0.75 >= 1.5 ? px * 0.75 : 1.5;
-  const gl = wrap('GLOBAL LEADERBOARD — EVERYONE WHO PLAYS IS ON IT', bw, gpx), top = GB.all && GB.all[0];
-  const TEDDY_T = 74, btnBlock = BH + gap + BH * 0.8 + gap + (sh + gap) + sh * 0.8 + gap + 4 + gl.length * 10 * gpx + (top ? 4 + 10 * gpx : 0) + (tall ? TEDDY_T : 0);
+  const bw = Math.min(colW, 340), top = null;
+  // RULINGS 31: STORY MODE (smaller, listed first) and ENDLESS (the big call to action), each with a caption; a prominent
+  // sound row; NAME small; GLOBAL LEADERBOARD at the bottom
+  const st = SAVE.story, resume = st && st.active && ((st.level | 0) > 0 || (st.deaths | 0) > 0);
+  const capS = wrap(SAVE.storyWon && !resume ? 'REPLAY THE BET' : resume ? 'PICK UP WHERE YOU CRASHED' : 'PLAY THIS FIRST', bw, 1.5), capE = wrap('COMPETE FOR THE GLOBAL LEADERBOARD', bw, 1.5);
+  const SL = 'CON AIR IS BEST PLAYED WITH THE SOUND ON', sline = textW(SL, 1.5) <= bw ? [SL] : ['CON AIR IS BEST PLAYED', 'WITH THE SOUND ON'];
+  const h1 = Math.round(BH * 0.82), nh = Math.round(sh * 0.85);
+  const capH = (n) => n.length * 15 + 2;
+  const TEDDY_T = 74, btnBlock = h1 + capH(capS) + gap + BH + capH(capE) + gap + capH(sline) + sh + gap + nh + gap + bh + (tall ? TEDDY_T : 0);
   const tl = wrap('GET HOME BEFORE HAYLEY CHECKS THE ACCOUNT.', colW - 10, px);
   const textBlock = tl.length * 10 * px + (SAVE.best ? 2 + 10 * px : 0);
   // the brand column (portrait + logo + tagline) shrinks until it fits beside / above the buttons
@@ -4893,24 +4920,22 @@ function drawTitle() {
   if (SAVE.best) { y += 2; text('BEST ' + SAVE.best + ' M', lx, y, px, ui.accent, 'c'); y += 10 * px; }
   if (!V.land) by = y + 16;
   const bx = rx - bw / 2, hw = (bw - gap) / 2;
-  // RULINGS 27: STORY first and larger on a new save; ENDLESS becomes primary once the story is won
-  const st = SAVE.story, resume = st && st.active && ((st.level | 0) > 0 || (st.deaths | 0) > 0);
-  const storyLbl = resume ? 'RESUME STORY · LEVEL ' + ((st.level | 0) + 1) : 'STORY';
-  const storyFn = () => startRun({ mode: 'story' }), endlessFn = () => startRun({ mode: 'endless' });
-  const first = SAVE.storyWon ? ['endless', 'ENDLESS', endlessFn] : ['story', storyLbl, storyFn], second = SAVE.storyWon ? ['story', storyLbl, storyFn] : ['endless', 'ENDLESS', endlessFn];
-  const h2 = Math.round(BH * 0.8);
-  modeButton(first[0], bx, by, bw, BH, first[1], first[2], true, ui); by += BH + gap;
-  modeButton(second[0], bx, by, bw, h2, second[1], second[2], false, ui); by += h2 + gap;
-  const w3 = (bw - gap * 2) / 3;
-  button('board', bx, by, w3, sh, 'BOARD', () => { G.from = 'title'; toScene('board'); }, { ui, px: 1.5 });
-  button('name', bx + w3 + gap, by, w3, sh, SAVE.name ? 'NAME: ' + SAVE.name : 'NAME', () => nameThenSubmit(), { ui, px: 1.5 });
-  button('sound', bx + 2 * (w3 + gap), by, w3, sh, SAVE.muted ? 'SOUND: OFF' : 'SOUND: ON', toggleMute, { ui, px: 1.5 }); by += sh + gap;
-  const iw = Math.min(bw, 150), ih = Math.round(sh * 0.8);
-  button('intro', rx - iw / 2, by, iw, ih, 'STORY INTRO', () => startRun({ mode: 'story', intro: true }), { ui, px: 1.5 }); by += ih + gap + 4;
-  gl.forEach((l) => { text(l, rx, by, gpx, ui.ink, 'c'); by += 10 * gpx; });
-  if (top) { by += 4; const s2 = 'TOP: ' + top.name + ' ' + top.m + ' M'; text(s2, rx, by, fitPx(s2, bw, gpx), ui.accent, 'c'); by += 10 * gpx; }
+  const storyLbl = resume ? 'RESUME STORY · LEVEL ' + ((st.level | 0) + 1) : 'STORY MODE';
+  modeButton('story', bx, by, bw, h1, storyLbl, () => startRun({ mode: 'story' }), false, ui); by += h1 + 3;
+  capS.forEach((l) => { text(l, rx, by, 1.5, ui.ink, 'c'); by += 15; }); by += gap - 1;
+  modeButton('endless', bx, by, bw, BH, 'ENDLESS', () => startRun({ mode: 'endless' }), true, ui); by += BH + 3;
+  capE.forEach((l) => { text(l, rx, by, 1.5, ui.accent, 'c'); by += 15; }); by += gap - 1;
+  sline.forEach((l) => { text(l, rx, by, 1.5, SAVE.muted ? '#FFE7B0' : ui.ink, 'c'); by += 15; }); by += 2;
+  if (SAVE.muted) { const a = 0.35 + 0.35 * Math.sin(G.t * 4); ctx.strokeStyle = 'rgba(255,231,176,' + a.toFixed(3) + ')'; ctx.lineWidth = 4; ctx.strokeRect(bx - 3, by - 3, bw + 6, sh + 6); ctx.lineWidth = 1; }
+  button('sound', bx, by, bw, sh, SAVE.muted ? 'SOUND: OFF · TAP FOR SOUND' : 'SOUND: ON', toggleMute, { ui, px: 1.5 });
+  { const is = Math.round(sh * 0.6); icon(SAVE.muted ? 'mute' : 'sound', bx + 10, by + (sh - is) / 2, is); }
+  by += sh + gap;
+  const nw = Math.min(bw * 0.5, 170);
+  button('name', rx - nw / 2, by, nw, nh, SAVE.name ? 'NAME: ' + SAVE.name : 'NAME', () => nameThenSubmit(), { ui, px: 1.5 }); by += nh + gap;
+  button('board', bx, by, bw, bh, 'GLOBAL LEADERBOARD', () => { G.from = 'title'; toScene('board'); }, { ui }); by += bh + gap;
   // Teddy stands proud under the buttons when there is room
   if (tall && A.y + A.h - by >= TEDDY_T) teddySit(bx + 44, by + TEDDY_T - 6, 92, 'proud');
+  void top;
 }
 // RULINGS 16b: five zone segments to the Super Bowl, Connie's head riding along, a football at the end
 function plate(x, y, w, h) { if (!artCall('drawTextPlate', [ctx, x, y, w, h, 0.7])) { ctx.fillStyle = 'rgba(6,4,10,0.7)'; ctx.fillRect(x, y, w, h); } ctx.setTransform(V.dpr, 0, 0, V.dpr, 0, 0); ctx.globalAlpha = 1; }
@@ -5078,10 +5103,10 @@ function drawResult() {
   let rk = '';
   if (res.board === 'ok') rk = res.rank ? 'GLOBAL RANK #' + res.rank : 'ON THE BOARD';
   else if (res.board === 'sending') rk = 'SENDING TO THE BOARD...';
-  else if (res.board === 'name') rk = 'ADD A NAME TO GET ON THE BOARD';
+  else if (res.board === 'name' || res.board === 'initials' || res.board === 'skipped') rk = res.board === 'skipped' ? 'NOT POSTED' : 'ENTER YOUR INITIALS TO POST';
   else if (res.board === 'offline') rk = 'OFFLINE — SCORES SAVED ON THIS PHONE';
   if (rk) { const rl = wrap(rk, inner, 1.5); rl.forEach((l) => { text(l, cx, y, 1.5, ui.ink, 'c'); y += 15; }); }
-  if (res.board === 'name') { const nb = btnH(); button('setname', cx - 70, y + 2, 140, nb, 'ADD NAME', nameThenSubmit, { ui }); y += nb + 8; }
+  if (res.board === 'initials' || res.board === 'skipped') { const nb = btnH(); button('setname', cx - 80, y + 2, 160, nb, 'POST SCORE', () => { res.board = 'initials'; askInitials(res); }, { ui }); y += nb + 8; }
   // characters: Connie (fist pump on a new best), and her if she knows
   // the cast is the centrepiece: Teddy, Connie (fist pump on a new best) and Hayley on one ground line
   // win: fist pump at seventy, Hayley laughing; lose: slumped, Hayley unimpressed
@@ -5244,7 +5269,7 @@ function frame(ts) {
 /* ---------- debug / test hooks ---------- */
 CA.debug = {
   state() { const S = R && R.S; return { scene: G.scene, paused: G.paused, phase: R && R.phase, seed: R && R.seedStr, t: S ? +S.t.toFixed(3) : 0, m: S ? metres(S) : 0, x: S ? +S.x.toFixed(1) : 0, y: S ? +S.y.toFixed(1) : 0, vy: S ? +S.vy.toFixed(1) : 0, dead: S ? S.dead : false, teddy: S && S.teddy, pose: R && R.pose, ang: R ? +(drawnAngle(G.noInterp ? 1 : clamp(R.acc / DT, 0, 1)) / DEG).toFixed(2) : 0, age: R && R.age, cutin: R && R.cutin ? R.cutin.kind + ':' + R.cutin.beat : null, mode: R && R.mode, level: R && R.level, won: !!(R && R.S.won), zk: R && R.S.zk, steps: S ? S.steps : 0, result: G.result, fps: Math.round(G.fps), art: !!ART(), artDead: Object.keys(artDead), hero: HERO.ok, err: G.lastErr, W: V.W, H: V.H, scale: +V.scale.toFixed(3), vwU: +V.vwU.toFixed(1) }; },
-  start(o) { startRun(o); if (!(o && (o.ready || o.intro))) { R.phase = 'run'; R.acc = 0; } return this.state(); }, scene(s) { toScene(s); }, hold(on) { G.forceHold = !!on; },
+  start(o) { o = Object.assign({ noIntro: true }, o || {}); startRun(o); if (!(o.ready || o.intro)) { R.phase = 'run'; R.acc = 0; } return this.state(); }, scene(s) { toScene(s); }, hold(on) { G.forceHold = !!on; },
   bot(kind) { G.bot = kind ? makeBot(kind, 1) : null; },
   buttons() { return G.btns.map((b) => ({ id: b.id, label: b.label, x: Math.round(b.x), y: Math.round(b.y), w: Math.round(b.w), h: Math.round(b.h) })); },
   tap(id) { const b = G.btns.find((x) => x.id === id); if (b) { b.fn(); render(); return true; } return false; },
@@ -5260,6 +5285,8 @@ CA.debug = {
   tapSkip() { const e = { pointerId: 9, clientX: V.W / 2, clientY: V.H * 0.7, preventDefault() { }, cancelable: false }; onDown(e); return R && R.cutin ? R.cutin.kind : null; },
   held() { return inputHeld(); }, hover() { return R ? { hover: R.S.hover, protect: R.S.protect, vy: R.S.vy, hold: R.S.hold } : null; },
   reload() { try { SAVE = Object.assign(freshSave(), JSON.parse(root.localStorage.getItem(SAVE_KEY) || 'null') || {}); } catch (e) { } return SAVE; },
+  initials(v, ok) { const inp = document.getElementById('canamein'); if (!inp) return null; inp.value = v; if (ok === 'retry') document.getElementById('canamex').onclick(); else document.getElementById('canameok').onclick(); return { name: SAVE.name, posts: (G.postLog || []).slice() }; },
+  posts() { return (G.postLog || []).slice(); },
   give(t) { if (R && R.phase === 'run') { const p = { id: 1e9 + (R.giveN = (R.giveN || 0) + 1), type: t, x: R.S.x, y: R.S.y, r: 5 }; CA.sim.collect(R.S, p); handleEvents(R.S); render(); } return this.state(); },
   chip(t) { if (R) { const q = SQUAD[t || 'pk.zin']; R.chip = { who: q.who, fx: q.fx, col: q.col, t: 0.5 }; render(); } },
   fx() { const S = R && R.S; return S ? { buzz: S.buzz, beef: S.beef, fire: S.fire, hazy: S.hazy, shield: S.shield, teddy: S.teddy, bonus: S.bonus, chip: R.chip && R.chip.who } : null; },
@@ -5273,7 +5300,7 @@ CA.debug = {
   pause(on) { G.paused = !!on; }, save() { return SAVE; }, reset() { SAVE = freshSave(); persist(); }, render() { render(); }, layout() { layout(); render(); },
   board(rows) { GB.all = rows || []; GB.state = 'ok'; },
   tanner() { tannerCutin(); render(); }, texts() { return TEXT_RECTS.map((r) => r.s); }, over() { return G.over ? G.over.kind : null; }, nameOpen() { return G.nameOpen; },
-  setName(v) { const c = cleanName(v); if (c.ok) { SAVE.name = c.name; persist(); if (c.tanner) tannerCutin(); } return SAVE.name; },
+  setName(v) { const c = cleanName(v); if (c.ok) { if (c.tanner) tannerCutin(); else { SAVE.name = c.name; persist(); } } return SAVE.name; },
 };
 
 /* ---------- boot ---------- */
@@ -5288,7 +5315,7 @@ function boot() {
   document.addEventListener('visibilitychange', () => { if (document.hidden) pauseNow(); au('setMuted', document.hidden || SAVE.muted); });
   document.addEventListener('touchmove', (e) => { if (e.target === cv && e.cancelable) e.preventDefault(); }, { passive: false });
   root.addEventListener('blur', pauseNow);
-  if (SAVE.pending && SAVE.name) submitScore(null);
+  if (SAVE.pending && SAVE.pending.name) submitScore(null);
   if (OPT.seed && !OPT.debug) startRun(); else toScene('title');
   if (!HEADLESS && typeof root.requestAnimationFrame === 'function') root.requestAnimationFrame(frame); else render();
 }
@@ -5351,6 +5378,10 @@ boot();
  * - RULINGS 28: no input state is ever cleared by a freezing cut-in; a tap that skips one is also a hold. sim.resume():
  *   vy 0, hover up to 0.7 s (ends on any input change), protection (grace rules, no Teddy/GAINS use) for at least 2.1 s
  *   from the resume, obstacles cleared for 2.2 s of flight ahead, world ramps 40% -> 100% over the 0.7 s.
+ * - RULINGS 30: initials after every ENDLESS result above 0 (DOM slots, top half, prefill = last clean initials, never
+ *   TNR); OK posts under them, RETRY skips posting. A saved TNR is wiped on load. STORY never prompts.
+ * - RULINGS 31: title = STORY MODE (caption) / ENDLESS (bigger, caption) / sound line + full-width sound row (pulses
+ *   while off) / NAME small / GLOBAL LEADERBOARD. The intro plays on every new story attempt from level 1.
  */
 
 </script>
