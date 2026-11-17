@@ -3923,7 +3923,7 @@ function step(S, hold) {
   while (S.oi < obs.length && obs[S.oi].bx1 < S.x - 120) S.oi++;
   for (let i = S.oi; i < obs.length; i++) {
     const o = obs[i]; if (o.bx0 > S.x + 60) break;
-    if (o.smash != null || o.bx1 < S.x - P.rx - 2 || o.bx0 > S.x + P.rx + 2) continue;
+    if (o.smash != null || o.ghost || o.bx1 < S.x - P.rx - 2 || o.bx0 > S.x + P.rx + 2) continue;
     if (!obstacleHits(o, S.x, S.y, P.rx, P.ry)) continue;
     if (S.beef > 0 || S.fire > 0) { o.smash = S.t; addBonus(S, S.beef > 0 ? P.beefM : P.fireM); S.smashed++; emit(S, S.beef > 0 ? 'smash' : 'burn', o.id); continue; }
     if (safe) continue;
@@ -3991,7 +3991,7 @@ function resume(S) {
   if (S.save > 0) { S.save = 0; S.y = S.C.centre(S.x); }
   S.vy = 0; S.hover = P.hoverT; S.hoverHold = null; S.resumeT = 0; S.protect = 0;
   const x1 = S.x + vNom(Tof(S.x)) * P.resumeClearS;
-  for (let i = S.oi; i < S.C.obs.length; i++) { const o = S.C.obs[i]; if (o.bx0 > x1) break; if (o.bx1 > S.x - P.rx - 4 && o.smash == null) o.smash = -1e9; }
+  for (let i = S.oi; i < S.C.obs.length; i++) { const o = S.C.obs[i]; if (o.bx0 > x1) break; if (o.bx1 > S.x - P.rx - 4 && o.smash == null) o.ghost = true; } // stay on screen, faded and harmless: the level must not look like it reset
 }
 function flags(S, storyWon) { return (S.teddyUsed ? 1 : 0) | ((S.won || storyWon) ? 4 : 0) | (S.mode === 'endless' ? 8 : 0); }
 
@@ -4711,7 +4711,7 @@ function icon(name, x, y, s) { if (!artCall('drawIcon', [ctx, name, x, y, s])) s
 
 function obstacleEnt(o, cx, S) {
   const z = ZID(zoneAt(Tof(o.x)).i);
-  const e = { type: o.type, id: o.id, side: o.side, zone: z, state: 'idle', k: 0 };
+  const e = { type: o.type, id: o.id, side: o.side, zone: z, state: 'idle', k: 0 }; if (o.ghost) e.alpha = 0.32;
   if (o.smash != null) { e.state = 'smash'; e.k = clamp((S.t - o.smash) / 0.6, 0, 1); }
   const sh = CA.sim.shapes(o, cx);
   if (o.type === 'goalpost') { Object.assign(e, { x: o.x, w: o.w, y0: o.y0, y1: o.y1, gapTop: o.gapTop, gapBot: o.gapBot, y: (o.gapTop + o.gapBot) / 2, h: o.gapBot - o.gapTop }); }
@@ -4743,7 +4743,7 @@ function buildScene(view) {
   else if (G.scene !== 'result') ents.push({ type: 'teddy', sparkle: R.sparkle || 0, x: tx, y: fy, state: S.teddy === 'tired' ? 'tired' : 'run', k: frac(G.t * (S.teddy === 'tired' ? 2.2 : 4.5)) });
   // Connie
   let conn;
-  const bubble = R.phase === 'ready' ? 1 : R.phase === 'run' && S.t < P.grace ? clamp((P.grace - S.t) / P.graceFade, 0, 1) : R.phase === 'run' && (S.hover > 0 || S.protect > 0) ? 0.6 * (S.hover > 0 ? 1 : clamp(S.protect / 0.6, 0, 1)) : 0;
+  const bubble = R.phase === 'ready' ? 1 : R.phase === 'run' && S.t < P.grace ? clamp((P.grace - S.t) / P.graceFade, 0, 1) : R.phase === 'run' && (S.hover > 0 || S.protect > 0) ? 0.3 * (S.hover > 0 ? 1 : clamp(S.protect / 0.6, 0, 1)) : 0;
   if (R.phase === 'ready') {
     const c = cellCentre(S.x, S.y + bobY());
     conn = { type: 'connie', x: c.x, y: c.y, w: P.cell, h: P.cell, cell: P.cell, pose: Math.floor(R.readyT / 0.12) % 2, age: R.age, ageFrom: R.age, ageK: 1, k: 0, thrust: false, bubble: 1, state: 'ready' };
