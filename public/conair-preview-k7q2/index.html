@@ -2086,7 +2086,7 @@ function drawConfetti(ctx, vw, vh, t, k) {
   }
   ctx.restore();
 }
-const ENDS = { win: { img: null, ok: false }, slip_win: { img: null, ok: false }, slip_lose: { img: null, ok: false }, sad: { img: null, ok: false }, hamzah: { img: null, ok: false }, party: { img: null, ok: false }, squad: { img: null, ok: false } };
+const ENDS = { win: { img: null, ok: false }, slip_win: { img: null, ok: false }, slip_lose: { img: null, ok: false }, sad: { img: null, ok: false }, hamzah: { img: null, ok: false }, party: { img: null, ok: false }, squad: { img: null, ok: false }, tanner: { img: null, ok: false } };
 const TINT = {};
 function tintedPic(key, im, col, a) {   // cached recoloured copy of a smooth image (cool/dim for the lose beat)
   if (TINT[key]) return TINT[key];
@@ -2131,11 +2131,11 @@ function drawCelebration(ctx, cx, cy, ph, k, t) {   // fallback for cutin_wife_h
 let BASE_T = null;
 function drawEndCutin(ctx, st, vw, vh, t) {
   BASE_T = ctx.getTransform();
-  const win = st.kind === 'win', k = c01(num(st.k, 0.5));
+  const tan = st.kind === 'tanner', win = st.kind === 'win', k = c01(num(st.k, 0.5));
   const idx = win ? clamp(Math.floor(num(st.beat, 0)), 0, 5) : clamp(Math.floor(num(st.tier, num(st.beat, 0))), 0, 2);
-  const lines = Array.isArray(st.lines) && st.lines.length ? st.lines.filter(Boolean).map(String) : (win ? WIN_LINES[idx] : LOSE_LINES[idx]);
-  const fast = !win, land = vw > vh, inK = easeOut(c01(k / (fast ? 0.06 : 0.12))), outK = c01((k - 0.88) / 0.12), outE = outK * outK;
-  const image = String(st.image || (win ? WIN_IMAGES[idx] : 'slip_lose')), pic = ENDS[image];
+  const lines = Array.isArray(st.lines) && st.lines.length ? st.lines.filter(Boolean).map(String) : (tan ? ['TANNER TOOK YOUR SCORE.', '"THAT WAS ALL ME."'] : win ? WIN_LINES[idx] : LOSE_LINES[idx]);
+  const fast = st.kind === 'lose', land = vw > vh, inK = easeOut(c01(k / (fast ? 0.06 : 0.12))), outK = c01((k - 0.88) / 0.12), outE = outK * outK;
+  const image = String(st.image || (tan ? 'tanner' : win ? WIN_IMAGES[idx] : 'slip_lose')), pic = ENDS[image];
   let chH = land ? Math.min(vh * 0.45, vw * 0.22) : Math.min(vw / 3, vh * 0.45), picW = chH * 3;
   const aspect = pic && pic.ok ? pic.img.naturalWidth / pic.img.naturalHeight : (image === 'squad' ? 16 / 9 : 3);
   const tall = aspect < 2.2;   // RULINGS 20: anything taller than 2.2:1 gets the tall uncropped layout
@@ -2145,10 +2145,10 @@ function drawEndCutin(ctx, st, vw, vh, t) {
     if (land) { chH = Math.min(vh * 0.56, vw * 0.96 / a); } else { chH = Math.min(vw / a, vh * 0.45); }
     picW = chH * a;
   }
-  const squad = tall, hamC = (image === 'hamzah' || image === 'party') && !tall;
+  const squad = tall, hamC = (image === 'hamzah' || image === 'party' || image === 'tanner') && !tall;
   if (hamC) { if (land) chH = Math.min(vh * (image === 'party' ? 0.42 : 0.36), vw * 0.96 / 3); else chH = vw / 3; picW = chH * 3; }   // centred, full width, never cropped at the sides
   const bandH = squad || hamC ? chH * 1.08 : chH * (win ? 1.45 : 1.3);
-  const acc = win ? '#F2C23E' : '#8A9AB8', acc2 = win ? '#3FF0E0' : '#4A5A78', ink = win ? '#FFF6DA' : '#D8DEEA';
+  const acc = tan ? '#B6FF2E' : win ? '#F2C23E' : '#8A9AB8', acc2 = tan ? '#FF6FAE' : win ? '#3FF0E0' : '#4A5A78', ink = win || tan ? '#FFF6DA' : '#D8DEEA';
   ctx.save(); ctx.imageSmoothingEnabled = false;
   ctx.fillStyle = 'rgba(' + (win ? '6,10,14' : '4,6,14') + ',' + ((win ? 0.62 : 0.72) * inK).toFixed(3) + ')'; ctx.fillRect(0, 0, vw, vh);
   if (win) {   // warm stadium-light wash from the top, steady
@@ -2187,6 +2187,7 @@ function drawEndCutin(ctx, st, vw, vh, t) {
     } else drawCloseup(ctx, { beat: -1 }, 4, leftX, 0, bh * 0.9, k, t, false);
   } else if (image === 'hamzah') drawHamzahScene(ctx, leftX + (land ? visHalf * 0.4 : 0), 0, bh, k, t);
   else if (image === 'party') drawParty(ctx, leftX + (land ? visHalf * 0.35 : 0), 0, bh, k, t);
+  else if (image === 'tanner') drawTannerScene(ctx, (land ? visHalf * 0.3 : 0) + slide, 0, bh, k, t);
   else if (image === 'squad') drawSquad(ctx, land ? visHalf * 0.25 + slide : slide, 0, bh, Math.min(picW, vw * 0.96), t);
   else {   // slip_lose placeholder: cool close-up behind (tier), the slip tearing in front
     if (idx === 2 && cutinCell(4)) { const C = cutinCell(4); const im = tintedPic('old', C.img, '#203050', 0.35); drawSmoothPic(ctx, im, C.sx, C.sy, C.sw, C.sh, rightX, 0, ph); }
@@ -2259,6 +2260,31 @@ function drawSquad(ctx, cx, cy, bh, w, t) {
     ctx.drawImage(f, Math.round(cx + (i - 3.5) * step - f.width * sc / 2), Math.round(cy + row - f.height * sc / 2 - jump), Math.round(f.width * sc), Math.round(f.height * sc));
   }
   ctx.restore();
+}
+/* TANNER placeholder (RULINGS 25e): a smug generic pixel guy in the teapot pose, steam puffing. No likeness. */
+let TANC = null;
+function tannerCanvas() {
+  if (TANC) return TANC;
+  const c = mk(40, 50), g = ctx2(c), sk = '#E8B48A', sh = '#7A4AC8', shd = '#5A3296';
+  Ln(g, sk, 13, 20, 7, 27, 3); Ln(g, sk, 7, 27, 12, 31, 3); Ln(g, sh, 13, 20, 9, 24, 4);       // hand on hip
+  Ln(g, sh, 25, 20, 30, 17, 4); Ln(g, sk, 30, 17, 35, 12, 3); Ln(g, sk, 35, 12, 38, 12, 2);    // arm out as the spout
+  R(g, sh, 12, 19, 14, 14); R(g, shd, 12, 29, 14, 4); R(g, '#F4F0E4', 16, 19, 6, 2);
+  R(g, '#2A2F3E', 13, 33, 12, 10); R(g, '#1A1E2A', 18, 35, 2, 8); R(g, '#101018', 12, 43, 6, 3); R(g, '#101018', 20, 43, 6, 3);
+  R(g, sk, 17, 16, 4, 3); E(g, sk, 19, 10, 6, 6.5); E(g, '#8A5A2A', 19, 5, 6.4, 3.2); R(g, '#8A5A2A', 13, 4, 3, 5);
+  R(g, '#1A1020', 16, 10, 3, 1); R(g, '#1A1020', 21, 10, 3, 1); R(g, '#8A6A50', 16, 9, 3, 1); R(g, '#8A6A50', 21, 9, 3, 1);   // smug half-lids
+  R(g, '#7A3A20', 18, 14, 4, 1); P(g, '#7A3A20', 22, 13);   // smirk
+  return (TANC = outlinedC(c, '#180C16'));
+}
+function drawTannerScene(ctx, cx, cy, bh, k, t) {
+  const gr = ctx.createRadialGradient(cx, cy, 0, cx, cy, bh * 0.9); gr.addColorStop(0, 'rgba(182,255,46,0.28)'); gr.addColorStop(1, 'rgba(182,255,46,0)');
+  ctx.fillStyle = gr; ctx.fillRect(cx - bh, cy - bh, bh * 2, bh * 2);
+  const f = tannerCanvas(), sc = bh * 0.9 / f.height, w = f.width * sc, h = f.height * sc, x0 = cx - w / 2, y0 = cy - h / 2;
+  ctx.save(); ctx.imageSmoothingEnabled = false; ctx.drawImage(f, Math.round(x0), Math.round(y0), Math.round(w), Math.round(h)); ctx.restore();
+  for (let i = 0; i < 6; i++) {   // steam from the "spout"
+    const q = frac(t * 1.2 + i / 6), sx = x0 + 39 * sc + q * 10 * sc + Math.sin(t * 4 + i) * 2 * sc, sy = y0 + 12 * sc - q * 22 * sc, r = (1.5 + q * 4) * sc;
+    ctx.globalAlpha = 0.7 * (1 - q); ctx.fillStyle = '#F0F0FA'; ctx.beginPath(); ctx.arc(sx, sy, r, 0, TAU); ctx.fill();
+  }
+  ctx.globalAlpha = 1;
 }
 function drawHamzahScene(ctx, cx, cy, bh, k, t) {
   const gr = ctx.createRadialGradient(cx, cy, 0, cx, cy, bh * 0.8); gr.addColorStop(0, 'rgba(63,240,224,0.35)'); gr.addColorStop(1, 'rgba(63,240,224,0)');
@@ -2375,7 +2401,7 @@ function drawCutin(ctx, st, vw, vh, t) {
   const cv = ctx.canvas || {};
   vw = num(vw, cv.width || 390); vh = num(vh, cv.height || 844); t = num(t, 0);
   if (st.kind === 'wife' || st.kind === 'sheknows') return drawWifeBand(ctx, st, vw, vh, t);
-  if (st.kind === 'win' || st.kind === 'lose') return drawEndCutin(ctx, st, vw, vh, t);
+  if (st.kind === 'win' || st.kind === 'lose' || st.kind === 'tanner') return drawEndCutin(ctx, st, vw, vh, t);
   if (st.kind === 'intro') return drawIntroCine(ctx, st, vw, vh, t);
   const k = c01(num(st.k, 0.5)), intro = st.kind === 'intro', ted = st.kind === 'teddy';
   const age = clamp(Math.floor(num(st.age, intro ? 0 : 1)), 0, 4), beat = clamp(Math.floor(num(st.beat, 0)), 0, 3) === 3 ? 2 : clamp(Math.floor(num(st.beat, 0)), 0, 2);
@@ -2531,6 +2557,11 @@ function iconSprite(name) {
     const P2 = name === 'arrowUp' ? pts : pts.map(p => [p[0], 16 - p[1]]);
     Poly(g, '#180C16', P2); const inner = P2.map(p => [7 + (p[0] - 7) * 0.72, 8 + (p[1] - 8) * 0.8]);
     Poly(g, name === 'arrowUp' ? '#3FF0E0' : '#FFC23A', inner);
+  } else if (name === 'teapot') {   // tiny teapot for TNR rows; readable at 12-16 px
+    c = mk(14, 11); const g = ctx2(c);
+    const O = '#180C16', T = '#F4F0E4', Tl = '#3FF0E0';
+    E(g, O, 6.5, 6.5, 5.5, 4.5); R(g, O, 11, 3, 3, 3); R(g, O, 0, 3, 2, 5); R(g, O, 4, 0, 5, 3);
+    E(g, T, 6.5, 6.5, 4.5, 3.5); R(g, T, 11, 4, 2, 1); P(g, T, 13, 3); R(g, Tl, 3, 6, 7, 1); P(g, T, 1, 4); P(g, T, 1, 6); R(g, T, 5, 1, 3, 2);
   } else if (name === 'football') {
     c = mk(16, 11); const g = ctx2(c);
     E(g, '#180C16', 8, 5.5, 8, 5.5); E(g, '#8A4A22', 8, 5.5, 7, 4.5); E(g, '#A85E2E', 7, 4.2, 4.5, 2.2);
@@ -2738,7 +2769,7 @@ function init() {
   loadImg(window.CA_CUTIN_URI, CUTS);
   loadImg(window.CA_LOGO_URI, LOGO); loadImg(window.CA_ITEMS_URI, ITEMS, () => { for (const k in ITC) delete ITC[k]; for (const k in OCM) OCM[k].clear(); });
   loadImg(window.CA_CUTIN_WIN_URI, ENDS.win); loadImg(window.CA_CUTIN_SLIP_WIN_URI, ENDS.slip_win); loadImg(window.CA_CUTIN_SLIP_LOSE_URI, ENDS.slip_lose);
-  loadImg(window.CA_CUTIN_WIFE_SAD_URI, ENDS.sad); loadImg(window.CA_CUTIN_HAMZAH_URI, ENDS.hamzah); loadImg(window.CA_CUTIN_PARTY_URI, ENDS.party); loadImg(window.CA_CUTIN_SQUAD_URI, ENDS.squad);
+  loadImg(window.CA_CUTIN_WIFE_SAD_URI, ENDS.sad); loadImg(window.CA_CUTIN_HAMZAH_URI, ENDS.hamzah); loadImg(window.CA_CUTIN_PARTY_URI, ENDS.party); loadImg(window.CA_CUTIN_SQUAD_URI, ENDS.squad); loadImg(window.CA_CUTIN_TANNER_URI, ENDS.tanner);
   loadImg(window.CA_CUTIN_INTRO_CITY_URI, INTROI.intro_city); loadImg(window.CA_CUTIN_INTRO_BET_URI, INTROI.intro_bet); loadImg(window.CA_CUTIN_INTRO_HAMZAH_URI, INTROI.intro_hamzah); loadImg(window.CA_CUTIN_INTRO_LAUNCH_URI, INTROI.intro_launch);
   loadImg(window.CA_TEDDY_URI, TEDS); loadImg(window.CA_WIFE_URI, WIFES);
   loadImg(window.CA_CUTIN_WIFE_URI, CUTW); loadImg(window.CA_CUTIN_TEDDY_URI, CUTT);
@@ -3666,21 +3697,28 @@ function scoreCode(name, m, secs, seedStr, fl) {
   return f.concat([(fnv1a32(f.concat([CHK_SALT]).join('|')) % 46656).toString(36).toUpperCase().padStart(3, '0')]).join('.');
 }
 function dayIndex(ms) { return Math.floor((ms - 5 * 3600e3) / 86400e3); }
-function dailySeedStr(day) { return 'D' + day.toString(36).toUpperCase(); }
 function seedOfStr(str) { return /^D/.test(str) ? fnv1a32('CONAIR|' + str) : (parseInt(str, 36) >>> 0); }
 const VERDICTS = [[100, "DIDN'T MAKE IT OUT OF THE DRIVE-THRU."], [300, 'LAID UP.'], [600, 'COVERED THE SPREAD.'], [1000, 'HOUSE MONEY.'], [1500, 'TEDDY IS PROUD OF YOU.'], [Infinity, 'HAYLEY KNEW THE WHOLE TIME. SHE STILL MARRIED YOU.']];
 function verdict(m) { for (const v of VERDICTS) if (m < v[0]) return v[1]; return VERDICTS[VERDICTS.length - 1][1]; }
 function moneyLost(m) { return 4999 + m * 1337 + m * m * 7; }
 function moneyWon(m) { return 250000000 + m * 13370; }
 function dollars(n) { return '$' + String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, ','); }
-Object.assign(CA, { scoreCode, fnv1a32, verdict, moneyLost, dollars, dayIndex, dailySeedStr, seedOfStr });
+// RULINGS 25: three-letter names; anything on scores-worker/blocked.txt becomes TNR (Tanner takes the credit).
+const BLOCKED_WORDS = 'FAG FGT FAQ JEW JUW NIG NGR NGA NIC NGG KKK KYK KIK SPC SPK CHK GUK GOK WOP COK COC KOK CUM CVM JIZ TIT ASS A55 ARS SEX FUK FUC FCK FUQ FUX PHK DIK DIC DCK DIX PUS VAG CNT KNT TWT HOE HOR SLT FAP WTF STD POO PEE PIS NAZ SSS HIV AID RAP DIE KYS HTL';
+const BLOCKED = new Set(BLOCKED_WORDS.split(' '));
+function nameInput(v) { return String(v || '').toUpperCase().replace(/[^A-Z]/g, '').slice(0, 3); }
+function nameOk(v) { return /^[A-Z]{3}$/.test(String(v)); }
+function cleanName(v) { const n = nameInput(v); if (!nameOk(n)) return { name: n, tanner: false, ok: false }; return BLOCKED.has(n) ? { name: 'TNR', tanner: true, ok: true } : { name: n, tanner: false, ok: true }; }
+Object.assign(CA, { scoreCode, fnv1a32, verdict, moneyLost, dollars, dayIndex, seedOfStr, BLOCKED_WORDS, nameInput, nameOk, cleanName });
 
 if (!HAS_DOM) return;
 const HEADLESS = OPT.headless;
 /* ---------- save (every access in try/catch) ---------- */
-function freshSave() { return { v: 1, name: '', best: 0, daily: {}, muted: false, runs: 0, pending: null, submitted: 0, intro: false }; }
+function freshSave() { return { v: 1, name: '', best: 0, muted: false, runs: 0, pending: null, submitted: 0, intro: false }; }
 let SAVE = freshSave();
 try { const s = JSON.parse(root.localStorage.getItem(SAVE_KEY) || 'null'); if (s && s.v === 1) SAVE = Object.assign(freshSave(), s); } catch (e) { }
+function fixName() { if (SAVE.name) { const c = cleanName(SAVE.name.slice(0, 3)); SAVE.name = c.ok ? c.name : ''; } }
+fixName();
 function persist() { try { root.localStorage.setItem(SAVE_KEY, JSON.stringify(SAVE)); } catch (e) { } }
 
 /* ---------- art / audio guards: every art method is optional and one that throws is retired ---------- */
@@ -3820,8 +3858,8 @@ function startRun(o) {
   o = o || {};
   const day = dayIndex(Date.now());
   let seedStr = o.seedStr;
-  if (!seedStr) seedStr = o.daily ? dailySeedStr(day) : (OPT.seed ? String(OPT.seed).toUpperCase() : newSeedStr());
-  const daily = /^D/.test(seedStr);
+  if (!seedStr) seedStr = OPT.seed ? String(OPT.seed).toUpperCase() : newSeedStr();
+  const daily = false; // RULINGS 25d: no daily mode
   const S = createSim(seedOfStr(seedStr), { best: SAVE.best });
   R = { S, seedStr, daily, day: daily ? parseInt(seedStr.slice(1), 36) : day, phase: 'ready', armed: false, readyT: 0, acc: 0, px: S.x, py: S.y, trail: [], cig: null, ct: 0,
     pose: 0, poseT: 0, flyT: 0, zA: 0, zB: 0, zf: 1, card: null, nearT: 0, cam: 0, crash: null, teddyX: S.x, ang: 0, angP: 0, angV: 0, fallT: 0, diveT: 0, tedOff: -6, leap: 0, proud: 0, band: null, coach: (SAVE.coached | 0) < 3, smash: {}, age: 0, ageFrom: 0, ageT: 1, cutin: null, ramp: 1 };
@@ -3830,7 +3868,7 @@ function startRun(o) {
   G.scene = 'play'; G.paused = false; G.result = null; G.ptrs = {};
   au('music', ZID(0)); au('setBuzz', false); au('setPace', 0);
 }
-function retry() { if (!R) return startRun(); const keep = R.daily ? R.seedStr : null; startRun(keep ? { seedStr: keep } : (OPT.seed ? {} : {})); }
+function retry() { startRun(); }
 function camFrac() { return V.land ? 0.22 : 0.28; }
 function toScene(s) { G.scene = s; G.paused = false; if (s === 'title') { au('music', 'title'); au('thrust', false); fetchBoard(); } if (s === 'board') { G.boardPage = 0; fetchBoard(true); } }
 function toast(s, dur) { G.toast = { s, t: 0, dur: dur || 2.2 }; }
@@ -3871,6 +3909,7 @@ function tipWorld(x, y, pose, k, age) {
 /* ---------- update ---------- */
 function update(dt) {
   G.t += dt;
+  if (G.over) { G.over.t += dt; if (G.over.t >= G.over.dur) G.over = null; else return; } // the tanner band freezes everything
   if (G.toast) { G.toast.t += dt; if (G.toast.t > G.toast.dur) G.toast = null; }
   if (!R) return;
   if (G.scene === 'play' && !G.paused) {
@@ -4053,8 +4092,8 @@ function crashUpdate(dt) {
 /* ---------- results, saves, submit ---------- */
 function finishRun() {
   const S = R.S, m = metres(S), secs = clamp(Math.ceil(S.t), 1, 3600), prev = SAVE.best;
-  const pb = m > prev, dprev = R.daily ? (SAVE.daily[R.day] || 0) : 0, dpb = R.daily && m > dprev;
-  SAVE.runs++; if (R.coach) SAVE.coached = (SAVE.coached | 0) + 1; if (pb) SAVE.best = m; if (dpb) { SAVE.daily = {}; SAVE.daily[R.day] = m; }
+  const pb = m > prev, dpb = false;
+  SAVE.runs++; if (R.coach) SAVE.coached = (SAVE.coached | 0) + 1; if (pb) SAVE.best = m;
   const res = { m, dist: distM(S), secs, seedStr: R.seedStr, daily: R.daily, flags: flags(S), won: S.won, zk: Math.min(4, S.zk), pb, prev, dpb, board: 'off', rank: null, cause: S.cause, bonus: S.bonus, auto: !!G.bot, age: R.age };
   G.result = res; R.phase = 'done'; G.scene = 'result'; R.flyT = 0;
   if (pb && !res.auto) au('sfx', 'newBest');
@@ -4088,7 +4127,7 @@ function submitScore(res) {
   if (res) res.board = 'sending';
   fetchJSON(BOARD_BASE + '/score', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ code: scoreCode(SAVE.name, p.m, p.secs, p.seedStr, p.flags) }) })
     .then((j) => {
-      if (j && j.ok) { if (res) { res.board = 'ok'; res.rank = j.rank; } if (SAVE.pending === p) SAVE.pending = null; SAVE.submitted = Math.max(SAVE.submitted || 0, p.m); persist(); fetchBoard(true); }
+      if (j && j.ok) { if (j.tanner || j.name === 'TNR' && SAVE.name !== 'TNR') { SAVE.name = 'TNR'; tannerCutin(); } if (res) { res.board = 'ok'; res.rank = j.rank; } if (SAVE.pending === p) SAVE.pending = null; SAVE.submitted = Math.max(SAVE.submitted || 0, p.m); persist(); fetchBoard(true); }
       else if (res) res.board = 'offline';
     }, () => { if (res) res.board = 'offline'; });
 }
@@ -4098,27 +4137,46 @@ function openName(after) {
   let el = document.getElementById('caname');
   if (!el) {
     el = document.createElement('div'); el.id = 'caname';
-    el.style.cssText = 'position:fixed;inset:0;background:rgba(10,6,14,0.9);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9;font:bold 16px ui-monospace,Menlo,monospace;color:#FFF1DE;touch-action:auto;';
-    el.innerHTML = '<div style="margin-bottom:10px;letter-spacing:2px">YOUR NAME FOR THE BOARD</div><div style="margin-bottom:12px;opacity:.7;font-size:12px">UP TO 7 LETTERS, A-Z</div>' +
-      '<input id="canamein" maxlength="7" autocomplete="off" autocapitalize="characters" spellcheck="false" style="width:200px;text-align:center;font:bold 28px ui-monospace,Menlo,monospace;letter-spacing:6px;padding:8px;border:3px solid #B6FF2E;background:#111;color:#B6FF2E;text-transform:uppercase;user-select:text;-webkit-user-select:text">' +
-      '<div style="display:flex;gap:12px;margin-top:16px"><div id="canameok" style="padding:12px 28px;background:#B6FF2E;color:#111;cursor:pointer">OK</div><div id="canamex" style="padding:12px 20px;background:#333;color:#EEE;cursor:pointer">LATER</div></div>';
+    el.style.cssText = 'position:fixed;inset:0;background:rgba(10,6,14,0.92);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9;font:bold 16px ui-monospace,Menlo,monospace;color:#FFF1DE;touch-action:auto;text-align:center;padding:0 16px;';
+    // three arcade slots: the real input sits on top, transparent-backed, so the phone keyboard works
+    el.innerHTML = '<div style="margin-bottom:8px;letter-spacing:2px">YOUR INITIALS FOR THE BOARD</div><div style="margin-bottom:16px;opacity:.7;font-size:12px">THREE LETTERS, A-Z</div>' +
+      '<div style="position:relative;width:216px;height:72px">' +
+      '<div style="position:absolute;inset:0;display:flex;gap:12px">' + [0, 1, 2].map((i) => '<div class="caslot" style="flex:1;border:3px solid #B6FF2E;background:#111;display:flex;align-items:center;justify-content:center;font:bold 40px ui-monospace,Menlo,monospace;color:#B6FF2E"></div>').join('') + '</div>' +
+      '<input id="canamein" maxlength="3" inputmode="text" autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false" style="position:absolute;inset:0;width:216px;height:72px;box-sizing:border-box;border:0;outline:0;background:transparent;color:transparent;font:bold 16px ui-monospace,Menlo,monospace;padding:0;opacity:0.01;caret-color:transparent;user-select:text;-webkit-user-select:text">' +
+      '</div>' +
+      '<div style="display:flex;gap:12px;margin-top:20px"><div id="canameok" style="padding:12px 28px;background:#B6FF2E;color:#111;cursor:pointer">OK</div><div id="canamex" style="padding:12px 20px;background:#333;color:#EEE;cursor:pointer">LATER</div></div>';
     document.body.appendChild(el);
     const inp = el.querySelector('#canamein');
-    inp.addEventListener('input', () => { const v = inp.value.toUpperCase().replace(/[^A-Z]/g, '').slice(0, 7); if (v !== inp.value) inp.value = v; });
+    inp.addEventListener('input', () => { const v = nameInput(inp.value); if (v !== inp.value) inp.value = v; syncOk(); });
     inp.addEventListener('keydown', (e) => { e.stopPropagation(); if (e.key === 'Enter') el.querySelector('#canameok').click(); });
-    ['pointerdown', 'pointerup', 'touchstart', 'keyup'].forEach((t) => el.addEventListener(t, (e) => e.stopPropagation()));
+    ['pointerdown', 'pointerup', 'touchstart', 'touchend', 'keyup'].forEach((t) => el.addEventListener(t, (e) => e.stopPropagation()));
   }
-  const inp = el.querySelector('#canamein'); inp.value = SAVE.name || '';
+  const inp = el.querySelector('#canamein'), okb = el.querySelector('#canameok');
+  function syncOk() { const v = nameInput(inp.value); el.querySelectorAll('.caslot').forEach((d, i) => { d.textContent = v[i] || ''; d.style.borderColor = i === v.length ? '#FFFFFF' : '#B6FF2E'; }); const on = nameOk(v); okb.style.opacity = on ? '1' : '0.35'; okb.style.pointerEvents = on ? 'auto' : 'none'; okb.dataset.on = on ? '1' : ''; }
+  inp.value = SAVE.name || ''; syncOk();
   const close = (ok) => {
-    const v = inp.value.toUpperCase().replace(/[^A-Z]/g, '').slice(0, 7);
+    const c = cleanName(inp.value);
+    if (ok && !c.ok) return; // OK stays disabled until three letters are in
     el.style.display = 'none'; try { inp.blur(); } catch (e) { }
-    if (ok && v) { SAVE.name = v; persist(); }
-    G.nameOpen = false; G.keys = {}; if (after) after(ok && !!v);
+    inp.value = ''; // never show a blocked word back
+    G.nameOpen = false; G.keys = {};
+    if (ok) { SAVE.name = c.name; persist(); if (c.tanner) tannerCutin(); }
+    if (after) after(ok && c.ok);
   };
-  el.querySelector('#canameok').onclick = () => close(true);
+  okb.onclick = () => close(true);
   el.querySelector('#canamex').onclick = () => close(false);
   el.style.display = 'flex'; G.nameOpen = true;
   setTimeout(() => { try { inp.focus(); } catch (e) { } }, 30);
+}
+// the TANNER cut-in: a 2.2 s freezing band over whatever screen is up, then back to it
+function tannerCutin() {
+  G.over = { kind: 'tanner', beat: 0, t: 0, dur: 2.2, zone: 'gameday', age: 0, lines: ['TANNER TOOK YOUR SCORE.', '"THAT WAS ALL ME."'], s1: false, s2: false };
+  au('sfx', 'tanner');
+}
+function drawOver() {
+  const c = G.over, st = { kind: c.kind, beat: 0, age: 0, k: clamp(c.t / c.dur, 0, 1), t: c.t, dur: c.dur, zone: c.zone, lines: c.lines.slice() };
+  if (!artCall('drawCutin', [ctx, st, V.W, V.H, G.t])) { ctx.setTransform(V.dpr, 0, 0, V.dpr, 0, 0); stubCutin(c); }
+  ctx.setTransform(V.dpr, 0, 0, V.dpr, 0, 0); ctx.globalAlpha = 1;
 }
 function nameThenSubmit() { openName((ok) => { if (ok && SAVE.pending) submitScore(G.scene === 'result' ? G.result : null); }); }
 
@@ -4379,7 +4437,7 @@ function drawTitle() {
   const lx = V.land ? A.x + A.w * 0.25 : V.W / 2, rx = V.land ? A.x + A.w * 0.75 : V.W / 2;
   const bw = Math.min(colW, 340), gpx = px * 0.75 >= 1.5 ? px * 0.75 : 1.5;
   const gl = wrap('GLOBAL LEADERBOARD — EVERYONE WHO PLAYS IS ON IT', bw, gpx), top = GB.all && GB.all[0];
-  const TEDDY_T = 74, btnBlock = BH + gap + 2 * (bh + gap) + sh + gap + 4 + gl.length * 10 * gpx + (top ? 4 + 10 * gpx : 0) + (tall ? TEDDY_T : 0);
+  const TEDDY_T = 74, btnBlock = BH + gap + (bh + gap) + sh + gap + 4 + gl.length * 10 * gpx + (top ? 4 + 10 * gpx : 0) + (tall ? TEDDY_T : 0);
   const tl = wrap('GET HOME BEFORE HAYLEY CHECKS THE ACCOUNT.', colW - 10, px);
   const textBlock = tl.length * 10 * px + (SAVE.best ? 2 + 10 * px : 0);
   // the brand column (portrait + logo + tagline) shrinks until it fits beside / above the buttons
@@ -4398,11 +4456,10 @@ function drawTitle() {
   if (!V.land) by = y + 16;
   const bx = rx - bw / 2, hw = (bw - gap) / 2;
   button('play', bx, by, bw, BH, 'PLAY', () => startRun(), { primary: true, ui }); by += BH + gap;
-  button('daily', bx, by, hw, bh, 'DAILY', () => startRun({ daily: true }), { ui });
-  button('board', bx + hw + gap, by, hw, bh, 'BOARD', () => { G.from = 'title'; toScene('board'); }, { ui }); by += bh + gap;
-  button('name', bx, by, hw, bh, SAVE.name ? 'NAME: ' + SAVE.name : 'NAME', () => nameThenSubmit(), { ui });
-  button('sound', bx + hw + gap, by, hw, bh, SAVE.muted ? 'SOUND: OFF' : 'SOUND: ON', toggleMute, { ui }); by += bh + gap;
-  const sw = Math.min(bw, 160); button('story', rx - sw / 2, by, sw, sh, 'STORY', () => startRun({ intro: true }), { ui, px: 1.5 });
+  button('board', bx, by, hw, bh, 'BOARD', () => { G.from = 'title'; toScene('board'); }, { ui });
+  button('name', bx + hw + gap, by, hw, bh, SAVE.name ? 'NAME: ' + SAVE.name : 'NAME', () => nameThenSubmit(), { ui }); by += bh + gap;
+  button('sound', bx, by, hw, sh, SAVE.muted ? 'SOUND: OFF' : 'SOUND: ON', toggleMute, { ui, px: 1.5 });
+  button('story', bx + hw + gap, by, hw, sh, 'STORY', () => startRun({ intro: true }), { ui, px: 1.5 });
   by += sh + gap + 4;
   gl.forEach((l) => { text(l, rx, by, gpx, ui.ink, 'c'); by += 10 * gpx; });
   if (top) { by += 4; const s2 = 'TOP: ' + top.name + ' ' + top.m + ' M'; text(s2, rx, by, fitPx(s2, bw, gpx), ui.accent, 'c'); by += 10 * gpx; }
@@ -4523,7 +4580,6 @@ function drawResult() {
   const limit = by - 8;
   // top: run label, distance, best, verdict, money, rank
   let y = y0 + 14;
-  if (res.daily) { text('DAILY RUN', cx, y, 1.5, ui.ink, 'c'); y += 15; }
   const hl = res.won ? 'THE BET HIT.' : 'THE BET IS DEAD.', hpx = fitPx(hl, inner, px * 1.5);
   text(hl, cx, y, hpx, res.won ? '#F2CD52' : '#FF8A7A', 'c'); y += 7 * hpx + 8;
   const big = fitPx(res.m + ' M', inner, px * 4); text(res.m + ' M', cx, y, big, '#FFFFFF', 'c');
@@ -4574,22 +4630,23 @@ function drawBoard() {
   let y = A.y;
   const bh = btnH(), gap = 8, tw = (pw - gap * 2) / 3;
   button('back', x0, y, tw, bh, 'BACK', () => toScene(G.from === 'result' && R ? 'result' : 'title'), { ui });
-  button('tab.all', x0 + tw + gap, y, tw, bh, 'ALL TIME', () => { G.board = 'all'; G.boardPage = 0; }, { ui, primary: G.board === 'all', px: V.px });
-  button('tab.daily', x0 + 2 * (tw + gap), y, tw, bh, 'TODAY', () => { G.board = 'daily'; G.boardPage = 0; }, { ui, primary: G.board === 'daily', px: V.px });
+  text('ALL TIME', x0 + pw - 4, y + bh / 2 - 3.5 * px, px, ui.accent, 'r');
   y += bh + 12;
-  const rows = (G.board === 'all' ? GB.all : GB.daily) || [];
+  const rows = GB.all || [];
   if (GB.state === 'loading' && !rows.length) { text('LOADING...', V.W / 2, y, px, ui.ink, 'c'); return; }
   if (GB.state === 'fail' && !rows.length) {
     const l = wrap('OFFLINE — SCORES SAVED ON THIS PHONE', pw, px); l.forEach((s) => { text(s, V.W / 2, y, px, ui.ink, 'c'); y += 10 * px; });
     y += 6; text('YOUR BEST: ' + SAVE.best + ' M', V.W / 2, y, px, ui.accent, 'c'); return;
   }
-  if (!rows.length) { text(G.board === 'daily' ? 'NO DAILY RUNS YET. BE FIRST.' : 'NOBODY YET. BE FIRST.', V.W / 2, y, fitPx('NO DAILY RUNS YET. BE FIRST.', pw, px), ui.ink, 'c'); return; }
+  if (!rows.length) { text('NOBODY YET. BE FIRST.', V.W / 2, y, fitPx('NOBODY YET. BE FIRST.', pw, px), ui.ink, 'c'); return; }
   const rh = 10 * px + 4, per = Math.max(1, Math.floor((A.y + A.h - y - bh - 12) / rh)), pages = Math.ceil(rows.length / per);
   G.boardPage = clamp(G.boardPage, 0, pages - 1);
   for (let i = G.boardPage * per; i < Math.min(rows.length, (G.boardPage + 1) * per); i++) {
     const r = rows[i], me = SAVE.name && r.name === SAVE.name, col = me ? '#B6FF2E' : ui.ink;
     const nw = text(String(i + 1).padStart(2, ' ') + '. ' + r.name, x0 + 4, y, px, col, 'l');
-    if ((r.flags | 0) & 4) icon('trophy', x0 + 4 + nw + 6, y - 1, Math.round(7 * px + 2));
+    let ix = x0 + 4 + nw + 6; const isz = Math.round(7 * px + 2);
+    if (r.name === 'TNR' && art('drawIcon')) { icon('teapot', ix, y - 1, isz); ix += isz + 4; }
+    if ((r.flags | 0) & 4) icon('trophy', ix, y - 1, isz);
     text(r.m + ' M', x0 + pw - 4, y, px, col, 'r'); y += rh;
   }
   if (pages > 1) {
@@ -4611,6 +4668,7 @@ function render() {
     else drawTitle();
   } catch (e) { if (!G.lastErr) console.error(e); G.lastErr = String(e && e.stack || e); }
   ctx.setTransform(V.dpr, 0, 0, V.dpr, 0, 0); ctx.globalAlpha = 1;
+  if (G.over) { G.btns = []; TEXT_RECTS.length = 0; drawOver(); }
   if (OPT.fps && G.fstat && G.fstat.show) { const s = G.fstat.show, w = textW(s, 1.5); ctx.fillStyle = 'rgba(0,0,0,0.6)'; ctx.fillRect(V.ins.l + 4, V.H - V.ins.b - 20, w + 8, 16); text(s, V.ins.l + 8, V.H - V.ins.b - 16, 1.5, '#B6FF2E', 'l', { noRect: true, shadow: false }); }
   if (G.toast) { const A = area(), px = fitPx(G.toast.s, A.w - 20, V.px), w = textW(G.toast.s, px) + 24, y = A.y + A.h * 0.5; ctx.fillStyle = 'rgba(12,8,18,0.92)'; ctx.fillRect(V.W / 2 - w / 2, y, w, 9 * px + 14); text(G.toast.s, V.W / 2, y + 8, px, '#FFF1DE', 'c', { noRect: true }); }
 }
@@ -4619,6 +4677,7 @@ function render() {
 function btnAt(x, y) { for (let i = G.btns.length - 1; i >= 0; i--) { const b = G.btns[i]; if (x >= b.x && x <= b.x + b.w && y >= b.y && y <= b.y + b.h) return b; } return null; }
 function onDown(e) {
   if (G.nameOpen) return;
+  if (G.over) { if (e.cancelable) e.preventDefault(); if (G.over.t > 0.4) G.over = null; return; }
   if (e.cancelable) e.preventDefault();
   au('unlock'); if (!G.audioInit) { G.audioInit = true; au('setMuted', SAVE.muted); }
   try { cv.setPointerCapture(e.pointerId); } catch (err) { }
@@ -4633,6 +4692,7 @@ function onDown(e) {
 // any finger down = hold, last finger up = release
 function onTouchStart(e) {
   if (G.nameOpen) return;
+  if (G.over) { if (e.cancelable) e.preventDefault(); return; }
   if (e.cancelable) e.preventDefault();
   au('unlock');
   const now = (root.performance && root.performance.now) ? root.performance.now() : Date.now();
@@ -4717,7 +4777,9 @@ CA.debug = {
   band() { if (R) R.band = { kind: 'wife', t: 0.3, dur: 1.2, zone: ZID(R.zB), lines: ['HAYLEY KNOWS.'] }; render(); },
   teddySave() { if (R && R.phase === 'run') { R.S.teddy = 'ready'; CA.sim.step(R.S, false); R.S.y = -50; CA.sim.step(R.S, false); handleEvents(R.S); } return this.state(); },
   pause(on) { G.paused = !!on; }, save() { return SAVE; }, reset() { SAVE = freshSave(); persist(); }, render() { render(); }, layout() { layout(); render(); },
-  board(rows) { GB.all = rows || []; GB.daily = rows || []; GB.state = 'ok'; },
+  board(rows) { GB.all = rows || []; GB.state = 'ok'; },
+  tanner() { tannerCutin(); render(); }, texts() { return TEXT_RECTS.map((r) => r.s); }, over() { return G.over ? G.over.kind : null; }, nameOpen() { return G.nameOpen; },
+  setName(v) { const c = cleanName(v); if (c.ok) { SAVE.name = c.name; persist(); if (c.tanner) tannerCutin(); } return SAVE.name; },
 };
 
 /* ---------- boot ---------- */
@@ -4758,9 +4820,9 @@ boot();
  * - Teddy save: 0.32 s glide to the corridor centre, then a small hop (vy -60), 1.2 s invincible after the glide.
  * - Cut-ins (RULINGS 9) and the post-cut-in 40%->100% ramp are a game-layer time scale; the sim never sees them.
  * - Crash: 0.8 s at 55% slow-mo, tumble frames 3-4-5 at 90 ms then hold 5; cigarette flies off trailing smoke.
- * - Random runs use a fresh random seed on RETRY; daily runs keep the daily seed ('D' + base36 day, UTC-5).
+ * - Every run (and every RETRY) uses a fresh random seed; the daily mode was removed by RULINGS 25.
  *   ?seed=XYZ (base36) pins a seed. ?debug=1 / ?headless=1 / bots never touch the network.
- * - Submit on a new personal best or a new daily best; with no name yet the result offers ADD NAME, and the pending
+ * - Submit on a new personal best; with no name yet the result offers ADD NAME, and the pending
  *   best is sent once a name is set (also retried on boot).
  * - Server bound: the perfect bot reaches ~25-27 m/s averaged over a run (5 min, bonuses included) because the creep
  *   keeps speeding up; `M <= 22*SECS + 60` would reject legit long runs.
@@ -4779,6 +4841,9 @@ boot();
  * - RULINGS 24 (one notch easier): hitbox rx 9.5 -> 8.4, ry 12.5 -> 11 (sprite unchanged); top speed v1 150 -> 134
  *   (start 70); clearance end 24 -> 26.5; pattern spacing end 0.9 -> 1.0 s; one bone per run from zone 3. Zones stay
  *   16 s of nominal flight, so a win is still ~80 s (the bet now hits at ~823 m).
+ * - RULINGS 25: names are three letters (DOM field drives three slots; OK disabled until three); a blocked word (same list
+ *   as scores-worker/blocked.txt, asserted by the harness) is saved as TNR and the TANNER band plays over whatever screen
+ *   is up; a server answer with tanner:true does the same. No daily mode: every run and retry is a fresh random seed.
  */
 
 </script>
