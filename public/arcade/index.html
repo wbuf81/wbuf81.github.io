@@ -22,12 +22,14 @@
 <style>
   :root { --bg: #0b0714; --panel: #150d24; --ink: #f4f1e6; --dim: #a9a3c6; --gold: #ffc42e; --pink: #ff4fa3; --teal: #2fd0c0; --lime: #b6ff2e; color-scheme: dark; }
   * { box-sizing: border-box; }
-  html, body { margin: 0; background: var(--bg); color: var(--ink); overflow-x: hidden; }
+  html { background: var(--bg); }
+  html, body { margin: 0; color: var(--ink); overflow-x: hidden; }
+  body { background: transparent; }
   body { font-family: "Press Start 2P", "Courier New", ui-monospace, monospace; min-height: 100vh; min-height: 100dvh;
     padding: max(14px, env(safe-area-inset-top)) 0 max(28px, env(safe-area-inset-bottom)); }
   /* the arcade room: a fixed layer so it stays put while the page scrolls (background-attachment: fixed is unreliable on iOS) */
-  body::before { content: ""; position: fixed; inset: 0; z-index: -2; background: #0b0714 url(img/bg.jpg) center 35% / cover no-repeat; }
-  body::after { content: ""; position: fixed; inset: 0; z-index: -1; background: linear-gradient(180deg, rgba(11,7,20,.55), rgba(11,7,20,.2) 30%, rgba(11,7,20,.55) 70%, rgba(11,7,20,.92)); }
+  body::before { content: ""; position: fixed; inset: 0; z-index: -2; background: #0b0714 url(img/bg.jpg) center 40% / cover no-repeat; filter: brightness(1.7) saturate(1.25); }
+  body::after { content: ""; position: fixed; inset: 0; z-index: -1; background: linear-gradient(180deg, rgba(11,7,20,.35), rgba(11,7,20,0) 30%, rgba(11,7,20,.25) 70%, rgba(11,7,20,.85)); }
   .wrap { max-width: 980px; margin: 0 auto; padding: 0 max(14px, env(safe-area-inset-right)) 0 max(14px, env(safe-area-inset-left)); }
   header { text-align: center; padding: 2px 0 6px; }
   .hero { display: block; width: 100%; max-width: 620px; height: auto; margin: 0 auto; filter: drop-shadow(0 0 18px rgba(255, 79, 163, .35)); }
@@ -40,23 +42,19 @@
   @keyframes b { 50% { opacity: .2; } }
   h2 { font-size: clamp(11px, 3.4vw, 16px); letter-spacing: .1em; color: var(--teal); margin: 30px 0 14px; text-align: center; text-shadow: 0 0 14px rgba(47,208,192,.5); }
 
-  /* ---- the row of cabinets: swipe sideways; the centre one faces you, the others turn to show their sides ---- */
-  .row { --w: min(50vw, 240px); --h: calc(var(--w) * 1.72); --d: calc(var(--w) * .62);
-    display: flex; gap: calc(var(--w) * .06); overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; scrollbar-width: none;
-    padding: 26px calc(50% - var(--w) / 2) 30px; perspective: 1100px; perspective-origin: 50% 42%; }
+  /* ---- the row of cabinets: a flat line-up standing on the arcade floor; swipe sideways on a phone ---- */
+  .row { --w: min(60vw, 250px); display: flex; align-items: flex-end; gap: 14px; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+    padding: 22px calc(50% - var(--w) / 2) 18px; }
   .row::-webkit-scrollbar { display: none; }
-  .slot { flex: none; width: var(--w); height: var(--h); scroll-snap-align: center; scroll-snap-stop: always; position: relative; transform-style: preserve-3d; -webkit-tap-highlight-color: transparent; cursor: pointer; }
-  .cab3d { position: absolute; inset: 0; transform-style: preserve-3d; will-change: transform; }
-  .face { position: absolute; top: 0; height: 100%; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
-  .face.front { left: 0; width: 100%; transform: translateZ(calc(var(--d) / 2)); }
-  .face.side { left: calc(50% - var(--d) / 2); width: var(--d); }
-  .face.side.r { transform: rotateY(90deg) translateZ(calc(var(--w) / 2)); }
-  .face.side.l { transform: rotateY(-90deg) translateZ(calc(var(--w) / 2)); }
-  .face img.art { width: 100%; height: 100%; object-fit: contain; object-position: bottom; display: block; }
-  .face.side.l img.art { transform: scaleX(-1); }
-  .shadow { position: absolute; left: 6%; right: 6%; bottom: -14px; height: 26px; border-radius: 50%; background: radial-gradient(closest-side, rgba(0,0,0,.6), transparent); }
+  @media (min-width: 1000px) { .row { --w: 172px; justify-content: center; overflow: visible; padding: 26px 20px 18px; gap: 20px; } .swipe { display: none; } }
+  a.slot { flex: none; width: var(--w); scroll-snap-align: center; color: inherit; text-decoration: none; text-align: center; -webkit-tap-highlight-color: transparent; transition: transform .14s ease; }
+  a.slot:active { transform: translateY(3px); }
+  @media (hover: hover) { a.slot:hover { transform: translateY(-6px); } }
+  .cabinet { position: relative; }
+  .cabinet img.art { display: block; width: 100%; height: auto; filter: drop-shadow(0 14px 14px rgba(0,0,0,.6)); }
+  .cabinet::after { content: ""; position: absolute; left: 4%; right: 4%; bottom: -10px; height: 20px; border-radius: 50%; background: radial-gradient(closest-side, rgba(0,0,0,.65), transparent); z-index: -1; }
   /* drawn cabinet (used until a picture is supplied) */
-  .box { --c: var(--pink); height: 100%; display: flex; flex-direction: column; border-radius: 12px 12px 4px 4px; background: linear-gradient(180deg, #24173a, #120a20); border: 3px solid var(--c);
+  .box { aspect-ratio: 10 / 17; display: flex; flex-direction: column; border-radius: 12px 12px 4px 4px; background: linear-gradient(180deg, #24173a, #120a20); border: 3px solid var(--c);
     box-shadow: 0 0 0 3px #05030a, 0 0 22px color-mix(in srgb, var(--c) 55%, transparent); overflow: hidden; }
   .marquee { background: linear-gradient(180deg, color-mix(in srgb, var(--c) 80%, #fff), var(--c)); color: #140b1c; text-align: center; font-size: calc(var(--w) * .044); line-height: 1.5; padding: 10px 6px 9px;
     min-height: 3.7em; display: flex; align-items: center; justify-content: center; border-bottom: 3px solid #05030a; }
@@ -70,22 +68,12 @@
   .kick { flex: 1; margin: 10px 9px 9px; border-radius: 3px; border: 2px solid #05030a; background: repeating-linear-gradient(135deg, color-mix(in srgb, var(--c) 28%, #120a20) 0 10px, #120a20 10px 20px); display: flex; align-items: flex-end; justify-content: center; padding-bottom: 8px; }
   .coin { width: 26px; height: 34px; border: 2px solid #05030a; border-radius: 3px; background: #0b0714; box-shadow: inset 0 0 0 2px #3a2a5a; position: relative; }
   .coin::after { content: ""; position: absolute; left: 10px; top: 8px; width: 3px; height: 14px; background: var(--gold); box-shadow: 0 0 6px var(--gold); }
-  .sidebox { --c: var(--pink); height: 100%; border-radius: 10px 60px 4px 4px; border: 3px solid var(--c); box-shadow: 0 0 0 3px #05030a;
-    background: linear-gradient(160deg, color-mix(in srgb, var(--c) 85%, #fff), color-mix(in srgb, var(--c) 55%, #120a20) 70%); position: relative; overflow: hidden; }
-  .sidebox::before { content: ""; position: absolute; inset: 0; background: repeating-linear-gradient(115deg, transparent 0 22px, rgba(5,3,10,.35) 22px 30px); }
-  .sidebox::after { content: attr(data-t); position: absolute; left: 0; right: 0; bottom: 26%; text-align: center; font-size: calc(var(--w) * .05); line-height: 1.6; color: #fff; text-shadow: 2px 2px 0 #05030a; padding: 0 6px; }
-
-  .info { text-align: center; min-height: 148px; padding: 0 14px; }
-  .info .t { font-size: clamp(13px, 4.4vw, 20px); line-height: 1.4; color: var(--c, var(--gold)); text-shadow: 3px 3px 0 #05030a, 0 0 18px color-mix(in srgb, var(--c, #ffc42e) 60%, transparent); }
-  .info .tag { margin-top: 10px; font-size: clamp(7px, 2.3vw, 10px); line-height: 1.8; color: var(--ink); min-height: 3.6em; }
-  .info .champ { margin-top: 4px; font-size: clamp(7px, 2.3vw, 10px); color: var(--gold); min-height: 1.6em; }
-  a.play { display: inline-block; margin-top: 12px; font: inherit; font-size: clamp(12px, 4vw, 16px); color: #140b1c; background: var(--lime); padding: 14px 26px 12px; border-radius: 4px; text-decoration: none;
-    box-shadow: 0 5px 0 #5c8a12, 0 0 22px rgba(182,255,46,.45); -webkit-tap-highlight-color: transparent; }
-  a.play:active { transform: translateY(4px); box-shadow: 0 1px 0 #5c8a12; }
-  .dots { display: flex; justify-content: center; gap: 9px; margin: 16px 0 0; }
-  .dots button { width: 11px; height: 11px; border-radius: 2px; border: 2px solid var(--dim); background: transparent; padding: 0; }
-  .dots button.on { background: var(--lime); border-color: var(--lime); box-shadow: 0 0 8px var(--lime); }
-  .swipe { text-align: center; font-size: 7px; color: var(--dim); letter-spacing: .1em; margin-top: 12px; }
+  .cap { margin-top: 18px; }
+  .cap .t { font-size: calc(var(--w) * .052); line-height: 1.5; color: var(--c); text-shadow: 2px 2px 0 #05030a; min-height: 3em; display: flex; align-items: center; justify-content: center; }
+  .cap .tag { margin-top: 6px; font-size: calc(var(--w) * .034); line-height: 1.8; color: var(--ink); min-height: 5.4em; }
+  .cap .play { display: inline-block; margin-top: 6px; font-size: calc(var(--w) * .056); color: #140b1c; background: var(--lime); padding: 11px 18px 9px; border-radius: 4px; box-shadow: 0 4px 0 #5c8a12, 0 0 18px rgba(182,255,46,.4); }
+  .cap .champ { margin-top: 12px; font-size: calc(var(--w) * .034); color: var(--gold); min-height: 1.6em; }
+  .swipe { text-align: center; font-size: 7px; color: var(--dim); letter-spacing: .1em; margin-top: 6px; }
 
   .boards { display: grid; grid-template-columns: minmax(0, 1fr); gap: 14px; }
   @media (min-width: 760px) { .boards { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
@@ -112,8 +100,6 @@
 
 <main>
   <div class="row" id="row" aria-label="Arcade cabinets"></div>
-  <div class="info" id="info"><div class="t" id="i-t"></div><div class="tag" id="i-tag"></div><div class="champ" id="i-champ"></div><a class="play" id="i-play" href="#">PLAY</a></div>
-  <div class="dots" id="dots"></div>
   <div class="swipe">&lt; SWIPE TO WALK THE FLOOR &gt;</div>
 
   <div class="wrap">
@@ -125,7 +111,7 @@
 <footer>GLOBAL LEADERBOARDS · EVERYONE WHO PLAYS IS ON THEM<br>NAUGHTY NAMES BELONG TO TANNER NOW</footer>
 
 <script>
-// Cabinet pictures are optional. Drop img/cab-<id>-front.png and img/cab-<id>-side.png to replace the drawn cabinet.
+// Cabinet pictures are optional. Drop img/cab-<id>.png (a three-quarter view) to replace the drawn cabinet.
 var GAMES = [
   { id: 'conair',       title: 'CON AIR',                 url: '/conair/',       shot: '/conair/share/og.jpg',       c: '#ffb13b', tag: 'CONNIE BET THE HOUSE ON THE JAGS. HOLD TO FART.' },
   { id: 'marbles',      title: "ROB'S MARBLE DADNESS",    url: '/marbles/',      shot: '/marbles/share/og.png',      c: '#2fd0c0', tag: 'FIVE COURSES. ANGELA IS SLIGHTLY AHEAD.' },
@@ -133,60 +119,26 @@ var GAMES = [
   { id: 'welldone',     title: 'WELL DONE!',              url: '/welldone/',     shot: '/welldone/share/og.png',     c: '#ff6a3d', tag: "THE SPECIAL AT DAVID'S. IT WAS DRY, THOUGH." },
   { id: 'fivepointtwo', title: "C SQUADBREAKER '99",      url: '/fivepointtwo/', shot: '/fivepointtwo/share/og.png', c: '#ff4fa3', tag: 'BLOCKS. BEEF. THE WHOLE SQUAD.' }
 ];
-var CHAMP = {};
 function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
-var row = document.getElementById('row'), dots = document.getElementById('dots'), slots = [], cur = -1;
-
-function drawnFront(g) {
-  var box = el('div', 'box'); box.style.setProperty('--c', g.c);
+var row = document.getElementById('row');
+function drawn(g) {
+  var box = el('div', 'box');
   box.appendChild(el('div', 'marquee', g.title));
   var screen = el('div', 'screen'), shot = new Image(); shot.src = g.shot; shot.alt = ''; screen.appendChild(shot); box.appendChild(screen);
   var deck = el('div', 'deck'); deck.appendChild(el('span', 'stick')); deck.appendChild(el('span', 'btn')); deck.appendChild(el('span', 'btn')); deck.appendChild(el('span', 'btn')); box.appendChild(deck);
   var kick = el('div', 'kick'); kick.appendChild(el('span', 'coin')); box.appendChild(kick);
   return box;
 }
-function drawnSide(g) { var s = el('div', 'sidebox'); s.style.setProperty('--c', g.c); s.setAttribute('data-t', g.title); return s; }
-function withArt(face, src, fallback) {
-  face.appendChild(fallback);
-  var im = new Image(); im.className = 'art'; im.alt = ''; im.onload = function () { face.textContent = ''; face.appendChild(im); }; im.src = src;
-}
-GAMES.forEach(function (g, i) {
-  var slot = el('div', 'slot'); slot.setAttribute('role', 'link'); slot.setAttribute('aria-label', g.title); slot.tabIndex = 0;
-  var cab = el('div', 'cab3d');
-  var front = el('div', 'face front'), sr = el('div', 'face side r'), sl = el('div', 'face side l');
-  withArt(front, 'img/cab-' + g.id + '-front.png', drawnFront(g));
-  withArt(sr, 'img/cab-' + g.id + '-side.png', drawnSide(g)); withArt(sl, 'img/cab-' + g.id + '-side.png', drawnSide(g));
-  cab.appendChild(el('div', 'shadow')); cab.appendChild(sl); cab.appendChild(sr); cab.appendChild(front); slot.appendChild(cab); row.appendChild(slot);
-  slot.addEventListener('click', function () { if (i === cur) location.href = g.url; else go(i); });
-  slot.addEventListener('keydown', function (e) { if (e.key === 'Enter') location.href = g.url; });
-  slots.push({ slot: slot, cab: cab });
-  var d = el('button'); d.setAttribute('aria-label', g.title); d.addEventListener('click', function () { go(i); }); dots.appendChild(d);
+GAMES.forEach(function (g) {
+  var a = el('a', 'slot'); a.href = g.url; a.style.setProperty('--c', g.c);
+  var cab = el('div', 'cabinet'); cab.appendChild(drawn(g));
+  // optional picture of the whole cabinet (front and side in one three-quarter view)
+  var im = new Image(); im.className = 'art'; im.alt = g.title + ' arcade cabinet'; im.onload = function () { cab.textContent = ''; cab.appendChild(im); }; im.src = 'img/cab-' + g.id + '.png';
+  a.appendChild(cab);
+  var cap = el('div', 'cap'); cap.appendChild(el('div', 't', g.title)); cap.appendChild(el('div', 'tag', g.tag)); cap.appendChild(el('span', 'play', 'PLAY'));
+  var ch = el('div', 'champ'); ch.id = 'champ-' + g.id; cap.appendChild(ch); a.appendChild(cap);
+  row.appendChild(a);
 });
-function go(i) { var s = slots[i].slot; row.scrollTo({ left: s.offsetLeft - (row.clientWidth - s.offsetWidth) / 2, behavior: 'smooth' }); }
-function setInfo(i) {
-  if (i === cur) return; cur = i; var g = GAMES[i], info = document.getElementById('info');
-  info.style.setProperty('--c', g.c);
-  document.getElementById('i-t').textContent = g.title; document.getElementById('i-tag').textContent = g.tag;
-  document.getElementById('i-champ').textContent = CHAMP[g.id] ? 'CHAMP: ' + CHAMP[g.id] : '';
-  var p = document.getElementById('i-play'); p.href = g.url; p.textContent = 'PLAY';
-  [].forEach.call(dots.children, function (d, k) { d.className = k === i ? 'on' : ''; });
-}
-var ticking = false;
-function layout() {
-  ticking = false; var mid = row.scrollLeft + row.clientWidth / 2, best = 0, bestD = 1e9;
-  slots.forEach(function (s, i) {
-    var w = s.slot.offsetWidth, off = (s.slot.offsetLeft + w / 2 - mid) / w, a = Math.abs(off);
-    if (a < bestD) { bestD = a; best = i; }
-    var ang = Math.max(-52, Math.min(52, off * 44)), sc = 1 - Math.min(a, 1.4) * 0.14, z = -Math.min(a, 1.6) * 90; // neighbours turn outward so their side art faces the centre
-    s.cab.style.transform = 'translateZ(' + z.toFixed(1) + 'px) rotateY(' + ang.toFixed(2) + 'deg) scale(' + sc.toFixed(3) + ')';
-    s.slot.style.zIndex = String(100 - Math.round(a * 10));
-    // no filter/opacity on the cabinet: either would flatten its 3D faces
-  });
-  setInfo(best);
-}
-row.addEventListener('scroll', function () { if (!ticking) { ticking = true; requestAnimationFrame(layout); } }, { passive: true });
-window.addEventListener('resize', layout);
-layout(); setTimeout(layout, 60);
 
 // ---- high scores ----
 var boards = document.getElementById('boards');
@@ -202,7 +154,7 @@ function fill(ol, rows, fmt) {
   });
 }
 function offline(ol) { ol.textContent = ''; ol.appendChild(el('div', 'empty', 'BOARD OFFLINE. TRY AGAIN LATER.')); }
-function champ(id, name) { CHAMP[id] = name; if (GAMES[cur] && GAMES[cur].id === id) document.getElementById('i-champ').textContent = 'CHAMP: ' + name; }
+function champ(id, name) { var c = document.getElementById('champ-' + id); if (c) c.textContent = 'CHAMP: ' + name; }
 function mmss(ms) { var s = ms / 1000, m = Math.floor(s / 60); return m + ':' + (s - m * 60).toFixed(2).padStart(5, '0'); }
 function get(url) { return fetch(url, { cache: 'no-store' }).then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); }); }
 
