@@ -27,7 +27,6 @@ export const metadata: Metadata = {
   description: DESCRIPTION,
   openGraph: { title: TITLE, description: DESCRIPTION, url: '/work', images: [CARD] },
   twitter: { card: 'summary_large_image', title: TITLE, description: DESCRIPTION, images: [CARD.url] },
-  robots: { index: false, follow: false },
 };
 
 const OSCAR = project('oscar');

@@ -42,9 +42,10 @@ test('the sections, in order', () => {
   ]);
 });
 
-test("its title and the site's own card, out of search and out of the sitemap", () => {
+test("its title and the site's own card, and it is findable: no noindex, and in the sitemap", () => {
   expect(metadata.title).toBe('The pals · Wesley Bard');
-  expect(metadata.robots).toEqual({ index: false, follow: false });
+  // Wes, 24 Nov 2026: "let's make it findable by search engines". The game and build write-ups stay hidden.
+  expect(metadata.robots).toBeUndefined();
   const og = metadata.openGraph as { url: string; images: { url: string }[] };
   expect(og.url).toBe('/work');
   // The card is the homepage's, the one app/layout.tsx names, and it exists.
@@ -54,7 +55,7 @@ test("its title and the site's own card, out of search and out of the sitemap", 
   expect(inPublic(site)).toBe(true);
   expect(metadata.twitter).toMatchObject({ card: 'summary_large_image', images: [site] });
   const sitemap = fs.readFileSync(path.join(process.cwd(), 'public/sitemap.xml'), 'utf8');
-  expect(sitemap).not.toMatch(/\/work\b/);
+  expect(sitemap).toMatch(/<loc>https:\/\/wesleybard\.com\/work<\/loc>/);
 });
 
 test('the roster is the nine homepage tiles in AGENTS order, with no link in them, then WBDB', () => {

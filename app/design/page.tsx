@@ -387,7 +387,8 @@ export default function DesignPage() {
                 <code>openGraph</code> replaces the site&apos;s images, so the card is always named: the page&apos;s own,{' '}
                 <code>public/og-&lt;slug&gt;</code> as a PNG or JPEG (never SVG), or the site&apos;s default from{' '}
                 <code>app/layout.tsx</code>, as <code>/work</code> does. Leave the page out of{' '}
-                <code>public/sitemap.xml</code>.
+                <code>public/sitemap.xml</code>. <code>/work</code> is the one write-up that search engines may find: it has
+                no <code>robots</code> line and is in the sitemap.
               </li>
               <li>
                 Write <code>__tests__/&lt;slug&gt;.test.tsx</code>, like <code>games.test.tsx</code>,{' '}
