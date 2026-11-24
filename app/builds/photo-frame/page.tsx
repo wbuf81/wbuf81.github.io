@@ -4,6 +4,7 @@ import { Nav } from '../../components/Nav';
 import Footer from '../../components/Footer';
 import Print from '../../components/home/Print';
 import { placement } from '@/lib/projects';
+import TrailerPrint from '@/app/components/home/TrailerPrint';
 import '../../games/games.css';
 import '../builds.css';
 
@@ -128,11 +129,8 @@ const TAPS: Shot[] = [
   },
 ];
 
-const BOOT: Shot = {
-  file: 'boot.jpg',
-  caption: ['The boot screen', '18 seconds of liftoff'],
-  alt: 'The boot screen: a Starship lifting off through clouds of smoke, with the words Starting up, Wes\'s Dashboard, Launching and an orange progress bar.',
-};
+const BOOT_LABEL =
+  'The boot animation: a Starship lifting off through clouds of smoke under the words Starting up, Wes\'s Dashboard, Launching, with an orange progress bar filling';
 
 const TILES: [string, string][] = [
   ['Clock', 'The time, a greeting, my next meeting and a verse of thanks that changes every day. After 5 PM the meeting line becomes the evening walk.'],
@@ -261,6 +259,21 @@ function ShotPrint({ shot, at, eager = false, className }: { shot: Shot; at?: nu
       {/* eslint-disable-next-line @next/next/no-img-element -- static export, images are served as they are */}
       <img className="ph shot" src={src} alt={shot.alt} width={1280} height={800} loading={eager ? 'eager' : 'lazy'} />
     </Print>
+  );
+}
+
+// The boot animation itself, playing: silent (the clip has no sound track), 16:10 like the screen.
+function BootPrint({ at }: { at: number }) {
+  const { tilt, tapes } = placement(at);
+  return (
+    <TrailerPrint
+      className="bd-boot"
+      tilt={tilt}
+      tapes={tapes}
+      sound={false}
+      label="The boot animation"
+      trailer={{ src: `${DIR}/boot.mp4`, poster: `${DIR}/boot.jpg`, width: 1280, height: 800, label: BOOT_LABEL }}
+    />
   );
 }
 
@@ -510,7 +523,7 @@ export default function PhotoFramePage() {
                   </p>
                 </div>
               </div>
-              <ShotPrint shot={BOOT} at={bootAt} className="bd-boot" />
+              <BootPrint at={bootAt} />
             </div>
           </Section>
 

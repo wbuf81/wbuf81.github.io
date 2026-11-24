@@ -1,6 +1,7 @@
 import { render, screen, fireEvent, act, within } from '@testing-library/react';
 import ProjectTile from '@/app/components/home/ProjectTile';
 import FeaturedBuild from '@/app/components/home/FeaturedBuild';
+import TrailerPrint from '@/app/components/home/TrailerPrint';
 import { GAMES, personal, place } from '@/lib/projects';
 
 // jsdom plays nothing: play() and pause() flip a fake `paused` and fire the events a browser would.
@@ -162,4 +163,47 @@ test('a featured build with no trailer keeps its linked print and picture', () =
   expect(print).toHaveAttribute('href', '/videogames/snes-history');
   expect(print.querySelector('img')).toBeTruthy();
   expect(feat.querySelector('video')).toBeNull();
+});
+
+describe('a silent clip', () => {
+  const clip = { src: '/x/boot.mp4', poster: '/x/boot.jpg', label: 'A boot clip', width: 1280, height: 800 };
+  function renderSilent() {
+    const { container } = render(<TrailerPrint trailer={clip} tilt={1} tapes={[]} sound={false} label="The boot animation" />);
+    return { print: container.querySelector<HTMLElement>('.print')!, video: container.querySelector('video')! };
+  }
+
+  test('has no sound button, its own caption and its own size', () => {
+    const { print, video } = renderSilent();
+    expect(within(print).queryByRole('button', { name: /sound/i })).toBeNull();
+    expect(within(print).getByRole('button', { name: 'Play' })).toBeInTheDocument();
+    expect(print).toHaveTextContent('The boot animation');
+    expect(print).not.toHaveTextContent('Trailer');
+    expect(video).toHaveAttribute('width', '1280');
+    expect(video).toHaveAttribute('height', '800');
+  });
+
+  test('a click on the picture plays, a second pauses and holds the pause; it is never unmuted', async () => {
+    const { print, video } = renderSilent();
+    await act(async () => {
+      fireEvent.click(video);
+    });
+    expect(video.paused).toBe(false);
+    expect(video.muted).toBe(true);
+    expect(within(print).getByRole('button', { name: 'Pause' })).toBeInTheDocument();
+    await act(async () => {
+      fireEvent.click(video);
+    });
+    expect(video.paused).toBe(true);
+    await view(false);
+    await view(true);
+    expect(video.paused).toBe(true);
+    expect(video.muted).toBe(true);
+  });
+});
+
+test('the default caption says Trailer and the video is 960 x 640', () => {
+  const { video, feat } = renderGame();
+  expect(feat.querySelector('.cap')).toHaveTextContent('Trailer');
+  expect(video).toHaveAttribute('width', '960');
+  expect(video).toHaveAttribute('height', '640');
 });

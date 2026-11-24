@@ -231,4 +231,5 @@ Left to you: the layout of each section within the system's blocks, the `bd-…`
    - 2 · In the cloud: "A Cloudflare Worker": one small program that is always on; checks for the key; trims the calendar; answers from its copies. Arrow: "The frame asks again every minute or two".
    - 3 · On the wall: "The photo frame": the kiosk app opens the one page at boot; the page draws the seven tiles and works out repeating meetings; a light sensor and a small script turn the screen off in the dark.
    - Under them, "When I change something": publish, the Worker serves it, the frame notices within five minutes and reloads.
+3. **The boot animation plays.** "lets get the 18 second boot video on the page too and have it play that is so cool". The boot print in "On the frame itself" holds `boot.mp4` (the frame's own 216 frames at 12 a second, 1280x800, no sound; poster `boot.jpg`) in the site's trailer print with the sound button off: it plays muted when half on screen, loops, and a click or its Pause button stops it. The page then has six screenshot links, not seven.
 

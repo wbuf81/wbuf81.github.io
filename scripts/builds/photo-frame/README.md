@@ -48,6 +48,18 @@ screen as JPEGs in `public/builds/photo-frame/`, the homepage tile (`public/proj
 and the link-preview card (`public/og-photo-frame.jpg`). Its header says what it needs. The page uses
 six of the ten pictures; the morning shot is left out because of the markets label described above.
 
+## The boot animation
+`public/builds/photo-frame/boot.mp4` is the frame's own boot animation, not the clean launch clip: the
+216 JPEG frames of `part0` in the private project's `boot-screens/launching-movie/bootanimation.zip`
+(each already carries the "Starting up / Wes's Dashboard / Launching" words and the progress bar),
+played at the 12 frames a second its `desc.txt` names. Unzip it somewhere outside both repos, then:
+
+```sh
+ffmpeg -framerate 12 -i part0/%03d.jpg -c:v libx264 -crf 23 -preset slow -pix_fmt yuv420p -an -movflags +faststart boot.mp4
+```
+
+It has no sound. Its poster is `boot.jpg`.
+
 ## Before any of this goes in the repo
 This repo is public. Look at every picture, and search the tools and pictures for anything private
 (the real town, ZIP and coordinates, the dashboard's address, keys, the real account names) by reading

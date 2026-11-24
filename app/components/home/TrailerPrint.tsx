@@ -16,7 +16,23 @@ function autoplayAllowed(): boolean {
 // while at least half of it is in view and pauses, muted again, when it leaves, so sound never comes back on its
 // own. A click on the picture or "Turn sound on" brings the sound in; Pause holds it until the visitor plays again.
 // The print is not a link: the tile's footer link goes to the game's page.
-export default function TrailerPrint({ trailer, tilt, tapes }: { trailer: Trailer; tilt: number; tapes: Tape[] }) {
+// `sound={false}` is for a clip with no sound track: no sound button, and a click on the picture plays or pauses it.
+// `label` is the caption's left-hand text.
+export default function TrailerPrint({
+  trailer,
+  tilt,
+  tapes,
+  sound = true,
+  label = 'Trailer',
+  className,
+}: {
+  trailer: Trailer;
+  tilt: number;
+  tapes: Tape[];
+  sound?: boolean;
+  label?: string;
+  className?: string;
+}) {
   const ref = useRef<HTMLVideoElement>(null);
   const userPaused = useRef(false);
   const [playing, setPlaying] = useState(false);
@@ -106,16 +122,18 @@ export default function TrailerPrint({ trailer, tilt, tapes }: { trailer: Traile
 
   return (
     <Print
-      className="trl"
+      className={className ? `trl ${className}` : 'trl'}
       tilt={tilt}
       tapes={tapes}
       caption={
         <>
-          <span>Trailer</span>
+          <span>{label}</span>
           <span className="trl-ctl">
-            <button type="button" onClick={toggleSound}>
-              {muted ? 'Turn sound on' : 'Turn sound off'}
-            </button>
+            {sound && (
+              <button type="button" onClick={toggleSound}>
+                {muted ? 'Turn sound on' : 'Turn sound off'}
+              </button>
+            )}
             <button type="button" onClick={togglePlay}>
               {playing ? 'Pause' : 'Play'}
             </button>
@@ -132,10 +150,10 @@ export default function TrailerPrint({ trailer, tilt, tapes }: { trailer: Traile
         loop
         playsInline
         preload="none"
-        width={960}
-        height={640}
+        width={trailer.width ?? 960}
+        height={trailer.height ?? 640}
         aria-label={trailer.label}
-        onClick={toggleSound}
+        onClick={sound ? toggleSound : togglePlay}
       />
     </Print>
   );

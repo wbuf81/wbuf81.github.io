@@ -212,7 +212,7 @@ export default function DesignPage() {
               A game&apos;s tile can hold its trailer in place of a picture. It starts muted once half of it is on
               screen, and loops. A click on it or Turn sound on gives it sound; scrolling away pauses it and mutes it
               again. A visitor who asked for reduced motion or data saving gets the poster and a Play button, never an
-              autoplay. While it holds a trailer the print is not a link: the tile&apos;s footer goes to the game&apos;s
+              autoplay. A clip with no sound track drops the sound button, and a click on it plays or pauses. While it holds a trailer the print is not a link: the tile&apos;s footer goes to the game&apos;s
               page.
             </p>
             <div className="tiles">

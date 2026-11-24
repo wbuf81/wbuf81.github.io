@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import PhotoFramePage, { metadata } from '@/app/builds/photo-frame/page';
 
 jest.mock('next/navigation', () => ({ usePathname: () => '/builds/photo-frame' }));
@@ -57,7 +57,7 @@ test('its own title and card, out of search and out of the sitemap', () => {
 test('every screenshot is 1280x800 with alt text, inside a same-tab link to its own full-size file', () => {
   const main = page();
   const imgs = Array.from(main.querySelectorAll('img'));
-  expect(imgs).toHaveLength(7);
+  expect(imgs).toHaveLength(6);
   imgs.forEach((img, i) => {
     expect(img).toHaveAttribute('width', '1280');
     expect(img).toHaveAttribute('height', '800');
@@ -74,12 +74,37 @@ test('every screenshot is 1280x800 with alt text, inside a same-tab link to its 
   expect((imgs[0].closest('a') as HTMLElement).style.transform).toBe('rotate(0deg)');
 });
 
+test('the boot animation plays in its print: silent, muted, no autoplay, no controls, not a link', () => {
+  const main = page();
+  const video = main.querySelector('video')!;
+  expect(main.querySelectorAll('video')).toHaveLength(1);
+  expect(video).toHaveAttribute('src', '/builds/photo-frame/boot.mp4');
+  expect(video).toHaveAttribute('poster', '/builds/photo-frame/boot.jpg');
+  expect(inPublic(video.getAttribute('src')!)).toBe(true);
+  expect(inPublic(video.getAttribute('poster')!)).toBe(true);
+  expect(video.muted).toBe(true);
+  expect(video).toHaveAttribute('loop');
+  expect(video).toHaveAttribute('playsinline');
+  expect(video).toHaveAttribute('preload', 'none');
+  expect(video).not.toHaveAttribute('autoplay');
+  expect(video).not.toHaveAttribute('controls');
+  expect(video).toHaveAttribute('width', '1280');
+  expect(video).toHaveAttribute('height', '800');
+  expect(video.getAttribute('aria-label')).toMatch(/^The boot animation: a Starship lifting off/);
+  expect(video.closest('a')).toBeNull();
+  const print = video.closest('.print') as HTMLElement;
+  expect(print).toHaveClass('bd-boot');
+  expect(print).toHaveTextContent('The boot animation');
+  expect(within(print).getByRole('button', { name: 'Play' })).toBeInTheDocument();
+  expect(within(print).queryByRole('button', { name: /sound/i })).toBeNull();
+});
+
 test('every picture, sprite and screenshot link it names exists', () => {
   const main = page();
   const local = Array.from(main.querySelectorAll('[src], [href]'))
     .map((el) => el.getAttribute('src') ?? el.getAttribute('href')!)
     .filter((u) => u.startsWith('/builds/'));
-  expect(local.length).toBeGreaterThanOrEqual(14);
+  expect(local.length).toBeGreaterThanOrEqual(13);
   for (const u of local) expect(inPublic(u)).toBe(true);
   const sprite = screen.getByRole('img', { name: 'Jeffrey, a pixel-art figure, walking' });
   expect(sprite).toHaveClass('bd-jeffrey');

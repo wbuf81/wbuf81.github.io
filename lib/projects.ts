@@ -45,6 +45,9 @@ export interface Trailer {
   poster: string;
   /** The video's accessible name. */
   label: string;
+  /** The video's own size in pixels (960 x 640 when left out). */
+  width?: number;
+  height?: number;
 }
 
 export interface Tape {
