@@ -78,12 +78,21 @@
 .wb .vh { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
 /* ── the header ─────────────────────────────────────────────── */
-.wb-head { position: relative; z-index: 20; background: var(--paper); border-bottom: 1px solid var(--rule); }
-.wb-head .in { max-width: 1380px; margin: 0 auto; min-height: 56px; padding: 0 clamp(16px, 3vw, 40px); display: flex; flex-wrap: wrap; align-items: center; gap: 0 28px; }
+/* One row at every width, so its height is a constant: --head-h, its bottom rule included. The homepage's band sticks
+   at that offset under it, and the footer (#connect) keeps that much clear when the header's Connect lands on it. */
+.wb { --head-h: 57px; }
+.wb-head { position: relative; z-index: 20; box-sizing: border-box; height: var(--head-h); background: var(--paper); border-bottom: 1px solid var(--rule); }
+/* the homepage's header stays on screen (Nav sticky) */
+.wb.wb-head.is-sticky { position: sticky; top: 0; }
+.wb-head .in { max-width: 1380px; height: 100%; margin: 0 auto; padding: 0 clamp(16px, 3vw, 40px); display: flex; align-items: center; gap: 0 28px; }
 .wb-head .brand { display: inline-flex; align-items: baseline; text-decoration: none; padding: 10px 0; }
 .wb-head .wm { font: 600 22px/1 var(--serif); letter-spacing: -.01em; color: var(--ink); }
 .wb-head .wm i { font-style: normal; color: var(--accent); }
-.wb-head .tools { margin-left: auto; display: flex; align-items: center; gap: 12px; padding: 10px 0; }
+/* Connect, the header's one link (the footer): on the right, before the theme switch, and alone there on a phone */
+.wb-head .connect { margin-left: auto; display: inline-flex; align-items: center; min-height: 44px; padding: 0 10px; border-radius: 4px; font: 500 14px var(--sans); color: var(--ink-2); white-space: nowrap; }
+.wb-head .connect:hover { color: var(--accent); background: var(--accent-soft); }
+.wb-head .tools { display: flex; align-items: center; gap: 12px; padding: 10px 0; }
+.wb-foot { scroll-margin-top: var(--head-h); }
 
 /* the theme switch: LegCom's pill, with its hover card */
 .wb .theme { position: relative; display: inline-flex; align-items: center; gap: 1px; height: 28px; padding: 1px; border: 1px solid var(--rule); border-radius: 14px; background: var(--paper); }
@@ -103,37 +112,39 @@
 .wb .theme .tip .p { margin: 0 0 6px; color: var(--ink-2); }
 .wb .theme .tip .lv { font: 500 11.5px var(--mono); color: var(--accent); }
 
-/* ── home-nav: the homepage's band (HomeNav), a sibling of SnesNav (.s-nav) and HealthNav (.h-nav), in the accent ──
-   The first thing in <main>, so it sits under the header (which scrolls away) and sticks to the top of the screen.
-   It is the page's only menu (Wes, 24 Nov 2026): the six build sections, then Connect at the right-hand end. */
-.wb.wb-page { --home-nav-h: 44px; }
-.wb .home-nav { position: sticky; top: 0; z-index: 16; height: var(--home-nav-h); background: var(--accent-soft); }
-.wb .home-nav-in { position: relative; max-width: 1380px; height: 100%; margin: 0 auto; padding: 0 clamp(16px, 3vw, 40px); box-sizing: border-box; display: flex; align-items: center; gap: 2px; overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: none; }
-.wb .home-nav-in::-webkit-scrollbar { display: none; }
-.wb .home-nav-k { flex: none; margin-right: 10px; font: 600 11px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--accent); }
-.wb .home-nav-a { position: relative; isolation: isolate; flex: none; display: inline-flex; align-items: center; gap: 6px; height: var(--home-nav-h); padding: 0 12px; color: var(--accent); font: 600 13px/1 var(--sans); text-decoration: none; white-space: nowrap; }
-.wb .home-nav-a:hover { color: var(--accent); }
-.wb .home-nav-a::before { content: ''; position: absolute; inset: 7px 0; z-index: -1; border-radius: 6px; }
-.wb .home-nav-a[aria-current="true"] { color: var(--ink); }
-.wb .home-nav-a[aria-current="true"]::before { background: var(--paper); box-shadow: 0 1px 0 var(--rule), 0 0 0 1px var(--rule-soft); }
-.wb .home-nav-a:focus-visible { outline: none; }
-.wb .home-nav-a:focus-visible::before { outline: 2px solid var(--accent); outline-offset: 0; }
-/* Connect sits at the right-hand end on a wide screen; on a phone it is the last stop of the sideways scroll. */
-.wb .home-nav-end { margin-left: auto; }
-.wb .home-nav-n { padding: 2px 6px; border-radius: 999px; border: 1px solid currentColor; font: 600 11px/1 var(--mono); }
-/* A band link (or the footer's Builds) lands a section just under the band, with a little air. */
-.wb .builds, .wb .builds > section { scroll-margin-top: calc(var(--home-nav-h) + 16px); }
+/* ── the band: the homepage's project filter (ProjectFilter), a sibling of SnesNav (.s-nav) and HealthNav (.h-nav) ──
+   Under the highlights row, full width; it sticks just under the stuck header (top: var(--head-h)). "Explore projects ▸",
+   then All and a button per category, the pressed one a raised paper key. On a phone it slides sideways within itself. */
+.wb.wb-page { --pf-band-h: 44px; }
+.wb .pf-band { position: sticky; top: var(--head-h); z-index: 16; height: var(--pf-band-h); background: var(--accent-soft); }
+.wb .pf-band-in { position: relative; max-width: 1380px; height: 100%; margin: 0 auto; padding: 0 clamp(16px, 3vw, 40px); display: flex; align-items: center; gap: 2px; overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: none; }
+.wb .pf-band-in::-webkit-scrollbar { display: none; }
+.wb .pf-k { flex: none; margin-right: 10px; font: 600 11px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--accent); white-space: nowrap; }
+.wb .pf-b { position: relative; isolation: isolate; flex: none; display: inline-flex; align-items: center; gap: 6px; height: var(--pf-band-h); margin: 0; padding: 0 12px; border: 0; background: none; color: var(--accent); font: 600 13px/1 var(--sans); white-space: nowrap; cursor: pointer; }
+.wb .pf-b::before { content: ''; position: absolute; inset: 7px 0; z-index: -1; border-radius: 6px; }
+.wb .pf-b[aria-pressed="true"] { color: var(--ink); }
+.wb .pf-b[aria-pressed="true"]::before { background: var(--paper); box-shadow: 0 1px 0 var(--rule), 0 0 0 1px var(--rule-soft); }
+.wb .pf-b:focus-visible { outline: none; }
+.wb .pf-b:focus-visible::before { outline: 2px solid var(--accent); outline-offset: 0; }
+.wb .pf-n { padding: 2px 6px; border-radius: 999px; border: 1px solid currentColor; font: 600 11px/1 var(--mono); }
+/* #projects lands on the band's own place, just under the header */
+.wb .pf-spot { scroll-margin-top: var(--head-h); }
 @media (hover: hover) {
-  .wb .home-nav-a:not([aria-current="true"]):hover::before { background: color-mix(in srgb, var(--paper) 55%, transparent); }
+  .wb .pf-b:not([aria-pressed="true"]):hover::before { background: color-mix(in srgb, var(--paper) 55%, transparent); }
 }
 @media (max-width: 480px) {
-  .wb .home-nav-k { display: none; }
-  .wb .home-nav-in { padding: 0 8px; gap: 0; }
-  .wb .home-nav-a { padding: 0 9px; font-size: 12.5px; gap: 5px; }
+  .wb .pf-k { display: none; }
+  .wb .pf-band-in { padding: 0 8px; gap: 0; }
+  .wb .pf-b { padding: 0 9px; font-size: 12.5px; gap: 5px; }
 }
 
 /* ── page blocks ────────────────────────────────────────────── */
 .wb .wrap { max-width: 1380px; margin: 0 auto; padding: 0 clamp(16px, 3vw, 40px) 48px; }
+/* the homepage's column splits at the band: the highlights row keeps its own gap above it, and the list opens below */
+.wb .wrap-top { padding-bottom: 0; }
+.wb .pf-wrap { padding-top: 34px; }
+.wb .pf-note { margin: 0 0 18px; }
+.wb .pf-note > .eyebrow { margin: 0 0 4px; color: var(--ink-3); }
 .wb .eyebrow { font: 500 11px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); }
 .wb h1.name { font: 600 clamp(40px, 5vw, 58px)/1.02 var(--serif); letter-spacing: -.02em; margin: 10px 0 0; color: var(--ink); }
 .wb .lede { color: var(--ink-2); max-width: 78ch; margin: 12px 0 0; font-size: 16px; line-height: 1.55; }
@@ -159,9 +170,6 @@
 .wb .sec-h { display: flex; align-items: baseline; justify-content: space-between; gap: 6px 16px; flex-wrap: wrap; margin: 0 0 14px; }
 .wb .sec-h h2 { font: 600 26px/1.15 var(--serif); margin: 0; letter-spacing: -.01em; color: var(--ink); }
 .wb .sec { margin-top: 52px; }
-.wb .grp { margin: 30px 0 0; }
-.wb .grp.first { margin-top: 0; }
-.wb .grp > .eyebrow { margin: 0 0 4px; color: var(--ink-3); }
 .wb .gnote { margin: 2px 0 8px; color: var(--ink-2); font-size: 14px; max-width: 84ch; }
 
 /* ── prints: a taped photo, tilted by hand ──────────────────── */
@@ -191,8 +199,12 @@
 /* ── tiles: a print standing over the top of its card ───────── */
 .wb .tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(280px, 100%), 1fr)); gap: 40px 22px; }
 .wb .tile { display: flex; flex-direction: column; min-width: 0; }
+.wb .tile[hidden] { display: none; }
 .wb .tile .print { margin: 12px 12px -26px; }
 .wb .tb { background: var(--paper); border: 1px solid var(--rule); padding: 40px 18px 16px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
+/* a tile's category, over its name in the eyebrow style: a button that presses that filter */
+.wb .tile-cat { align-self: flex-start; margin: -4px 0 -1px; padding: 0; border: 0; background: none; font: 500 11px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); cursor: pointer; }
+.wb .tile-cat:hover { color: var(--accent); }
 .wb .th { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
 .wb .th .tag { margin-top: 3px; }
 .wb .tb h3 { font: 600 20px/1.15 var(--serif); margin: 0; color: var(--ink); }
@@ -315,9 +327,9 @@
 .wb .type > div { display: grid; grid-template-columns: 170px minmax(0, 1fr); gap: 16px; align-items: baseline; padding-bottom: 12px; border-bottom: 1px solid var(--rule-soft); }
 .wb .type small { font: 400 11px var(--mono); color: var(--ink-3); }
 .wb .spec-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
-/* The homepage band as a sample: framed like the SNES menu, and not stuck to the top of this page. */
-.wb .ds-home-nav { overflow: hidden; border: 1px solid var(--rule); border-radius: 6px; }
-.wb .ds-home-nav .home-nav { position: static; }
+/* The homepage band as a sample: framed like the SNES menu, and not stuck on this page. */
+.wb .ds-band { overflow: hidden; border: 1px solid var(--rule); border-radius: 6px; }
+.wb .ds-band .pf-band { position: static; }
 /* the SNES kit (app/design/SnesKit.tsx): holds the SNES pieces still and in the flow, using app/snes/snes.css as is */
 .wb .ds-snes-nav { overflow: hidden; border: 1px solid var(--rule); border-radius: 6px; }
 .wb .ds-snes-nav .s-nav { position: static; }

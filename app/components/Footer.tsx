@@ -2,12 +2,12 @@ import Link from 'next/link';
 
 // The site footer, the coastal one (Wes, 9 Nov 2026; app/design-system.css › the footer): the name and a line,
 // Beyond work, Explore and Connect, the year and Back to top (the boardwalk drawing that sat under them was removed
-// on 10 Nov 2026). It is id="connect": the homepage band's Connect (HomeNav) lands here,
+// on 10 Nov 2026). It is id="connect": the header's Connect lands here, on every page,
 // since the homepage's Beyond work and Connect cards folded into it. Back to top lands on the header's id="top" (Nav), which
 // every page with this footer renders first. The year is fixed at build time (static export).
 
 const EXPLORE = [
-  { label: 'Builds', href: '/#builds' },
+  { label: 'Projects', href: '/#projects' },
   { label: 'SNES History', href: '/videogames' },
   { label: 'Design system', href: '/design' },
 ];

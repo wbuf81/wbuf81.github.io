@@ -10,8 +10,8 @@ import Highlights from '../components/home/Highlights';
 import ThenNowStill from '../components/home/ThenNowStill';
 import TetrisPrint from '../components/home/TetrisPrint';
 import GitHubMap from '../components/home/GitHubMap';
-import HomeNav from '../components/home/HomeNav';
-import { AGENTS, PERSONAL, GAMES, place, personal, buildCounts, homeNavItems } from '@/lib/projects';
+import { FilterBand } from '../components/home/ProjectFilter';
+import { AGENTS, PERSONAL, GAMES, place, personal, buildCounts, filterItems } from '@/lib/projects';
 import contributions from '@/data/github-contributions.json';
 import { TOKENS, tokenValues, type TokenGroup } from './tokens';
 import SnesKit from './SnesKit';
@@ -118,22 +118,27 @@ export default function DesignPage() {
           <section className="ch" aria-labelledby="ds-header">
             <h2 id="ds-header">The header</h2>
             <p>
-              Paper bar with a bottom rule: the wordmark (Bard in the accent), which is the link home, and the theme
-              switch, the same three-way pill as the work tools: light, match my computer, dark. The choice is saved in
-              this browser and applied before the page paints, so it never flashes. The header carries no other links.
-              It&apos;s live at the top of this page.
+              Paper bar with a bottom rule, one row at every width: the wordmark (Bard in the accent), which is the link
+              home, then Connect, which lands on the footer of whatever page you are on, and the theme switch, the same
+              three-way pill as the work tools: light, match my computer, dark. The choice is saved in this browser and
+              applied before the page paints, so it never flashes. On a phone the switch is hidden, so it is the name
+              and Connect. On the homepage the header stays on screen; everywhere else it scrolls away. It&apos;s live
+              at the top of this page.
             </p>
 
             <h3>The band</h3>
             <p>
-              One menu per page, and it is never in the header. A page with parts of its own puts a band first in{' '}
-              <code>&lt;main&gt;</code>. It sticks to the top as the header scrolls away, lights the section you are in,
-              and scrolls sideways within itself on a phone. <code>HomeNav</code> on the homepage (its six sections,
-              then Connect), <code>HealthNav</code> and <code>SnesNav</code> on theirs. This is the homepage&apos;s,
-              held still: it doesn&apos;t stick, and its links go to the homepage.
+              A tinted strip the width of the page, with the pressed item a raised paper key, and it slides sideways
+              within itself on a phone. <code>HealthNav</code> and <code>SnesNav</code> are their pages&apos; menus,
+              first in <code>&lt;main&gt;</code> and stuck to the top. On the homepage the band is a filter,{' '}
+              <code>ProjectFilter</code>: under the highlights row, labelled Explore projects, then All (pressed to
+              start) and a button per category, each with its count. It sticks just under the header, and a press shows
+              only that category in the one grid below it, newest first, with All leaving out the highlights already
+              above. The address keeps the choice (<code>/#work</code>, <code>/#games</code> …). This is the
+              homepage&apos;s, held still: it doesn&apos;t stick, and its buttons do nothing here.
             </p>
-            <div className="ds-home-nav">
-              <HomeNav items={homeNavItems()} sample="games" />
+            <div className="ds-band">
+              <FilterBand items={filterItems()} pressed="all" />
             </div>
           </section>
 
@@ -141,7 +146,7 @@ export default function DesignPage() {
             <h2 id="ds-footer">The footer</h2>
             <p>
               Paper with a top rule, so the graph paper ends cleanly above it: the name, a Beyond work line, Explore
-              (Builds, SNES History, Design system) and Connect, then the year and Back to top over a thin rule. The homepage band&apos;s Connect lands here. It&apos;s live
+              (Projects, SNES History, Design system) and Connect, then the year and Back to top over a thin rule. The header&apos;s Connect lands here. It&apos;s live
               at the bottom of this page.
             </p>
           </section>
@@ -200,11 +205,12 @@ export default function DesignPage() {
             <p>
               A print standing over the top of its card. A tile says what the thing does and what it runs on. Outside
               Work, a tile adds a footer: the board, or what it&apos;s written in, then GitHub when the repo is public,
-              or a link to its page here when the build lives on this site or has a write-up.
+              or a link to its page here when the build lives on this site or has a write-up. On the homepage every tile
+              carries its category over its name, in the eyebrow style; pressing it shows only that category.
             </p>
             <div className="tiles">
-              <ProjectTile project={lucy} />
-              <ProjectTile project={knobdeck} footer />
+              <ProjectTile project={lucy} category={{ name: 'Work' }} />
+              <ProjectTile project={knobdeck} category={{ name: 'Electronics' }} footer />
             </div>
 
             <h3>The trailer print</h3>
@@ -216,7 +222,7 @@ export default function DesignPage() {
               page.
             </p>
             <div className="tiles">
-              <ProjectTile project={conair} footer />
+              <ProjectTile project={conair} category={{ name: 'Gaming' }} footer />
             </div>
 
             <h3>The highlights row</h3>
@@ -224,8 +230,8 @@ export default function DesignPage() {
               The top of the homepage: a row of builds I pick. Each is a print over its card, a size up from the tiles,
               with a button. <code>HIGHLIGHTS</code> in <code>lib/projects.ts</code> is the whole row, in order.{' '}
               <code>LATEST</code> names the one card that wears the filled Latest tag and a strip from a label maker on
-              its print; it can be any card in the row. Every card also stays a tile in its own section below. Under
-              900px the cards stack.
+              its print; it can be any card in the row. With All pressed the grid below leaves them out; a category shows
+              them as ordinary tiles. Under 900px the cards stack.
             </p>
             <Highlights />
 
@@ -382,8 +388,9 @@ export default function DesignPage() {
                 tests fail.
               </li>
               <li>
-                A page with parts of its own puts its band first in <code>&lt;main&gt;</code>: <code>HomeNav</code>,{' '}
-                <code>HealthNav</code> or <code>SnesNav</code>. The header takes no links.
+                A page with parts of its own puts its band first in <code>&lt;main&gt;</code>: <code>HealthNav</code> or{' '}
+                <code>SnesNav</code>. The header carries Connect and nothing else, and only the homepage&apos;s stays on
+                screen (<code>&lt;Nav theme sticky /&gt;</code>), with its band under it at <code>var(--head-h)</code>.
               </li>
               <li>Every block is scoped under <code>.wb</code>, so pages with their own look are untouched.</li>
               <li>

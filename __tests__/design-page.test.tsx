@@ -1,5 +1,5 @@
 import fs from 'fs';
-import { render, screen, within } from '@testing-library/react';
+import { render, screen, within, fireEvent } from '@testing-library/react';
 import DesignPage from '@/app/design/page';
 import { TOKENS } from '@/app/design/tokens';
 
@@ -61,19 +61,34 @@ test('the design page keeps its outline (one h1, no skipped levels) and every SN
   }
 });
 
-test('the header section shows the homepage band, held still, its links going to the homepage', () => {
+test('the header section shows the homepage band as a filter, held still and inert', () => {
   const { container } = render(<DesignPage />);
   const header = container.querySelector('section[aria-labelledby="ds-header"]') as HTMLElement;
   expect(within(header).getByRole('heading', { level: 3, name: 'The band' })).toBeInTheDocument();
-  const nav = within(header).getByRole('navigation', { name: 'Builds on the homepage' });
-  expect(nav.closest('.ds-home-nav')).not.toBeNull();
-  const links = within(nav).getAllByRole('link');
-  expect(links).toHaveLength(7);
-  expect(links.map((a) => a.getAttribute('href'))).toEqual(['/#work', '/#games', '/#mac', '/#linux', '/#electronics', '/#more', '/#connect']);
-  expect(links.filter((a) => a.getAttribute('aria-current') === 'true')).toHaveLength(1);
+  expect(header).toHaveTextContent(/Connect, which lands on the footer/);
+  expect(header).toHaveTextContent(/On the homepage the header stays on screen/);
+  expect(header).toHaveTextContent(/labelled Explore projects, then All/);
+  expect(header).toHaveTextContent(/one grid below it, newest first/);
+  const band = within(header).getByRole('group', { name: 'Explore projects' });
+  expect(band.closest('.ds-band')).not.toBeNull();
+  expect(band).toHaveTextContent('Explore projects ▸');
+  expect(within(band).queryAllByRole('link')).toHaveLength(0);
+  const buttons = within(band).getAllByRole('button');
+  expect(buttons.map((b) => b.querySelector('.pf-l')!.textContent)).toEqual(['All', 'Work', 'Gaming', 'Mac apps', 'Linux', 'Electronics', 'More']);
+  expect(buttons.filter((b) => b.getAttribute('aria-pressed') === 'true').map((b) => b.querySelector('.pf-l')!.textContent)).toEqual(['All']);
+  // Inert: a press changes nothing here.
+  fireEvent.click(buttons[1]);
+  expect(buttons[0]).toHaveAttribute('aria-pressed', 'true');
+  expect(buttons[1]).toHaveAttribute('aria-pressed', 'false');
   // It doesn't stick on this page.
   const css = fs.readFileSync('app/design-system.css', 'utf8');
-  expect(css).toMatch(/\.wb \.ds-home-nav \.home-nav \{ position: static; \}/);
+  expect(css).toMatch(/\.wb \.ds-band \.pf-band \{ position: static; \}/);
+});
+
+test('the sample tiles carry their category over the name', () => {
+  const { container } = render(<DesignPage />);
+  const labels = Array.from(container.querySelectorAll('.tile .tile-cat'), (b) => b.textContent);
+  expect(labels).toEqual(['Work', 'Electronics', 'Gaming']);
 });
 
 test('the trailer print is shown live: a video that never autoplays and shows no controls, and the print is no link', () => {

@@ -8,25 +8,41 @@ let mockPath = '/';
 jest.mock('next/navigation', () => ({ usePathname: () => mockPath }));
 beforeEach(() => { mockPath = '/'; });
 
-// One menu at the top of a page (Wes, 24 Nov 2026): the header carries the name and the theme switch, no links.
-test('the header is the name, the link home, and the theme switch: no other links', () => {
+// Wes, 24 Nov 2026: "move the connect back up to the main Wesley Bard header and then have that always show on the
+// page when you scroll". The header is the name, Connect and the theme switch on every page; only the homepage's sticks.
+test('the header is the name, the link home, Connect and the theme switch, on every page', () => {
   for (const p of ['/', '/videogames/snes-history', '/games/con-air', '/builds/photo-frame']) {
     mockPath = p;
     const { container, unmount } = render(<Nav theme />);
     const header = container.querySelector('header.wb-head') as HTMLElement;
     const links = within(header).getAllByRole('link');
-    expect(links).toHaveLength(1);
+    expect(links.map((a) => [a.textContent, a.getAttribute('href')])).toEqual([
+      ['Wesley Bard', '/'],
+      ['Connect', '#connect'],
+    ]);
     expect(links[0]).toHaveAccessibleName('Wesley Bard');
-    expect(links[0]).toHaveAttribute('href', '/');
     expect(within(header).getByRole('group', { name: 'Colour theme' })).toBeInTheDocument();
     expect(within(header).queryByRole('navigation')).toBeNull();
-    for (const name of ['Projects', 'Games', 'Builds', 'SNES History', 'Connect']) {
-      expect(within(header).queryByText(name)).toBeNull();
-      expect(within(header).queryByRole('link', { name })).toBeNull();
-    }
     expect(header.querySelector('[aria-current]')).toBeNull();
     unmount();
   }
+});
+
+test('the homepage header sticks; a /videogames page keeps one that scrolls away', () => {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const VideoGamesPage = require('@/app/videogames/page').default;
+  mockPath = '/videogames';
+  const { container } = render(<VideoGamesPage />);
+  const header = container.querySelector('header.wb-head') as HTMLElement;
+  expect(within(header).getAllByRole('link').map((a) => a.textContent)).toEqual(['Wesley Bard', 'Connect']);
+  expect(header).not.toHaveClass('is-sticky');
+  const home = fs.readFileSync('app/page.tsx', 'utf8');
+  expect(home).toMatch(/<Nav theme sticky \/>/);
+  // Only the homepage asks for it: the SNES and health pages stick their own bands to the top.
+  const walk = (dir: string): string[] =>
+    fs.readdirSync(dir, { withFileTypes: true }).flatMap((e) => (e.isDirectory() ? walk(path.join(dir, e.name)) : [path.join(dir, e.name)]));
+  const sticky = walk('app').filter((f) => f.endsWith('.tsx') && /<Nav[^>]*\bsticky\b/.test(fs.readFileSync(f, 'utf8')));
+  expect(sticky).toEqual([path.join('app', 'page.tsx')]);
 });
 
 test('pages outside the design system get the header without the theme switch', () => {
@@ -51,7 +67,7 @@ test('footer links: Explore on the site, Connect out to new tabs', () => {
   within(screen.getByRole('navigation', { name: 'Footer' })).getByRole('list', { name: 'Explore' });
   const explore = within(screen.getByRole('list', { name: 'Explore' })).getAllByRole('link');
   expect(explore.map((a) => [a.textContent, a.getAttribute('href')])).toEqual([
-    ['Builds', '/#builds'],
+    ['Projects', '/#projects'],
     ['SNES History', '/videogames'],
     ['Design system', '/design'],
   ]);
@@ -66,7 +82,7 @@ test('footer links: Explore on the site, Connect out to new tabs', () => {
 
 test('the footer is where Connect lands, and carries the one Beyond work line', () => {
   const { container } = render(<Footer />);
-  // The header's Connect (/#connect) scrolls to the footer; the homepage's card row is gone (Wes, 9 Nov 2026).
+  // The header's Connect (#connect) scrolls to the footer; the homepage's card row is gone (Wes, 9 Nov 2026).
   expect(container.querySelector('footer#connect.wb-foot')).not.toBeNull();
   expect(fs.readFileSync('app/page.tsx', 'utf8')).not.toMatch(/id="connect"/);
   const beyond = screen.getByRole('group', { name: 'Beyond work' });
@@ -107,8 +123,11 @@ test("the footer has no drawing any more, and the year is the build's", () => {
   expect(screen.getByText(`© ${new Date().getFullYear()} Wesley Bard`)).toBeInTheDocument();
 });
 
-test('the header has no link list and its old link styles are gone', () => {
+test('the header keeps one row: its height is the variable the band sticks at, and Connect has its own rule', () => {
   const css = fs.readFileSync('app/design-system.css', 'utf8');
   expect(css).not.toMatch(/\.wb-head \.nav/);
+  expect(css).toMatch(/\.wb-head \.connect \{ margin-left: auto;/);
+  expect(css).toMatch(/\.wb-head \.in \{[^}]*height: 100%;/);
+  expect(css).not.toMatch(/\.wb-head \.in \{[^}]*flex-wrap: wrap/);
   expect(fs.readFileSync('app/components/Nav.tsx', 'utf8')).not.toMatch(/NAV_LINKS|aria-current/);
 });

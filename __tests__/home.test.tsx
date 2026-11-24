@@ -194,53 +194,6 @@ test("the hero introduces Wes in his own words, right under his name", () => {
   );
 });
 
-test('Work: one tiles grid of ten, newest first, no Domain intelligence group', () => {
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const HomePage = require('@/app/page').default;
-  const { container } = render(<HomePage />);
-  const work = container.querySelector<HTMLElement>('#work')!;
-  expect(work.querySelectorAll('.tiles')).toHaveLength(1);
-  const names = [...work.querySelectorAll('.tiles article.tile h3')].map((h) => h.textContent);
-  expect(names).toEqual(['WINNIE', 'LUCY', 'WBDB', 'BEASLEY', 'MAISIE', 'SNOOP', 'RHINO', 'PABSTY', 'OSCAR', 'SMORES']);
-  expect([...work.querySelectorAll('.eyebrow')].map((e) => e.textContent)).toEqual(['Autonomous AI agents']);
-});
-
-test('Gaming: its own section after Work and before Mac apps, two groups', () => {
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const HomePage = require('@/app/page').default;
-  render(<HomePage />);
-  const games = screen.getByRole('region', { name: 'Gaming' });
-  expect(games).toHaveAttribute('id', 'games');
-  expect(games).toHaveTextContent(
-    'Private builds for friends, so there is nothing to download. Each one has a page on how it plays and how it was built.',
-  );
-  expect(document.querySelector('article.feat')).toBeNull();
-  expect(within(games).getByRole('heading', { level: 2, name: 'Gaming' })).toBeInTheDocument();
-  const groups = games.querySelectorAll<HTMLElement>('.grp');
-  expect(groups).toHaveLength(2);
-  expect(groups[0].querySelector('.eyebrow')).toHaveTextContent("Games I've made");
-  expect(groups[1].querySelector('.eyebrow')).toHaveTextContent('Other game projects');
-  expect(games.querySelectorAll('.eyebrow')).toHaveLength(2);
-  const tiles = groups[0].querySelectorAll<HTMLElement>('article.tile');
-  expect(tiles).toHaveLength(1);
-  const others = [...groups[1].querySelectorAll<HTMLElement>('article.tile h3')].map((h) => h.textContent);
-  expect(others).toEqual(['SNES History', 'GBForge Tetris']);
-  const tile = tiles[0];
-  expect(within(tile).getByRole('heading', { level: 3, name: 'CON AIR' })).toBeInTheDocument();
-  expect(within(tile).getByText('Private build')).toBeInTheDocument();
-  const about = within(tile).getByRole('link', { name: 'About the game →' });
-  expect(about).toHaveAttribute('href', '/games/con-air');
-  expect(about).not.toHaveAttribute('target');
-  const video = tile.querySelector('.print video')!;
-  expect(video).toBeTruthy();
-  expect(video.closest('a')).toBeNull();
-
-  const work = screen.getByRole('heading', { level: 2, name: 'Work' });
-  const mac = screen.getByRole('heading', { level: 2, name: 'Mac apps' });
-  expect(work.compareDocumentPosition(games) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
-  expect(games.compareDocumentPosition(mac) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
-});
-
 test('a tile with a cta uses it for its page on this site; one without still says Explore it', () => {
   const base = place([personal('snes')], 0)[0];
   const { rerender } = render(<ProjectTile project={{ ...base, cta: 'Read more →' }} footer />);
@@ -258,67 +211,123 @@ test('the /videogames hub keeps its featured block as it was', () => {
   expect(within(feat).getByRole('link', { name: 'Explore it →' })).toHaveAttribute('href', '/videogames/snes-history');
 });
 
-test('the photo frame sits in Electronics and links to its write-up; the strip counts fifteen at home', () => {
+const ORDER = [
+  'Photo Frame Dashboard', 'CON AIR', 'My Office in 3D', 'WINNIE', 'Tidemark', 'Mac Tesla Tracker', 'SNES History',
+  'LUCY', 'WBDB', 'OmaFinance', 'Idle Screen Counter', 'BEASLEY', 'Knobdeck', 'Stream Deck Neo Takeover',
+  'Personal AAC Device', 'M5 Spotify Deck', 'Daisy Status Bar', 'GBForge Tetris', 'Omarchy Workspace Labels',
+  'MAISIE', 'SNOOP', 'RHINO', 'PABSTY', 'OSCAR', 'SMORES',
+];
+const HIGHLIGHTED = ['Photo Frame Dashboard', 'CON AIR', 'Tidemark'];
+
+function home() {
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const HomePage = require('@/app/page').default;
-  render(<HomePage />);
+  return render(<HomePage />);
+}
+
+// Wes, 24 Nov 2026: the highlights, then the band, then one grid of every project, then the GitHub map.
+test('the homepage in order: highlights, the band, one grid, the GitHub map', () => {
+  const { container } = home();
+  const hls = screen.getByRole('region', { name: 'Highlights' });
+  const band = screen.getByRole('group', { name: 'Explore projects' });
+  const list = screen.getByRole('region', { name: 'Projects' });
+  const map = container.querySelector('.heat')!.closest('section')!;
+  const after = (x: Node, y: Node) => !!(x.compareDocumentPosition(y) & Node.DOCUMENT_POSITION_FOLLOWING);
+  expect(after(hls, band)).toBe(true);
+  expect(after(band, list)).toBe(true);
+  expect(after(list, map)).toBe(true);
+  // The band spans the page: it is not inside the page's column.
+  expect(band.closest('.wrap')).toBeNull();
+  expect(band.parentElement).toBe(container.querySelector('main'));
+  // #projects is the band's own place, just before it.
+  expect(container.querySelector('#projects')?.nextElementSibling).toBe(band);
+  expect(list.querySelectorAll('.tiles')).toHaveLength(1);
+});
+
+test('the server renders All: 22 tiles showing, the three highlights left out, no note, newest first', () => {
+  const { container } = home();
+  const tiles = [...container.querySelectorAll<HTMLElement>('.pf-list article.tile')];
+  expect(tiles.map((t) => t.querySelector('h3')!.textContent)).toEqual(ORDER);
+  const shown = tiles.filter((t) => !t.hidden).map((t) => t.querySelector('h3')!.textContent);
+  expect(shown).toHaveLength(22);
+  expect(shown).toEqual(ORDER.filter((n) => !HIGHLIGHTED.includes(n)));
+  expect(container.querySelector('.pf-note')).toBeNull();
+  expect(screen.getByRole('button', { name: /^All, 25 projects$/ })).toHaveAttribute('aria-pressed', 'true');
+  // Each project shows once: the three highlights are in the row above.
+  const list = screen.getByRole('region', { name: 'Projects' });
+  for (const name of HIGHLIGHTED) {
+    expect(within(list).queryByRole('heading', { level: 3, name })).toBeNull();
+    expect(screen.getAllByRole('heading', { level: 3, name })).toHaveLength(1);
+  }
+});
+
+test('no section headings for the categories, and every tile carries its category label', () => {
+  const { container } = home();
+  for (const name of ['Work', 'Gaming', 'Mac apps', 'Omarchy Linux', 'Electronics', 'Everything else', 'Personal']) {
+    expect(screen.queryByRole('heading', { name })).toBeNull();
+  }
+  for (const id of ['work', 'games', 'mac', 'linux', 'electronics', 'more', 'builds']) expect(container.querySelector(`#${id}`)).toBeNull();
+  const tiles = [...container.querySelectorAll<HTMLElement>('.pf-list article.tile')];
+  const label = (name: string) => tiles.find((t) => t.querySelector('h3')!.textContent === name)!.querySelector('.tile-cat')!.textContent;
+  for (const t of tiles) {
+    const cat = t.querySelector('.tile-cat')!;
+    expect(cat.tagName).toBe('BUTTON');
+    // Over the name and badge row, not inside it.
+    expect(cat.nextElementSibling).toBe(t.querySelector('.th'));
+  }
+  expect(label('WINNIE')).toBe('Work');
+  expect(label('WBDB')).toBe('Work');
+  expect(label('CON AIR')).toBe('Gaming');
+  expect(label('SNES History')).toBe('Gaming');
+  expect(label('Tidemark')).toBe('Mac apps');
+  expect(label('OmaFinance')).toBe('Omarchy Linux');
+  expect(label('Photo Frame Dashboard')).toBe('Electronics');
+  expect(label('My Office in 3D')).toBe('Everything else');
+});
+
+test('the photo frame links to its write-up; CON AIR keeps its trailer; the strip counts fifteen at home', () => {
+  const { container } = home();
   expect(screen.getByText('Ten builds at work, fifteen at home')).toBeInTheDocument();
-  const group = screen.getByRole('region', { name: 'Electronics' });
-  expect(group).toHaveAttribute('id', 'electronics');
-  expect([...group.querySelectorAll('article.tile h3')].map((h) => h.textContent)).toEqual([
-    'Photo Frame Dashboard', 'Knobdeck', 'Stream Deck Neo Takeover', 'Personal AAC Device', 'M5 Spotify Deck',
-  ]);
-  const tile = within(group).getByRole('heading', { level: 3, name: 'Photo Frame Dashboard' }).closest('article')!;
-  expect(within(tile).getByText('Private repo')).toBeInTheDocument();
-  const link = within(tile).getByRole('link', { name: 'How I built it →' });
+  const list = container.querySelector<HTMLElement>('.pf-list')!;
+  const tile = (name: string) => [...list.querySelectorAll<HTMLElement>('article.tile')].find((t) => t.querySelector('h3')!.textContent === name)!;
+  const frame = tile('Photo Frame Dashboard');
+  expect(within(frame).getByText('Private repo')).toBeInTheDocument();
+  const link = within(frame).getByRole('link', { name: 'How I built it →', hidden: true });
   expect(link).toHaveAttribute('href', '/builds/photo-frame');
   expect(link).not.toHaveAttribute('target');
-  expect(within(tile).queryByRole('link', { name: /GitHub/ })).toBeNull();
+  const conair = tile('CON AIR');
+  expect(within(conair).getByText('Private build')).toBeInTheDocument();
+  expect(within(conair).getByRole('link', { name: 'About the game →', hidden: true })).toHaveAttribute('href', '/games/con-air');
+  const video = conair.querySelector('.print video')!;
+  expect(video).toBeTruthy();
+  expect(video.closest('a')).toBeNull();
+  // Work tiles have no footer; the rest do.
+  expect(tile('WINNIE').querySelector('.tf')).toBeNull();
+  expect(tile('Knobdeck').querySelector('.tf')).not.toBeNull();
 });
 
-// Wes, 24 Nov 2026: Personal's groups became sections of their own, each newest first, under one band.
-test('six build sections in order, inside #builds, every tile once, no Personal section', () => {
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const HomePage = require('@/app/page').default;
-  const { container } = render(<HomePage />);
-  const builds = container.querySelector<HTMLElement>('#builds')!;
-  expect(builds).not.toBeNull();
-  const sections = [...builds.children].filter((e) => e.tagName === 'SECTION') as HTMLElement[];
-  expect(sections.map((s) => [s.id, s.querySelector('h2')?.textContent])).toEqual([
-    ['work', 'Work'], ['games', 'Gaming'], ['mac', 'Mac apps'], ['linux', 'Omarchy Linux'], ['electronics', 'Electronics'], ['more', 'Everything else'],
-  ]);
-  expect(builds.firstElementChild).toBe(sections[0]);
-  for (const s of sections) expect(screen.getByRole('region', { name: s.querySelector('h2')!.textContent! })).toBe(s);
-  expect(screen.queryByRole('heading', { name: 'Personal' })).toBeNull();
-  expect(container.querySelector('#projects')).toBeNull();
-
-  // A promoted group's name is its heading, shown once: no eyebrow repeating it.
-  for (const id of ['mac', 'linux', 'electronics', 'more']) {
-    const s = container.querySelector<HTMLElement>(`#${id}`)!;
-    expect(s.querySelectorAll('.eyebrow')).toHaveLength(0);
-  }
-
-  const order = (id: string) => [...container.querySelectorAll<HTMLElement>(`#${id} article.tile h3`)].map((h) => h.textContent);
-  expect(order('mac')).toEqual(['Tidemark', 'Mac Tesla Tracker', 'Daisy Status Bar']);
-  expect(order('linux')).toEqual(['OmaFinance', 'Idle Screen Counter', 'Omarchy Workspace Labels']);
-  expect(order('more')).toEqual(['My Office in 3D']);
-  expect(order('games')).toEqual(['CON AIR', 'SNES History', 'GBForge Tetris']);
-
-  // Every project is a tile exactly once among the sections; the highlights row repeats three of them above.
-  const all = [...AGENTS, ...TOOLS, ...PERSONAL, ...GAMES].map((p) => p.name).sort();
-  expect([...builds.querySelectorAll('article.tile h3')].map((h) => h.textContent).sort()).toEqual(all);
-  for (const name of ['Photo Frame Dashboard', 'CON AIR', 'Tidemark']) {
-    expect(within(builds).getAllByRole('heading', { level: 3, name })).toHaveLength(1);
-  }
-});
-
-test('the band is the first thing in main, and the header has no menu of its own', () => {
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const HomePage = require('@/app/page').default;
-  const { container } = render(<HomePage />);
-  const main = container.querySelector('main')!;
-  expect(main.firstElementChild).toBe(screen.getByRole('navigation', { name: 'Builds on this page' }));
+test('the header carries the name and Connect and stays on screen here; the footer is where Connect lands', () => {
+  const { container } = home();
   const header = container.querySelector<HTMLElement>('header.wb-head')!;
-  expect(within(header).getAllByRole('link').map((a) => a.getAttribute('href'))).toEqual(['/']);
-  expect(screen.getAllByRole('navigation').map((n) => n.getAttribute('aria-label'))).toEqual(['Builds on this page', 'Footer']);
+  expect(header).toHaveClass('is-sticky');
+  expect(within(header).getAllByRole('link').map((a) => [a.textContent, a.getAttribute('href')])).toEqual([
+    ['Wesley Bard', '/'],
+    ['Connect', '#connect'],
+  ]);
+  expect(container.querySelector('footer#connect')).not.toBeNull();
+  // One menu: no navigation landmark but the footer's.
+  expect(screen.getAllByRole('navigation').map((n) => n.getAttribute('aria-label'))).toEqual(['Footer']);
+});
+
+test('the header and the band stick, one under the other, at the header\'s own height', () => {
+  const css = fs.readFileSync('app/design-system.css', 'utf8');
+  expect(css).toMatch(/\.wb \{ --head-h: 57px; \}/);
+  expect(css).toMatch(/\.wb-head \{[^}]*box-sizing: border-box; height: var\(--head-h\);/);
+  expect(css).toMatch(/\.wb\.wb-head\.is-sticky \{ position: sticky; top: 0; \}/);
+  expect(css).toMatch(/\.wb \.pf-band \{ position: sticky; top: var\(--head-h\);/);
+  expect(css).toMatch(/\.wb \.pf-band-in \{[^}]*overflow-x: auto;[^}]*scrollbar-width: none;/);
+  expect(css).toMatch(/\.wb-foot \{ scroll-margin-top: var\(--head-h\); \}/);
+  expect(css).toMatch(/\.wb \.pf-spot \{ scroll-margin-top: var\(--head-h\); \}/);
+  expect(css).toMatch(/\.wb \.tile\[hidden\] \{ display: none; \}/);
+  expect(css).not.toMatch(/home-nav|\.builds\b|\.grp\b/);
 });

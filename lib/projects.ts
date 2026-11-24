@@ -14,7 +14,7 @@ export interface Hardware {
 export interface Project {
   key: string;
   /**
-   * The day it was added to this site (YYYY-MM-DD). Within its section or group the newest shows first (`newestFirst`);
+   * The day it was added to this site (YYYY-MM-DD). The homepage's grid shows the newest first (`homeProjects`);
    * never shown on the page. The early dates are Wes's best recollection, and he may correct them.
    */
   added: string;
@@ -62,20 +62,20 @@ export interface Placed extends Project {
   tapes: Tape[];
 }
 
-/** Personal work reads in these groups, in this order: each is a top-level homepage section of its own (HOME_SECTIONS). */
+/** Personal work reads in these groups, in this order: each is a category of its own on the homepage (CATEGORIES). */
 export const GROUPS = ['Mac apps', 'Omarchy Linux', 'Electronics', 'Everything else'] as const;
 
 /**
- * The personal projects the Gaming section draws (under "Other game projects"), not a personal group's section. They stay
- * in PERSONAL so the /videogames hub and the build counts still find them.
+ * The personal projects in the Gaming category, beside the games Wes made. They stay in PERSONAL so the /videogames hub
+ * and the build counts still find them.
  */
 export const GAMING_GROUP = 'Gaming' as const;
 
 /**
  * The highlights row at the top of the homepage, left to right (Wes, 24 Nov 2026): Photo Frame Dashboard, CON AIR,
  * Tidemark. HIGHLIGHTS is the whole row; LATEST names which of its cards wears the filled Latest tag and the NEW strip
- * (the others are "Highlight"), and must be one of them. The row repeats its builds: each also sits in its own section
- * below as an ordinary tile. Whenever a project is added, ask Wes whether it should become the Latest card
+ * (the others are "Highlight"), and must be one of them. The row repeats its builds: with All pressed the grid below
+ * leaves them out (they are right above it), and a category shows them as ordinary tiles. Whenever a project is added, ask Wes whether it should become the Latest card
  * (CLAUDE.md); a card it replaces simply leaves the row, unless he keeps it in HIGHLIGHTS.
  */
 export const HIGHLIGHTS: string[] = ['frame', 'conair', 'tidemark'];
@@ -276,7 +276,7 @@ export const PERSONAL: Project[] = [
 ];
 
 /**
- * Games Wes has made, newest first (24 Nov 2026). Each is a tile in the homepage's games section. A private build has a page on this site about it and nothing to download.
+ * Games Wes has made, newest first (24 Nov 2026). Each is a tile in the homepage's Gaming category. A private build has a page on this site about it and nothing to download.
  */
 export const GAMES: Project[] = [
   {
@@ -341,60 +341,64 @@ export function newestFirst<T extends { added: string }>(list: readonly T[]): T[
   return [...list].sort((a, b) => b.added.localeCompare(a.added));
 }
 
-export type HomeSectionId = 'work' | 'games' | 'mac' | 'linux' | 'electronics' | 'more';
+export type CategoryId = 'work' | 'games' | 'mac' | 'linux' | 'electronics' | 'more';
 
 /**
- * The homepage's six build sections, top to bottom (Wes, 24 Nov 2026: Personal was one big section of twelve, so its
- * groups became sections of their own). `heading` is the section's h2; `label` and `icon` are its link in the band
- * (HomeNav), shorter where the heading is long. A personal group's section carries its `group`.
+ * The homepage's categories, in the band's order (Wes, 24 Nov 2026: one grid of every project, "defaulting to all, but
+ * then the click tabs"). `name` is the full name, on each tile's label; `label` and `icon` are the category's button in
+ * the band (ProjectFilter), shorter where the name is long. `id` is the button's address (/#work …). A personal group's
+ * category carries its `group`; work and games are found by the list a project lives in (categoryOf).
  */
-export const HOME_SECTIONS: { id: HomeSectionId; heading: string; label: string; icon: string; group?: (typeof GROUPS)[number] }[] = [
-  { id: 'work', heading: 'Work', label: 'Work', icon: '🤖' },
-  { id: 'games', heading: 'Gaming', label: 'Gaming', icon: '🎮' },
-  { id: 'mac', heading: 'Mac apps', label: 'Mac apps', icon: '💻', group: 'Mac apps' },
-  { id: 'linux', heading: 'Omarchy Linux', label: 'Linux', icon: '🐧', group: 'Omarchy Linux' },
-  { id: 'electronics', heading: 'Electronics', label: 'Electronics', icon: '🔌', group: 'Electronics' },
-  { id: 'more', heading: 'Everything else', label: 'More', icon: '✨', group: 'Everything else' },
+export const CATEGORIES: { id: CategoryId; name: string; label: string; icon: string; group?: (typeof GROUPS)[number] }[] = [
+  { id: 'work', name: 'Work', label: 'Work', icon: '🤖' },
+  { id: 'games', name: 'Gaming', label: 'Gaming', icon: '🎮' },
+  { id: 'mac', name: 'Mac apps', label: 'Mac apps', icon: '💻', group: 'Mac apps' },
+  { id: 'linux', name: 'Omarchy Linux', label: 'Linux', icon: '🐧', group: 'Omarchy Linux' },
+  { id: 'electronics', name: 'Electronics', label: 'Electronics', icon: '🔌', group: 'Electronics' },
+  { id: 'more', name: 'Everything else', label: 'More', icon: '✨', group: 'Everything else' },
 ];
 
-export interface HomeBuilds {
-  /** The agents and WBDB, as one list. */
-  work: Placed[];
-  games: Placed[];
-  /** The Gaming section's "Other game projects". */
-  otherGames: Placed[];
-  /** One per personal group, in GROUPS order (the highlights row repeats three of their tiles). */
-  groups: { id: HomeSectionId; label: (typeof GROUPS)[number]; items: Placed[] }[];
+/** A project's category, from where it lives: the agents and WBDB are work, games and the gaming group are gaming. */
+export function categoryOf(p: Project): CategoryId {
+  if (AGENTS.includes(p) || TOOLS.includes(p)) return 'work';
+  if (GAMES.includes(p) || p.group === GAMING_GROUP) return 'games';
+  const c = CATEGORIES.find((x) => x.group && x.group === p.group);
+  if (!c) throw new Error(`No category for ${p.key}`);
+  return c.id;
+}
+
+export interface HomeProject extends Placed {
+  category: CategoryId;
 }
 
 /**
- * Every tile on the homepage, list by list in page order, each list newest first. Tilt and tape go by position on the
- * page, so they are given after sorting and carry on from one list to the next.
+ * Every project on the homepage, as one list: newest first across everything by `added`. Ties keep a fixed order, work
+ * first, then the personal builds in PERSONAL's order, then games (the sort is stable). Tilt and tape go by position
+ * in this full list, so a tile keeps its look when the grid is filtered.
  */
-export function homeBuilds(): HomeBuilds {
-  let n = 0;
-  const take = (list: Project[]): Placed[] => {
-    const placed = place(newestFirst(list), n);
-    n += list.length;
-    return placed;
-  };
-  const work = take([...AGENTS, ...TOOLS]);
-  const games = take(GAMES);
-  const otherGames = take(PERSONAL.filter((p) => p.group === GAMING_GROUP));
-  const groups = HOME_SECTIONS.filter((s) => s.group).map((s) => ({
-    id: s.id,
-    label: s.group!,
-    items: take(PERSONAL.filter((p) => p.group === s.group)),
-  }));
-  return { work, games, otherGames, groups };
+export function homeProjects(): HomeProject[] {
+  const all = [...AGENTS, ...TOOLS, ...PERSONAL, ...GAMES];
+  return place(newestFirst(all), 0).map((p) => ({ ...p, category: categoryOf(all.find((x) => x.key === p.key)!) }));
 }
 
-/** The band's links (HomeNav), one per section in page order, each with its count of tiles. */
-export function homeNavItems(): { id: HomeSectionId; heading: string; label: string; icon: string; count: number }[] {
-  const b = homeBuilds();
-  const counts: Record<string, number> = { work: b.work.length, games: b.games.length + b.otherGames.length };
-  for (const g of b.groups) counts[g.id] = g.items.length;
-  return HOME_SECTIONS.map(({ id, heading, label, icon }) => ({ id, heading, label, icon, count: counts[id] }));
+/** What the homepage's band can press: every project, or one category. */
+export type Filter = 'all' | CategoryId;
+
+export interface FilterItem {
+  id: Filter;
+  label: string;
+  /** The full name, for assistive tech when the label is shorter ("Linux" is Omarchy Linux). */
+  name: string;
+  icon?: string;
+  count: number;
+}
+
+/** The band's buttons, All first, each with its count. All counts every project, the highlights included. */
+export function filterItems(projects: { category: CategoryId }[] = homeProjects()): FilterItem[] {
+  return [
+    { id: 'all', label: 'All', name: 'All', count: projects.length },
+    ...CATEGORIES.map((c) => ({ id: c.id, label: c.label, name: c.name, icon: c.icon, count: projects.filter((p) => p.category === c.id).length })),
+  ];
 }
 
 export function buildCounts(): { work: number; home: number } {

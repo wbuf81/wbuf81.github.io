@@ -17,7 +17,8 @@ function autoplayAllowed(): boolean {
 // own. A click on the picture or "Turn sound on" brings the sound in; Pause holds it until the visitor plays again.
 // The print is not a link: the tile's footer link goes to the game's page.
 // `sound={false}` is for a clip with no sound track: no sound button, and a click on the picture plays or pauses it.
-// `label` is the caption's left-hand text.
+// `label` is the caption's left-hand text. `off` is its tile filtered out of the homepage grid: it stops, muted, and
+// starts again (muted) only once it is back on screen.
 export default function TrailerPrint({
   trailer,
   tilt,
@@ -25,6 +26,7 @@ export default function TrailerPrint({
   sound = true,
   label = 'Trailer',
   className,
+  off = false,
 }: {
   trailer: Trailer;
   tilt: number;
@@ -32,6 +34,7 @@ export default function TrailerPrint({
   sound?: boolean;
   label?: string;
   className?: string;
+  off?: boolean;
 }) {
   const ref = useRef<HTMLVideoElement>(null);
   const userPaused = useRef(false);
@@ -92,6 +95,15 @@ export default function TrailerPrint({
       v.removeEventListener('volumechange', sync);
     };
   }, [play, sync]);
+
+  // Filtered out of the grid: stop it, as scrolling it away would (the observer starts it again once it is back).
+  useEffect(() => {
+    const v = ref.current;
+    if (!off || !v) return;
+    if (!v.paused) v.pause();
+    v.muted = true;
+    sync();
+  }, [off, sync]);
 
   // Synchronous inside the click: iOS only lets sound start from within the tap.
   const toggleSound = () => {
