@@ -97,7 +97,7 @@ export const AGENTS: Project[] = [
   {
     key: 'smores', added: '2026-02-16', name: 'SMORES', kind: 'Schnoodle', fit: 'photo', badge: 'Private repo', href: '/work', cta: 'How they work →',
     image: '/agents/smores.jpg', alt: 'SMORES, a schnoodle, at a desk with a binder',
-    subtitle: 'Service Mark Ongoing Review & Enhancement System',
+    subtitle: 'Service Mark Ongoing Review & Enforcement System',
     description: 'Tracks all service marks, renewals, and filing deadlines across the brand portfolio. Monitors trademark lifecycles and fires alerts before anything lapses.',
   },
   {
@@ -109,7 +109,7 @@ export const AGENTS: Project[] = [
   {
     key: 'snoop', added: '2026-05-22', name: 'SNOOP', kind: 'Detective beagle', fit: 'photo', badge: 'Private repo', href: '/work', cta: 'How they work →',
     image: '/agents/snoop.jpg', alt: 'SNOOP, a beagle in a detective hat, at a desk',
-    subtitle: 'Direct Navigator for Oversight of Organizational Policies',
+    subtitle: 'Smart Navigator for Oversight of Organizational Policies',
     description: 'Monitors and manages organizational policies across compliance frameworks. Tracks policy lifecycles, detects gaps in framework coverage, and keeps documentation current.',
   },
   {
