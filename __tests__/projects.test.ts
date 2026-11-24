@@ -71,9 +71,9 @@ test('the highlights row: Photo Frame Dashboard (latest), CON AIR, Tidemark', ()
   const keys = (c: string) => homeProjects().filter((p) => p.category === c).map((p) => p.key);
   expect(keys('mac')).toEqual(['tidemark', 'tesla', 'daisy']);
   expect(keys('electronics')).toEqual(['frame', 'knobdeck', 'neo', 'aac', 'spotify']);
-  expect(keys('more')).toEqual(['office']);
+  expect(keys('web')).toEqual(['office']);
   expect(keys('games')).toEqual(['conair', 'snes', 'gbforge']);
-  expect([...GROUPS]).toEqual(['Mac apps', 'Omarchy Linux', 'Electronics', 'Everything else']);
+  expect([...GROUPS]).toEqual(['Mac apps', 'Omarchy Linux', 'Electronics', 'Web']);
   expect(personal('snes')).toMatchObject({ badge: 'Live on this site', href: '/videogames/snes-history' });
   expect(() => personal('nope')).toThrow();
 });
@@ -186,12 +186,12 @@ test('every project has a category, from where it lives', () => {
 test('six categories, and the band counts each from the data, All first', () => {
   expect(CATEGORIES.map((c) => [c.id, c.name, c.label, c.icon])).toEqual([
     ['work', 'Work', 'Work', '🤖'], ['games', 'Gaming', 'Gaming', '🎮'], ['mac', 'Mac apps', 'Mac apps', '💻'],
-    ['linux', 'Omarchy Linux', 'Linux', '🐧'], ['electronics', 'Electronics', 'Electronics', '🔌'], ['more', 'Everything else', 'More', '✨'],
+    ['linux', 'Omarchy Linux', 'Linux', '🐧'], ['electronics', 'Electronics', 'Electronics', '🔌'], ['web', 'Web', 'Web', '🌐'],
   ]);
   expect(filterItems().map((i) => [i.id, i.label, i.count])).toEqual([
     ['all', 'All', all.length],
     ['work', 'Work', AGENTS.length + TOOLS.length],
     ['games', 'Gaming', GAMES.length + PERSONAL.filter((p) => p.group === GAMING_GROUP).length],
-    ['mac', 'Mac apps', 3], ['linux', 'Linux', 3], ['electronics', 'Electronics', 5], ['more', 'More', 1],
+    ['mac', 'Mac apps', 3], ['linux', 'Linux', 3], ['electronics', 'Electronics', 5], ['web', 'Web', 1],
   ]);
 });

@@ -136,7 +136,7 @@ type Selection = { filter: Filter; n: number; scroll: null | 'press' | 'arrive' 
  * carry `hidden`, so a tile keeps its place, tilt and tape.
  *
  * The server renders All, so without JavaScript every tile shows but the three above, and nothing is out of reach. The
- * address holds the filter: #work … #more select a category, #projects is All (and lands on the band), no hash is All.
+ * address holds the filter: #work … #web select a category, #projects is All (and lands on the band), no hash is All.
  * A press rewrites the address in place; a hash change (Back, Forward, a link) applies it again.
  *
  * The band sticks under the header (top: var(--head-h)). A press while it is stuck brings the start of the list up

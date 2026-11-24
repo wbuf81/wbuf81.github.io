@@ -29,12 +29,12 @@ test('a labelled group, not a nav: All and the six categories, each with its cou
   show();
   expect(screen.queryByRole('navigation')).toBeNull();
   expect(band()).toHaveTextContent('Explore projects ▸');
-  expect(buttons().map((b) => b.querySelector('.pf-l')!.textContent)).toEqual(['All', 'Work', 'Gaming', 'Mac apps', 'Linux', 'Electronics', 'More']);
-  expect(buttons().map((b) => b.querySelector('.pf-i')?.textContent ?? null)).toEqual([null, '🤖', '🎮', '💻', '🐧', '🔌', '✨']);
+  expect(buttons().map((b) => b.querySelector('.pf-l')!.textContent)).toEqual(['All', 'Work', 'Gaming', 'Mac apps', 'Linux', 'Electronics', 'Web']);
+  expect(buttons().map((b) => b.querySelector('.pf-i')?.textContent ?? null)).toEqual([null, '🤖', '🎮', '💻', '🐧', '🔌', '🌐']);
   expect(buttons().map((b) => b.querySelector('.pf-n')!.textContent)).toEqual(['25', '10', '3', '3', '3', '5', '1']);
   expect(buttons().map((b) => b.getAttribute('aria-label'))).toEqual([
     'All, 25 projects', 'Work, 10 projects', 'Gaming, 3 projects', 'Mac apps, 3 projects', 'Omarchy Linux, 3 projects',
-    'Electronics, 5 projects', 'More, Everything else, 1 project',
+    'Electronics, 5 projects', 'Web, 1 project',
   ]);
   expect(pressed().map((b) => b.querySelector('.pf-l')!.textContent)).toEqual(['All']);
 });
@@ -64,7 +64,7 @@ test('a press shows only that category, newest first, with its note; All leaves 
   expect(shown(c)).toEqual(['Tidemark', 'Mac Tesla Tracker', 'Daisy Status Bar']);
   press('Linux');
   expect(shown(c)).toEqual(['OmaFinance', 'Idle Screen Counter', 'Omarchy Workspace Labels']);
-  press('More');
+  press('Web');
   expect(shown(c)).toEqual(['My Office in 3D']);
 
   press('All');
@@ -130,7 +130,7 @@ test.each([
   ['#mac', 'Mac apps', 3],
   ['#linux', 'Linux', 3],
   ['#electronics', 'Electronics', 5],
-  ['#more', 'More', 1],
+  ['#web', 'Web', 1],
   ['#projects', 'All', 22],
   ['#connect', 'All', 22],
   ['', 'All', 22],

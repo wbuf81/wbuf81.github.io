@@ -243,6 +243,8 @@ describe('How everything gets to the frame', () => {
 test('the closing card credits the upstream work and goes home', () => {
   render(<PhotoFramePage />);
   expect(screen.getByRole('heading', { level: 2, name: "Credit where it's due" })).toBeInTheDocument();
+  // Wes named him on 24 Nov 2026 when asked who to credit for the launch footage.
+  expect(screen.getByText(/Starship launch video behind the boot animation was made by my friend Jason Dettmer/)).toBeInTheDocument();
   expect(screen.getByRole('link', { name: 'Back to the homepage' })).toHaveAttribute('href', '/');
   for (const c of ['JavaScript', 'Vite', 'Cloudflare Workers', 'Workers KV', 'ical.js', 'Android 6']) {
     expect(document.querySelector('.bd-credit')).toHaveTextContent(c);

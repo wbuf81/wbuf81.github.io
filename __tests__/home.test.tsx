@@ -263,10 +263,10 @@ test('the server renders All: 22 tiles showing, the three highlights left out, n
 
 test('no section headings for the categories, and every tile carries its category label', () => {
   const { container } = home();
-  for (const name of ['Work', 'Gaming', 'Mac apps', 'Omarchy Linux', 'Electronics', 'Everything else', 'Personal']) {
+  for (const name of ['Work', 'Gaming', 'Mac apps', 'Omarchy Linux', 'Electronics', 'Everything else', 'Web', 'Personal']) {
     expect(screen.queryByRole('heading', { name })).toBeNull();
   }
-  for (const id of ['work', 'games', 'mac', 'linux', 'electronics', 'more', 'builds']) expect(container.querySelector(`#${id}`)).toBeNull();
+  for (const id of ['work', 'games', 'mac', 'linux', 'electronics', 'more', 'web', 'builds']) expect(container.querySelector(`#${id}`)).toBeNull();
   const tiles = [...container.querySelectorAll<HTMLElement>('.pf-list article.tile')];
   const label = (name: string) => tiles.find((t) => t.querySelector('h3')!.textContent === name)!.querySelector('.tile-cat')!.textContent;
   for (const t of tiles) {
@@ -282,7 +282,7 @@ test('no section headings for the categories, and every tile carries its categor
   expect(label('Tidemark')).toBe('Mac apps');
   expect(label('OmaFinance')).toBe('Omarchy Linux');
   expect(label('Photo Frame Dashboard')).toBe('Electronics');
-  expect(label('My Office in 3D')).toBe('Everything else');
+  expect(label('My Office in 3D')).toBe('Web');
 });
 
 test('the photo frame links to its write-up; CON AIR keeps its trailer; the strip counts fifteen at home', () => {

@@ -63,7 +63,7 @@ export interface Placed extends Project {
 }
 
 /** Personal work reads in these groups, in this order: each is a category of its own on the homepage (CATEGORIES). */
-export const GROUPS = ['Mac apps', 'Omarchy Linux', 'Electronics', 'Everything else'] as const;
+export const GROUPS = ['Mac apps', 'Omarchy Linux', 'Electronics', 'Web'] as const;
 
 /**
  * The personal projects in the Gaming category, beside the games Wes made. They stay in PERSONAL so the /videogames hub
@@ -216,7 +216,7 @@ export const PERSONAL: Project[] = [
     href: '/builds/photo-frame', cta: 'How I built it →',
   },
   {
-    key: 'office', added: '2026-11-01', name: 'My Office in 3D', group: 'Everything else', kind: 'Three.js · TypeScript', fit: 'shot', badge: 'Live on this site',
+    key: 'office', added: '2026-11-01', name: 'My Office in 3D', group: 'Web', kind: 'Three.js · TypeScript', fit: 'shot', badge: 'Live on this site',
     image: '/projects/wesley-office.jpg', alt: 'My office as a 3D dollhouse',
     subtitle: 'Inspired by Wes Bos’s 3D office',
     description: 'My actual office, rebuilt in 3D from an iPhone room scan with Wes Bos’s 3d-model-anything. Walk around it, flip it to night, and click the graded games, the Gators helmet or Daisy for the story behind each one.',
@@ -341,7 +341,7 @@ export function newestFirst<T extends { added: string }>(list: readonly T[]): T[
   return [...list].sort((a, b) => b.added.localeCompare(a.added));
 }
 
-export type CategoryId = 'work' | 'games' | 'mac' | 'linux' | 'electronics' | 'more';
+export type CategoryId = 'work' | 'games' | 'mac' | 'linux' | 'electronics' | 'web';
 
 /**
  * The homepage's categories, in the band's order (Wes, 24 Nov 2026: one grid of every project, "defaulting to all, but
@@ -355,7 +355,7 @@ export const CATEGORIES: { id: CategoryId; name: string; label: string; icon: st
   { id: 'mac', name: 'Mac apps', label: 'Mac apps', icon: '💻', group: 'Mac apps' },
   { id: 'linux', name: 'Omarchy Linux', label: 'Linux', icon: '🐧', group: 'Omarchy Linux' },
   { id: 'electronics', name: 'Electronics', label: 'Electronics', icon: '🔌', group: 'Electronics' },
-  { id: 'more', name: 'Everything else', label: 'More', icon: '✨', group: 'Everything else' },
+  { id: 'web', name: 'Web', label: 'Web', icon: '🌐', group: 'Web' },
 ];
 
 /** A project's category, from where it lives: the agents and WBDB are work, games and the gaming group are gaming. */

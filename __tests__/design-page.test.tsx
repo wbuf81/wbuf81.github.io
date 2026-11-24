@@ -74,7 +74,7 @@ test('the header section shows the homepage band as a filter, held still and ine
   expect(band).toHaveTextContent('Explore projects ▸');
   expect(within(band).queryAllByRole('link')).toHaveLength(0);
   const buttons = within(band).getAllByRole('button');
-  expect(buttons.map((b) => b.querySelector('.pf-l')!.textContent)).toEqual(['All', 'Work', 'Gaming', 'Mac apps', 'Linux', 'Electronics', 'More']);
+  expect(buttons.map((b) => b.querySelector('.pf-l')!.textContent)).toEqual(['All', 'Work', 'Gaming', 'Mac apps', 'Linux', 'Electronics', 'Web']);
   expect(buttons.filter((b) => b.getAttribute('aria-pressed') === 'true').map((b) => b.querySelector('.pf-l')!.textContent)).toEqual(['All']);
   // Inert: a press changes nothing here.
   fireEvent.click(buttons[1]);

@@ -598,7 +598,7 @@ export default function PhotoFramePage() {
               device research, the kiosk app, the boot fixes and the boot-screen method. The night look is Omarchy&apos;s
               Tokyo Night theme and its liftoff wallpaper. The type is IBM Plex, Source Serif 4 and JetBrains Mono. Weather
               is from Open-Meteo, game history from Wikidata and Wikipedia, verses from the Berean Standard Bible and map
-              tiles from Esri.
+              tiles from Esri. The Starship launch video behind the boot animation was made by my friend Jason Dettmer.
             </p>
             <p>
               The dashboard, its Worker, the sleep script and the boot screens are mine, built with Claude Code starting in
