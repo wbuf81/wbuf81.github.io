@@ -4,7 +4,7 @@ import ThemeSwitch from './ThemeSwitch';
 // The site header, in the design system (app/design-system.css › the header): the name, the link home, on the left;
 // Connect, which lands on the footer of whatever page you are on (id="connect"), and the theme switch on the right.
 // On a phone the header is a single row: the switch is hidden there, so it is the name and Connect.
-// `sticky` keeps it on screen (the homepage only, Wes, 24 Nov 2026): the homepage's band sticks just under it. The
+// `sticky` keeps it on screen (the homepage only, Wes, 24 Nov 2026): the homepage's slim filter bar sits just under it. The
 // SNES and health pages stick their own bands to the top, so theirs scroll away, as on every other page.
 // `theme` shows the light/dark switch: only pages built on the system have a dark look, so a page that keeps
 // its own styles gets the header without it, always light. Every page is on the system since /lee was retired

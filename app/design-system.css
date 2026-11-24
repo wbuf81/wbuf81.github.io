@@ -333,6 +333,12 @@
 .wb .type > div { display: grid; grid-template-columns: 170px minmax(0, 1fr); gap: 16px; align-items: baseline; padding-bottom: 12px; border-bottom: 1px solid var(--rule-soft); }
 .wb .type small { font: 400 11px var(--mono); color: var(--ink-3); }
 .wb .spec-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+.wb .ds > .ch > ol.ds-recipe { margin: 0 0 10px; padding-left: 22px; }
+.wb .ds > .ch > ol.ds-recipe > li { max-width: 84ch; font-size: 14.5px; color: var(--ink-2); margin: 0 0 6px; }
+/* a write-up sample in its own .wb.gm wrapper, so the write-ups' page-wide rules reach it; the graph paper shows through */
+.wb .ds .wb.ds-gm { background: none; min-width: 0; }
+.wb .ds .ds-shots { max-width: 760px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+@media (max-width: 480px) { .wb .ds .ds-shots { grid-template-columns: minmax(0, 1fr); } }
 /* the SNES kit (app/design/SnesKit.tsx): holds the SNES pieces still and in the flow, using app/snes/snes.css as is */
 .wb .ds-snes-nav { overflow: hidden; border: 1px solid var(--rule); border-radius: 6px; }
 .wb .ds-snes-nav .s-nav { position: static; }

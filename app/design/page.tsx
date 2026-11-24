@@ -8,17 +8,19 @@ import ProjectTile from '../components/home/ProjectTile';
 import FeaturedBuild from '../components/home/FeaturedBuild';
 import Highlights from '../components/home/Highlights';
 import ThenNowStill from '../components/home/ThenNowStill';
+import TrailerPrint from '../components/home/TrailerPrint';
 import TetrisPrint from '../components/home/TetrisPrint';
 import GitHubMap from '../components/home/GitHubMap';
 import { FilterChips } from '../components/home/ProjectFilter';
-import { AGENTS, PERSONAL, GAMES, place, personal, buildCounts, filterItems } from '@/lib/projects';
+import { AGENTS, PERSONAL, GAMES, place, placement, personal, buildCounts, filterItems } from '@/lib/projects';
 import contributions from '@/data/github-contributions.json';
 import { TOKENS, tokenValues, type TokenGroup } from './tokens';
 import SnesKit from './SnesKit';
 import { fraktur, vt323 } from '../snes/fonts';
 import '../snes/snes.css';
-// The write-up pages' own blocks, for their samples below. Their page-wide rules hang off .wb.gm, which this page's
-// <main> doesn't carry, so only the named blocks (gm-…, bd-…) reach it.
+// The write-up pages' own blocks, for their samples below. Their page-wide rules hang off .wb.gm (and .wb.gm.bd),
+// which this page's <main> doesn't carry, so only the named blocks (gm-…, bd-…) reach it; a sample that needs a
+// page-wide rule (the four facts, a screenshot's shape) sits in its own .wb.gm wrapper (.ds-gm).
 import '../games/games.css';
 import '../builds/builds.css';
 
@@ -41,14 +43,42 @@ const PF_WARNINGS = [
   'Back the frame up, and check the backup, before you change anything.',
   'Never cut the power during a write.',
 ];
+const PF_DIR = '/builds/photo-frame';
+const PF_FACTS: [string, string, string][] = [
+  ['The frame', 'PF1007L', 'a 10.1-inch touch screen sold under several brand names'],
+  ['Screen', '1280 × 800', 'one pixel per pixel, so every screen is drawn for exactly this'],
+  ['Runs on', 'Android 6', 'with its browser engine upgraded to Chrome 106'],
+  ['Served by', 'Cloudflare Workers', 'the free plan, no computer attached'],
+];
+// The flowchart, cut down to two rows a box, in the photo frame page's own words.
+const PF_FLOW_SOURCES: { title: string; rows: [string, string][]; arrow: string }[] = [
+  {
+    title: 'Out on the internet',
+    rows: [
+      ['The weather', 'Open-Meteo'],
+      ['The markets', 'Yahoo Finance'],
+    ],
+    arrow: 'The Worker fetches these and keeps a copy',
+  },
+  {
+    title: 'On my Mac',
+    rows: [
+      ['Where my car is', 'Mac Tesla Tracker'],
+      ['My Claude usage', 'a small usage app'],
+    ],
+    arrow: 'My Mac sends these, checking once a minute',
+  },
+];
+const PF_BOOT_LABEL =
+  'The boot animation: a Starship lifting off through clouds of smoke under the words Starting up, Wes\'s Dashboard, Launching, with an orange progress bar filling';
 
 const TYPE = [
   { label: 'Name · serif 58', sample: 'Wesley Bard', style: { font: '600 58px/1.02 var(--serif)', letterSpacing: '-.02em' } },
-  { label: 'Section · serif 26', sample: 'Electronics', style: { font: '600 26px/1.15 var(--serif)' } },
+  { label: 'Section · serif 26', sample: 'Explore projects', style: { font: '600 26px/1.15 var(--serif)' } },
   { label: 'Tile name · serif 20', sample: 'Knobdeck', style: { font: '600 20px/1.15 var(--serif)' } },
   { label: 'Figure · serif 24', sample: 'Lockheed Martin', style: { font: '600 24px/1.1 var(--serif)', color: 'var(--accent)' } },
   { label: 'Text · sans 15', sample: 'A desk controller on a round touchscreen you turn.', style: { font: '400 15px/1.55 var(--sans)' } },
-  { label: 'Eyebrow · mono 11', sample: 'AUTONOMOUS AI AGENTS', style: { font: '500 11px var(--mono)', letterSpacing: '.08em', color: 'var(--ink-2)' } },
+  { label: 'Eyebrow · mono 11', sample: 'THE PALS', style: { font: '500 11px var(--mono)', letterSpacing: '.08em', color: 'var(--ink-2)' } },
   { label: 'Caption · mono 11', sample: 'wbuf81/esp32-knobdeck', style: { font: '400 11.5px var(--mono)', color: 'var(--ink-3)' } },
 ];
 
@@ -122,8 +152,9 @@ export default function DesignPage() {
               home, then Connect, which lands on the footer of whatever page you are on, and the theme switch, the same
               three-way pill as the work tools: light, match my computer, dark. The choice is saved in this browser and
               applied before the page paints, so it never flashes. On a phone the switch is hidden, so it is the name
-              and Connect. On the homepage the header stays on screen; everywhere else it scrolls away. It&apos;s live
-              at the top of this page.
+              and Connect. On the homepage the header stays on screen; everywhere else it scrolls away, because the
+              SNES and health pages stick their own menus to the top. It carries no other links: a page&apos;s own
+              menu goes first in <code>&lt;main&gt;</code>, never up here. It&apos;s live at the top of this page.
             </p>
 
             <h3>The band</h3>
@@ -139,8 +170,11 @@ export default function DesignPage() {
               <code>ProjectFilter</code> puts an Explore projects heading in the size of a section heading, then a chip
               per filter: All (pressed to start) and each category, with its emoji and its count. The chips are
               outlined on paper, the pressed one filled in ink, and on a phone they wrap so all seven show. A press
-              shows only that category in the one grid below, newest first, with All leaving out the highlights already
-              above; the address keeps the choice (<code>/#work</code>, <code>/#games</code> …). Once the chips have
+              shows only that category in the one grid below, newest first. All leaves out the highlight cards, which
+              sit just above, though its count still includes them; a category shows them as ordinary tiles. Two
+              categories open with a note above the grid: Work, with a link to how the pals work, and Gaming, saying
+              the games are private builds. The others have none. The address keeps the choice (<code>/#work</code>,{' '}
+              <code>/#games</code> …, and <code>/#projects</code> for All), so a link can open a category. Once the chips have
               gone up under the header, a slim bar fixed just under it carries the same chips a size down in one row,
               sliding sideways on a phone with a fade at its edge; it goes again above the chips or past the list, and
               the page never moves when it comes or goes. This is the resting control, held still: its chips do
@@ -213,10 +247,23 @@ export default function DesignPage() {
 
             <h3>Tiles</h3>
             <p>
-              A print standing over the top of its card. A tile says what the thing does and what it runs on. A tile
-              adds a footer: the board, or what it&apos;s written in, then GitHub when the repo is public, or a link to
-              its page here when the build lives on this site or has a write-up. On the homepage every tile
-              carries its category over its name, in the eyebrow style; pressing it shows only that category.
+              A print standing over the top of its card, four across on a wide screen. Every project is the same tile,
+              one entry in <code>lib/projects.ts</code>. On the homepage the category sits over the name, in the eyebrow
+              style, and pressing it shows only that category. Then the name and its badge, a mono subtitle, and a line
+              or two on what the thing does and what it runs on.
+            </p>
+            <p>
+              The footer names the board it runs on, with its picture, or else what it&apos;s written in. Then one
+              link, by the badge. <code>Open source</code> links its public repo, GitHub →, in a new tab. A build that
+              lives on this site, or has a write-up here, links that page in the same tab, in the words of its{' '}
+              <code>cta</code> (How I built it →, About the game →, How they work →; Explore it → when there is none).
+              A <code>Private repo</code> tile links only to its write-up, or nowhere, never outside the site; a{' '}
+              <code>Private build</code> links its page under <code>/games/</code>. The project tests hold all of it.
+            </p>
+            <p>
+              The grid runs newest first by each project&apos;s <code>added</code> date, the day it went on the site,
+              which is never shown. A new project gets today&apos;s date and lands first. Tilt and tape still go by
+              position, so the rows look hand-placed whatever moves.
             </p>
             <div className="tiles">
               <ProjectTile project={lucy} category={{ name: 'Work' }} footer />
@@ -228,11 +275,30 @@ export default function DesignPage() {
               A game&apos;s tile can hold its trailer in place of a picture. It starts muted once half of it is on
               screen, and loops. A click on it or Turn sound on gives it sound; scrolling away pauses it and mutes it
               again. A visitor who asked for reduced motion or data saving gets the poster and a Play button, never an
-              autoplay. A clip with no sound track drops the sound button, and a click on it plays or pauses. While it holds a trailer the print is not a link: the tile&apos;s footer goes to the game&apos;s
-              page.
+              autoplay. Pause is always there, because anything that moves by itself for more than five seconds needs
+              one. The video loads nothing until it is in view. While it holds a trailer the print is not a link: the
+              tile&apos;s footer goes to the game&apos;s page. A game gets one by carrying a <code>trailer</code> in{' '}
+              <code>GAMES</code>.
             </p>
             <div className="tiles">
               <ProjectTile project={conair} category={{ name: 'Gaming' }} footer />
+            </div>
+            <p>
+              <code>TrailerPrint</code> also works on its own, for a clip with no sound track, like the photo
+              frame&apos;s boot animation below. <code>sound={'{false}'}</code> drops the sound button, and a click on
+              the picture plays or pauses it. <code>label</code> is the caption&apos;s left-hand words, and the
+              trailer&apos;s <code>width</code> and <code>height</code> are the video&apos;s own size, so it keeps its
+              shape while it loads. <code>off</code> stops it, muted, when the homepage filter leaves its tile out; it
+              starts again once the tile is back on screen.
+            </p>
+            <div className="wb gm bd ds-gm spec-print">
+              <TrailerPrint
+                tilt={placement(3).tilt}
+                tapes={placement(3).tapes}
+                sound={false}
+                label="The boot animation"
+                trailer={{ src: `${PF_DIR}/boot.mp4`, poster: `${PF_DIR}/boot.jpg`, width: 1280, height: 800, label: PF_BOOT_LABEL }}
+              />
             </div>
 
             <h3>The highlights row</h3>
@@ -240,8 +306,9 @@ export default function DesignPage() {
               The top of the homepage: a row of builds I pick. Each is a print over its card, a size up from the tiles,
               with a button. <code>HIGHLIGHTS</code> in <code>lib/projects.ts</code> is the whole row, in order.{' '}
               <code>LATEST</code> names the one card that wears the filled Latest tag and a strip from a label maker on
-              its print; it can be any card in the row. With All pressed the grid below leaves them out; a category shows
-              them as ordinary tiles. Under 900px the cards stack.
+              its print; it can be any card in the row. The row always shows, whatever filter is pressed. With All
+              pressed the grid below leaves its cards out; a category shows them as ordinary tiles. A card with a
+              trailer shows its still picture here, so the three prints stay one height. Under 900px the cards stack.
             </p>
             <Highlights />
 
@@ -283,17 +350,143 @@ export default function DesignPage() {
           <section className="ch" aria-labelledby="ds-writeups">
             <h2 id="ds-writeups">Write-up pages</h2>
             <p>
-              A page about one build: a game at <code>/games/&lt;slug&gt;</code>, or a build whose repo stays private
-              at <code>/builds/&lt;slug&gt;</code>. It opens on a hero with an untilted print beside the name, then a
-              facts strip, sections of prints and definition lists, and a closing card. Write-ups are hidden from
-              search and out of the sitemap, and each names its own link-preview card. See{' '}
+              A page about one build, for when the build itself can&apos;t be shared: a game at{' '}
+              <code>/games/&lt;slug&gt;</code>, a build whose repo stays private at <code>/builds/&lt;slug&gt;</code>,
+              or the work tools at <code>/work</code>. It opens on a hero with an untilted print beside the name, then
+              a facts strip, sections of prints, notes and steps, and a closing card. See{' '}
               <a href="/games/con-air">CON AIR</a>, <a href="/builds/photo-frame">Photo Frame Dashboard</a> and{' '}
               <a href="/work">The pals</a>.
             </p>
+
+            <h3>The recipe</h3>
+            <ol className="ds-recipe">
+              <li>
+                Make <code>app/games/&lt;slug&gt;/page.tsx</code> or <code>app/builds/&lt;slug&gt;/page.tsx</code>. Its
+                pictures go in <code>public/games/&lt;slug&gt;/</code> or <code>public/builds/&lt;slug&gt;/</code>, served
+                from here and never hotlinked.
+              </li>
+              <li>
+                Import <code>app/games/games.css</code>, and for a build <code>app/builds/builds.css</code> after it.
+                Render <code>&lt;Nav theme /&gt;</code>, then <code>&lt;main className=&quot;wb wb-page gm&quot;&gt;</code>{' '}
+                (<code>wb wb-page gm bd</code> for a build), then <code>&lt;Footer /&gt;</code>. Inside{' '}
+                <code>main</code>, one <code>.wrap</code> holds everything.
+              </li>
+              <li>
+                Blocks only this page needs go in a stylesheet beside it, named by a prefix of its own the way{' '}
+                <code>/work</code> has <code>work.css</code> and <code>wk-…</code>, with that class on{' '}
+                <code>main</code> too. Tokens only, every selector under <code>.wb</code>.
+              </li>
+              <li>
+                Each part is a <code>section.sec</code> with its <code>h2</code> in a <code>.sec-h</code>, and a{' '}
+                <code>p.gnote</code> to open it. The page has one <code>h1</code>, the build&apos;s name.
+              </li>
+              <li>
+                Export <code>metadata</code> with a title (&ldquo;Name · Wesley Bard&rdquo;), a description,{' '}
+                <code>robots: {'{ index: false, follow: false }'}</code>, and <code>openGraph</code> and{' '}
+                <code>twitter</code> (<code>summary_large_image</code>) that name a card. A child route&apos;s{' '}
+                <code>openGraph</code> replaces the site&apos;s images, so the card is always named: the page&apos;s own,{' '}
+                <code>public/og-&lt;slug&gt;</code> as a PNG or JPEG (never SVG), or the site&apos;s default from{' '}
+                <code>app/layout.tsx</code>, as <code>/work</code> does. Leave the page out of{' '}
+                <code>public/sitemap.xml</code>.
+              </li>
+              <li>
+                Write <code>__tests__/&lt;slug&gt;.test.tsx</code>, like <code>games.test.tsx</code>,{' '}
+                <code>builds.test.tsx</code> and <code>work.test.tsx</code>: one <code>h1</code>; the metadata, the card
+                existing in <code>public/</code>, and no sitemap entry; every picture with its alt text and size; every
+                outside link on an allow-list and opening in a new tab; nothing private by its shape (a ROM, a private
+                repo&apos;s address, an email); the stylesheet tokens-only and under <code>.wb</code>.
+              </li>
+              <li>
+                Link it from the homepage: the project&apos;s entry in <code>lib/projects.ts</code> gets the page as its{' '}
+                <code>href</code> and the link&apos;s words as its <code>cta</code>. Its tile then goes there in the same
+                tab. The page&apos;s closing card links back to the homepage; an address like <code>/#games</code> or{' '}
+                <code>/#work</code> lands with that category pressed.
+              </li>
+            </ol>
+
+            <h3>The hero</h3>
             <p>
-              The shared blocks are in <code>app/games/games.css</code> (<code>gm-…</code>), a build&apos;s own in{' '}
-              <code>app/builds/builds.css</code> (<code>bd-…</code>). These are the ones that exist only there.
+              The homepage&apos;s <code>.hero</code>: an eyebrow (category, what it runs on, the year), the name as the{' '}
+              <code>h1</code>, and the lede, beside one print that isn&apos;t tilted, held by one strip of tape across
+              its top (<code>gm-trailer</code> for a video, <code>bd-hero</code> for a screenshot). When some of the
+              pictures are made up, a <code>p.fine</code> under the lede says which parts, and that the rest is real.
             </p>
+
+            <h3>The facts strip</h3>
+            <p>
+              The homepage&apos;s <code>.stats</code> with four cells: a mono key, a figure and a line under it. On a
+              write-up it goes four across, two by two under 1100px and one under 480px, so it never leaves an empty
+              cell. Every figure is checked against the build&apos;s code before it ships.
+            </p>
+            <div className="wb gm ds-gm">
+              <div className="stats">
+                {PF_FACTS.map(([k, n, l]) => (
+                  <div key={k}>
+                    <div className="k">{k}</div>
+                    <div className="n">{n}</div>
+                    <div className="l">{l}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <h3>Screenshots</h3>
+            <p>
+              A screenshot is a print in its own shape, not the system&apos;s 2:1: 3:2 for a Game Boy Advance&apos;s
+              screen, 16:10 for the photo frame&apos;s. The page&apos;s stylesheet sets the shape for every print on it,
+              and each <code>img</code> carries its real width and height so the room is held while it loads. Where the
+              text in a picture is small, the print is a link to the full-size file, in the same tab. Rows of prints
+              sit in <code>gm-grid</code>: three across (<code>five</code> for five), two under 860px, one under 480px.
+              They take their tilt and tape by position, counting down the page, from <code>placement</code>.
+            </p>
+            <div className="gm-grid ds-shots">
+              <div className="wb gm ds-gm">
+                <Print
+                  tilt={placement(0).tilt}
+                  tapes={placement(0).tapes}
+                  caption={
+                    <>
+                      <span>Endless</span>
+                      <span>Main menu</span>
+                    </>
+                  }
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element -- static export, images are served as they are */}
+                  <img
+                    className="ph shot"
+                    src="/games/con-air/menu.png"
+                    alt="The main menu with Endless selected: Story mode, Endless, Versus, How to play, Extras"
+                    width={960}
+                    height={640}
+                    loading="lazy"
+                  />
+                </Print>
+              </div>
+              <div className="wb gm bd ds-gm">
+                <Print
+                  tilt={placement(1).tilt}
+                  tapes={placement(1).tapes}
+                  href={`${PF_DIR}/home-paper.jpg`}
+                  label="Open the full-size picture: Paper"
+                  caption={
+                    <>
+                      <span>Paper</span>
+                      <span>the first look</span>
+                    </>
+                  }
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element -- static export, images are served as they are */}
+                  <img
+                    className="ph shot"
+                    src={`${PF_DIR}/home-paper.jpg`}
+                    alt="The home screen in the Paper look: white tiles on graph paper with serif headings."
+                    width={1280}
+                    height={800}
+                    loading="lazy"
+                  />
+                </Print>
+              </div>
+            </div>
 
             <h3>The definition list</h3>
             <p>
@@ -349,9 +542,114 @@ export default function DesignPage() {
 
             <h3>The flowchart</h3>
             <p>
-              <code>bd-flow…</code>: three stages joined by labelled arrows, side by side on a wide screen and stacked
-              on a phone, in HTML and CSS so the words stay real text. It lives on{' '}
-              <a href="/builds/photo-frame">Photo Frame Dashboard</a>, under How everything gets to the frame.
+              <code>bd-flow…</code>: how something works, for a reader who doesn&apos;t build things. Three stages
+              joined by labelled arrows, with a strip underneath for what happens next time round. It is HTML and CSS,
+              not a picture, so every word is real text that reads on a phone and to a screen reader. Side by side on
+              a wide screen; at 980px and under the stages stack and the arrows point down, labels beside them.
+            </p>
+            <p>
+              The markup: a <code>figure.bd-flow</code> with an <code>aria-label</code>, holding an{' '}
+              <code>ol.bd-flow-stages</code> of three <code>li.bd-flow-stage</code> (<code>bd-flow-from</code>,{' '}
+              <code>bd-flow-cloud</code>, <code>bd-flow-wall</code>), each a <code>p.bd-flow-label</code> and a{' '}
+              <code>.bd-flow-body</code>. A box is <code>.bd-flow-box</code> with an <code>h3</code> and either a{' '}
+              <code>dl.bd-flow-rows</code> or a <code>ul.bd-flow-points</code>; the middle one adds{' '}
+              <code>bd-flow-hub</code> and a <code>p.bd-flow-lead</code>. A box with an arrow out of it sits in a{' '}
+              <code>.bd-flow-feed</code> with its <code>.bd-flow-conn</code>. Up to two source boxes, numbered{' '}
+              <code>bd-flow-feed-1</code> and <code>-2</code>, so a phone shows both boxes before both arrows. The
+              strip is <code>.bd-flow-loop</code>. Keep the words plain. This one is cut down from{' '}
+              <a href="/builds/photo-frame">Photo Frame Dashboard</a>; <a href="/work">The pals</a> has one with a
+              single source box.
+            </p>
+            <figure className="bd-flow" aria-label="A sample flowchart: how data reaches the photo frame, in three stages">
+              <ol className="bd-flow-stages">
+                <li className="bd-flow-stage bd-flow-from">
+                  <p className="bd-flow-label">1 · Where it comes from</p>
+                  <div className="bd-flow-body">
+                    {PF_FLOW_SOURCES.map((s, i) => (
+                      <div key={s.title} className={`bd-flow-feed bd-flow-feed-${i + 1}`}>
+                        <div className="bd-flow-box">
+                          <h3>{s.title}</h3>
+                          <dl className="bd-flow-rows">
+                            {s.rows.map(([thing, from]) => (
+                              <div key={thing}>
+                                <dt>{thing}</dt>
+                                <dd>{from}</dd>
+                              </div>
+                            ))}
+                          </dl>
+                        </div>
+                        <div className="bd-flow-conn">
+                          <span className="bd-flow-arrow" aria-hidden="true" />
+                          <p className="bd-flow-says">{s.arrow}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </li>
+                <li className="bd-flow-stage bd-flow-cloud">
+                  <p className="bd-flow-label">2 · In the cloud</p>
+                  <div className="bd-flow-body">
+                    <div className="bd-flow-feed">
+                      <div className="bd-flow-box bd-flow-hub">
+                        <h3>A Cloudflare Worker</h3>
+                        <p className="bd-flow-lead">One small program that is always on.</p>
+                        <ul className="bd-flow-points">
+                          <li>Checks for the key. No key, no dashboard.</li>
+                          <li>Answers from its copies, so the frame never waits on a slow source.</li>
+                        </ul>
+                      </div>
+                      <div className="bd-flow-conn">
+                        <span className="bd-flow-arrow" aria-hidden="true" />
+                        <p className="bd-flow-says">The frame asks again every minute or two</p>
+                      </div>
+                    </div>
+                  </div>
+                </li>
+                <li className="bd-flow-stage bd-flow-wall">
+                  <p className="bd-flow-label">3 · On the wall</p>
+                  <div className="bd-flow-body">
+                    <div className="bd-flow-box">
+                      <h3>The photo frame</h3>
+                      <ul className="bd-flow-points">
+                        <li>A kiosk app opens the one page when it boots.</li>
+                        <li>The page draws the seven tiles and works out my repeating meetings.</li>
+                      </ul>
+                    </div>
+                  </div>
+                </li>
+              </ol>
+              <div className="bd-flow-loop">
+                <p className="bd-flow-label">When I change something</p>
+                <p>
+                  I publish a new version, the Worker starts serving it, and within five minutes the frame notices and
+                  reloads itself. Nobody touches the frame.
+                </p>
+              </div>
+            </figure>
+
+            <h3>The roster</h3>
+            <p>
+              A page about several builds shows them with the homepage&apos;s own tiles, <code>ProjectTile</code>{' '}
+              without its <code>footer</code>, so it carries no link back to the page it is on. The words come from{' '}
+              <code>lib/projects.ts</code>, so a tile edit changes both. <code>/work</code> puts its nine three across
+              (<code>wk-tiles</code>), then two, then one.
+            </p>
+
+            <h3>The animated sprite</h3>
+            <p>
+              Pixel art that moves, like Jeffrey walking across the photo frame&apos;s walk card (<code>bd-jeffrey</code>):
+              a sprite sheet stepped through with CSS <code>steps()</code>, drawn with{' '}
+              <code>image-rendering: pixelated</code>, with a <code>role=&quot;img&quot;</code> and a label. Under reduced
+              motion it holds still on its first frame. Set the sheet on the element&apos;s own style, so the bundler
+              never has to resolve it.
+            </p>
+
+            <h3>The closing card</h3>
+            <p>
+              Every write-up ends on a <code>card gm-note</code> with an <code>h2</code>: what isn&apos;t here and why
+              (&ldquo;Not for download&rdquo;, &ldquo;What isn&apos;t here&rdquo;), or the credits
+              (&ldquo;Credit where it&apos;s due&rdquo;, with <code>bd-credit</code>). It may carry a row of chips for
+              what it was built with, and ends with a <code>.go</code> link back to the homepage.
             </p>
           </section>
 
@@ -381,8 +679,19 @@ export default function DesignPage() {
                 art or trademarked game names.
               </li>
               <li>Titles are the US titles as printed on the box.</li>
+              <li>State the fact and stop. No narration and no captions that explain what the reader can already see.</li>
               <li>
-                A write-up links no private repo, ROM or download, and nothing private goes in its words or pictures.
+                A write-up never carries a ROM, a download, a save file or a link to a private repo. Nothing private goes
+                in it in any form: not in its words, pictures, tests or scripts. This repo is public, so a test bans a
+                private thing by its shape and never names the real value to ban it.
+              </li>
+              <li>
+                A picture of something private is made again from made-up data, never a screenshot of the real thing,
+                and a fine-print line under the lede says what was made up.
+              </li>
+              <li>
+                A page about work says only what has already been approved for it. It names no vendor, client, person
+                or number, and says &ldquo;the company&apos;s single sign-on&rdquo;, not the product.
               </li>
             </ul>
           </section>
@@ -399,10 +708,22 @@ export default function DesignPage() {
                 tests fail.
               </li>
               <li>
-                A page with parts of its own puts its band first in <code>&lt;main&gt;</code>: <code>HealthNav</code> or{' '}
-                <code>SnesNav</code>. The header carries Connect and nothing else, and only the homepage&apos;s stays on
-                screen (<code>&lt;Nav theme sticky /&gt;</code>), with the projects&apos; slim bar under it at{' '}
-                <code>var(--head-h)</code>.
+                One menu per page. A page with parts of its own puts its band first in <code>&lt;main&gt;</code>:{' '}
+                <code>HealthNav</code> or <code>SnesNav</code>. The menu never goes in the header, which carries Connect
+                and nothing else. Only the homepage&apos;s header stays on screen (<code>&lt;Nav theme sticky /&gt;</code>),
+                with the projects&apos; slim bar under it at <code>var(--head-h)</code>.
+              </li>
+              <li>
+                Every card shows. Nothing is folded away behind a toggle, a drop-down or a More link; a filter may narrow
+                a list, but it starts on All.
+              </li>
+              <li>
+                A list of builds runs newest first, by <code>added</code>. A story, like the health change log, may run
+                oldest first.
+              </li>
+              <li>
+                A page reached from a project tile follows the write-up recipe above, and its tile links it through{' '}
+                <code>href</code> and <code>cta</code>.
               </li>
               <li>Every block is scoped under <code>.wb</code>, so pages with their own look are untouched.</li>
               <li>
