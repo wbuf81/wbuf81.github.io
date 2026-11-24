@@ -38,9 +38,10 @@ test('the new tiles are there', () => {
 
 test('private repos have no link, open ones link to GitHub, live ones to a page on this site', () => {
   for (const p of all) {
-    // A private repo has no link, or links to its write-up on this site, never an outside address.
+    // A private repo has no link, or links to its write-up on this site (a build's, or /work for the pals and WBDB),
+    // never an outside address.
     if (p.badge === 'Private repo') {
-      if (p.href !== undefined) expect(p.href).toMatch(/^\/builds\/[a-z0-9-]+$/);
+      if (p.href !== undefined) expect(p.href).toMatch(/^\/(builds\/[a-z0-9-]+|work)$/);
     }
     else if (p.badge === 'Open source') expect(p.href).toMatch(/^https:\/\/github\.com\/wbuf81\//);
     // A game Wes made has a page here about it, and nothing to download.

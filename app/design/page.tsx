@@ -203,13 +203,13 @@ export default function DesignPage() {
 
             <h3>Tiles</h3>
             <p>
-              A print standing over the top of its card. A tile says what the thing does and what it runs on. Outside
-              Work, a tile adds a footer: the board, or what it&apos;s written in, then GitHub when the repo is public,
-              or a link to its page here when the build lives on this site or has a write-up. On the homepage every tile
+              A print standing over the top of its card. A tile says what the thing does and what it runs on. A tile
+              adds a footer: the board, or what it&apos;s written in, then GitHub when the repo is public, or a link to
+              its page here when the build lives on this site or has a write-up. On the homepage every tile
               carries its category over its name, in the eyebrow style; pressing it shows only that category.
             </p>
             <div className="tiles">
-              <ProjectTile project={lucy} category={{ name: 'Work' }} />
+              <ProjectTile project={lucy} category={{ name: 'Work' }} footer />
               <ProjectTile project={knobdeck} category={{ name: 'Electronics' }} footer />
             </div>
 
@@ -277,7 +277,8 @@ export default function DesignPage() {
               at <code>/builds/&lt;slug&gt;</code>. It opens on a hero with an untilted print beside the name, then a
               facts strip, sections of prints and definition lists, and a closing card. Write-ups are hidden from
               search and out of the sitemap, and each names its own link-preview card. See{' '}
-              <a href="/games/con-air">CON AIR</a> and <a href="/builds/photo-frame">Photo Frame Dashboard</a>.
+              <a href="/games/con-air">CON AIR</a>, <a href="/builds/photo-frame">Photo Frame Dashboard</a> and{' '}
+              <a href="/work">The pals</a>.
             </p>
             <p>
               The shared blocks are in <code>app/games/games.css</code> (<code>gm-…</code>), a build&apos;s own in{' '}

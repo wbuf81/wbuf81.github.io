@@ -45,8 +45,18 @@ test('a press shows only that category, newest first, with its note; All leaves 
 
   press('Work');
   expect(shown(c)).toEqual(['WINNIE', 'LUCY', 'WBDB', 'BEASLEY', 'MAISIE', 'SNOOP', 'RHINO', 'PABSTY', 'OSCAR', 'SMORES']);
-  expect(c.querySelector('.pf-note .eyebrow')).toHaveTextContent('Autonomous AI agents');
+  expect(c.querySelector('.pf-note .eyebrow')).toHaveTextContent('The pals');
   expect(note(c)).toMatch(/Each one named after a coworker.s pet/);
+  // The note links to the pals' write-up, in the same tab.
+  const more = within(c.querySelector<HTMLElement>('.pf-note')!).getByRole('link', { name: 'How the pals work →' });
+  expect(more).toHaveAttribute('href', '/work');
+  expect(more).not.toHaveAttribute('target');
+  // Every Work tile links to it too.
+  for (const t of [...c.querySelectorAll<HTMLElement>('article.tile')].filter((t) => !t.hidden)) {
+    const a = within(t).getByRole('link', { name: 'How they work →' });
+    expect(a).toHaveAttribute('href', '/work');
+    expect(a).not.toHaveAttribute('target');
+  }
   expect(pressed()).toHaveLength(1);
 
   press('Gaming');

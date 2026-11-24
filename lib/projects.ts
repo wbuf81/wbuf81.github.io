@@ -89,55 +89,55 @@ const M5: Hardware = {
 
 export const AGENTS: Project[] = [
   {
-    key: 'oscar', added: '2026-02-16', name: 'OSCAR', kind: 'Bernese mountain dog', fit: 'photo', badge: 'Private repo',
+    key: 'oscar', added: '2026-02-16', name: 'OSCAR', kind: 'Bernese mountain dog', fit: 'photo', badge: 'Private repo', href: '/work', cta: 'How they work →',
     image: '/agents/oscar.jpg', alt: 'OSCAR, a Bernese mountain dog, at a desk with two monitors',
     subtitle: 'Obligation Scanning & Compliance Analysis Reporter',
-    description: 'AI agent that continuously scans company web properties for legal compliance gaps — privacy notices, cookie banners, GDPR requirements, hidden footer links — with automated reporting and email alerts.',
+    description: 'Continuously scans company web properties for legal compliance gaps — privacy notices, cookie banners, GDPR requirements, hidden footer links — with automated reporting and email alerts.',
   },
   {
-    key: 'smores', added: '2026-02-16', name: 'SMORES', kind: 'Schnoodle', fit: 'photo', badge: 'Private repo',
+    key: 'smores', added: '2026-02-16', name: 'SMORES', kind: 'Schnoodle', fit: 'photo', badge: 'Private repo', href: '/work', cta: 'How they work →',
     image: '/agents/smores.jpg', alt: 'SMORES, a schnoodle, at a desk with a binder',
     subtitle: 'Service Mark Ongoing Review & Enhancement System',
     description: 'Tracks all service marks, renewals, and filing deadlines across the brand portfolio. Monitors trademark lifecycles and fires alerts before anything lapses.',
   },
   {
-    key: 'maisie', added: '2026-05-22', name: 'MAISIE', kind: 'Tabby cat', fit: 'photo', badge: 'Private repo',
+    key: 'maisie', added: '2026-05-22', name: 'MAISIE', kind: 'Tabby cat', fit: 'photo', badge: 'Private repo', href: '/work', cta: 'How they work →',
     image: '/agents/maisie.jpg', alt: 'MAISIE, a tabby cat in glasses, reading at a desk',
     subtitle: 'Monitoring Agent for International Sanctions & Intelligence Engine',
     description: "Monitors domains across the company's brand portfolio against the OFAC Specially Designated Nationals list. Syncs sanctions data, flags potential matches, and tracks compliance status across the portfolio.",
   },
   {
-    key: 'snoop', added: '2026-05-22', name: 'SNOOP', kind: 'Detective beagle', fit: 'photo', badge: 'Private repo',
+    key: 'snoop', added: '2026-05-22', name: 'SNOOP', kind: 'Detective beagle', fit: 'photo', badge: 'Private repo', href: '/work', cta: 'How they work →',
     image: '/agents/snoop.jpg', alt: 'SNOOP, a beagle in a detective hat, at a desk',
     subtitle: 'Direct Navigator for Oversight of Organizational Policies',
     description: 'Monitors and manages organizational policies across compliance frameworks. Tracks policy lifecycles, detects gaps in framework coverage, and keeps documentation current.',
   },
   {
-    key: 'rhino', added: '2026-05-22', name: 'RHINO', kind: 'Rhinoceros', fit: 'photo', badge: 'Private repo',
+    key: 'rhino', added: '2026-05-22', name: 'RHINO', kind: 'Rhinoceros', fit: 'photo', badge: 'Private repo', href: '/work', cta: 'How they work →',
     image: '/agents/rhino.jpg', alt: 'RHINO, a rhinoceros, at a desk',
     subtitle: 'Risk Hub for Identification, Notification & Oversight',
     description: 'Maintains the enterprise risk register — material risks with likelihood, residual score, and mitigation plan in one place. Quarterly assessment cadence with full audit trail and portfolio-level exposure tracking.',
   },
   {
-    key: 'pabsty', added: '2026-05-22', name: 'PABSTY', kind: 'British shorthair', fit: 'photo', badge: 'Private repo',
+    key: 'pabsty', added: '2026-05-22', name: 'PABSTY', kind: 'British shorthair', fit: 'photo', badge: 'Private repo', href: '/work', cta: 'How they work →',
     image: '/agents/pabsty.jpg', alt: 'PABSTY, a grey British shorthair, at a desk',
     subtitle: 'Privacy Analytics & Benchmarking for Subject Tasks',
     description: 'Transforms privacy request data into executive-ready analytics. Tracks DSAR volumes by region, brand, and regulation type — automated monthly snapshots delivered without manual intervention.',
   },
   {
-    key: 'beasley', added: '2026-08-30', name: 'BEASLEY', kind: 'Aussiedoodle', fit: 'photo', badge: 'Private repo',
+    key: 'beasley', added: '2026-08-30', name: 'BEASLEY', kind: 'Aussiedoodle', fit: 'photo', badge: 'Private repo', href: '/work', cta: 'How they work →',
     image: '/agents/beasley.jpg', alt: 'BEASLEY, an aussiedoodle, at a desk',
     subtitle: 'Brand Evaluation & Abuse Scoping Linked Exactly to Your-brands',
     description: 'Routes abuse complaints to the team that owns them — reads the incoming complaint mail, pulls out the domains, attributes each one to its brand in the portfolio, and keeps the analytics on what came in and where it went.',
   },
   {
-    key: 'lucy', added: '2026-10-03', name: 'LUCY', kind: 'Pit and lab mix', fit: 'photo', badge: 'Private repo',
+    key: 'lucy', added: '2026-10-03', name: 'LUCY', kind: 'Pit and lab mix', fit: 'photo', badge: 'Private repo', href: '/work', cta: 'How they work →',
     image: '/agents/lucy.jpg', alt: 'LUCY, a pit and lab mix, at a desk',
     subtitle: 'Litigation Utility for Conflicts on Your Brand',
     description: "Polls a domain-name watch service every couple of hours for newly registered look-alike domains, works out which brand in the portfolio manages each one, and emails Legal a digest with Take action and Dismiss buttons — then follows every actioned domain until it's gone.",
   },
   {
-    key: 'winnie', added: '2026-10-22', name: 'WINNIE', kind: 'Tabby cat', fit: 'photo', badge: 'Private repo',
+    key: 'winnie', added: '2026-10-22', name: 'WINNIE', kind: 'Tabby cat', fit: 'photo', badge: 'Private repo', href: '/work', cta: 'How they work →',
     image: '/agents/winnie.jpg', alt: 'WINNIE, a tabby cat in glasses and a flamingo shirt, at a desk',
     subtitle: 'Watchful Inbox Navigator for Notices, Inquiries & Escalations',
     description: "Watches the privacy team's shared inbox and sorts every message by the rules the team already works by — what needs action, what's a follow-up, what's noise. Each request becomes a ticket with the routing WINNIE proposes, checked against what a person actually did, and a weekday morning brief says what's waiting.",
@@ -147,7 +147,7 @@ export const AGENTS: Project[] = [
 /** Work that isn't a pet-named agent. */
 export const TOOLS: Project[] = [
   {
-    key: 'wbdb', added: '2026-10-03', name: 'WBDB', kind: 'The lab', fit: 'shot', badge: 'Private repo',
+    key: 'wbdb', added: '2026-10-03', name: 'WBDB', kind: 'The lab', fit: 'shot', badge: 'Private repo', href: '/work', cta: 'How they work →',
     image: '/projects/wbdb-lab.jpg', alt: "WBDB's lab bench: element tiles pour into a beaker labelled WBDB",
     subtitle: "Domain intelligence · the company's domains, read for risk and value",
     description: 'Where you bring a question about the domains on the platform. Scores how convincingly a look-alike domain impersonates a brand, finds the banks, credit unions, hospitals and nonprofits among them, and checks every domain against public registers of institutions and companies.',

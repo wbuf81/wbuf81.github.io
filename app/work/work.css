@@ -1,0 +1,46 @@
+/*
+ * The pals write-up (/work), on top of the design system, the game pages' gm-… blocks and the build
+ * write-ups' bd-… blocks. Tokens only, every selector under .wb, new blocks named wk-… (__tests__/work.test.tsx holds all three).
+ */
+
+/* Mascots are 2:1 photos cropped from the top, the system's own print shape. games.css makes prints 3:2 and
+   builds.css 16:10 for screenshots, so both are put back here. */
+.wb.gm.bd.wk .print .ph { aspect-ratio: 2 / 1; height: auto; object-position: 50% 0%; }
+.wb.gm.bd.wk .print .ph.shot { object-position: 50% 50%; }
+
+/* The roster: the homepage's tiles, three across so the nine make a square, then two, then one. */
+.wb.wk .tiles.wk-tiles { grid-template-columns: repeat(3, minmax(0, 1fr)); margin-top: 26px; }
+
+/* And one tool: the print beside its words. */
+.wb .wk-tool { display: grid; grid-template-columns: minmax(0, 420px) minmax(0, 1fr); gap: 30px 44px; align-items: center; margin-top: 18px; }
+.wb .wk-tool .print { min-width: 0; margin: 12px 0 0; }
+.wb .wk-who { min-width: 0; }
+.wb .wk-who h3 { font: 600 21px/1.2 var(--serif); margin: 0; color: var(--ink); }
+.wb .wk-kind { margin: 4px 0 0; font: 400 11.5px/1.45 var(--mono); color: var(--ink-3); }
+.wb .wk-who p:not(.wk-kind) { margin: 8px 0 0; font-size: 14px; line-height: 1.55; color: var(--ink-2); max-width: 70ch; }
+
+@media (max-width: 900px) {
+  .wb.wk .tiles.wk-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 600px) {
+  .wb.wk .tiles.wk-tiles { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 860px) {
+  .wb .wk-tool { grid-template-columns: minmax(0, 1fr); }
+  .wb .wk-tool .print { max-width: 460px; }
+}
+@media (max-width: 480px) {
+  /* one print across fills the gutter-to-gutter width, and its corner tape ran off the edge of the screen */
+  .wb .wk-tool .print { margin-left: 8px; margin-right: 8px; }
+}
+
+/* One source box here, not two, so the hub keeps its own height in the middle and doesn't stretch into a tall
+   empty box (the photo frame page stretches it so both of its arrows land on it). */
+@media (min-width: 981px) {
+  .wb.wk .bd-flow-cloud .bd-flow-body { align-content: center; }
+  .wb.wk .bd-flow-cloud .bd-flow-feed { align-items: center; }
+}
+
+/* The line after the numbered steps sits clear of the last step's rule. */
+.wb .gnote.wk-after { margin-top: 16px; }
+.wb .wk-tool .wk-who p + p { margin-top: 10px; }

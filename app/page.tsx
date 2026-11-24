@@ -15,7 +15,7 @@ import contributions from '@/data/github-contributions.json';
 
 // Wes's own words for the space under his name (4 Oct 2026): casual, first person, not a tagline.
 const INTRO =
-  "Hey, I'm Wes. I work in compliance, and before that I spent 12 years as an engineer. These days I'm all in on building with AI agents, using loops and graphs to build AI tools and agents at scale. Here's some of what I've made at work, and what I'm tinkering with at home.";
+  "Hey, I'm Wes. I work in compliance, and before that I spent 12 years as an engineer. These days I'm all in on building with AI agents, using loops and graphs to build and monitor tools at scale. Here's some of what I've made at work, and what I'm tinkering with at home.";
 
 export default function HomePage() {
   return (

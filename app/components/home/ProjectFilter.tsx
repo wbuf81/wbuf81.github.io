@@ -107,15 +107,19 @@ export function FilterBand({
   );
 }
 
-// The notes a category opens with, when it has one: the agents' and the games' (Wes's copy, from the old sections).
+// The notes a category opens with, when it has one: the pals' and the games' (Wes's copy, from the old sections). The
+// pals' note links to their write-up, /work.
 const NOTES: Partial<Record<CategoryId, ReactNode>> = {
   work: (
     <>
-      <div className="eyebrow">Autonomous AI agents</div>
+      <div className="eyebrow">The pals</div>
       <p className="gnote">
         Agents that take the repetitive end of legal and compliance work — scanning, monitoring, reporting, chasing
         deadlines before they lapse. Each one named after a coworker&apos;s pet, driving engagement and making compliance a
         little more fun.
+      </p>
+      <p className="gnote">
+        <a href="/work">How the pals work →</a>
       </p>
     </>
   ),
@@ -215,7 +219,7 @@ export default function ProjectFilter({
               <ProjectTile
                 key={p.key}
                 project={p}
-                footer={p.category !== 'work'}
+                footer
                 category={{ name: nameOf(p.category), onPress: () => press(p.category) }}
                 hidden={filter === 'all' ? highlights.includes(p.key) : p.category !== filter}
               />

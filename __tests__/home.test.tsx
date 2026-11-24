@@ -190,7 +190,7 @@ test("the hero introduces Wes in his own words, right under his name", () => {
   const name = screen.getByRole('heading', { level: 1, name: 'Wesley Bard' });
   const intro = name.nextElementSibling as HTMLElement;
   expect(intro).toHaveTextContent(
-    "Hey, I'm Wes. I work in compliance, and before that I spent 12 years as an engineer. These days I'm all in on building with AI agents, using loops and graphs to build AI tools and agents at scale. Here's some of what I've made at work, and what I'm tinkering with at home.",
+    "Hey, I'm Wes. I work in compliance, and before that I spent 12 years as an engineer. These days I'm all in on building with AI agents, using loops and graphs to build and monitor tools at scale. Here's some of what I've made at work, and what I'm tinkering with at home.",
   );
 });
 
@@ -301,9 +301,17 @@ test('the photo frame links to its write-up; CON AIR keeps its trailer; the stri
   const video = conair.querySelector('.print video')!;
   expect(video).toBeTruthy();
   expect(video.closest('a')).toBeNull();
-  // Work tiles have no footer; the rest do.
-  expect(tile('WINNIE').querySelector('.tf')).toBeNull();
+  // Every tile has a footer; a Work tile's links to the pals' write-up in the same tab.
+  for (const name of ['OSCAR', 'SMORES', 'MAISIE', 'SNOOP', 'RHINO', 'PABSTY', 'BEASLEY', 'LUCY', 'WINNIE', 'WBDB']) {
+    const work = tile(name);
+    expect(work.querySelector('.tf')).not.toBeNull();
+    const a = within(work).getByRole('link', { name: 'How they work →', hidden: true });
+    expect(a).toHaveAttribute('href', '/work');
+    expect(a).not.toHaveAttribute('target');
+  }
   expect(tile('Knobdeck').querySelector('.tf')).not.toBeNull();
+  // The homepage says what /work says: the pals mostly run on rules, so nothing calls them autonomous AI agents.
+  expect(container.textContent).not.toMatch(/Autonomous AI agents/i);
 });
 
 test('the header carries the name and Connect and stays on screen here; the footer is where Connect lands', () => {
