@@ -20,10 +20,10 @@ const INTRO =
 export default function HomePage() {
   return (
     <>
-      {/* The header stays on screen here (only here): the band sticks just under it. */}
+      {/* The header stays on screen here (only here): the projects' slim bar shows just under it. */}
       <Nav theme sticky />
       <main className="wb wb-page">
-        <div className="wrap wrap-top">
+        <div className="wrap">
           <section className="hero" aria-label="Wesley Bard">
             <div className="hero-text">
               <div className="eyebrow">Governance, Risk &amp; Compliance · Newfold Digital</div>
@@ -36,13 +36,12 @@ export default function HomePage() {
           <ThenNowStill counts={buildCounts()} />
 
           <Highlights />
-        </div>
 
-        {/* The band, the note and one grid of every project, newest first (Wes, 24 Nov 2026). It spans the page, so it
-            sits outside the column above and brings its own below, which the GitHub map shares. */}
-        <ProjectFilter projects={homeProjects()} highlights={HIGHLIGHTS}>
-          <GitHubMap data={contributions} />
-        </ProjectFilter>
+          {/* "Explore projects", its chips, the note and one grid of every project, newest first (Wes, 24 Nov 2026). */}
+          <ProjectFilter projects={homeProjects()} highlights={HIGHLIGHTS}>
+            <GitHubMap data={contributions} />
+          </ProjectFilter>
+        </div>
       </main>
       <Footer />
     </>

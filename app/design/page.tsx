@@ -10,7 +10,7 @@ import Highlights from '../components/home/Highlights';
 import ThenNowStill from '../components/home/ThenNowStill';
 import TetrisPrint from '../components/home/TetrisPrint';
 import GitHubMap from '../components/home/GitHubMap';
-import { FilterBand } from '../components/home/ProjectFilter';
+import { FilterChips } from '../components/home/ProjectFilter';
 import { AGENTS, PERSONAL, GAMES, place, personal, buildCounts, filterItems } from '@/lib/projects';
 import contributions from '@/data/github-contributions.json';
 import { TOKENS, tokenValues, type TokenGroup } from './tokens';
@@ -130,15 +130,25 @@ export default function DesignPage() {
             <p>
               A tinted strip the width of the page, with the pressed item a raised paper key, and it slides sideways
               within itself on a phone. <code>HealthNav</code> and <code>SnesNav</code> are their pages&apos; menus,
-              first in <code>&lt;main&gt;</code> and stuck to the top. On the homepage the band is a filter,{' '}
-              <code>ProjectFilter</code>: under the highlights row, labelled Explore projects, then All (pressed to
-              start) and a button per category, each with its count. It sticks just under the header, and a press shows
-              only that category in the one grid below it, newest first, with All leaving out the highlights already
-              above. The address keeps the choice (<code>/#work</code>, <code>/#games</code> …). This is the
-              homepage&apos;s, held still: it doesn&apos;t stick, and its buttons do nothing here.
+              first in <code>&lt;main&gt;</code> and stuck to the top.
             </p>
-            <div className="ds-band">
-              <FilterBand items={filterItems()} pressed="all" />
+
+            <h3>The project filter</h3>
+            <p>
+              The homepage&apos;s list has no band. Under the highlights row, in the page&apos;s column,{' '}
+              <code>ProjectFilter</code> puts an Explore projects heading in the size of a section heading, then a chip
+              per filter: All (pressed to start) and each category, with its emoji and its count. The chips are
+              outlined on paper, the pressed one filled in ink, and on a phone they wrap so all seven show. A press
+              shows only that category in the one grid below, newest first, with All leaving out the highlights already
+              above; the address keeps the choice (<code>/#work</code>, <code>/#games</code> …). Once the chips have
+              gone up under the header, a slim bar fixed just under it carries the same chips a size down in one row,
+              sliding sideways on a phone with a fade at its edge; it goes again above the chips or past the list, and
+              the page never moves when it comes or goes. This is the resting control, held still: its chips do
+              nothing here.
+            </p>
+            <div className="pf-rest">
+              <h4 className="pf-h">Explore projects</h4>
+              <FilterChips items={filterItems()} pressed="all" />
             </div>
           </section>
 
@@ -391,7 +401,8 @@ export default function DesignPage() {
               <li>
                 A page with parts of its own puts its band first in <code>&lt;main&gt;</code>: <code>HealthNav</code> or{' '}
                 <code>SnesNav</code>. The header carries Connect and nothing else, and only the homepage&apos;s stays on
-                screen (<code>&lt;Nav theme sticky /&gt;</code>), with its band under it at <code>var(--head-h)</code>.
+                screen (<code>&lt;Nav theme sticky /&gt;</code>), with the projects&apos; slim bar under it at{' '}
+                <code>var(--head-h)</code>.
               </li>
               <li>Every block is scoped under <code>.wb</code>, so pages with their own look are untouched.</li>
               <li>

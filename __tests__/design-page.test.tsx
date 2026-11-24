@@ -61,28 +61,30 @@ test('the design page keeps its outline (one h1, no skipped levels) and every SN
   }
 });
 
-test('the header section shows the homepage band as a filter, held still and inert', () => {
+test('the header section shows the project filter: heading and chips, held still and inert, All pressed', () => {
   const { container } = render(<DesignPage />);
   const header = container.querySelector('section[aria-labelledby="ds-header"]') as HTMLElement;
   expect(within(header).getByRole('heading', { level: 3, name: 'The band' })).toBeInTheDocument();
+  expect(within(header).getByRole('heading', { level: 3, name: 'The project filter' })).toBeInTheDocument();
   expect(header).toHaveTextContent(/Connect, which lands on the footer/);
   expect(header).toHaveTextContent(/On the homepage the header stays on screen/);
-  expect(header).toHaveTextContent(/labelled Explore projects, then All/);
-  expect(header).toHaveTextContent(/one grid below it, newest first/);
-  const band = within(header).getByRole('group', { name: 'Explore projects' });
-  expect(band.closest('.ds-band')).not.toBeNull();
-  expect(band).toHaveTextContent('Explore projects ▸');
-  expect(within(band).queryAllByRole('link')).toHaveLength(0);
-  const buttons = within(band).getAllByRole('button');
+  expect(header).toHaveTextContent(/The homepage.s list has no band/);
+  expect(header).toHaveTextContent(/a slim bar fixed just under it/);
+  expect(header).toHaveTextContent(/the page never moves when it comes or goes/);
+  expect(header.textContent).not.toMatch(/On the homepage the band/);
+  const sample = header.querySelector('.pf-rest') as HTMLElement;
+  expect(within(sample).getByRole('heading', { level: 4, name: 'Explore projects' })).toHaveClass('pf-h');
+  const chips = within(sample).getByRole('group', { name: 'Explore projects' });
+  expect(within(chips).queryAllByRole('link')).toHaveLength(0);
+  const buttons = within(chips).getAllByRole('button');
   expect(buttons.map((b) => b.querySelector('.pf-l')!.textContent)).toEqual(['All', 'Work', 'Gaming', 'Mac apps', 'Linux', 'Electronics', 'Web']);
   expect(buttons.filter((b) => b.getAttribute('aria-pressed') === 'true').map((b) => b.querySelector('.pf-l')!.textContent)).toEqual(['All']);
-  // Inert: a press changes nothing here.
+  // Inert: a press changes nothing here, and there is no slim bar on this page.
   fireEvent.click(buttons[1]);
   expect(buttons[0]).toHaveAttribute('aria-pressed', 'true');
   expect(buttons[1]).toHaveAttribute('aria-pressed', 'false');
-  // It doesn't stick on this page.
-  const css = fs.readFileSync('app/design-system.css', 'utf8');
-  expect(css).toMatch(/\.wb \.ds-band \.pf-band \{ position: static; \}/);
+  expect(container.querySelector('.pf-bar')).toBeNull();
+  expect(container.querySelector('.pf-band')).toBeNull();
 });
 
 test('the sample tiles carry their category over the name', () => {

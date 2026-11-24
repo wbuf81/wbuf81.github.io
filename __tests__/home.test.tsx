@@ -225,23 +225,30 @@ function home() {
   return render(<HomePage />);
 }
 
-// Wes, 24 Nov 2026: the highlights, then the band, then one grid of every project, then the GitHub map.
-test('the homepage in order: highlights, the band, one grid, the GitHub map', () => {
+// Wes, 24 Nov 2026: the highlights, then "Explore projects" and its chips, then one grid, then the GitHub map.
+test('the homepage in order: highlights, the Explore projects heading and chips, one grid, the GitHub map', () => {
   const { container } = home();
   const hls = screen.getByRole('region', { name: 'Highlights' });
-  const band = screen.getByRole('group', { name: 'Explore projects' });
-  const list = screen.getByRole('region', { name: 'Projects' });
+  const list = screen.getByRole('region', { name: 'Explore projects' });
+  const heading = within(list).getByRole('heading', { level: 2, name: 'Explore projects' });
+  const chips = screen.getByRole('group', { name: 'Explore projects' });
+  const grid = list.querySelector('.tiles')!;
   const map = container.querySelector('.heat')!.closest('section')!;
   const after = (x: Node, y: Node) => !!(x.compareDocumentPosition(y) & Node.DOCUMENT_POSITION_FOLLOWING);
-  expect(after(hls, band)).toBe(true);
-  expect(after(band, list)).toBe(true);
+  expect(after(hls, heading)).toBe(true);
+  expect(after(heading, chips)).toBe(true);
+  expect(after(chips, grid)).toBe(true);
   expect(after(list, map)).toBe(true);
-  // The band spans the page: it is not inside the page's column.
-  expect(band.closest('.wrap')).toBeNull();
-  expect(band.parentElement).toBe(container.querySelector('main'));
-  // #projects is the band's own place, just before it.
-  expect(container.querySelector('#projects')?.nextElementSibling).toBe(band);
+  // No stripe: the chips sit in the page's column, under the heading, and #projects lands on the heading.
+  expect(chips.closest('.wrap')).not.toBeNull();
+  expect(container.querySelector('#projects')).toBe(heading.parentElement);
+  expect(heading.nextElementSibling).toBe(chips);
+  expect(screen.queryByRole('heading', { name: 'Projects' })).toBeNull();
+  expect(container.querySelector('.pf-band')).toBeNull();
   expect(list.querySelectorAll('.tiles')).toHaveLength(1);
+  // The slim bar is in the server's HTML but hidden, so without JavaScript it never shows.
+  expect(container.querySelector('.pf-bar')).toHaveAttribute('hidden');
+  expect(screen.getAllByRole('group', { name: 'Explore projects' })).toHaveLength(1);
 });
 
 test('the server renders All: 22 tiles showing, the three highlights left out, no note, newest first', () => {
@@ -254,7 +261,7 @@ test('the server renders All: 22 tiles showing, the three highlights left out, n
   expect(container.querySelector('.pf-note')).toBeNull();
   expect(screen.getByRole('button', { name: /^All, 25 projects$/ })).toHaveAttribute('aria-pressed', 'true');
   // Each project shows once: the three highlights are in the row above.
-  const list = screen.getByRole('region', { name: 'Projects' });
+  const list = screen.getByRole('region', { name: 'Explore projects' });
   for (const name of HIGHLIGHTED) {
     expect(within(list).queryByRole('heading', { level: 3, name })).toBeNull();
     expect(screen.getAllByRole('heading', { level: 3, name })).toHaveLength(1);
@@ -327,15 +334,20 @@ test('the header carries the name and Connect and stays on screen here; the foot
   expect(screen.getAllByRole('navigation').map((n) => n.getAttribute('aria-label'))).toEqual(['Footer']);
 });
 
-test('the header and the band stick, one under the other, at the header\'s own height', () => {
+test('the header sticks, and the slim bar sits under it at the header\'s own height', () => {
   const css = fs.readFileSync('app/design-system.css', 'utf8');
   expect(css).toMatch(/\.wb \{ --head-h: 57px; \}/);
   expect(css).toMatch(/\.wb-head \{[^}]*box-sizing: border-box; height: var\(--head-h\);/);
   expect(css).toMatch(/\.wb\.wb-head\.is-sticky \{ position: sticky; top: 0; \}/);
-  expect(css).toMatch(/\.wb \.pf-band \{ position: sticky; top: var\(--head-h\);/);
-  expect(css).toMatch(/\.wb \.pf-band-in \{[^}]*overflow-x: auto;[^}]*scrollbar-width: none;/);
+  // Fixed, not sticky: the page never moves when the bar comes or goes.
+  expect(css).toMatch(/\.wb \.pf-bar \{ position: fixed; left: 0; right: 0; top: var\(--head-h\);/);
+  expect(css).toMatch(/\.wb \.pf-bar\[hidden\] \{ display: none; \}/);
+  expect(css).toMatch(/\.wb \.pf-chips\.is-slim \{[^}]*flex-wrap: nowrap;[^}]*overflow-x: auto;[^}]*scrollbar-width: none;/);
+  // At rest the chips wrap, so all seven show on a phone.
+  expect(css).toMatch(/\.wb \.pf-chips \{ display: flex; flex-wrap: wrap;/);
+  expect(css).toMatch(/\.wb \.pf-chip\[aria-pressed="true"\] \{ background: var\(--ink\); border-color: var\(--ink\); color: var\(--paper\); \}/);
   expect(css).toMatch(/\.wb-foot \{ scroll-margin-top: var\(--head-h\); \}/);
-  expect(css).toMatch(/\.wb \.pf-spot \{ scroll-margin-top: var\(--head-h\); \}/);
+  expect(css).toMatch(/\.wb \.pf-rest \{[^}]*scroll-margin-top: var\(--head-h\); \}/);
   expect(css).toMatch(/\.wb \.tile\[hidden\] \{ display: none; \}/);
-  expect(css).not.toMatch(/home-nav|\.builds\b|\.grp\b/);
+  expect(css).not.toMatch(/home-nav|\.builds\b|\.grp\b|pf-band|pf-spot|wrap-top|pf-wrap|ds-band/);
 });

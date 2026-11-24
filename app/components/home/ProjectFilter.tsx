@@ -27,42 +27,58 @@ function scrollToY(top: number, smooth: boolean) {
   window.scrollTo({ top: Math.max(0, top), behavior: smooth && !reducedMotion() ? 'smooth' : 'auto' });
 }
 
-// The space between the band's bottom edge and the start of the list when a press brings the list up.
+// The space between the slim bar's bottom edge and the start of the list when a press brings the list up.
 const GAP = 16;
 
 /**
- * The band (design system › the band): the homepage's project filter, a sibling of SnesNav and HealthNav in looks.
- * "Explore projects ▸", then All and a button per category, each with its count; one is pressed at a time
- * (aria-pressed), and arrow keys, Home and End move between them. Without `onPress` (the /design sample) it is inert.
+ * The homepage's chips (design system › the project filter): All and a chip per category, each with its emoji and its
+ * count. One is pressed at a time (aria-pressed, filled in ink); arrow keys, Home and End move between them. `slim` is
+ * the one-row copy in the bar that shows once the resting chips have gone up under the header: on a phone it slides
+ * sideways, keeps the pressed chip in view and fades its right edge while there is more. `inert` takes a copy that
+ * isn't showing out of the tab order and the accessibility tree. Without `onPress` (the /design sample) it is inert.
  */
-export function FilterBand({
+export function FilterChips({
   items,
   pressed,
   onPress,
-  bandRef,
+  slim = false,
+  inert = false,
 }: {
   items: FilterItem[];
   pressed: Filter;
   onPress?: (id: Filter) => void;
-  bandRef?: React.Ref<HTMLDivElement>;
+  slim?: boolean;
+  inert?: boolean;
 }) {
   const rowRef = useRef<HTMLDivElement>(null);
 
-  // Keep the pressed button in view inside the band (it slides sideways on a phone), without moving the page.
+  // The slim row: keep the pressed chip in view without moving the page, and fade the edge while there is more.
+  const fit = useCallback(() => {
+    const row = rowRef.current;
+    if (!slim || !row) return;
+    row.classList.toggle('pf-more', row.scrollWidth - row.clientWidth - row.scrollLeft > 4);
+  }, [slim]);
   useEffect(() => {
     const row = rowRef.current;
-    const b = row?.querySelector<HTMLElement>('[aria-pressed="true"]');
-    if (!row || !b) return;
-    const left = b.offsetLeft;
-    const right = left + b.offsetWidth;
-    if (left >= row.scrollLeft && right <= row.scrollLeft + row.clientWidth) return;
-    const to = Math.max(0, left - (row.clientWidth - b.offsetWidth) / 2);
-    if (typeof row.scrollTo === 'function') row.scrollTo({ left: to, behavior: reducedMotion() ? 'auto' : 'smooth' });
-    else row.scrollLeft = to;
-  }, [pressed]);
+    if (!slim || !row) return;
+    const b = row.querySelector<HTMLElement>('[aria-pressed="true"]');
+    if (b && row.scrollWidth > row.clientWidth) {
+      const left = b.offsetLeft;
+      const right = left + b.offsetWidth;
+      if (left < row.scrollLeft || right > row.scrollLeft + row.clientWidth) {
+        row.scrollLeft = Math.max(0, left - (row.clientWidth - b.offsetWidth) / 2);
+      }
+    }
+    fit();
+  }, [pressed, slim, inert, fit]);
+  useEffect(() => {
+    if (!slim) return;
+    window.addEventListener('resize', fit);
+    return () => window.removeEventListener('resize', fit);
+  }, [slim, fit]);
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-    const list = [...(rowRef.current?.querySelectorAll<HTMLButtonElement>('.pf-b') ?? [])];
+    const list = [...(rowRef.current?.querySelectorAll<HTMLButtonElement>('.pf-chip') ?? [])];
     const i = list.indexOf(document.activeElement as HTMLButtonElement);
     if (i < 0) return;
     const last = list.length - 1;
@@ -73,36 +89,40 @@ export function FilterBand({
   };
 
   return (
-    <div className="pf-band" role="group" aria-label="Explore projects" ref={bandRef}>
-      <div className="pf-band-in" ref={rowRef} onKeyDown={onKeyDown}>
-        <span className="pf-k" aria-hidden="true">
-          Explore projects ▸
-        </span>
-        {items.map((s) => {
-          // The visible label stays in the name (for voice control); a short label also gets the full name.
-          const name = s.name.includes(s.label) ? s.name : `${s.label}, ${s.name}`;
-          return (
-            <button
-              key={s.id}
-              type="button"
-              className="pf-b"
-              aria-pressed={s.id === pressed}
-              aria-label={`${name}, ${s.count} ${s.count === 1 ? 'project' : 'projects'}`}
-              onClick={onPress ? () => onPress(s.id) : undefined}
-            >
-              {s.icon && (
-                <span className="pf-i" aria-hidden="true">
-                  {s.icon}
-                </span>
-              )}
-              <span className="pf-l">{s.label}</span>
-              <span className="pf-n" aria-hidden="true">
-                {s.count}
+    <div
+      className={slim ? 'pf-chips is-slim' : 'pf-chips'}
+      role="group"
+      aria-label="Explore projects"
+      ref={rowRef}
+      onKeyDown={onKeyDown}
+      onScroll={slim ? fit : undefined}
+      inert={inert}
+    >
+      {items.map((s) => {
+        // The visible label stays in the name (for voice control); a short label also gets the full name.
+        const name = s.name.includes(s.label) ? s.name : `${s.label}, ${s.name}`;
+        return (
+          <button
+            key={s.id}
+            type="button"
+            className="pf-chip"
+            data-id={s.id}
+            aria-pressed={s.id === pressed}
+            aria-label={`${name}, ${s.count} ${s.count === 1 ? 'project' : 'projects'}`}
+            onClick={onPress ? () => onPress(s.id) : undefined}
+          >
+            {s.icon && (
+              <span className="pf-i" aria-hidden="true">
+                {s.icon}
               </span>
-            </button>
-          );
-        })}
-      </div>
+            )}
+            <span className="pf-l">{s.label}</span>
+            <span className="pf-n" aria-hidden="true">
+              {s.count}
+            </span>
+          </button>
+        );
+      })}
     </div>
   );
 }
@@ -134,17 +154,21 @@ const NOTES: Partial<Record<CategoryId, ReactNode>> = {
 type Selection = { filter: Filter; n: number; scroll: null | 'press' | 'arrive' };
 
 /**
- * The homepage's projects (Wes, 24 Nov 2026: "defaulting to all, but then the click tabs"): the band, the note for the
- * pressed category, and one grid of every project, newest first. With All pressed the highlights row's projects are
- * left out of the grid (they are right above it); a category shows only its own tiles, highlights included. The others
- * carry `hidden`, so a tile keeps its place, tilt and tape.
+ * The homepage's projects (Wes, 24 Nov 2026: "defaulting to all, but then the click tabs"): an "Explore projects"
+ * heading with the chips under it, the note for the pressed category, and one grid of every project, newest first.
+ * With All pressed the highlights row's projects are left out of the grid (they are right above it); a category shows
+ * only its own tiles, highlights included. The others carry `hidden`, so a tile keeps its place, tilt and tape.
  *
  * The server renders All, so without JavaScript every tile shows but the three above, and nothing is out of reach. The
- * address holds the filter: #work … #web select a category, #projects is All (and lands on the band), no hash is All.
+ * address holds the filter: #work … #web select a category, #projects is All (and lands on the heading), no hash is All.
  * A press rewrites the address in place; a hash change (Back, Forward, a link) applies it again.
  *
- * The band sticks under the header (top: var(--head-h)). A press while it is stuck brings the start of the list up
- * under it; while it is still in its own place on screen the page stays put. `children` follow the grid (the GitHub map).
+ * The slim bar (Wes picked "option 1", 24 Nov 2026): once the resting chips have gone up under the header, and while
+ * the list is still on screen, a one-row copy of them shows in a bar fixed under the header. Fixed, so nothing in the
+ * page moves when it comes or goes. Only one copy is ever reachable: the bar is `hidden` while it isn't showing, and
+ * the resting chips are `inert` while it is; a keyboard user focused in the copy that goes is moved to the same chip in
+ * the other. A press while the bar shows brings the start of the list up under it; otherwise the page stays put.
+ * `children` follow the list (the GitHub map).
  */
 export default function ProjectFilter({
   projects,
@@ -156,9 +180,12 @@ export default function ProjectFilter({
   children?: ReactNode;
 }) {
   const [sel, setSel] = useState<Selection>({ filter: 'all', n: 0, scroll: null });
-  const spotRef = useRef<HTMLDivElement>(null);
-  const bandRef = useRef<HTMLDivElement>(null);
-  const listRef = useRef<HTMLElement>(null);
+  const [stuck, setStuck] = useState(false);
+  const restRef = useRef<HTMLDivElement>(null);
+  const barRef = useRef<HTMLDivElement>(null);
+  const startRef = useRef<HTMLDivElement>(null);
+  const handoff = useRef<string | null>(null);
+  const stuckRef = useRef(false);
   const filter = sel.filter;
 
   const press = useCallback((id: Filter) => {
@@ -174,7 +201,7 @@ export default function ProjectFilter({
     const start = filterFromHash(location.hash);
     if (start && start !== 'all') setSel((s) => ({ filter: start, n: s.n + 1, scroll: returning() ? null : 'arrive' }));
     // Back, Forward or a link changing the hash (a fragment's Back and Forward fire hashchange too). #projects is All,
-    // and the browser has already brought the band up; a category is applied as on arrival. Any other hash (the
+    // and the browser has already brought the heading up; a category is applied as on arrival. Any other hash (the
     // header's #connect, Back to top's #top) leaves the filter as it is.
     const onHash = () => {
       const f = filterFromHash(location.hash);
@@ -184,19 +211,65 @@ export default function ProjectFilter({
     return () => window.removeEventListener('hashchange', onHash);
   }, []);
 
-  // After the grid has changed: put the band and the list where the press or the address wants them.
+  // The header's height, where the bar sits (top: var(--head-h)); the stylesheet is the one place it is set.
+  const line = () => (barRef.current ? parseFloat(getComputedStyle(barRef.current).top) || 0 : 0);
+
+  // Show the slim bar once the resting chips have gone up under the header, while the list is still on screen.
+  const update = useCallback(() => {
+    const rest = restRef.current?.querySelector<HTMLElement>('.pf-chips');
+    const start = startRef.current;
+    if (!rest || !start) return;
+    const top = line();
+    const next = rest.getBoundingClientRect().top < top && start.getBoundingClientRect().bottom > top + 60;
+    if (next === stuckRef.current) return;
+    // A keyboard user in the copy that is going moves to the same chip in the other.
+    const a = document.activeElement as HTMLElement | null;
+    const from = stuckRef.current ? barRef.current : restRef.current;
+    handoff.current = a && from?.contains(a) ? (a.dataset.id ?? null) : null;
+    stuckRef.current = next;
+    setStuck(next);
+  }, []);
+
+  useEffect(() => {
+    let frame = 0;
+    const raf = typeof window.requestAnimationFrame === 'function' ? window.requestAnimationFrame.bind(window) : null;
+    const onScroll = () => {
+      if (!raf) return update();
+      if (!frame) frame = raf(() => {
+        frame = 0;
+        update();
+      });
+    };
+    update();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
+      if (frame && typeof window.cancelAnimationFrame === 'function') window.cancelAnimationFrame(frame);
+    };
+  }, [update]);
+
   useLayoutEffect(() => {
-    const spot = spotRef.current;
-    const band = bandRef.current;
-    const list = listRef.current;
-    if (!sel.scroll || !spot || !band || !list) return;
-    // The band's sticky offset is the header's height (--head-h); the stylesheet is the one place it is set.
-    const line = parseFloat(getComputedStyle(band).top) || 0;
-    const settled = window.scrollY + spot.getBoundingClientRect().top - line; // the band just stuck, the list under it
+    const id = handoff.current;
+    handoff.current = null;
+    if (!id) return;
+    const to = (stuck ? barRef.current : restRef.current)?.querySelector<HTMLElement>(`.pf-chip[data-id="${id}"]`);
+    to?.focus({ preventScroll: true });
+  }, [stuck]);
+
+  // After the grid has changed: put the heading and the list where the press or the address wants them.
+  useLayoutEffect(() => {
+    const rest = restRef.current;
+    const start = startRef.current;
+    if (!sel.scroll || !rest || !start) return;
+    const top = line();
+    const settled = window.scrollY + rest.getBoundingClientRect().top - top; // the heading just under the header
     if (sel.scroll === 'arrive') return scrollToY(settled, false);
-    if (spot.getBoundingClientRect().top > line + 0.5) return; // the band is still in its own place: stay put
-    const y = window.scrollY + list.getBoundingClientRect().top - line - band.offsetHeight - GAP;
+    if (!stuck || !barRef.current) return; // the chips are still in their own place: stay put
+    const y = window.scrollY + start.getBoundingClientRect().top - top - barRef.current.offsetHeight - GAP;
     scrollToY(Math.max(y, settled), sel.scroll === 'press');
+    // `stuck` is read, not followed: a press or an arrival is what moves the page.
   }, [sel]);
 
   const items = filterItems(projects);
@@ -205,14 +278,21 @@ export default function ProjectFilter({
 
   return (
     <>
-      {/* #projects lands here: the band's own place, so it comes to rest just under the header. */}
-      <div id="projects" className="pf-spot" ref={spotRef} />
-      <FilterBand items={items} pressed={filter} onPress={press} bandRef={bandRef} />
-      <div className="wrap pf-wrap">
-        <section className="pf-list" aria-labelledby="pf-h" ref={listRef}>
-          <h2 id="pf-h" className="vh">
-            Projects
+      {/* The slim bar, fixed under the header: first in the order, so Tab meets it before the list when it shows. */}
+      <div className="pf-bar" ref={barRef} hidden={!stuck}>
+        <div className="pf-bar-in">
+          <FilterChips items={items} pressed={filter} onPress={press} slim inert={!stuck} />
+        </div>
+      </div>
+      <section className="pf-list" aria-labelledby="pf-h">
+        {/* #projects lands here: the heading comes to rest just under the header. */}
+        <div id="projects" className="pf-rest" ref={restRef}>
+          <h2 id="pf-h" className="pf-h">
+            Explore projects
           </h2>
+          <FilterChips items={items} pressed={filter} onPress={press} inert={stuck} />
+        </div>
+        <div className="pf-items" ref={startRef}>
           {note && <div className="pf-note">{note}</div>}
           <div className="tiles">
             {projects.map((p) => (
@@ -225,9 +305,9 @@ export default function ProjectFilter({
               />
             ))}
           </div>
-        </section>
-        {children}
-      </div>
+        </div>
+      </section>
+      {children}
     </>
   );
 }
