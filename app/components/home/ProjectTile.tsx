@@ -1,5 +1,6 @@
 import type { Hardware, Placed } from '@/lib/projects';
 import Print from './Print';
+import TrailerPrint from './TrailerPrint';
 
 export function HardwareLink({ hardware }: { hardware: Hardware }) {
   return (
@@ -17,19 +18,23 @@ export function HardwareLink({ hardware }: { hardware: Hardware }) {
 export default function ProjectTile({ project: p, footer = false }: { project: Placed; footer?: boolean }) {
   return (
     <article className="tile">
-      <Print
-        image={p.image}
-        alt={p.alt}
-        fit={p.fit}
-        tilt={p.tilt}
-        tapes={p.tapes}
-        caption={
-          <>
-            <span>{p.name}</span>
-            <span>{p.kind}</span>
-          </>
-        }
-      />
+      {p.trailer ? (
+        <TrailerPrint trailer={p.trailer} tilt={p.tilt} tapes={p.tapes} />
+      ) : (
+        <Print
+          image={p.image}
+          alt={p.alt}
+          fit={p.fit}
+          tilt={p.tilt}
+          tapes={p.tapes}
+          caption={
+            <>
+              <span>{p.name}</span>
+              <span>{p.kind}</span>
+            </>
+          }
+        />
+      )}
       <div className="tb">
         <div className="th">
           <h3>{p.name}</h3>
@@ -42,7 +47,7 @@ export default function ProjectTile({ project: p, footer = false }: { project: P
             {p.hardware ? <HardwareLink hardware={p.hardware} /> : <span className="fine">{p.kind}</span>}
             {p.href &&
               (p.href.startsWith('/') ? (
-                <a href={p.href}>Explore it →</a>
+                <a href={p.href}>{p.cta ?? 'Explore it →'}</a>
               ) : (
                 <a href={p.href} target="_blank" rel="noopener noreferrer">
                   GitHub →

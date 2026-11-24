@@ -8,13 +8,25 @@ let mockPath = '/';
 jest.mock('next/navigation', () => ({ usePathname: () => mockPath }));
 beforeEach(() => { mockPath = '/'; });
 
-test('header has the wordmark, the three links and the theme switch', () => {
-  render(<Nav theme />);
-  expect(screen.getByRole('link', { name: 'Wesley Bard' })).toHaveAttribute('href', '/');
-  expect(screen.getByRole('link', { name: 'Projects' })).toHaveAttribute('href', '/#projects');
-  expect(screen.getByRole('link', { name: 'Games' })).toHaveAttribute('href', '/videogames');
-  expect(screen.getByRole('link', { name: 'Connect' })).toHaveAttribute('href', '/#connect');
-  expect(screen.getByRole('group', { name: 'Colour theme' })).toBeInTheDocument();
+// One menu at the top of a page (Wes, 24 Nov 2026): the header carries the name and the theme switch, no links.
+test('the header is the name, the link home, and the theme switch: no other links', () => {
+  for (const p of ['/', '/videogames/snes-history', '/games/con-air', '/builds/photo-frame']) {
+    mockPath = p;
+    const { container, unmount } = render(<Nav theme />);
+    const header = container.querySelector('header.wb-head') as HTMLElement;
+    const links = within(header).getAllByRole('link');
+    expect(links).toHaveLength(1);
+    expect(links[0]).toHaveAccessibleName('Wesley Bard');
+    expect(links[0]).toHaveAttribute('href', '/');
+    expect(within(header).getByRole('group', { name: 'Colour theme' })).toBeInTheDocument();
+    expect(within(header).queryByRole('navigation')).toBeNull();
+    for (const name of ['Projects', 'Games', 'Builds', 'SNES History', 'Connect']) {
+      expect(within(header).queryByText(name)).toBeNull();
+      expect(within(header).queryByRole('link', { name })).toBeNull();
+    }
+    expect(header.querySelector('[aria-current]')).toBeNull();
+    unmount();
+  }
 });
 
 test('pages outside the design system get the header without the theme switch', () => {
@@ -39,8 +51,8 @@ test('footer links: Explore on the site, Connect out to new tabs', () => {
   within(screen.getByRole('navigation', { name: 'Footer' })).getByRole('list', { name: 'Explore' });
   const explore = within(screen.getByRole('list', { name: 'Explore' })).getAllByRole('link');
   expect(explore.map((a) => [a.textContent, a.getAttribute('href')])).toEqual([
-    ['Projects', '/#projects'],
-    ['Games', '/videogames'],
+    ['Builds', '/#builds'],
+    ['SNES History', '/videogames'],
     ['Design system', '/design'],
   ]);
   const connect = within(screen.getByRole('list', { name: 'Connect' })).getAllByRole('link');
@@ -95,29 +107,8 @@ test("the footer has no drawing any more, and the year is the build's", () => {
   expect(screen.getByText(`© ${new Date().getFullYear()} Wesley Bard`)).toBeInTheDocument();
 });
 
-test('the nav order is Projects, Games, Connect', () => {
-  render(<Nav />);
-  expect(within(screen.getByRole('navigation', { name: 'Main' })).getAllByRole('link').map((a) => a.textContent)).toEqual(['Projects', 'Games', 'Connect']);
-});
-
-test('Games is marked current under /videogames, and only there', () => {
-  mockPath = '/videogames/snes-history';
-  const { unmount } = render(<Nav />);
-  expect(screen.getByRole('link', { name: 'Games' })).toHaveAttribute('aria-current', 'page');
-  expect(screen.getByRole('link', { name: 'Projects' })).not.toHaveAttribute('aria-current');
-  unmount();
-  mockPath = '/';
-  render(<Nav />);
-  expect(screen.getByRole('link', { name: 'Games' })).not.toHaveAttribute('aria-current');
-});
-
-test('Games is current on /videogames itself and below it, but not on a look-alike path', () => {
-  for (const [path, current] of [['/videogames', true], ['/videogames/snes-history/f-zero', true], ['/videogamesxyz', false]] as const) {
-    mockPath = path;
-    const { unmount } = render(<Nav />);
-    const games = screen.getByRole('link', { name: 'Games' });
-    if (current) expect(games).toHaveAttribute('aria-current', 'page');
-    else expect(games).not.toHaveAttribute('aria-current');
-    unmount();
-  }
+test('the header has no link list and its old link styles are gone', () => {
+  const css = fs.readFileSync('app/design-system.css', 'utf8');
+  expect(css).not.toMatch(/\.wb-head \.nav/);
+  expect(fs.readFileSync('app/components/Nav.tsx', 'utf8')).not.toMatch(/NAV_LINKS|aria-current/);
 });

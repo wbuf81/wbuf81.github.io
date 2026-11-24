@@ -83,10 +83,6 @@
 .wb-head .brand { display: inline-flex; align-items: baseline; text-decoration: none; padding: 10px 0; }
 .wb-head .wm { font: 600 22px/1 var(--serif); letter-spacing: -.01em; color: var(--ink); }
 .wb-head .wm i { font-style: normal; color: var(--accent); }
-.wb-head .nav { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; }
-.wb-head .nav a { display: inline-flex; align-items: center; min-height: 44px; font: 500 14px var(--sans); color: var(--ink-2); padding: 0 10px; border-radius: 4px; white-space: nowrap; }
-.wb-head .nav a[aria-current="page"] { color: var(--accent); background: var(--accent-soft); }
-.wb-head .nav a:hover { color: var(--accent); background: var(--accent-soft); }
 .wb-head .tools { margin-left: auto; display: flex; align-items: center; gap: 12px; padding: 10px 0; }
 
 /* the theme switch: LegCom's pill, with its hover card */
@@ -106,6 +102,35 @@
 .wb .theme .tip .h { font: 600 16px/1.25 var(--serif); color: var(--ink); margin-bottom: 6px; }
 .wb .theme .tip .p { margin: 0 0 6px; color: var(--ink-2); }
 .wb .theme .tip .lv { font: 500 11.5px var(--mono); color: var(--accent); }
+
+/* ── home-nav: the homepage's band (HomeNav), a sibling of SnesNav (.s-nav) and HealthNav (.h-nav), in the accent ──
+   The first thing in <main>, so it sits under the header (which scrolls away) and sticks to the top of the screen.
+   It is the page's only menu (Wes, 24 Nov 2026): the six build sections, then Connect at the right-hand end. */
+.wb.wb-page { --home-nav-h: 44px; }
+.wb .home-nav { position: sticky; top: 0; z-index: 16; height: var(--home-nav-h); background: var(--accent-soft); }
+.wb .home-nav-in { position: relative; max-width: 1380px; height: 100%; margin: 0 auto; padding: 0 clamp(16px, 3vw, 40px); box-sizing: border-box; display: flex; align-items: center; gap: 2px; overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: none; }
+.wb .home-nav-in::-webkit-scrollbar { display: none; }
+.wb .home-nav-k { flex: none; margin-right: 10px; font: 600 11px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--accent); }
+.wb .home-nav-a { position: relative; isolation: isolate; flex: none; display: inline-flex; align-items: center; gap: 6px; height: var(--home-nav-h); padding: 0 12px; color: var(--accent); font: 600 13px/1 var(--sans); text-decoration: none; white-space: nowrap; }
+.wb .home-nav-a:hover { color: var(--accent); }
+.wb .home-nav-a::before { content: ''; position: absolute; inset: 7px 0; z-index: -1; border-radius: 6px; }
+.wb .home-nav-a[aria-current="true"] { color: var(--ink); }
+.wb .home-nav-a[aria-current="true"]::before { background: var(--paper); box-shadow: 0 1px 0 var(--rule), 0 0 0 1px var(--rule-soft); }
+.wb .home-nav-a:focus-visible { outline: none; }
+.wb .home-nav-a:focus-visible::before { outline: 2px solid var(--accent); outline-offset: 0; }
+/* Connect sits at the right-hand end on a wide screen; on a phone it is the last stop of the sideways scroll. */
+.wb .home-nav-end { margin-left: auto; }
+.wb .home-nav-n { padding: 2px 6px; border-radius: 999px; border: 1px solid currentColor; font: 600 11px/1 var(--mono); }
+/* A band link (or the footer's Builds) lands a section just under the band, with a little air. */
+.wb .builds, .wb .builds > section { scroll-margin-top: calc(var(--home-nav-h) + 16px); }
+@media (hover: hover) {
+  .wb .home-nav-a:not([aria-current="true"]):hover::before { background: color-mix(in srgb, var(--paper) 55%, transparent); }
+}
+@media (max-width: 480px) {
+  .wb .home-nav-k { display: none; }
+  .wb .home-nav-in { padding: 0 8px; gap: 0; }
+  .wb .home-nav-a { padding: 0 9px; font-size: 12.5px; gap: 5px; }
+}
 
 /* ── page blocks ────────────────────────────────────────────── */
 .wb .wrap { max-width: 1380px; margin: 0 auto; padding: 0 clamp(16px, 3vw, 40px) 48px; }
@@ -190,6 +215,14 @@
 .wb .fcopy p { margin: 0; font-size: 14px; line-height: 1.6; color: var(--ink-2); }
 .wb .fcopy .btn { align-self: flex-start; }
 .wb .fdata { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+/* A trailer in a tile's print (TrailerPrint): 3:2 like the game's screen, and a click toggles its sound. The
+   caption holds two text buttons; the caption's clip and ellipsis are lifted so they and their focus rings show. */
+.wb .print .ph.trl-v { aspect-ratio: 3 / 2; height: auto; cursor: pointer; background: var(--screen); }
+.wb .print.trl .cap, .wb .print.trl .cap span:last-child { overflow: visible; }
+.wb .print.trl .cap { bottom: 5px; color: var(--ink-2); }
+.wb .trl-ctl { display: flex; gap: 14px; }
+.wb .trl-ctl button { min-height: 24px; padding: 0; margin: 0; border: 0; background: none; font: inherit; letter-spacing: inherit; color: var(--ink-2); text-decoration: underline; text-underline-offset: 2px; cursor: pointer; }
+.wb .trl-ctl button:hover { color: var(--accent); }
 
 /* ── the highlights row: two picks, then the latest (Wes, 9 Nov 2026) ──
    Three cards a size up from the tiles, each a taped print over its card. The latest wears a filled tag and a strip
@@ -269,6 +302,8 @@
 .wb .ds > .ch > h3, .wb .ds > .ch > div > h3 { font: 600 16px/1.3 var(--serif); margin: 22px 0 10px; color: var(--ink); }
 .wb .ds > .ch > p, .wb .ds > .ch > ul > li { max-width: 84ch; font-size: 14.5px; color: var(--ink-2); }
 .wb .ds > .ch > p { margin: 0 0 10px; }
+/* a link in the page's prose is underlined, so it reads as a link without colour alone */
+.wb .ds > .ch > p a { text-decoration: underline; text-underline-offset: 2px; }
 .wb .ds > .ch > ul { margin: 0; padding-left: 20px; }
 .wb .ds code { font: 500 12px var(--mono); padding: 1px 6px; border-radius: 3px; background: var(--rule-soft); color: var(--ink); }
 .wb .sws { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(190px, 100%), 1fr)); gap: 12px; }
@@ -280,6 +315,9 @@
 .wb .type > div { display: grid; grid-template-columns: 170px minmax(0, 1fr); gap: 16px; align-items: baseline; padding-bottom: 12px; border-bottom: 1px solid var(--rule-soft); }
 .wb .type small { font: 400 11px var(--mono); color: var(--ink-3); }
 .wb .spec-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+/* The homepage band as a sample: framed like the SNES menu, and not stuck to the top of this page. */
+.wb .ds-home-nav { overflow: hidden; border: 1px solid var(--rule); border-radius: 6px; }
+.wb .ds-home-nav .home-nav { position: static; }
 /* the SNES kit (app/design/SnesKit.tsx): holds the SNES pieces still and in the flow, using app/snes/snes.css as is */
 .wb .ds-snes-nav { overflow: hidden; border: 1px solid var(--rule); border-radius: 6px; }
 .wb .ds-snes-nav .s-nav { position: static; }

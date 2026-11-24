@@ -1,8 +1,8 @@
 import { highlights, type Project } from '@/lib/projects';
 import Print from './Print';
 
-// The highlights row at the top of the homepage (design system › the highlights row): the two builds Wes picks, then
-// the latest. Each is a taped print over its card, a size up from the tiles, with a button. lib/projects.ts ›
+// The highlights row at the top of the homepage (design system › the highlights row): the builds Wes picks, one
+// of them marked Latest. Each is a taped print over its card, a size up from the tiles, with a button. lib/projects.ts ›
 // HIGHLIGHTS and LATEST choose them.
 const TILTS = [-1.6, 1.1, -0.8];
 const TAPES = ['38%', '30%', '44%'];
@@ -45,7 +45,7 @@ export function HighlightCard({ project: p, latest, position }: { project: Proje
         {p.href && (
           <div className="hl-go">
             <a className="btn sm" href={p.href} {...(internal ? {} : { target: '_blank', rel: 'noopener noreferrer' })}>
-              {internal ? 'Explore it →' : 'View on GitHub →'}
+              {internal ? (p.cta ?? 'Explore it →') : 'View on GitHub →'}
             </a>
           </div>
         )}

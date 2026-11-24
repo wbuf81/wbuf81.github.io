@@ -1,0 +1,60 @@
+/*
+ * The game pages' own blocks (/games/…), on top of the design system. Tokens only, never a hex, so dark mode
+ * reaches everything; every selector under .wb, and new blocks are named gm-…  (__tests__/games.test.tsx holds both).
+ */
+
+/* Screenshots are the GBA's 3:2, where the system's prints are 2:1. The width and height attributes on each
+   image hold its room while it loads; height: auto keeps the attribute from stretching it. */
+.wb.gm .print .ph { aspect-ratio: 3 / 2; height: auto; object-fit: cover; object-position: 50% 50%; }
+
+/* The trailer: a print with no tilt beside the name, its video on a screen-coloured ground until the poster loads. */
+.wb .print.gm-trailer { flex: 1 1 min(520px, 100%); max-width: 640px; min-width: 0; padding: 10px 10px 34px; }
+.wb .print.gm-trailer .tape { height: 20px; }
+.wb .gm-trailer video { display: block; width: 100%; height: auto; aspect-ratio: 3 / 2; background: var(--screen); }
+
+/* The four facts go four across, then two by two, then one. The system's auto-fit strip put three across on a
+   tablet and left the fourth beside an empty grey cell. */
+.wb.gm .stats { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
+/* Prints in rows: three across, the levels five; the gaps leave room for the tilt and tape. */
+.wb .gm-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 40px 30px; margin-top: 26px; }
+.wb .gm-grid.five { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 34px 22px; }
+.wb .gm-grid .print { min-width: 0; }
+
+/* Ways to play: a print, then its name and a line under it. */
+.wb .gm-way { display: flex; flex-direction: column; min-width: 0; }
+.wb .gm-way h3 { font: 600 20px/1.15 var(--serif); margin: 18px 0 0; color: var(--ink); }
+.wb .gm-way p { margin: 6px 0 0; font-size: 14px; line-height: 1.55; color: var(--ink-2); max-width: 52ch; }
+
+/* Under the hood: the notes in two columns, the two help pages stacked beside them. */
+.wb .gm-hood { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 320px); gap: 30px 44px; align-items: start; margin-top: 18px; }
+.wb .gm-dl { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 30px; margin: 0; }
+.wb .gm-dl > div { padding: 12px 0 14px; border-top: 1px solid var(--rule); min-width: 0; }
+.wb .gm-dl dt { font: 500 11px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink); }
+.wb .gm-dl dd { margin: 6px 0 0; font-size: 14px; line-height: 1.55; color: var(--ink-2); }
+.wb .gm-hood-shots { display: grid; gap: 34px; padding-top: 12px; }
+
+.wb .gm-built { margin-top: 14px; }
+
+/* The closing note: a card, not a link. */
+.wb .card.gm-note { margin-top: 52px; max-width: 640px; }
+.wb .gm-note h2 { font: 600 18px/1.25 var(--serif); margin: 0 0 6px; color: var(--ink); }
+
+@media (max-width: 1100px) {
+  .wb.gm .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .wb .gm-grid.five { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .wb .gm-hood { grid-template-columns: minmax(0, 1fr); }
+  .wb .gm-hood-shots { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 30px; max-width: 700px; }
+}
+@media (max-width: 860px) {
+  .wb .gm-grid, .wb .gm-grid.five { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 34px 22px; }
+}
+@media (max-width: 600px) {
+  .wb .gm-dl { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 480px) {
+  .wb.gm .stats { grid-template-columns: minmax(0, 1fr); }
+  .wb .gm-grid, .wb .gm-grid.five, .wb .gm-hood-shots { grid-template-columns: minmax(0, 1fr); }
+  /* one print across fills the gutter-to-gutter width, and its corner tape ran off the edge of the screen */
+  .wb .gm-grid .print, .wb .gm-hood-shots .print { margin: 0 8px; }
+}

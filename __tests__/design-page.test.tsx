@@ -1,3 +1,4 @@
+import fs from 'fs';
 import { render, screen, within } from '@testing-library/react';
 import DesignPage from '@/app/design/page';
 import { TOKENS } from '@/app/design/tokens';
@@ -13,23 +14,24 @@ beforeAll(() => {
 test('the design page shows every token, the type, the blocks and the rules', () => {
   const { container } = render(<DesignPage />);
   expect(screen.getByRole('heading', { level: 1, name: 'How wesleybard.com is built.' })).toBeInTheDocument();
-  for (const name of ['Colour', 'Type', 'The header', 'Building blocks', 'Writing', 'Using it on a page']) {
+  for (const name of ['Colour', 'Type', 'The header', 'Building blocks', 'Write-up pages', 'Writing', 'Using it on a page']) {
     expect(screen.getByRole('heading', { level: 2, name })).toBeInTheDocument();
   }
   const swatches = Array.from(container.querySelectorAll('.sw code'), (c) => c.textContent);
   expect(swatches.sort()).toEqual(TOKENS.map((t) => t.name).sort());
   expect(screen.getByText('#0f4c5c · #7ec4d4')).toBeInTheDocument();
   expect(screen.getAllByRole('group', { name: 'Colour theme' }).length).toBeGreaterThanOrEqual(1);
-  expect(screen.getByRole('button', { name: /Play/ })).toBeInTheDocument();
+  // Tetris's own Play, and the trailer print's
+  expect(within(container.querySelector('.arcade') as HTMLElement).getByRole('button', { name: /Play/ })).toBeInTheDocument();
 });
 
-test('the SNES kit shows every SNES piece, after the building blocks and before the writing rules', () => {
+test('the SNES kit shows every SNES piece, after the building blocks and write-ups and before the writing rules', () => {
   const { container } = render(<DesignPage />);
   const section = container.querySelector('section#ds-snes') as HTMLElement;
   expect(section).not.toBeNull();
   expect(within(section).getByRole('heading', { level: 2, name: 'The SNES kit' })).toBeInTheDocument();
   const order = Array.from(container.querySelectorAll('.ds > section'), (s) => s.getAttribute('aria-labelledby'));
-  expect(order.slice(order.indexOf('ds-blocks'), order.indexOf('ds-blocks') + 3)).toEqual(['ds-blocks', 'ds-snes-h', 'ds-writing']);
+  expect(order.slice(order.indexOf('ds-blocks'), order.indexOf('ds-blocks') + 4)).toEqual(['ds-blocks', 'ds-writeups', 'ds-snes-h', 'ds-writing']);
   const pieces = [
     'The SNES menu', 'Game tiles', 'Covers and the no-art placeholder', 'The ★ Top 8 button', 'The toast', 'The Top 8 tray',
     'Filter chips and toggles', 'Heatmap cells', 'Instruction booklet bits', 'The Omaha World-Pixel', 'Be Kind, Rewind',
@@ -56,5 +58,54 @@ test('the design page keeps its outline (one h1, no skipped levels) and every SN
     expect(img.hasAttribute('alt')).toBe(true);
     expect(img.getAttribute('width')).toBeTruthy();
     expect(img.getAttribute('height')).toBeTruthy();
+  }
+});
+
+test('the header section shows the homepage band, held still, its links going to the homepage', () => {
+  const { container } = render(<DesignPage />);
+  const header = container.querySelector('section[aria-labelledby="ds-header"]') as HTMLElement;
+  expect(within(header).getByRole('heading', { level: 3, name: 'The band' })).toBeInTheDocument();
+  const nav = within(header).getByRole('navigation', { name: 'Builds on the homepage' });
+  expect(nav.closest('.ds-home-nav')).not.toBeNull();
+  const links = within(nav).getAllByRole('link');
+  expect(links).toHaveLength(7);
+  expect(links.map((a) => a.getAttribute('href'))).toEqual(['/#work', '/#games', '/#mac', '/#linux', '/#electronics', '/#more', '/#connect']);
+  expect(links.filter((a) => a.getAttribute('aria-current') === 'true')).toHaveLength(1);
+  // It doesn't stick on this page.
+  const css = fs.readFileSync('app/design-system.css', 'utf8');
+  expect(css).toMatch(/\.wb \.ds-home-nav \.home-nav \{ position: static; \}/);
+});
+
+test('the trailer print is shown live: a video that never autoplays and shows no controls, and the print is no link', () => {
+  const { container } = render(<DesignPage />);
+  expect(screen.getByRole('heading', { level: 3, name: 'The trailer print' })).toBeInTheDocument();
+  const video = container.querySelector('.print.trl video') as HTMLVideoElement;
+  expect(video).not.toBeNull();
+  expect(video.hasAttribute('autoplay')).toBe(false);
+  expect(video.hasAttribute('controls')).toBe(false);
+  expect(video.getAttribute('src')).toBe('/games/con-air/trailer.mp4');
+  expect(video.closest('a')).toBeNull();
+  expect(within(container.querySelector('.print.trl') as HTMLElement).getByRole('button', { name: 'Turn sound on' })).toBeInTheDocument();
+});
+
+test('the write-up pages part shows its own blocks live and links both real pages', () => {
+  const { container } = render(<DesignPage />);
+  const section = container.querySelector('section[aria-labelledby="ds-writeups"]') as HTMLElement;
+  expect(within(section).getByRole('heading', { level: 2, name: 'Write-up pages' })).toBeInTheDocument();
+  for (const name of ['The definition list', 'The warning card', 'The numbered steps', 'The flowchart']) {
+    expect(within(section).getByRole('heading', { level: 3, name })).toBeInTheDocument();
+  }
+  expect(section.querySelectorAll('dl.gm-dl > div')).toHaveLength(2);
+  expect(section.querySelectorAll('.card.bd-warn li')).toHaveLength(2);
+  const steps = section.querySelectorAll('ol.bd-steps > li');
+  expect(steps.length).toBeGreaterThanOrEqual(2);
+  expect(section.querySelectorAll('ol.bd-steps .bd-links a').length).toBeGreaterThanOrEqual(1);
+  const hrefs = Array.from(section.querySelectorAll('a'), (a) => a.getAttribute('href'));
+  expect(hrefs).toContain('/games/con-air');
+  expect(hrefs).toContain('/builds/photo-frame');
+  // the outside link opens in a new tab, never the opener
+  for (const a of Array.from(section.querySelectorAll('a[href^="http"]'))) {
+    expect(a.getAttribute('target')).toBe('_blank');
+    expect(a.getAttribute('rel')).toMatch(/noopener/);
   }
 });

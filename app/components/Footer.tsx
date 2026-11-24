@@ -2,13 +2,13 @@ import Link from 'next/link';
 
 // The site footer, the coastal one (Wes, 9 Nov 2026; app/design-system.css › the footer): the name and a line,
 // Beyond work, Explore and Connect, the year and Back to top (the boardwalk drawing that sat under them was removed
-// on 10 Nov 2026). It is id="connect": the header's Connect lands here, since
-// the homepage's Beyond work and Connect cards folded into it. Back to top lands on the header's id="top" (Nav), which
+// on 10 Nov 2026). It is id="connect": the homepage band's Connect (HomeNav) lands here,
+// since the homepage's Beyond work and Connect cards folded into it. Back to top lands on the header's id="top" (Nav), which
 // every page with this footer renders first. The year is fixed at build time (static export).
 
 const EXPLORE = [
-  { label: 'Projects', href: '/#projects' },
-  { label: 'Games', href: '/videogames' },
+  { label: 'Builds', href: '/#builds' },
+  { label: 'SNES History', href: '/videogames' },
   { label: 'Design system', href: '/design' },
 ];
 
@@ -60,7 +60,7 @@ export default function Footer() {
               <ul aria-labelledby="foot-explore">
                 {EXPLORE.map((l) => (
                   <li key={l.label}>
-                    {/* a home-page section is a plain link, as in the header; a page of its own is a Link */}
+                    {/* a home-page section is a plain link; a page of its own is a Link */}
                     {l.href.startsWith('/#') ? <a href={l.href}>{l.label}</a> : <Link href={l.href}>{l.label}</Link>}
                   </li>
                 ))}

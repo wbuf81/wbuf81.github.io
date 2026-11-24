@@ -10,12 +10,17 @@ import Highlights from '../components/home/Highlights';
 import ThenNowStill from '../components/home/ThenNowStill';
 import TetrisPrint from '../components/home/TetrisPrint';
 import GitHubMap from '../components/home/GitHubMap';
-import { AGENTS, PERSONAL, place, personal, buildCounts } from '@/lib/projects';
+import HomeNav from '../components/home/HomeNav';
+import { AGENTS, PERSONAL, GAMES, place, personal, buildCounts, homeNavItems } from '@/lib/projects';
 import contributions from '@/data/github-contributions.json';
 import { TOKENS, tokenValues, type TokenGroup } from './tokens';
 import SnesKit from './SnesKit';
 import { fraktur, vt323 } from '../snes/fonts';
 import '../snes/snes.css';
+// The write-up pages' own blocks, for their samples below. Their page-wide rules hang off .wb.gm, which this page's
+// <main> doesn't carry, so only the named blocks (gm-…, bd-…) reach it.
+import '../games/games.css';
+import '../builds/builds.css';
 
 export const metadata: Metadata = {
   title: 'Design system · Wesley Bard',
@@ -26,9 +31,20 @@ export const metadata: Metadata = {
 const VALUES = tokenValues(fs.readFileSync(path.join(process.cwd(), 'app/design-system.css'), 'utf8'));
 const GROUPS: TokenGroup[] = ['Surfaces', 'Ink', 'Accent', 'Meaning', 'Prints', 'Arcade', 'GitHub map', 'Charts', 'SNES'];
 
+// Real copy from the Photo Frame Dashboard write-up (app/builds/photo-frame/page.tsx), for the write-up samples.
+const PF_GUIDE = 'https://github.com/wesbos/photo-frame-dashboard/blob/main';
+const PF_NOTES: [string, string][] = [
+  ['Fetched once', 'The verse and the gaming list are fetched once a day and kept. Weather is kept for ten minutes.'],
+  ['Slow Wi-Fi', 'After a power cut the page loads before Wi-Fi does. Every tile keeps the last good data, says how old it is and tries again.'],
+];
+const PF_WARNINGS = [
+  'Back the frame up, and check the backup, before you change anything.',
+  'Never cut the power during a write.',
+];
+
 const TYPE = [
   { label: 'Name · serif 58', sample: 'Wesley Bard', style: { font: '600 58px/1.02 var(--serif)', letterSpacing: '-.02em' } },
-  { label: 'Section · serif 26', sample: 'Personal', style: { font: '600 26px/1.15 var(--serif)' } },
+  { label: 'Section · serif 26', sample: 'Electronics', style: { font: '600 26px/1.15 var(--serif)' } },
   { label: 'Tile name · serif 20', sample: 'Knobdeck', style: { font: '600 20px/1.15 var(--serif)' } },
   { label: 'Figure · serif 24', sample: 'Lockheed Martin', style: { font: '600 24px/1.1 var(--serif)', color: 'var(--accent)' } },
   { label: 'Text · sans 15', sample: 'A desk controller on a round touchscreen you turn.', style: { font: '400 15px/1.55 var(--sans)' } },
@@ -40,6 +56,7 @@ export default function DesignPage() {
   const lucy = place(AGENTS.filter((a) => a.key === 'lucy'), 0)[0];
   const knobdeck = place(PERSONAL.filter((p) => p.key === 'knobdeck'), 1)[0];
   const oscar = AGENTS[0];
+  const conair = place([GAMES[0]], 2)[0];
 
   return (
     <>
@@ -101,18 +118,30 @@ export default function DesignPage() {
           <section className="ch" aria-labelledby="ds-header">
             <h2 id="ds-header">The header</h2>
             <p>
-              Paper bar with a bottom rule: the wordmark (Bard in the accent), Projects and Connect, and the theme
+              Paper bar with a bottom rule: the wordmark (Bard in the accent), which is the link home, and the theme
               switch, the same three-way pill as the work tools: light, match my computer, dark. The choice is saved in
-              this browser and applied before the page paints, so it never flashes. On a phone the bar wraps instead
-              of hiding behind a menu. It&apos;s live at the top of this page.
+              this browser and applied before the page paints, so it never flashes. The header carries no other links.
+              It&apos;s live at the top of this page.
             </p>
+
+            <h3>The band</h3>
+            <p>
+              One menu per page, and it is never in the header. A page with parts of its own puts a band first in{' '}
+              <code>&lt;main&gt;</code>. It sticks to the top as the header scrolls away, lights the section you are in,
+              and scrolls sideways within itself on a phone. <code>HomeNav</code> on the homepage (its six sections,
+              then Connect), <code>HealthNav</code> and <code>SnesNav</code> on theirs. This is the homepage&apos;s,
+              held still: it doesn&apos;t stick, and its links go to the homepage.
+            </p>
+            <div className="ds-home-nav">
+              <HomeNav items={homeNavItems()} sample="games" />
+            </div>
           </section>
 
           <section className="ch" aria-labelledby="ds-footer">
             <h2 id="ds-footer">The footer</h2>
             <p>
-              Paper with a top rule, so the graph paper ends cleanly above it: the name, a Beyond work line, Explore and
-              Connect, then the year and Back to top over a thin rule. The header&apos;s Connect lands here. It&apos;s live
+              Paper with a top rule, so the graph paper ends cleanly above it: the name, a Beyond work line, Explore
+              (Builds, SNES History, Design system) and Connect, then the year and Back to top over a thin rule. The homepage band&apos;s Connect lands here. It&apos;s live
               at the bottom of this page.
             </p>
           </section>
@@ -169,20 +198,34 @@ export default function DesignPage() {
 
             <h3>Tiles</h3>
             <p>
-              A print standing over the top of its card. A tile says what the thing does and what it runs on. Personal
-              projects add a footer: the board, or what it&apos;s written in, and GitHub when the repo is public.
+              A print standing over the top of its card. A tile says what the thing does and what it runs on. Outside
+              Work, a tile adds a footer: the board, or what it&apos;s written in, then GitHub when the repo is public,
+              or a link to its page here when the build lives on this site or has a write-up.
             </p>
             <div className="tiles">
               <ProjectTile project={lucy} />
               <ProjectTile project={knobdeck} footer />
             </div>
 
+            <h3>The trailer print</h3>
+            <p>
+              A game&apos;s tile can hold its trailer in place of a picture. It starts muted once half of it is on
+              screen, and loops. A click on it or Turn sound on gives it sound; scrolling away pauses it and mutes it
+              again. A visitor who asked for reduced motion or data saving gets the poster and a Play button, never an
+              autoplay. While it holds a trailer the print is not a link: the tile&apos;s footer goes to the game&apos;s
+              page.
+            </p>
+            <div className="tiles">
+              <ProjectTile project={conair} footer />
+            </div>
+
             <h3>The highlights row</h3>
             <p>
-              The top of the homepage: two builds I pick, then the newest. Each is a print over its card, a size up from
-              the tiles, with a button. The newest wears a filled Latest tag and a strip from a label maker on its print.{' '}
-              <code>HIGHLIGHTS</code> and <code>LATEST</code> in <code>lib/projects.ts</code> choose them, and each is
-              left out of its group below. On a phone, or under 900px, the three stack.
+              The top of the homepage: a row of builds I pick. Each is a print over its card, a size up from the tiles,
+              with a button. <code>HIGHLIGHTS</code> in <code>lib/projects.ts</code> is the whole row, in order.{' '}
+              <code>LATEST</code> names the one card that wears the filled Latest tag and a strip from a label maker on
+              its print; it can be any card in the row. Every card also stays a tile in its own section below. Under
+              900px the cards stack.
             </p>
             <Highlights />
 
@@ -221,6 +264,80 @@ export default function DesignPage() {
             </div>
           </section>
 
+          <section className="ch" aria-labelledby="ds-writeups">
+            <h2 id="ds-writeups">Write-up pages</h2>
+            <p>
+              A page about one build: a game at <code>/games/&lt;slug&gt;</code>, or a build whose repo stays private
+              at <code>/builds/&lt;slug&gt;</code>. It opens on a hero with an untilted print beside the name, then a
+              facts strip, sections of prints and definition lists, and a closing card. Write-ups are hidden from
+              search and out of the sitemap, and each names its own link-preview card. See{' '}
+              <a href="/games/con-air">CON AIR</a> and <a href="/builds/photo-frame">Photo Frame Dashboard</a>.
+            </p>
+            <p>
+              The shared blocks are in <code>app/games/games.css</code> (<code>gm-…</code>), a build&apos;s own in{' '}
+              <code>app/builds/builds.css</code> (<code>bd-…</code>). These are the ones that exist only there.
+            </p>
+
+            <h3>The definition list</h3>
+            <p>
+              <code>gm-dl</code>: short notes, a mono term over a line or two. Two columns, one on a phone.
+            </p>
+            <dl className="gm-dl">
+              {PF_NOTES.map(([term, text]) => (
+                <div key={term}>
+                  <dt>{term}</dt>
+                  <dd>{text}</dd>
+                </div>
+              ))}
+            </dl>
+
+            <h3>The warning card</h3>
+            <p>
+              <code>bd-warn</code>: a card with a <code>--warn</code> rule down its left edge, for what can go wrong,
+              before the steps.
+            </p>
+            <aside className="card bd-warn" aria-labelledby="ds-warn-h">
+              <h3 id="ds-warn-h">Before you start</h3>
+              <ul>
+                {PF_WARNINGS.map((w) => (
+                  <li key={w}>{w}</li>
+                ))}
+              </ul>
+            </aside>
+
+            <h3>The numbered steps</h3>
+            <p>
+              <code>bd-steps</code>: how to make your own. The number in the accent, the step in bold, and a row of
+              links under a step that has a guide.
+            </p>
+            <ol className="bd-steps">
+              <li>
+                <p>
+                  <strong>Get a frame the project supports.</strong> Go by the model on the frame&apos;s About screen,
+                  not the brand on the box. The same listing can ship different boards.
+                </p>
+                <p className="bd-links">
+                  <a href={`${PF_GUIDE}/docs/devices.md`} target="_blank" rel="noopener noreferrer">
+                    Device index
+                  </a>
+                </p>
+              </li>
+              <li>
+                <p>
+                  <strong>Point the kiosk at your page.</strong> Save the address once. Give your page a version check
+                  and it will pick up new deploys by itself.
+                </p>
+              </li>
+            </ol>
+
+            <h3>The flowchart</h3>
+            <p>
+              <code>bd-flow…</code>: three stages joined by labelled arrows, side by side on a wide screen and stacked
+              on a phone, in HTML and CSS so the words stay real text. It lives on{' '}
+              <a href="/builds/photo-frame">Photo Frame Dashboard</a>, under How everything gets to the frame.
+            </p>
+          </section>
+
           <SnesKit />
 
           <section className="ch" aria-labelledby="ds-writing">
@@ -247,6 +364,9 @@ export default function DesignPage() {
                 art or trademarked game names.
               </li>
               <li>Titles are the US titles as printed on the box.</li>
+              <li>
+                A write-up links no private repo, ROM or download, and nothing private goes in its words or pictures.
+              </li>
             </ul>
           </section>
 
@@ -261,7 +381,15 @@ export default function DesignPage() {
                 A new colour goes in the stylesheet, light and dark, and in <code>TOKENS</code> on this page, or the
                 tests fail.
               </li>
+              <li>
+                A page with parts of its own puts its band first in <code>&lt;main&gt;</code>: <code>HomeNav</code>,{' '}
+                <code>HealthNav</code> or <code>SnesNav</code>. The header takes no links.
+              </li>
               <li>Every block is scoped under <code>.wb</code>, so pages with their own look are untouched.</li>
+              <li>
+                A write-up imports <code>app/games/games.css</code>, and <code>app/builds/builds.css</code> for a
+                build, and adds <code>gm</code> (and <code>bd</code>) to its <code>&lt;main&gt;</code>.
+              </li>
               <li>
                 An SNES page also imports <code>app/snes/snes.css</code>, starts <code>&lt;main&gt;</code> with{' '}
                 <code>SnesNav</code> and ends with <code>SnesCredit</code>. Route paths come from{' '}
