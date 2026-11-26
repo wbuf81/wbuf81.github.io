@@ -79,6 +79,23 @@ export function stepPath(f: Frame, values: (number | null)[], y: (v: number) => 
 }
 
 /**
+ * A bar chart's scale in whole steps, from zero or below to zero or above, with room under the lowest bar for the
+ * value label printed beneath it. A bar that reaches the foot of the plot would print its label on whatever sits
+ * under the plot (the weekday names on "The week, by day"), so the floor drops a step at a time until the lowest
+ * negative value ends at least `room` units above the foot. `plot` is the plot's height in the same units.
+ */
+export function barScale(values: number[], step: number, plot: number, room: number): { lo: number; hi: number } {
+  const min = Math.min(0, ...values);
+  let lo = Math.floor(min / step) * step;
+  const hi = Math.max(Math.ceil(Math.max(0, ...values) / step) * step, lo + step);
+  // The gap only grows as the floor drops, and approaches the whole plot, so a room under it always ends the loop.
+  if (min < 0 && room < plot) {
+    while (((min - lo) / (hi - lo)) * plot < room) lo -= step;
+  }
+  return { lo, hi };
+}
+
+/**
  * Below 600px a chart drawn for the desktop shrinks to a strip a third of its height with labels piled on
  * each other, so each chart is drawn twice: in its wide frame, and in a taller compact frame with room for
  * the labels. CSS shows one or the other (`.h-v.is-wide` / `.h-v.is-compact` in health.css): no script, no

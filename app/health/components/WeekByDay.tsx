@@ -6,7 +6,7 @@ import { HealthCalorieTarget, HealthDatedTargets, HealthDay } from '@/types/heal
 import { targetsFor } from '@/lib/targets';
 import { WeekdayProfile, WeekdayRow, weekdayProfile } from '@/lib/healthInsights';
 import { formatDelta, formatNumber } from './format';
-import { VARIANTS, Variant, pct, rectPath } from './svg';
+import { VARIANTS, Variant, barScale, pct, rectPath } from './svg';
 
 interface Props {
   days: HealthDay[];
@@ -37,6 +37,11 @@ const FRAMES: Record<Variant, DFrame> = {
   compact: { w: 600, l: 104, r: 10, t: 40, plot: 300, b: 80, px: 2 },
 };
 const height = (F: DFrame) => F.t + F.plot + F.b;
+/**
+ * Room under the lowest bar for its value label, in CSS pixels: the 3px gap and an 11.5px label (health.css ›
+ * .h-ax.is-sm) with a little air. Without it a bar reaching the foot printed its label on the weekday's name.
+ */
+const LABEL_ROOM_PX = 18;
 const TIP_WIDTH = 236;
 const f1 = (n: number) => n.toFixed(1);
 
@@ -84,8 +89,7 @@ function build(spec: Spec, v: Variant, profile: WeekdayProfile, weightUnit: stri
   const band = (F.w - F.l - F.r) / 7;
   const x = (i: number) => F.l + band * (i + 0.5);
   const vals = profile.rows.map(spec.value).filter((n): n is number => n !== null);
-  const lo = Math.floor(Math.min(0, ...vals) / spec.step) * spec.step;
-  const hi = Math.max(Math.ceil(Math.max(0, ...vals) / spec.step) * spec.step, lo + spec.step);
+  const { lo, hi } = barScale(vals, spec.step, F.plot, LABEL_ROOM_PX * F.px);
   const y = (n: number) => F.t + F.plot - ((n - lo) / (hi - lo)) * F.plot;
   const bw = Math.min(64 * F.px, band * 0.5);
 

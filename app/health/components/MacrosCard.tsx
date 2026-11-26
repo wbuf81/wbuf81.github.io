@@ -20,13 +20,6 @@ interface Props {
  */
 export default function MacrosCard({ range, weeklyTrend, phases, targets }: Props) {
   const goals = range.days.map((d) => targetsFor(d.date, targets)?.proteinGoal ?? null);
-  const latestGoal = [...goals].reverse().find((g) => g !== null) ?? null;
-
-  // Each day against the goal in force that day, so raising the goal never rescores the days before it.
-  const scored = range.days
-    .map((d, i) => ({ protein: d.protein, goal: goals[i] }))
-    .filter((s): s is { protein: number; goal: number } => s.protein !== null && s.goal !== null);
-  const met = scored.filter((s) => s.protein >= s.goal).length;
 
   return (
     <section className="h-card">
@@ -55,20 +48,7 @@ export default function MacrosCard({ range, weeklyTrend, phases, targets }: Prop
         label="Protein, carbs and fat: weekly averages in grams, with each day’s protein and the protein goal"
         endPx={80}
       />
-      <p className="h-note is-after">
-        Grams a day, weekly averages. The dots are each day&rsquo;s protein
-        {latestGoal !== null && scored.length > 0 ? (
-          <>
-            ; it met the {formatNumber(latestGoal)} g goal on{' '}
-            <b>
-              {met} of {scored.length} days
-            </b>{' '}
-            shown.
-          </>
-        ) : (
-          '.'
-        )}
-      </p>
+      <p className="h-note is-after">Grams a day, weekly averages. The dots are each day&rsquo;s protein.</p>
     </section>
   );
 }

@@ -13,13 +13,22 @@ import {
   WeeklyTrendRow,
 } from '@/types/health';
 import type { CalendarDay } from '@/lib/healthCalendar';
+import { longDate } from './format';
 import { section as sectionInfo, type HealthSection } from '../sections';
+import CaloriesScale from './CaloriesScale';
 import Calendar from './Calendar';
 import Consistency from './Consistency';
+import DailyGoals from './DailyGoals';
+import MorningMoves from './MorningMoves';
+import NextMorning from './NextMorning';
 import Records from './Records';
+import RoadToGoal from './RoadToGoal';
+import SameWeight from './SameWeight';
 import SectionHeader, { healthEyebrow } from './SectionHeader';
+import SoFar from './SoFar';
 import StatTiles from './StatTiles';
 import Trends from './Trends';
+import WeekByDay from './WeekByDay';
 import WeekLead from './WeekLead';
 import WeekLog from './WeekLog';
 
@@ -48,12 +57,15 @@ interface Props {
 
 /**
  * One /health section, each its own page under the HealthNav menu:
- * - week: the week and the block, the tiles, the log's four newest weeks
+ * - week: the week and the block, the road to the block's goal, the tiles, the log's four newest weeks
  * - calendar: the month, each day as three lights
- * - trends: weight with calories under it, pounds per week, the next morning, the week by day, steps and macros
- * - habits: consistency
+ * - trends: the range switch, then weight with calories under it, pounds per week, steps and macros
+ * - patterns: the cards that always read everything, a morning up to a block: the next morning, how far one morning
+ *   moves, the week by day, a week's calories and what the scale did, the same weight twice
+ * - habits: consistency (the twelve newest weeks, the rest behind a button), the daily goals, the running totals
  * - records: the records
- * Specs: docs/superpowers/specs/2026-10-04-health-redesign-design.md, 2026-11-04-health-sections-calendar-design.md.
+ * Specs: docs/superpowers/specs/2026-10-04-health-redesign-design.md, 2026-11-04-health-sections-calendar-design.md,
+ * 2026-11-26-health-patterns-and-ideas-design.md.
  */
 export default function HealthDashboard({
   section,
@@ -97,6 +109,7 @@ export default function HealthDashboard({
           next={leadPhase && activePhase && leadPhase !== activePhase ? activePhase : null}
           weightUnit={weightUnit}
         />
+        <RoadToGoal days={days} weeklyTrend={weeklyTrend} phases={phases} lead={leadPhase} weightUnit={weightUnit} />
         <StatTiles summary={summary} phase={leadPhase} weightUnit={weightUnit} />
         <WeekLog
           weeks={weeks}
@@ -134,9 +147,29 @@ export default function HealthDashboard({
           leadPhase={leadPhase}
           calorieTargets={calorieTargets}
           targets={targets}
-          stepStreaks={stepStreaks}
           weightUnit={weightUnit}
         />
+        <Updated on={lastUpdated} />
+      </>
+    );
+  }
+
+  if (section === 'patterns') {
+    // Every card here reads the whole log; the range switch on Trends does not reach them.
+    return (
+      <>
+        {header}
+        <NextMorning days={days} calorieTargets={calorieTargets} weightUnit={weightUnit} />
+        <MorningMoves days={days} weightUnit={weightUnit} />
+        <WeekByDay days={days} calorieTargets={calorieTargets} targets={targets} weightUnit={weightUnit} />
+        <CaloriesScale
+          weeklyTrend={weeklyTrend}
+          lead={leadPhase}
+          calorieTargets={calorieTargets}
+          newestDate={days[days.length - 1]?.date ?? null}
+          weightUnit={weightUnit}
+        />
+        <SameWeight days={days} weeklyTrend={weeklyTrend} phases={phases} lead={leadPhase} weightUnit={weightUnit} />
         <Updated on={lastUpdated} />
       </>
     );
@@ -155,6 +188,8 @@ export default function HealthDashboard({
           noteMarks={noteMarks}
           weightUnit={weightUnit}
         />
+        <DailyGoals days={days} targets={targets} streaks={stepStreaks} lead={leadPhase} />
+        <SoFar days={days} lead={leadPhase} />
         <Updated on={lastUpdated} />
       </>
     );
@@ -177,5 +212,5 @@ export default function HealthDashboard({
 }
 
 function Updated({ on }: { on: string }) {
-  return <p className="h-updated">Last updated {on}</p>;
+  return <p className="h-updated">Last updated {longDate(on)}</p>;
 }

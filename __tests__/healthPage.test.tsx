@@ -68,7 +68,7 @@ function fixture(n = 21, patch: (day: HealthDay, i: number) => Partial<HealthDay
   };
 }
 
-/** Every section, in menu order (or just `only`): the five /health pages stacked. */
+/** Every section, in menu order (or just `only`): the six /health pages stacked. */
 function Dashboard({ data, only }: { data: HealthData; only?: HealthSection }) {
   if (data.days.length === 0) return <p className="h-note">No data recorded yet.</p>;
   const phases = buildPhases(data.days, data.phases);
@@ -113,18 +113,16 @@ describe('/health', () => {
       unmount();
       return out;
     };
-    expect(headings('week')).toEqual(['The log']);
+    // A running block with a goal: the road to it sits between the lead card and the tiles.
+    expect(headings('week')).toEqual(['The road to 195', 'The log']);
     expect(headings('calendar')).toEqual(['August 2026']);
-    expect(headings('trends')).toEqual([
-      'Weight',
-      'Pounds per week',
-      'What a day’s calories do to the next morning',
-      'The week, by day',
-      'Steps',
-      'Protein, carbs and fat',
-    ]);
-    expect(headings('habits')).toEqual(['Consistency']);
-    expect(headings('records')).toEqual(['Records']);
+    // Trends holds the cards the range switch redraws; Patterns the ones that always read everything.
+    expect(headings('trends')).toEqual(['Weight', 'Pounds per week', 'Steps', 'Protein, carbs and fat']);
+    // Three weeks of one block: no second block for "The same weight, twice", too few weeks for the calories card.
+    expect(headings('patterns')).toEqual(['What a day’s calories do to the next morning', 'How far one morning moves', 'The week, by day']);
+    expect(headings('habits')).toEqual(['Consistency', 'Daily goals', 'So far']);
+    // The Records card is named for the table on show, not "Records" again under the page's title.
+    expect(headings('records')).toEqual(['By week']);
   });
 
   it('titles each page for its section, under one eyebrow naming the block and its week', () => {
@@ -175,7 +173,7 @@ describe('/health', () => {
 
   it('calls a day 20% or more over its target a big day', () => {
     // The fixture's Saturdays eat 3,000 against 2,400: 1.25 times the target.
-    render(<Dashboard data={fixture()} only="trends" />);
+    render(<Dashboard data={fixture()} only="patterns" />);
     expect(screen.getByText(/A big day, 20% or more over target/)).toBeInTheDocument();
     expect(screen.getByText('The mornings after a big day')).toBeInTheDocument();
     expect(screen.getByText('After a big day')).toBeInTheDocument();
@@ -185,8 +183,33 @@ describe('/health', () => {
   it('marks the page it is on in the menu, and links every section', () => {
     render(<HealthNav current="calendar" />);
     const links = screen.getAllByRole('link');
-    expect(links.map((a) => a.getAttribute('href'))).toEqual(['/health', '/health/calendar', '/health/trends', '/health/habits', '/health/records']);
+    expect(links.map((a) => a.getAttribute('href'))).toEqual([
+      '/health',
+      '/health/calendar',
+      '/health/trends',
+      '/health/patterns',
+      '/health/habits',
+      '/health/records',
+    ]);
     expect(screen.getByRole('link', { current: 'page' })).toHaveAttribute('href', '/health/calendar');
+    // Patterns sits after Trends, with its own icon and a phone label as short as the rest.
+    const patterns = screen.getByRole('link', { name: /Patterns/ });
+    expect(patterns).toHaveTextContent('🧩');
+    for (const s of SECTIONS) expect(s.short.length).toBeLessThanOrEqual(8);
+  });
+
+  it('dates the page in words, from the ISO string’s own parts', () => {
+    render(<Dashboard data={{ ...fixture(), lastUpdated: '2026-11-26' }} only="week" />);
+    expect(screen.getByText('Last updated Nov 26, 2026')).toBeInTheDocument();
+    expect(screen.queryByText(/2026-11-26/)).toBeNull();
+  });
+
+  it('names the Records card for the table on show', () => {
+    render(<Dashboard data={fixture()} only="records" />);
+    expect(screen.getByRole('heading', { level: 2, name: 'By week' })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Every day' }));
+    expect(screen.getByRole('heading', { level: 2, name: 'Every day' })).toBeInTheDocument();
+    expect(screen.queryByRole('heading', { level: 2, name: 'Records' })).toBeNull();
   });
 
   it('opens the calendar on the newest month and steps back a month', () => {
@@ -213,6 +236,29 @@ describe('/health', () => {
     const data = fixture(13); // Mon Jul 20 – Sat Aug 1: the newest week began Jul 27
     render(<Dashboard data={data} only="calendar" />);
     expect(screen.getByRole('heading', { name: 'July 2026' })).toBeInTheDocument();
+  });
+
+  it('draws a day as three lights in a row and its weigh-in, with no words in the cell', () => {
+    const { container } = render(<Dashboard data={fixture()} only="calendar" />);
+    const sat = screen.getByRole('button', { name: /^Aug 8:/ });
+    const lights = sat.querySelector('.h-cal-lights') as HTMLElement;
+    // Calories, protein, steps, in that order: Saturday misses calories on a cut and hits the other two.
+    expect(Array.from(lights.children).map((el) => el.className)).toEqual(['h-cal-dot is-miss', 'h-cal-dot is-hit', 'h-cal-dot is-hit']);
+    expect(lights).toHaveTextContent(/^$/);
+    expect(sat).not.toHaveTextContent(/kcal|protein|steps/);
+    // The fixture weighs Aug 8 at 210 - 19 × 0.15 = 207.15, shown to one decimal.
+    expect(sat.querySelector('.h-cal-wt')).toHaveTextContent(/^207\.\d$/);
+    // The spoken label still names every light, and the training tags stay.
+    expect(sat.getAttribute('aria-label')).toMatch(/calories 3,000 missed, protein 205 g hit, steps 14,000 hit/);
+    expect(sat.querySelector('.h-cal-train')).toHaveTextContent('L');
+    expect(container.querySelector('.h-cal-legend')).toHaveTextContent('The three lights are calories, protein and steps, in that order.');
+  });
+
+  it('leaves the weight out of a cell with no weigh-in', () => {
+    render(<Dashboard data={fixture(21, (d) => (d.date === '2026-08-05' ? { weight: null } : {}))} only="calendar" />);
+    const wed = screen.getByRole('button', { name: /^Aug 5:/ });
+    expect(wed.querySelector('.h-cal-wt')).toBeNull();
+    expect(wed.querySelectorAll('.h-cal-dot')).toHaveLength(3);
   });
 
   it('switches the calendar between lights and numbers', () => {
@@ -323,10 +369,35 @@ describe('/health', () => {
       fireEvent.click(screen.getByRole('button', { name }));
       expect(container.innerHTML).not.toMatch(/NaN|undefined|Infinity/);
       const charts = Array.from(container.querySelectorAll('svg[role="img"]'));
-      // Weight, pounds per week, the scatter and the mornings after, two weekday charts, steps, macros: two frames each.
-      expect(charts).toHaveLength(16);
+      // Weight, pounds per week, steps, macros: two frames each.
+      expect(charts).toHaveLength(8);
       for (const svg of charts) expect(svg.getAttribute('aria-label')).toMatch(/\w/);
     }
+  });
+
+  it('draws every Patterns chart from the real data, each named for screen readers', () => {
+    const { container } = render(<Dashboard data={getHealthData()} only="patterns" />);
+    expect(container.innerHTML).not.toMatch(/NaN|undefined|Infinity/);
+    expect(screen.queryByRole('group', { name: 'How far back' })).toBeNull();
+    const charts = Array.from(container.querySelectorAll('svg[role="img"]'));
+    // The scatter and the mornings after, how far one morning moves, the two weekday charts, a week's calories and
+    // the scale, and (with two blocks) the same weight twice.
+    // Two frames each; the same weight twice waits for a complete week of a new block, so an import can leave it out.
+    expect(charts.length).toBeGreaterThanOrEqual(10);
+    for (const svg of charts) expect(svg.getAttribute('aria-label')).toMatch(/\w/);
+  });
+
+  it('draws This week and Habits from the real data, with no NaN and nothing pinned to this week’s numbers', () => {
+    const week = render(<Dashboard data={getHealthData()} only="week" />);
+    expect(week.container.innerHTML).not.toMatch(/NaN|undefined|Infinity/);
+    // The road card shows only while the block runs and a pace reaches its goal; when it does, it is in both frames.
+    const road = week.container.querySelectorAll('.h-road svg[role="img"]');
+    expect([0, 2]).toContain(road.length);
+    week.unmount();
+    const habits = render(<Dashboard data={getHealthData()} only="habits" />);
+    expect(habits.container.innerHTML).not.toMatch(/NaN|undefined|Infinity/);
+    expect(screen.getByRole('heading', { level: 2, name: 'So far' })).toBeInTheDocument();
+    expect(screen.getByText(/at 2,100 steps a mile/)).toBeInTheDocument();
   });
 
   it('thins the date labels as the log grows, so they never touch', () => {
@@ -359,8 +430,24 @@ describe('/health', () => {
     expect(days('.h-wkd.is-wt.is-wide')).toEqual(['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']);
   });
 
+  it('leaves room under the lowest weekday bar for its label, above the weekday’s name', () => {
+    // Fridays 300 under a 2,400 target: one whole step, so the bar used to reach the foot of the plot and print
+    // "−300" on "Fri".
+    const { container } = render(<Dashboard data={fixture(21, (d) => (d.day === 'Fri' ? { cals: 2100 } : {}))} only="patterns" />);
+    for (const v of ['wide', 'compact']) {
+      const chart = container.querySelector(`.h-wkd.is-cal.is-${v}`) as HTMLElement;
+      const [, , h] = (chart.querySelector('svg')?.getAttribute('viewBox') ?? '').split(' ').map(Number);
+      const foot = parseFloat((chart.querySelector('.h-wkd-day') as HTMLElement).style.top);
+      const fri = Array.from(chart.querySelectorAll('.h-ax.is-sm')).find((el) => el.textContent === '−300') as HTMLElement;
+      expect(fri).toBeDefined();
+      // From the bar's end to the weekday names, in viewBox units: room for the 3px gap and the label beneath.
+      const units = ((foot - parseFloat(fri.style.top)) / 100) * h;
+      expect(units).toBeGreaterThanOrEqual(v === 'wide' ? 18 * 1.33 : 18 * 2);
+    }
+  });
+
   it('draws the two weekday charts as a pair, each in both frames', () => {
-    const { container } = render(<Dashboard data={fixture()} only="trends" />);
+    const { container } = render(<Dashboard data={fixture()} only="patterns" />);
     const pair = container.querySelector('.h-two.is-even') as HTMLElement;
     expect(pair.children).toHaveLength(2);
     for (const kind of ['cal', 'wt']) {
@@ -369,7 +456,7 @@ describe('/health', () => {
   });
 
   it('prints the next-morning and weekday figures in plain ink: patterns, not results', () => {
-    render(<Dashboard data={fixture()} only="trends" />);
+    render(<Dashboard data={fixture()} only="patterns" />);
     const labels = [
       'After a day over target',
       'After a day at or under',
@@ -388,7 +475,7 @@ describe('/health', () => {
 
   it('names only the newest big day, "so far" while its mornings are still coming', () => {
     // The fixture ends Sun Aug 9: Saturday Aug 8 is big (3,000 against 2,400) and has one morning after it.
-    const { container } = render(<Dashboard data={fixture()} only="trends" />);
+    const { container } = render(<Dashboard data={fixture()} only="patterns" />);
     const named = Array.from(container.querySelectorAll('.h-after .is-named')).map((el) => el.textContent);
     expect(named).toEqual(['Aug 8 · so far', 'Aug 8 · so far']);
     // No other big day is labelled: the average and every day are named instead.
@@ -404,7 +491,7 @@ describe('/health', () => {
 
   it('names the newest big day plainly once its three mornings are in', () => {
     // Out to Wed Aug 12: Aug 8 has Aug 9, 10 and 11 after it.
-    const { container } = render(<Dashboard data={fixture(24)} only="trends" />);
+    const { container } = render(<Dashboard data={fixture(24)} only="patterns" />);
     const named = Array.from(container.querySelectorAll('.h-after .is-named')).map((el) => el.textContent);
     expect(named).toEqual(['Aug 8, the newest', 'Aug 8, the newest']);
   });
@@ -415,10 +502,8 @@ describe('/health', () => {
       Array.from(container.querySelectorAll('.h-series.is-wide .g-day')).map((el) => (el.getAttribute('d')?.match(/M/g) ?? []).length);
     // 8 weeks: the last 56 days, a dot each, in the steps chart and the macros chart.
     expect(dots()).toEqual([56, 56]);
-    expect(screen.getByText(/it met the 200 g goal on/)).toHaveTextContent(/ of 56 days shown\./);
     fireEvent.click(screen.getByRole('button', { name: 'Everything' }));
     expect(dots()).toEqual([280, 280]);
-    expect(screen.getByText(/it met the 200 g goal on/)).toHaveTextContent(/ of 280 days shown\./);
   });
 
   it('names every steps and macros line at its right end', () => {
@@ -438,13 +523,30 @@ describe('/health', () => {
     expect(macros.querySelector('.g-line')?.getAttribute('d')).toMatch(/^M[\d. ]+H[\d.]+V[\d.]+H[\d.]+$/);
     expect(within(steps).getByText('goal 15k')).toBeInTheDocument();
     expect(within(macros).getByText('goal 210')).toBeInTheDocument();
-    // Each day against the goal in force: 205 g met 200 before Aug 3, missed 210 after: 14 of 21.
-    expect(screen.getByText(/it met the 210 g goal on/)).toHaveTextContent('it met the 210 g goal on 14 of 21 days shown.');
   });
 
-  it('counts the protein days in the macros footer', () => {
-    render(<Dashboard data={fixture(21, (_d, i) => ({ protein: i % 3 === 0 ? 190 : 205 }))} only="trends" />);
-    expect(screen.getByText(/it met the 200 g goal on/)).toHaveTextContent('it met the 200 g goal on 14 of 21 days shown.');
+  it('scores the protein goal on Habits, each day against the goal in force that day', () => {
+    const data = fixture();
+    data.targets = [...(data.targets ?? []), { from: '2026-08-03', stepsGoal: 15000, proteinGoal: 210 }];
+    render(<Dashboard data={data} only="habits" />);
+    // 205 g met 200 before Aug 3, missed 210 after: 14 of 21.
+    const cell = screen.getByText('Protein goal, this cut').parentElement as HTMLElement;
+    expect(cell).toHaveTextContent('14 of 21 days');
+    expect(cell).toHaveTextContent('at or over the 210 g goal since Jul 20');
+    expect(screen.getByText('Protein goal, in all').nextElementSibling).toHaveTextContent('14 of 21 days');
+  });
+
+  it('counts the protein days on Habits, not under the macros chart', () => {
+    const data = fixture(21, (_d, i) => ({ protein: i % 3 === 0 ? 190 : 205 }));
+    const trends = render(<Dashboard data={data} only="trends" />);
+    expect(screen.getByText('Grams a day, weekly averages. The dots are each day’s protein.')).toBeInTheDocument();
+    expect(screen.queryByText(/goal on/)).toBeNull();
+    expect(screen.queryByText(/best run/)).toBeNull();
+    trends.unmount();
+    render(<Dashboard data={data} only="habits" />);
+    expect(screen.getByText('Protein goal, this cut').nextElementSibling).toHaveTextContent('14 of 21 days');
+    expect(screen.getByText('Above the 10k steps floor').nextElementSibling).toHaveTextContent('21 days');
+    expect(screen.getByText('Above the 10k steps floor').parentElement).toHaveTextContent('running, the best run yet');
   });
 
   it('places the hover line inside the plot of whichever frame is showing', () => {

@@ -167,6 +167,69 @@
 .wb .g-last { stroke: var(--ink); stroke-width: 1.5; fill: none; }
 .wb .g-lastpts { fill: var(--ink); stroke: var(--paper); stroke-width: 1.5; }
 
+/* ── Patterns: the same weight twice, a week's calories and the scale, how far one morning moves ── */
+.wb .h-sw.is-rungwk { width: 8px; height: 8px; margin: 0 2px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 2px var(--paper), 0 0 0 3px var(--accent); }
+.wb .h-sw.is-rung { width: 18px; height: 0; border-radius: 0; border-top: 2px dashed var(--ink-3); }
+.wb .h-sw.is-ring { border-radius: 50%; box-shadow: inset 0 0 0 2px var(--accent); }
+.wb .h-sw.is-nband { width: 16px; background: color-mix(in srgb, var(--ink) 9%, transparent); }
+.wb .g-wk { fill: var(--accent); stroke: var(--paper); stroke-width: 2; }
+.wb .g-wk.is-big { stroke-width: 2.5; }
+.wb .g-rung { stroke: var(--ink-3); stroke-width: 1.25; stroke-dasharray: 5 4; fill: none; }
+.wb .g-trend { stroke: var(--ink-2); stroke-width: 1.5; stroke-dasharray: 5 4; fill: none; }
+.wb .g-path { stroke: color-mix(in srgb, var(--ink-3) 35%, transparent); stroke-width: 1; fill: none; stroke-linejoin: round; }
+.wb .g-ring { fill: var(--paper); stroke: var(--accent); stroke-width: 1.75; }
+.wb .g-mk { fill: var(--paper); stroke: var(--ink); stroke-width: 1.5; }
+.wb .g-brk { stroke: var(--ink-3); stroke-width: 1; fill: none; }
+.wb .g-base { stroke: var(--rule); stroke-width: 1; fill: none; }
+.wb .g-now { fill: var(--accent); stroke: var(--paper); stroke-width: 1; }
+.wb .h-ax.is-rung { font: 500 10.5px var(--mono); color: var(--ink-2); padding: 1px 2px; background: color-mix(in srgb, var(--paper) 80%, transparent); }
+.wb .h-ax.is-chip { font-size: 10.5px; color: var(--ink-2); padding: 1px 3px; background: var(--paper); }
+.wb .h-ax.is-now { font: 600 12px var(--sans); color: var(--accent); }
+.wb .h-cscale .h-ax.is-note, .wb .h-moves .h-ax.is-note { font-size: 10.5px; }
+/* The rungs, highest weight first: on a phone the steps drop under the calories and the older weight goes. */
+.wb .h-rungs { width: 100%; border-collapse: collapse; font-size: 13.5px; margin-top: 14px; }
+.wb .h-rungs th { text-align: left; font: 500 10.5px var(--mono); letter-spacing: .07em; text-transform: uppercase; color: var(--ink-3); padding: 8px; border-bottom: 1px solid var(--rule); white-space: nowrap; }
+.wb .h-rungs td, .wb .h-rungs tbody th { padding: 9px 8px; border-bottom: 1px solid var(--rule-soft); font-variant-numeric: tabular-nums; vertical-align: top; }
+.wb .h-rungs td b { font-weight: 600; }
+.wb .h-rungs .is-num { text-align: right; }
+.wb .h-rungs tbody th.is-wt { font: 600 17px/1.2 var(--serif); letter-spacing: 0; text-transform: none; color: var(--ink); white-space: nowrap; }
+.wb .h-rungs .is-ex { font: 400 12px var(--sans); color: var(--ink-3); }
+.wb .h-rung-m { color: var(--ink-2); }
+.wb .h-rung-wk { display: block; font: 400 11px var(--mono); color: var(--ink-3); margin-top: 2px; }
+.wb .h-rung-br { display: none; }
+
+/* ── This week: the road to the goal. The block so far, then a line to the goal at each pace: the last three weeks in
+   ink, the whole block lighter, the plan dashed; the span between the fastest and slowest tinted. ── */
+.wb .h-sw.is-rd-recent { width: 18px; height: 2px; border-radius: 0; background: var(--ink); }
+.wb .h-sw.is-rd-block { width: 18px; height: 2px; border-radius: 0; background: var(--ink-3); }
+.wb .g-rd-recent { stroke: var(--ink); stroke-width: 1.75; fill: none; }
+.wb .g-rd-block { stroke: var(--ink-3); stroke-width: 1.75; fill: none; }
+.wb .g-fan { fill: color-mix(in srgb, var(--accent) 9%, transparent); }
+.wb .g-arrive { fill: var(--paper); stroke: var(--ink-2); stroke-width: 1.5; }
+.wb .g-ref { stroke: var(--rule); stroke-width: 1; fill: none; }
+.wb .g-today { stroke: var(--ink-3); stroke-width: 2; stroke-dasharray: 0.5 4.5; stroke-linecap: round; fill: none; }
+.wb .h-road .h-ax.is-date { font: 500 11px var(--mono); color: var(--ink); padding: 0 4px; background: var(--paper); }
+.wb .h-road .h-ax.is-goal-n { font: 500 11px var(--mono); color: var(--accent); padding: 0 4px 0 0; }
+.wb .h-road .h-ax.is-ref { font-size: 10.5px; padding: 0 3px; background: color-mix(in srgb, var(--paper) 85%, transparent); }
+
+/* ── Habits: the grid's older weeks behind a button; so far, the running totals ── */
+.wb .h-more-weeks .h-grid7 { margin-top: 4px; }
+.wb .h-more { margin-top: 12px; }
+.wb .h-so { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1px; background: var(--rule-soft); border: 1px solid var(--rule-soft); margin-top: 14px; }
+.wb .h-so > div { background: var(--paper); padding: 14px 16px 16px; min-width: 0; }
+.wb .h-so .h-n { font-size: 22px; margin-top: 5px; }
+.wb .h-so .h-l { margin-top: 5px; text-wrap: pretty; }
+.wb .h-so .h-l b { color: var(--ink); font-weight: 600; }
+.wb .h-so-lead { grid-column: span 2; }
+.wb .h-so-next { margin-top: 14px; }
+.wb .h-so-ctr { display: flex; align-items: flex-end; gap: 3px; margin: 6px 0 2px; }
+.wb .h-so-dg { font: 600 clamp(24px, 6vw, 40px)/1 var(--serif); color: var(--accent); background: var(--bg); border: 1px solid var(--rule-soft); border-radius: 4px; padding: 6px 0 5px; width: clamp(22px, 5.6vw, 38px); text-align: center; font-variant-numeric: tabular-nums; }
+.wb .h-so-sep { font: 600 clamp(20px, 5vw, 34px)/1 var(--serif); color: var(--ink-3); width: 6px; text-align: center; }
+.wb .h-so-trk { margin: 12px 0 2px; }
+.wb .h-so-bar { position: relative; height: 10px; border-radius: 5px; background: var(--rule-soft); overflow: hidden; }
+.wb .h-so-bar i { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 5px; background: var(--accent); }
+.wb .h-so-ends { display: flex; justify-content: space-between; font: 500 10.5px var(--mono); color: var(--ink-3); margin-top: 4px; min-height: 13px; }
+
 /* ── the week, by day ───────────────────────────────────────── */
 /* Each chart is a size container: "over on" shows only where a column has room for it. */
 .wb .h-wkd { container-type: inline-size; }
@@ -252,12 +315,22 @@
   .wb .h-big { font-size: 42px; }
   .wb .h-days7 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   .wb .h-goals { grid-template-columns: minmax(0, 1fr); }
+  .wb .h-so { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (max-width: 600px) {
   .wb .h-card, .wb .h-week { padding: 16px; }
   .wb .h-grid7 { grid-template-columns: 44px repeat(7, minmax(0, 1fr)); }
   .wb .h-v.is-wide { display: none; }
   .wb .h-v.is-compact { display: block; }
+  .wb .h-so { grid-template-columns: minmax(0, 1fr); }
+  .wb .h-so-lead { grid-column: auto; }
+  .wb .h-rungs { font-size: 12.5px; }
+  .wb .h-rungs th { padding: 6px 4px; font-size: 9.5px; letter-spacing: .04em; white-space: normal; }
+  .wb .h-rungs td, .wb .h-rungs tbody th { padding: 8px 4px; }
+  .wb .h-rungs tbody th.is-wt { font-size: 15px; }
+  .wb .h-rungs .is-ex, .wb .h-rung-dv { display: none; }
+  .wb .h-rung-br { display: inline; }
+  .wb .h-rung-wk { font-size: 10px; }
   /* two facts a row, an odd last one across both, so no empty cell shows the rule colour */
   .wb .h-facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .wb .h-facts > div:last-child:nth-child(odd) { grid-column: 1 / -1; }
@@ -314,8 +387,10 @@
 .wb .h-cal-top { display: flex; justify-content: space-between; align-items: baseline; gap: 4px; }
 .wb .h-cal-dn { font: 500 13px var(--mono); color: var(--ink-2); }
 .wb .h-cal-icons { font-size: 14px; line-height: 1; white-space: nowrap; overflow: hidden; }
-.wb .h-cal-lights { display: grid; grid-template-columns: auto 1fr; gap: 3px 6px; align-items: center; }
-.wb .h-cal-lbl { font: 500 10.5px var(--mono); letter-spacing: .03em; color: var(--ink-3); }
+/* Lights mode: the three lights in a row, calories, protein, steps, with the day's weigh-in under them. */
+.wb .h-cal-body { display: flex; flex-direction: column; gap: 4px; }
+.wb .h-cal-lights { display: flex; gap: 4px; align-items: center; }
+.wb .h-cal-order { flex-basis: 100%; }
 .wb .h-cal-dot { display: inline-block; width: 11px; height: 11px; border-radius: 50%; flex: none; }
 .wb .h-cal-dot.is-hit { background: var(--core); }
 .wb .h-cal-dot.is-close { background: linear-gradient(90deg, var(--warn) 50%, transparent 50%); box-shadow: inset 0 0 0 2px var(--warn); }
@@ -357,8 +432,8 @@
   .wb .h-cal-dow { padding: 6px 0; text-align: center; }
   .wb .h-cal-day { min-height: 74px; padding: 5px 3px 6px; gap: 3px; align-items: center; }
   .wb .h-cal-top { flex-direction: column; align-items: center; gap: 1px; }
-  .wb .h-cal-lights { grid-template-columns: 1fr; justify-items: center; }
-  .wb .h-cal-lbl { display: none; }
+  .wb .h-cal-body { align-items: center; gap: 3px; }
+  .wb .h-cal-lights { gap: 2px; }
   .wb .h-cal-dot { width: 9px; height: 9px; }
   .wb .h-cal-icons { font-size: 11px; }
   .wb .h-cal-dn { font-size: 12px; }

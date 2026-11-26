@@ -2,7 +2,8 @@ import Link from 'next/link';
 import { SECTIONS, type HealthSection } from '../sections';
 
 /** /health's own menu, built like SnesNav: a sticky row of tabs under the site header, one page per section.
- * On a phone the icons drop and the labels shorten, so all five fit one row at 375px without sliding. */
+ * On a phone the icons drop and the labels shorten, so all six fit one row at 375px without sliding (measured 26 Nov
+ * 2026: the last tab ends at 351px of 367). The row can still slide inside the menu if a face ever runs wider. */
 export default function HealthNav({ current }: { current: HealthSection }) {
   return (
     <nav className="h-nav" aria-label="Health">

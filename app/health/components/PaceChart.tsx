@@ -3,6 +3,7 @@
 import { useMemo, useState } from 'react';
 import type { PointerEvent } from 'react';
 import type { PhaseSummary, WeeklyTrendRow } from '@/types/health';
+import { weekOnWeek } from '@/lib/healthProgress';
 import { formatDelta, formatNumber, shortDate } from './format';
 import FitRow, { type FitCell } from './FitRow';
 import { VARIANTS, type Variant, labelStride, pct, rectPath, sundayLabels } from './svg';
@@ -176,13 +177,15 @@ export default function PaceChart({ range, weeklyTrend, phases, lead, weightUnit
     facts.push({ k: 'Last week', n: `${formatDelta(lastWeek.weightChange)} ${weightUnit}`, l: `week ending ${shortDate(lastWeek.weekEnd)}` });
   }
   if (lead) {
-    const changes = weeklyTrend.filter((w) => w.phase?.start === lead.start && w.weightChange !== null).map((w) => w.weightChange as number);
-    if (changes.length) {
+    // Its first week is measured against the week before the block, so it differs from the lead card's whole-block
+    // pace, which counts from the block's first weigh-in (This week › The road to the goal says so too).
+    const wow = weekOnWeek(weeklyTrend, lead);
+    if (wow) {
       const word = lead.type === 'maintain' ? 'block' : lead.type;
       facts.push({
         k: `This ${word}, week on week`,
-        n: `${formatDelta(changes.reduce((s, c) => s + c, 0) / changes.length)} ${weightUnit}`,
-        l: `a week on average, over ${changes.length} week${changes.length === 1 ? '' : 's'}`,
+        n: `${formatDelta(wow.avg)} ${weightUnit}`,
+        l: `a week on average, over ${wow.n} week${wow.n === 1 ? '' : 's'}${wow.from ? '; the first measured from the week before the block' : ''}`,
       });
     }
     if (lead.ratePerWeek) {

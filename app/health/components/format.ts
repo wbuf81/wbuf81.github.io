@@ -67,6 +67,17 @@ export function shortDate(iso: string): string {
   return `${MONTHS[date.getUTCMonth()]} ${date.getUTCDate()}`;
 }
 
+/**
+ * "2026-11-26" → "Nov 26, 2026", read from the string's own parts so no time zone can move it a day. Anything that
+ * is not an ISO date comes back as it was.
+ */
+export function longDate(iso: string): string {
+  const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso);
+  if (!m) return iso;
+  const month = MONTHS[Number(m[2]) - 1];
+  return month ? `${month} ${Number(m[3])}, ${m[1]}` : iso;
+}
+
 /** "2026-09-27" → "Sun Sep 27" */
 export function dayDate(iso: string): string {
   return `${WEEKDAYS[utc(iso).getUTCDay()]} ${shortDate(iso)}`;

@@ -42,8 +42,11 @@ export default function StatTiles({ summary, phase = null, weightUnit }: Props) 
     summary.estimatedMaintenance !== null && summary.recentAvgCals !== null
       ? summary.estimatedMaintenance - summary.recentAvgCals
       : null;
-  // The averages cover the block; without one, every recorded day.
+  // The averages cover the block; without one, every recorded day. The scope goes in the label, so a block average
+  // is never read as the lead card's week average above it: "Avg calories, this bulk", "per day since Oct 26".
   const scope = phase ? THIS_BLOCK[phase.type] : null;
+  const avgLabel = (what: string) => `Avg ${what}, ${scope ?? 'all time'}`;
+  const perDay = phase ? `per day since ${phase.startLabel}` : 'per day';
   const avgCals = phase ? phase.avgCals : summary.avgCals;
   const avgProtein = phase ? phase.avgProtein : summary.avgProtein;
   const avgSteps = phase ? phase.avgSteps : summary.avgSteps;
@@ -65,9 +68,9 @@ export default function StatTiles({ summary, phase = null, weightUnit }: Props) 
       block: phase && sinceBlock !== null ? phase.type : null,
     },
     {
-      label: 'Avg calories',
+      label: avgLabel('calories'),
       value: avgCals !== null ? formatNumber(avgCals) : '—',
-      detail: scope ? `per day, ${scope}` : 'per day, all recorded days',
+      detail: perDay,
     },
     {
       label: 'Est. maintenance',
@@ -79,14 +82,14 @@ export default function StatTiles({ summary, phase = null, weightUnit }: Props) 
           : 'needs two weighed weeks',
     },
     {
-      label: 'Avg protein',
+      label: avgLabel('protein'),
       value: avgProtein !== null ? `${formatNumber(avgProtein)} g` : '—',
-      detail: scope ? `per day, ${scope}` : 'per day',
+      detail: perDay,
     },
     {
-      label: 'Avg steps',
+      label: avgLabel('steps'),
       value: avgSteps !== null ? formatNumber(avgSteps) : '—',
-      detail: scope ? `per day, ${scope}` : 'per day',
+      detail: perDay,
     },
     // "This week" (lifts · cardio) now lives in the WeekLead card, which shows
     // the newest — possibly partial — week; repeating it here said it twice.

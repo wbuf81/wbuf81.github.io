@@ -58,25 +58,28 @@ function tile(label: string) {
 
 test('the tiles describe the block the newest data falls in, never a cut and a bulk blended', () => {
   render(<StatTiles summary={summary} phase={bulk} weightUnit="lb" />);
-  expect(tile('Avg calories')).toEqual({ value: '2,843', detail: 'per day, this bulk' });
-  expect(tile('Avg protein')).toEqual({ value: '211 g', detail: 'per day, this bulk' });
-  expect(tile('Avg steps')).toEqual({ value: '14,120', detail: 'per day, this bulk' });
+  // The scope is in the label, so a block average is never read as the lead card's week average above it.
+  expect(tile('Avg calories, this bulk')).toEqual({ value: '2,843', detail: 'per day since Nov 2' });
+  expect(tile('Avg protein, this bulk')).toEqual({ value: '211 g', detail: 'per day since Nov 2' });
+  expect(tile('Avg steps, this bulk')).toEqual({ value: '14,120', detail: 'per day since Nov 2' });
+  expect(screen.queryByText('Avg calories')).toBeNull();
   expect(tile('Tracked')).toEqual({ value: '3 weeks', detail: 'this bulk · 119 days in all' });
 });
 
 test('a cut says "this cut", maintenance "this block"', () => {
   const { unmount } = render(<StatTiles summary={summary} phase={{ ...bulk, type: 'cut' }} weightUnit="lb" />);
-  expect(tile('Avg calories').detail).toBe('per day, this cut');
+  expect(tile('Avg calories, this cut').detail).toBe('per day since Nov 2');
   unmount();
   render(<StatTiles summary={summary} phase={{ ...bulk, type: 'maintain' }} weightUnit="lb" />);
-  expect(tile('Avg calories').detail).toBe('per day, this block');
+  expect(tile('Avg calories, this block').detail).toBe('per day since Nov 2');
   expect(tile('Tracked').detail).toBe('this block · 119 days in all');
 });
 
 test('with no block the tiles fall back to every recorded day', () => {
   render(<StatTiles summary={summary} phase={null} weightUnit="lb" />);
-  expect(tile('Avg calories')).toEqual({ value: '2,576', detail: 'per day, all recorded days' });
-  expect(tile('Avg protein')).toEqual({ value: '202 g', detail: 'per day' });
+  expect(tile('Avg calories, all time')).toEqual({ value: '2,576', detail: 'per day' });
+  expect(tile('Avg protein, all time')).toEqual({ value: '202 g', detail: 'per day' });
+  expect(tile('Avg steps, all time')).toEqual({ value: '15,398', detail: 'per day' });
   expect(tile('Tracked')).toEqual({ value: '119 days', detail: '17 weeks' });
 });
 
@@ -97,7 +100,7 @@ test('intake under maintenance reads as a deficit; no maintenance, no figure', (
 
 test('the latest weigh-in counts from the start of its block, toned by the block', () => {
   render(<StatTiles summary={summary} phase={bulk} weightUnit="lb" />);
-  const note = screen.getByText(/since Nov 2/);
+  const note = screen.getByText(/one reading · .* since Nov 2/);
   expect(note).toHaveTextContent('one reading · +0.9 lb since Nov 2');
   expect(note).toHaveClass('is-good');
   expect(screen.queryByText(/since start/)).toBeNull();

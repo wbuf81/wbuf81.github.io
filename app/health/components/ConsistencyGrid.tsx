@@ -1,5 +1,6 @@
 import { HealthDay, HealthMarker, HealthNoteMark, WeekSummary } from '@/types/health';
 import { noteMarksFor, noteTextFor } from '@/lib/noteMarks';
+import MoreWeeks from './MoreWeeks';
 
 interface Props {
   weeks: WeekSummary[];
@@ -7,7 +8,12 @@ interface Props {
   markers?: HealthMarker[];
   /** Glyphs drawn when a day's notes mention the configured phrase. */
   noteMarks?: HealthNoteMark[];
+  /** How many of the newest weeks show before "Show all". */
+  limit?: number;
 }
+
+/** The grid opens on this many weeks, newest first. */
+export const NEWEST_WEEKS = 12;
 
 const DAY_ORDER = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
@@ -72,9 +78,36 @@ export function Marks({ m }: { m: ReturnType<typeof dayMarks> }) {
  * A marker's icon replaces the rest dash: it explains the same fact more specifically. A note mark is
  * triggered by the day's own notes, so a cross means church was written down that day, not that it was a
  * Sunday; one flagged `replaces: 'cardio'` takes the cardio dot's place.
+ *
+ * The newest `limit` weeks show, newest first; the older ones, also newest first, wait behind a button under the grid.
  */
-export default function ConsistencyGrid({ weeks, markers = [], noteMarks = [] }: Props) {
+export default function ConsistencyGrid({ weeks, markers = [], noteMarks = [], limit = NEWEST_WEEKS }: Props) {
   const markerByDate = new Map(markers.filter((m) => m.icon).map((m) => [m.date, m]));
+  // Newest first: the week just posted is the one looked for.
+  const ordered = [...weeks].sort((a, b) => b.weekStart.localeCompare(a.weekStart));
+  const shown = ordered.slice(0, limit);
+  const rest = ordered.slice(limit);
+
+  const rows = (list: WeekSummary[]) =>
+    list.map((week) => {
+      const byDate = new Map(week.days.map((day) => [day.date, day]));
+      return [
+        <span key={`${week.weekStart}-label`} className="h-wl">
+          {week.label}
+        </span>,
+        ...DAY_ORDER.map((_, i) => {
+          const date = addDays(week.weekStart, i);
+          const day = byDate.get(date);
+          if (!day) return <span key={date} className="h-cell is-empty" title={`${date}: no data`} />;
+          const m = dayMarks(day, markerByDate.get(date), noteMarks);
+          return (
+            <span key={date} className="h-cell" title={m.title} role="img" aria-label={m.title}>
+              <Marks m={m} />
+            </span>
+          );
+        }),
+      ];
+    });
 
   return (
     <>
@@ -85,26 +118,13 @@ export default function ConsistencyGrid({ weeks, markers = [], noteMarks = [] }:
             {d.charAt(0)}
           </span>
         ))}
-        {weeks.map((week) => {
-          const byDate = new Map(week.days.map((day) => [day.date, day]));
-          return [
-            <span key={`${week.weekStart}-label`} className="h-wl">
-              {week.label}
-            </span>,
-            ...DAY_ORDER.map((_, i) => {
-              const date = addDays(week.weekStart, i);
-              const day = byDate.get(date);
-              if (!day) return <span key={date} className="h-cell is-empty" title={`${date}: no data`} />;
-              const m = dayMarks(day, markerByDate.get(date), noteMarks);
-              return (
-                <span key={date} className="h-cell" title={m.title} role="img" aria-label={m.title}>
-                  <Marks m={m} />
-                </span>
-              );
-            }),
-          ];
-        })}
+        {rows(shown)}
       </div>
+      {rest.length > 0 && (
+        <MoreWeeks total={ordered.length} shown={shown.length}>
+          <div className="h-grid7">{rows(rest)}</div>
+        </MoreWeeks>
+      )}
       <MarksKey noteMarks={noteMarks} className="is-below" />
     </>
   );

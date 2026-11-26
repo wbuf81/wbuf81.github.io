@@ -121,7 +121,7 @@ export default function WeekLead({ rows, phase, next = null, weightUnit }: Props
             <div>
               <div className="h-k">Per week</div>
               <div className={`h-n ${blockTone(phase.weightChangePerWeek)}`}>{signedLb(phase.weightChangePerWeek)}</div>
-              <div className="h-l">whole block</div>
+              <div className="h-l">whole block, from the first weigh-in</div>
             </div>
             {/*
               The whole-block rate is front-loaded by the first fortnight's water, so once a distinct recent

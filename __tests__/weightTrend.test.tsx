@@ -5,7 +5,7 @@ import Trends from '@/app/health/components/Trends';
 import WeightTrend from '@/app/health/components/WeightTrend';
 import PaceChart, { paceTone } from '@/app/health/components/PaceChart';
 import { trendRange, weekPoints, rangeKeys } from '@/app/health/components/trendRange';
-import { buildPhases, buildStepStreaks, buildWeeklyTrend, leadPhase } from '@/lib/health';
+import { buildPhases, buildWeeklyTrend, leadPhase } from '@/lib/health';
 import type { HealthCalorieTarget, HealthDay, HealthPhase } from '@/types/health';
 
 // The Trends shell, the weight chart and pounds per week (spec 2026-11-16, step 2). Wes alternates cuts and bulks,
@@ -79,7 +79,6 @@ function renderTrends(s = setup()) {
       leadPhase={s.lead}
       calorieTargets={s.calorieTargets}
       targets={[]}
-      stepStreaks={buildStepStreaks(s.days, [])}
       weightUnit="lb"
     />,
   );
@@ -320,7 +319,8 @@ describe('pounds per week', () => {
     expect(within(facts).getByText('Last week')).toBeInTheDocument();
     expect(within(facts).getByText('week ending Nov 15')).toBeInTheDocument();
     expect(within(facts).getByText('This bulk, week on week')).toBeInTheDocument();
-    expect(within(facts).getByText('a week on average, over 3 weeks')).toBeInTheDocument();
+    // The bulk's first week is measured against the cut's last.
+    expect(within(facts).getByText('a week on average, over 3 weeks; the first measured from the week before the block')).toBeInTheDocument();
     expect(within(facts).getByText('The plan').nextElementSibling).toHaveTextContent('+0.5 lb');
     expect(within(facts).getByText('Against the plan line')).toBeInTheDocument();
     expect(within(facts).getByText(/(above|below) it this week; the line starts at the block’s first weigh-in/)).toBeInTheDocument();

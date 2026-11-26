@@ -21,7 +21,7 @@ const label = (date: string) => `${SHORT[Number(date.slice(5, 7)) - 1]} ${Number
 const n = (v: number | null, digits = 0) => (v === null ? '—' : formatNumber(v, digits));
 
 /**
- * The month, Monday first, each day as three lights (calories, protein, steps) or as its numbers, with the
+ * The month, Monday first, each day as three lights in a row (calories, protein, steps) over its weigh-in, or as its numbers, with the
  * week's average in a column on the right. Rules in lib/healthCalendar.ts. Opens on the month the newest week began in.
  */
 export default function Calendar({ days, weightUnit }: { days: CalendarDay[]; weightUnit: string }) {
@@ -148,6 +148,7 @@ export default function Calendar({ days, weightUnit }: { days: CalendarDay[]; we
             <span><i className="h-cal-dot is-hit" />Hit</span>
             <span><i className="h-cal-dot is-close" />Close</span>
             <span><i className="h-cal-dot is-miss" />Missed</span>
+            <span className="h-cal-order">The three lights are calories, protein and steps, in that order.</span>
           </>
         )}
         <span><span className="h-cal-chip">L</span>Lift</span>
@@ -217,13 +218,14 @@ function Day({
         <span className="h-cal-icons">{day.icons.join('')}</span>
       </span>
       {mode === 'lights' ? (
-        <span className="h-cal-lights">
-          <i className={`h-cal-dot is-${cals}`} />
-          <span className="h-cal-lbl">kcal</span>
-          <i className={`h-cal-dot is-${protein}`} />
-          <span className="h-cal-lbl">protein</span>
-          <i className={`h-cal-dot is-${steps}`} />
-          <span className="h-cal-lbl">steps</span>
+        // Calories, protein, steps, always in that order (the key says so once); the aria-label names each in words.
+        <span className="h-cal-body">
+          <span className="h-cal-lights">
+            <i className={`h-cal-dot is-${cals}`} />
+            <i className={`h-cal-dot is-${protein}`} />
+            <i className={`h-cal-dot is-${steps}`} />
+          </span>
+          {day.weight !== null && <span className="h-cal-wt">{n(day.weight, 1)}</span>}
         </span>
       ) : (
         <span className="h-cal-nums">

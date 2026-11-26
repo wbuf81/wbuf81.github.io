@@ -38,7 +38,8 @@ export default function Records({ trend, markers, changeLog, days, phases, weigh
   return (
     <section className="h-card">
       <div className="h-card-h is-center">
-        <h2>Records</h2>
+        {/* Named for the table on show: the page itself is already titled Records. */}
+        <h2>{tabs.find((t) => t.key === tab)?.label ?? 'By week'}</h2>
         <div className="h-seg" role="group" aria-label="Which table">
           {tabs.map((t) => (
             <button key={t.key} type="button" aria-pressed={tab === t.key} onClick={() => setTab(t.key)}>
