@@ -7,7 +7,7 @@ Pushes to `main` auto-deploy to GitHub Pages via `.github/workflows/deploy.yml`.
 ## Setting up a new machine
 A clone carries the playbook (this file), the scripts and the data, but not the tools they run on. Install:
 - **Node 25** (`.nvmrc` pins it; `nvm use`). The health importer relies on Node's built-in TypeScript stripping, so an old LTS fails with "Could not load lib/health.ts". Then `npm install`.
-- **Python 3 with Pillow** (`pip3 install pillow`) and **Google Chrome** — only for the link-preview card and the weekly share cards. Importing a week works without them and just warns.
+- **Python 3 with Pillow** (`pip3 install pillow`) and **Google Chrome** — only for the link-preview card and the weekly share cards, both drawn on request. Importing a week needs neither.
 - Push access to the repo (SSH key or HTTPS token). Importing a week is a push.
 
 Smoke-test with `npm test` and `npm run health:add -- --dry-run < /dev/null`.
@@ -142,7 +142,7 @@ To add a week: Wes pastes the sheet rows (tab-separated, **12 columns**, Date→
 pbpaste | npm run health:add          # or: node scripts/add-health-week.mjs < week.tsv
 node scripts/add-health-week.mjs --dry-run < week.tsv   # preview first
 ```
-A successful import also draws the week's **share cards** into `.weekly/` — see "Weekly share cards" below. Pass `--no-cards` to skip.
+**The import no longer draws the week's share cards** (Wes, 26 Nov 2026: "we dont have to make the share cards anymore"). They were drawn into `.weekly/` after every import until then. Pass `--cards` to draw them with an import; see "Weekly share cards" below.
 
 Optionally refresh the local copy of the link-preview card (the deploy redraws it either way):
 ```
@@ -331,6 +331,8 @@ python3 scripts/og/build-og.py snes videogames   # SNES history + hub cards; als
 - Social sites cache previews: after changing the card, LinkedIn's Post Inspector re-fetches it. **Bump `?v=` on `OG_IMAGE` in `app/layout.tsx` whenever `og-image.png` is redrawn**: LinkedIn keeps an image by its address, and after the Oct 2026 redraw it showed a blank box until the address changed. A LinkedIn **Featured** link keeps the preview from when it was added, so it has to be removed and re-added to pick up a change.
 
 ## Weekly share cards
+**Not made any more unless Wes asks** (26 Nov 2026: "we dont have to make the share cards anymore"). The weekly import stopped drawing them that day, so don't draw or offer them after an import. The tools stay in the repo, and the rules below hold if he asks for a card again.
+
 Three 1080x1350 PNGs for posting to X, drawn by `scripts/og/build-weekly.py` from the newest **complete** week:
 
 ```
@@ -348,7 +350,7 @@ Rules that are deliberate:
 - Output goes to `.weekly/` (gitignored). These are posts, not site assets — nothing here is served or deployed.
 - Numbers come from `scripts/weekly-stats.mjs`, which reads `lib/health.ts`. Never recompute a figure inside the card script; a card that disagrees with the page is worse than no card.
 - Only a **complete** week is drawn. With no finished week the chain exits **3**, which callers treat as a skip, not a failure.
-- Card generation runs at the end of `npm run health:add` and can only ever **warn**: the data is already written by then, and a missing Chrome says nothing about whether the week imported.
+- With `--cards`, card generation runs at the end of `npm run health:add` and can only ever **warn**: the data is already written by then, and a missing Chrome says nothing about whether the week imported.
 - The palette is validated against the ink surface, not eyeballed — `#4a95e8` / `#e06a30` / `#2f9e6e` pass the lightness-band, chroma, colour-blind separation and contrast checks. Re-run a validator before changing any of them.
 - Type is Outfit only, heavy and tightly tracked. The serif belongs to the site's own cards; these have to read as a scoreboard at thumbnail size.
 

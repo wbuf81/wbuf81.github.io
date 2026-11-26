@@ -6,10 +6,11 @@
  *   pbpaste | node scripts/add-health-week.mjs
  *   node scripts/add-health-week.mjs --year 2026 < week.tsv
  *   node scripts/add-health-week.mjs --dry-run < week.tsv
- *   node scripts/add-health-week.mjs --no-cards < week.tsv
+ *   node scripts/add-health-week.mjs --cards < week.tsv
  *
- * A successful import also draws the week's share cards into .weekly/. That step
- * can fail (it needs Chrome) without the import being in doubt, so it only ever
+ * The import no longer draws the week's share cards (Wes, 26 Nov 2026). Pass
+ * --cards to draw them into .weekly/ after a successful import. That step can
+ * fail (it needs Chrome) without the import being in doubt, so it only ever
  * warns — see buildCards.
  *
  * Input is tab-separated rows copied straight from the sheet, columns Date
@@ -50,10 +51,12 @@ function loadParser() {
 }
 
 function parseArgs(argv) {
-  const args = { year: null, dryRun: false, cards: true };
+  // Share cards are off unless asked for. --no-cards is still accepted, so an old command keeps working.
+  const args = { year: null, dryRun: false, cards: false };
   for (let i = 0; i < argv.length; i++) {
     if (argv[i] === '--year') args.year = Number(argv[++i]);
     else if (argv[i] === '--dry-run') args.dryRun = true;
+    else if (argv[i] === '--cards') args.cards = true;
     else if (argv[i] === '--no-cards') args.cards = false;
   }
   return args;
@@ -63,7 +66,7 @@ function parseArgs(argv) {
 const NOTHING_TO_DRAW = 3;
 
 /**
- * Draw the share cards for the week just imported.
+ * Draw the share cards for the week just imported. Only with --cards.
  *
  * The data is already on disk by the time this runs, so a card problem is
  * reported and shrugged off rather than failing the import — Chrome or Pillow
