@@ -91,7 +91,8 @@
   .swipe { text-align: center; font-size: 7px; color: var(--dim); letter-spacing: .1em; margin-top: 6px; }
 
   .boards { display: grid; grid-template-columns: minmax(0, 1fr); gap: 14px; }
-  @media (min-width: 760px) { .boards { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  @media (min-width: 760px) { .boards { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (min-width: 1100px) { .boards { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
   .board { --c: var(--teal); background: rgba(21, 13, 36, .88); border: 3px solid var(--c); border-radius: 6px; box-shadow: 0 0 0 3px #05030a, 0 0 18px color-mix(in srgb, var(--c) 35%, transparent); padding: 12px 12px 10px; min-width: 0; }
   .board h3 { margin: 0 0 4px; font-size: clamp(9px, 2.8vw, 11px); color: var(--c); line-height: 1.5; letter-spacing: .04em; }
   .board .what { font-size: 7px; color: var(--dim); margin-bottom: 10px; letter-spacing: .05em; line-height: 1.6; }
@@ -178,9 +179,14 @@ function champ(id, name) { var c = document.getElementById('champ-' + id); if (c
 function mmss(ms) { var s = ms / 1000, m = Math.floor(s / 60); return m + ':' + (s - m * 60).toFixed(2).padStart(5, '0'); }
 function get(url) { return fetch(url, { cache: 'no-store' }).then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); }); }
 
+var olF = board('FORE!NITE', 'TARGET RANGE · HIGH SCORE', '#20d9f2');
 var olC = board('CON AIR', 'ENDLESS · FARTHEST FLIGHT', '#ffb13b');
 var olM = board('MARBLE DADNESS', 'ALL FIVE COURSES · FASTEST TOTAL', '#2fd0c0');
 var olW = board('WALLET ROYALE', 'MOST STUFF IN THE WALLET', '#b6ff2e');
+
+get('https://forenite-scores.wes-bard.workers.dev/top').then(function (d) {
+  var rows = (d.range && d.range.all) || []; fill(olF, rows, function (r) { return String(r.score); }); if (rows[0]) champ('forenite', rows[0].name);
+}).catch(function () { offline(olF); });
 
 get('https://conair-scores.wes-bard.workers.dev/top').then(function (d) {
   var rows = d.all || []; fill(olC, rows, function (r) { return r.m + ' M'; }); if (rows[0]) champ('conair', rows[0].name);
