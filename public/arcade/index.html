@@ -92,7 +92,6 @@
 
   .boards { display: grid; grid-template-columns: minmax(0, 1fr); gap: 14px; }
   @media (min-width: 760px) { .boards { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-  @media (min-width: 1100px) { .boards { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
   .board { --c: var(--teal); background: rgba(21, 13, 36, .88); border: 3px solid var(--c); border-radius: 6px; box-shadow: 0 0 0 3px #05030a, 0 0 18px color-mix(in srgb, var(--c) 35%, transparent); padding: 12px 12px 10px; min-width: 0; }
   .board h3 { margin: 0 0 4px; font-size: clamp(9px, 2.8vw, 11px); color: var(--c); line-height: 1.5; letter-spacing: .04em; }
   .board .what { font-size: 7px; color: var(--dim); margin-bottom: 10px; letter-spacing: .05em; line-height: 1.6; }
